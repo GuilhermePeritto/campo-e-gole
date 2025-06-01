@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -76,10 +75,8 @@ const Comandas = () => {
   );
 
   const closeComanda = (comandaId: number) => {
-    toast({
-      title: "Comanda fechada com sucesso!",
-      description: "Comanda foi finalizada e enviada para o caixa.",
-    });
+    // Redirecionar para o checkout ao invés de fechar diretamente
+    navigate('/bar/checkout');
   };
 
   return (

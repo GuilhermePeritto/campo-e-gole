@@ -23,6 +23,10 @@ import Comandas from "./pages/bar/Comandas";
 import Inventory from "./pages/bar/Inventory";
 import Products from "./pages/bar/Products";
 import BarReports from "./pages/bar/Reports";
+import NewComanda from "./pages/bar/NewComanda";
+import NewProduct from "./pages/bar/NewProduct";
+import EditProduct from "./pages/bar/EditProduct";
+import Checkout from "./pages/bar/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -130,6 +134,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/bar/comandas/new"
+        element={
+          <ProtectedRoute>
+            <NewComanda />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/bar/inventory"
         element={
           <ProtectedRoute>
@@ -142,6 +154,30 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Products />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/products/new"
+        element={
+          <ProtectedRoute>
+            <NewProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/products/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/checkout"
+        element={
+          <ProtectedRoute>
+            <Checkout />
           </ProtectedRoute>
         }
       />
