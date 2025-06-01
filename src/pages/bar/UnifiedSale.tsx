@@ -1,15 +1,15 @@
 
-import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Plus, Minus, ShoppingCart, Trash2, Receipt, Search } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, Minus, Plus, Receipt, Search, ShoppingCart, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -151,22 +151,22 @@ const UnifiedSale = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/bar')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-900 dark:text-gray-300"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>
             <div className="flex items-center gap-3">
               {getIcon()}
-              <h1 className="text-2xl font-medium text-black">{getTitle()}</h1>
+              <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">{getTitle()}</h1>
             </div>
           </div>
         </div>
@@ -176,19 +176,19 @@ const UnifiedSale = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Seleção de Produtos */}
           <div className="lg:col-span-2">
-            <Card className="border-gray-200">
+            <Card className="border">
               <CardHeader>
-                <CardTitle className="text-black">Produtos</CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardTitle className="text-gray-900 dark:text-gray-300">Produtos</CardTitle>
+                <CardDescription className="text-gray-900 dark:text-gray-300">
                   Selecione produtos para adicionar
                 </CardDescription>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-900 dark:text-gray-300" />
                   <Input
                     placeholder="Buscar produtos..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-gray-300"
+                    className="pl-10 border"
                   />
                 </div>
               </CardHeader>
@@ -206,19 +206,19 @@ const UnifiedSale = () => {
                       {filteredProducts.map((product) => (
                         <div 
                           key={product.id} 
-                          className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                          className="flex items-center justify-between p-4 border border rounded-lg hover:bg-muted cursor-pointer"
                           onClick={() => addProduct(product)}
                         >
                           <div className="flex-1">
-                            <div className="font-medium text-black">{product.name}</div>
-                            <div className="text-sm text-gray-600">
+                            <div className="font-medium text-gray-900 dark:text-gray-300">{product.name}</div>
+                            <div className="text-sm text-gray-900 dark:text-gray-300">
                               R$ {product.price.toFixed(2)} • Estoque: {product.stock}
                             </div>
                             <Badge variant="secondary" className="mt-1">
                               {product.category}
                             </Badge>
                           </div>
-                          <Button size="sm" className="bg-black text-white hover:bg-gray-800">
+                          <Button size="sm" variant='outline' className="text-gray-900 dark:text-gray-300">
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
@@ -234,12 +234,12 @@ const UnifiedSale = () => {
                           .map((product) => (
                             <div 
                               key={product.id} 
-                              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                              className="flex items-center justify-between p-4 border border rounded-lg hover:bg-muted cursor-pointer"
                               onClick={() => addProduct(product)}
                             >
                               <div className="flex-1">
-                                <div className="font-medium text-black">{product.name}</div>
-                                <div className="text-sm text-gray-600">
+                                <div className="font-medium text-gray-900 dark:text-gray-300">{product.name}</div>
+                                <div className="text-sm text-gray-900 dark:text-gray-300">
                                   R$ {product.price.toFixed(2)} • Estoque: {product.stock}
                                 </div>
                               </div>
@@ -258,12 +258,12 @@ const UnifiedSale = () => {
 
           {/* Carrinho/Comanda */}
           <div>
-            <Card className="border-gray-200">
+            <Card className="border">
               <CardHeader>
-                <CardTitle className="text-black">
+                <CardTitle className="text-gray-900 dark:text-gray-300">
                   {saleType === 'comanda' ? 'Itens da Comanda' : 'Carrinho de Venda'}
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-gray-900 dark:text-gray-300">
                   {saleItems.length} {saleItems.length === 1 ? 'item' : 'itens'} selecionados
                 </CardDescription>
               </CardHeader>
@@ -272,23 +272,23 @@ const UnifiedSale = () => {
                 {saleType === 'comanda' && (
                   <div className="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg">
                     <div className="space-y-2">
-                      <Label htmlFor="clientName" className="text-black">Nome do Cliente *</Label>
+                      <Label htmlFor="clientName" className="text-gray-900 dark:text-gray-300">Nome do Cliente *</Label>
                       <Input
                         id="clientName"
                         placeholder="Nome do cliente"
                         value={clientName}
                         onChange={(e) => setClientName(e.target.value)}
-                        className="border-gray-300"
+                        className="border"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="tableNumber" className="text-black">Mesa (opcional)</Label>
+                      <Label htmlFor="tableNumber" className="text-gray-900 dark:text-gray-300">Mesa (opcional)</Label>
                       <Input
                         id="tableNumber"
                         placeholder="Número da mesa"
                         value={tableNumber}
                         onChange={(e) => setTableNumber(e.target.value)}
-                        className="border-gray-300"
+                        className="border"
                       />
                     </div>
                   </div>
@@ -302,10 +302,10 @@ const UnifiedSale = () => {
                 ) : (
                   <div className="space-y-4">
                     {saleItems.map((item) => (
-                      <div key={item.product.id} className="flex items-center justify-between p-3 border border-gray-200 rounded">
+                      <div key={item.product.id} className="flex items-center justify-between p-3 border border rounded">
                         <div className="flex-1">
-                          <div className="font-medium text-black">{item.product.name}</div>
-                          <div className="text-sm text-gray-600">
+                          <div className="font-medium text-gray-900 dark:text-gray-300">{item.product.name}</div>
+                          <div className="text-sm text-gray-900 dark:text-gray-300">
                             R$ {item.product.price.toFixed(2)} cada
                           </div>
                         </div>
@@ -314,7 +314,7 @@ const UnifiedSale = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                            className="border-gray-300"
+                            className="border"
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -323,7 +323,7 @@ const UnifiedSale = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                            className="border-gray-300"
+                            className="border"
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -331,19 +331,19 @@ const UnifiedSale = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => removeItem(item.product.id)}
-                            className="border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="border text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
-                        <div className="w-20 text-right font-medium text-black">
+                        <div className="w-20 text-right font-medium text-gray-900 dark:text-gray-300">
                           R$ {(item.product.price * item.quantity).toFixed(2)}
                         </div>
                       </div>
                     ))}
 
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex justify-between text-xl font-semibold text-black">
+                    <div className="border-t border pt-4">
+                      <div className="flex justify-between text-xl font-semibold text-gray-900 dark:text-gray-300">
                         <span>Total:</span>
                         <span>R$ {getTotal().toFixed(2)}</span>
                       </div>
@@ -351,11 +351,11 @@ const UnifiedSale = () => {
 
                     {/* Pagamento (apenas para venda direta) */}
                     {saleType === 'direct' && (
-                      <div className="space-y-4 pt-4 border-t border-gray-200">
+                      <div className="space-y-4 pt-4 border-t border">
                         <div className="space-y-2">
-                          <Label htmlFor="paymentMethod" className="text-black">Método de Pagamento</Label>
+                          <Label htmlFor="paymentMethod" className="text-gray-900 dark:text-gray-300">Método de Pagamento</Label>
                           <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                            <SelectTrigger className="border-gray-300">
+                            <SelectTrigger className="border">
                               <SelectValue placeholder="Selecione o método" />
                             </SelectTrigger>
                             <SelectContent>

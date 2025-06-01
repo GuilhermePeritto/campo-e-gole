@@ -1,14 +1,14 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ArrowLeft, BarChart3, Calendar as CalendarIcon, TrendingUp, ShoppingCart, Package, DollarSign } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import ExportButton from '@/components/ExportButton';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, BarChart3, Calendar as CalendarIcon, DollarSign, Package, ShoppingCart, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -51,8 +51,8 @@ const Reports = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="shadow-sm border-b border">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -60,14 +60,14 @@ const Reports = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/bar')}
-                className="gap-2 text-black hover:bg-gray-100"
+                className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex items-center gap-3">
                 <BarChart3 className="h-6 w-6 text-green-600" />
-                <h1 className="text-2xl font-medium text-black">Relatórios do Bar</h1>
+                <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Relatórios do Bar</h1>
               </div>
             </div>
 
@@ -82,17 +82,17 @@ const Reports = () => {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Filtros */}
-        <Card className="mb-8 border-gray-200">
+        <Card className="mb-8 border">
           <CardHeader>
-            <CardTitle className="text-black">Filtros</CardTitle>
+            <CardTitle className="text-gray-900 dark:text-gray-300">Filtros</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-4 items-end">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-black">Período</label>
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Período</label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
+                    <Button variant="outline" className="border text-gray-900 dark:text-gray-300 hover:bg-gray-50">
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {dateRange.from && dateRange.to 
                         ? `${dateRange.from.toLocaleDateString('pt-BR')} - ${dateRange.to.toLocaleDateString('pt-BR')}`
@@ -111,9 +111,9 @@ const Reports = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-black">Categoria</label>
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Categoria</label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-48 border-gray-300">
+                  <SelectTrigger className="w-48 border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -126,7 +126,7 @@ const Reports = () => {
                 </Select>
               </div>
 
-              <Button className="bg-black text-white hover:bg-gray-800">
+              <Button className="" variant='outline'>
                 Aplicar Filtros
               </Button>
             </div>
@@ -135,60 +135,60 @@ const Reports = () => {
 
         {/* Métricas Principais */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-green-100 rounded-lg">
                   <DollarSign className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Faturamento</p>
-                  <p className="text-2xl font-bold text-black">R$ 12.300</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-300">Faturamento</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">R$ 12.300</p>
                   <p className="text-xs text-green-600">+18% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-blue-100 rounded-lg">
                   <ShoppingCart className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Vendas Realizadas</p>
-                  <p className="text-2xl font-bold text-black">491</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-300">Vendas Realizadas</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">491</p>
                   <p className="text-xs text-blue-600">+12% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-purple-100 rounded-lg">
                   <Package className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Itens Vendidos</p>
-                  <p className="text-2xl font-bold text-black">820</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-300">Itens Vendidos</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">820</p>
                   <p className="text-xs text-purple-600">+8% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-orange-100 rounded-lg">
                   <TrendingUp className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Ticket Médio</p>
-                  <p className="text-2xl font-bold text-black">R$ 25,05</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-300">Ticket Médio</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">R$ 25,05</p>
                   <p className="text-xs text-orange-600">+3% vs semana anterior</p>
                 </div>
               </div>
@@ -198,10 +198,10 @@ const Reports = () => {
 
         {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Vendas por Dia</CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardTitle className="text-gray-900 dark:text-gray-300">Vendas por Dia</CardTitle>
+              <CardDescription className="text-gray-900 dark:text-gray-300">
                 Faturamento diário da semana
               </CardDescription>
             </CardHeader>
@@ -218,10 +218,10 @@ const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Vendas por Categoria</CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardTitle className="text-gray-900 dark:text-gray-300">Vendas por Categoria</CardTitle>
+              <CardDescription className="text-gray-900 dark:text-gray-300">
                 Distribuição de vendas por tipo de produto
               </CardDescription>
             </CardHeader>
@@ -250,20 +250,20 @@ const Reports = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Produtos Mais Vendidos</CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardTitle className="text-gray-900 dark:text-gray-300">Produtos Mais Vendidos</CardTitle>
+              <CardDescription className="text-gray-900 dark:text-gray-300">
                 Top 5 produtos por quantidade vendida
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {topProducts.map((product, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                     <div>
-                      <div className="font-medium text-black">{product.product}</div>
-                      <div className="text-sm text-gray-600">{product.quantity} unidades</div>
+                      <div className="font-medium text-gray-900 dark:text-gray-300">{product.product}</div>
+                      <div className="text-sm text-gray-900 dark:text-gray-300">{product.quantity} unidades</div>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold text-green-600">R$ {product.revenue}</div>
@@ -274,10 +274,10 @@ const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Métodos de Pagamento</CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardTitle className="text-gray-900 dark:text-gray-300">Métodos de Pagamento</CardTitle>
+              <CardDescription className="text-gray-900 dark:text-gray-300">
                 Distribuição dos tipos de pagamento
               </CardDescription>
             </CardHeader>
