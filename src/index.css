@@ -6,15 +6,15 @@
 @layer base {
   :root {
     --background: 255 255 255;
-    --foreground: 15 23 42;
+    --foreground: 17 24 39;
 
     --card: 255 255 255;
-    --card-foreground: 15 23 42;
+    --card-foreground: 17 24 39;
 
     --popover: 255 255 255;
-    --popover-foreground: 15 23 42;
+    --popover-foreground: 17 24 39;
 
-    --primary: 71 85 105;
+    --primary: 34 197 94;
     --primary-foreground: 255 255 255;
 
     --secondary: 107 114 128;
@@ -23,65 +23,65 @@
     --muted: 249 250 251;
     --muted-foreground: 107 114 128;
 
-    --accent: 243 244 246;
-    --accent-foreground: 15 23 42;
+    --accent: 240 253 244;
+    --accent-foreground: 17 24 39;
 
-    --destructive: 220 38 38;
+    --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
 
     --border: 229 231 235;
     --input: 229 231 235;
-    --ring: 71 85 105;
+    --ring: 34 197 94;
 
     --radius: 0.5rem;
 
     --sidebar-background: 248 250 252;
     --sidebar-foreground: 51 65 85;
-    --sidebar-primary: 71 85 105;
+    --sidebar-primary: 34 197 94;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 241 245 249;
+    --sidebar-accent: 240 253 244;
     --sidebar-accent-foreground: 51 65 85;
     --sidebar-border: 226 232 240;
-    --sidebar-ring: 71 85 105;
+    --sidebar-ring: 34 197 94;
   }
 
   .dark {
-    --background: 2 6 23;
-    --foreground: 248 250 252;
+    --background: 17 24 39;
+    --foreground: 249 250 251;
 
-    --card: 15 23 42;
-    --card-foreground: 248 250 252;
+    --card: 31 41 55;
+    --card-foreground: 249 250 251;
 
-    --popover: 15 23 42;
-    --popover-foreground: 248 250 252;
+    --popover: 31 41 55;
+    --popover-foreground: 249 250 251;
 
-    --primary: 100 116 139;
-    --primary-foreground: 15 23 42;
+    --primary: 34 197 94;
+    --primary-foreground: 17 24 39;
 
-    --secondary: 55 65 81;
-    --secondary-foreground: 248 250 252;
+    --secondary: 75 85 99;
+    --secondary-foreground: 249 250 251;
 
-    --muted: 30 41 59;
-    --muted-foreground: 148 163 184;
+    --muted: 55 65 81;
+    --muted-foreground: 156 163 175;
 
-    --accent: 30 41 59;
-    --accent-foreground: 248 250 252;
+    --accent: 22 101 52;
+    --accent-foreground: 249 250 251;
 
-    --destructive: 220 38 38;
-    --destructive-foreground: 248 250 252;
+    --destructive: 239 68 68;
+    --destructive-foreground: 249 250 251;
 
-    --border: 30 41 59;
-    --input: 30 41 59;
-    --ring: 100 116 139;
+    --border: 55 65 81;
+    --input: 55 65 81;
+    --ring: 34 197 94;
 
-    --sidebar-background: 15 23 42;
-    --sidebar-foreground: 226 232 240;
-    --sidebar-primary: 100 116 139;
-    --sidebar-primary-foreground: 15 23 42;
-    --sidebar-accent: 30 41 59;
-    --sidebar-accent-foreground: 226 232 240;
-    --sidebar-border: 30 41 59;
-    --sidebar-ring: 100 116 139;
+    --sidebar-background: 31 41 55;
+    --sidebar-foreground: 209 213 219;
+    --sidebar-primary: 34 197 94;
+    --sidebar-primary-foreground: 17 24 39;
+    --sidebar-accent: 22 101 52;
+    --sidebar-accent-foreground: 209 213 219;
+    --sidebar-border: 55 65 81;
+    --sidebar-ring: 34 197 94;
   }
 }
 
@@ -98,7 +98,7 @@
 
 @layer components {
   .gradient-bg {
-    background: linear-gradient(135deg, #475569 0%, #6b7280 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   }
   
   .card-hover {

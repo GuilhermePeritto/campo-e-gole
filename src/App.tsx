@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +17,12 @@ import Calendar from "./pages/events/Calendar";
 import Venues from "./pages/events/Venues";
 import Clients from "./pages/events/Clients";
 import EventReports from "./pages/events/Reports";
+// Bar pages
+import NewSale from "./pages/bar/NewSale";
+import Comandas from "./pages/bar/Comandas";
+import Inventory from "./pages/bar/Inventory";
+import Products from "./pages/bar/Products";
+import BarReports from "./pages/bar/Reports";
 
 const queryClient = new QueryClient();
 
@@ -101,10 +106,50 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/*"
+        path="/bar"
         element={
           <ProtectedRoute>
             <Bar />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/sales/new"
+        element={
+          <ProtectedRoute>
+            <NewSale />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/comandas"
+        element={
+          <ProtectedRoute>
+            <Comandas />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/inventory"
+        element={
+          <ProtectedRoute>
+            <Inventory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/products"
+        element={
+          <ProtectedRoute>
+            <Products />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/reports"
+        element={
+          <ProtectedRoute>
+            <BarReports />
           </ProtectedRoute>
         }
       />

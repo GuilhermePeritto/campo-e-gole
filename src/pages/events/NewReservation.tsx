@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +11,7 @@ import { toast } from '@/hooks/use-toast';
 
 const NewReservation = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     clientName: '',
     clientPhone: '',
@@ -24,6 +24,14 @@ const NewReservation = () => {
     recurringType: '',
     notes: ''
   });
+
+  // Preencher data automaticamente se vier da agenda
+  useEffect(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      setFormData(prev => ({ ...prev, date: dateParam }));
+    }
+  }, [searchParams]);
 
   const venues = [
     'Quadra A - Futebol Society',
