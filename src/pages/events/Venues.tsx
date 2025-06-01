@@ -67,27 +67,30 @@ const Venues = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/events')}
-                className="gap-2"
+                className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Gerenciar Locais</h1>
+              <div className="flex items-center gap-3">
+                <MapPin className="h-6 w-6 text-green-600" />
+                <h1 className="text-2xl font-medium text-black">Gerenciar Locais</h1>
               </div>
             </div>
 
-            <Button className="gap-2">
+            <Button 
+              onClick={() => navigate('/events/venues/new')}
+              className="gap-2 bg-black text-white hover:bg-gray-800"
+            >
               <Plus className="h-4 w-4" />
               Novo Local
             </Button>
@@ -95,7 +98,7 @@ const Venues = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Busca e Filtros */}
         <div className="mb-6">
           <div className="relative">
@@ -104,7 +107,7 @@ const Venues = () => {
               placeholder="Buscar locais..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-gray-300"
             />
           </div>
         </div>
@@ -112,12 +115,12 @@ const Venues = () => {
         {/* Lista de Locais */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredVenues.map((venue) => (
-            <Card key={venue.id} className="hover:shadow-lg transition-shadow">
+            <Card key={venue.id} className="hover:shadow-lg transition-shadow border-gray-200">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg">{venue.name}</CardTitle>
-                    <CardDescription>{venue.type}</CardDescription>
+                    <CardTitle className="text-lg text-black">{venue.name}</CardTitle>
+                    <CardDescription className="text-gray-600">{venue.type}</CardDescription>
                   </div>
                   <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                     venue.status === 'active' 
@@ -130,28 +133,28 @@ const Venues = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600">
                     {venue.description}
                   </p>
                   
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4 text-gray-500" />
-                      <span>{venue.capacity} pessoas</span>
+                      <span className="text-gray-700">{venue.capacity} pessoas</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4 text-gray-500" />
-                      <span>R$ {venue.hourlyRate}/hora</span>
+                      <span className="text-gray-700">R$ {venue.hourlyRate}/hora</span>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-sm font-medium mb-2">Equipamentos:</div>
+                    <div className="text-sm font-medium mb-2 text-black">Equipamentos:</div>
                     <div className="flex flex-wrap gap-1">
                       {venue.equipment.map((item, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded-full"
+                          className="px-2 py-1 bg-gray-100 text-xs rounded-full text-gray-700"
                         >
                           {item}
                         </span>
@@ -160,14 +163,19 @@ const Venues = () => {
                   </div>
 
                   <div className="flex gap-2 pt-4">
-                    <Button variant="outline" size="sm" className="flex-1 gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 gap-1 border-gray-300 text-black hover:bg-gray-50"
+                      onClick={() => navigate(`/events/venues/${venue.id}/edit`)}
+                    >
                       <Edit className="h-4 w-4" />
                       Editar
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 border-gray-300"
                       onClick={() => handleDelete(venue.id)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -182,13 +190,16 @@ const Venues = () => {
         {filteredVenues.length === 0 && (
           <div className="text-center py-12">
             <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-lg font-medium text-black mb-2">
               Nenhum local encontrado
             </h3>
             <p className="text-gray-500 mb-4">
               {searchTerm ? 'Tente ajustar sua busca' : 'Comece criando o primeiro local'}
             </p>
-            <Button className="gap-2">
+            <Button 
+              onClick={() => navigate('/events/venues/new')}
+              className="gap-2 bg-black text-white hover:bg-gray-800"
+            >
               <Plus className="h-4 w-4" />
               Criar Novo Local
             </Button>

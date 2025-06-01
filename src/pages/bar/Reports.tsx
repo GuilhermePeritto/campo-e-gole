@@ -4,232 +4,269 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, BarChart3, TrendingUp, TrendingDown, DollarSign, Package, Receipt } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowLeft, BarChart3, Calendar as CalendarIcon, TrendingUp, ShoppingCart, Package, DollarSign } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import ExportButton from '@/components/ExportButton';
 
 const Reports = () => {
   const navigate = useNavigate();
-  const [selectedPeriod, setSelectedPeriod] = useState('30');
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    to: new Date()
+  });
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const salesData = [
-    { name: 'Seg', vendas: 450, comandas: 320, livre: 130 },
-    { name: 'Ter', vendas: 380, comandas: 250, livre: 130 },
-    { name: 'Qua', vendas: 520, comandas: 380, livre: 140 },
-    { name: 'Qui', vendas: 480, comandas: 340, livre: 140 },
-    { name: 'Sex', vendas: 720, comandas: 520, livre: 200 },
-    { name: 'Sáb', vendas: 890, comandas: 650, livre: 240 },
-    { name: 'Dom', vendas: 560, comandas: 400, livre: 160 }
+  // Mock data para relatórios
+  const dailySales = [
+    { day: 'Seg', sales: 1250, items: 45 },
+    { day: 'Ter', sales: 1380, items: 52 },
+    { day: 'Qua', sales: 1150, items: 38 },
+    { day: 'Qui', sales: 1620, items: 68 },
+    { day: 'Sex', sales: 2100, items: 85 },
+    { day: 'Sáb', sales: 2850, items: 125 },
+    { day: 'Dom', sales: 1950, items: 78 }
+  ];
+
+  const productCategories = [
+    { name: 'Bebidas', value: 45, color: '#10b981' },
+    { name: 'Lanches', value: 30, color: '#3b82f6' },
+    { name: 'Refeições', value: 20, color: '#8b5cf6' },
+    { name: 'Sobremesas', value: 5, color: '#f59e0b' }
   ];
 
   const topProducts = [
-    { name: 'Cerveja Skol 350ml', quantity: 245, revenue: 1102.50 },
-    { name: 'Refrigerante Coca 600ml', quantity: 180, revenue: 1080.00 },
-    { name: 'Sanduíche Natural', quantity: 85, revenue: 1020.00 },
-    { name: 'Água Mineral 500ml', quantity: 320, revenue: 800.00 },
-    { name: 'Salgadinho Doritos', quantity: 95, revenue: 760.00 }
+    { product: 'Cerveja Skol 350ml', quantity: 320, revenue: 1440 },
+    { product: 'Refrigerante Coca 600ml', quantity: 180, revenue: 1080 },
+    { product: 'Sanduíche Natural', quantity: 95, revenue: 1140 },
+    { product: 'Salgadinho Doritos', quantity: 75, revenue: 600 },
+    { product: 'Água Mineral 500ml', quantity: 150, revenue: 375 }
   ];
 
-  const monthlyData = [
-    { month: 'Jan', revenue: 12450 },
-    { month: 'Fev', revenue: 13200 },
-    { month: 'Mar', revenue: 15800 },
-    { month: 'Abr', revenue: 14600 },
-    { month: 'Mai', revenue: 16900 },
-    { month: 'Jun', revenue: 18200 }
+  const paymentMethods = [
+    { method: 'Cartão', value: 55, color: '#10b981' },
+    { method: 'PIX', value: 30, color: '#3b82f6' },
+    { method: 'Dinheiro', value: 15, color: '#8b5cf6' }
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/bar')}
-                className="gap-2"
+                className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Relatórios do Bar</h1>
+              <div className="flex items-center gap-3">
+                <BarChart3 className="h-6 w-6 text-green-600" />
+                <h1 className="text-2xl font-medium text-black">Relatórios do Bar</h1>
               </div>
             </div>
 
-            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Últimos 7 dias</SelectItem>
-                <SelectItem value="30">Últimos 30 dias</SelectItem>
-                <SelectItem value="90">Últimos 90 dias</SelectItem>
-                <SelectItem value="365">Último ano</SelectItem>
-              </SelectContent>
-            </Select>
+            <ExportButton 
+              data={dailySales} 
+              filename="relatorio-bar" 
+              title="Relatório do Bar"
+            />
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Filtros */}
+        <Card className="mb-8 border-gray-200">
+          <CardHeader>
+            <CardTitle className="text-black">Filtros</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-end">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-black">Período</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange.from && dateRange.to 
+                        ? `${dateRange.from.toLocaleDateString('pt-BR')} - ${dateRange.to.toLocaleDateString('pt-BR')}`
+                        : 'Selecionar período'
+                      }
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="range"
+                      selected={{ from: dateRange.from, to: dateRange.to }}
+                      onSelect={(range) => setDateRange({ from: range?.from, to: range?.to })}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-black">Categoria</label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-48 border-gray-300">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as Categorias</SelectItem>
+                    <SelectItem value="bebidas">Bebidas</SelectItem>
+                    <SelectItem value="lanches">Lanches</SelectItem>
+                    <SelectItem value="refeicoes">Refeições</SelectItem>
+                    <SelectItem value="sobremesas">Sobremesas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button className="bg-black text-white hover:bg-gray-800">
+                Aplicar Filtros
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Métricas Principais */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-primary" />
+                <div className="p-3 bg-green-100 rounded-lg">
+                  <DollarSign className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Faturamento Total</p>
-                  <p className="text-2xl font-bold">R$ 18.450</p>
-                  <p className="text-xs text-primary flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3" />
-                    +12% vs mês anterior
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Faturamento</p>
+                  <p className="text-2xl font-bold text-black">R$ 12.300</p>
+                  <p className="text-xs text-green-600">+18% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Receipt className="h-5 w-5 text-primary" />
+                <div className="p-3 bg-blue-100 rounded-lg">
+                  <ShoppingCart className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total de Vendas</p>
-                  <p className="text-2xl font-bold">284</p>
-                  <p className="text-xs text-primary flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3" />
-                    +8% vs mês anterior
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Vendas Realizadas</p>
+                  <p className="text-2xl font-bold text-black">491</p>
+                  <p className="text-xs text-blue-600">+12% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Package className="h-5 w-5 text-primary" />
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <Package className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Ticket Médio</p>
-                  <p className="text-2xl font-bold">R$ 64,96</p>
-                  <p className="text-xs text-red-500 flex items-center gap-1">
-                    <TrendingDown className="h-3 w-3" />
-                    -2% vs mês anterior
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Itens Vendidos</p>
+                  <p className="text-2xl font-bold text-black">820</p>
+                  <p className="text-xs text-purple-600">+8% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-primary" />
+                <div className="p-3 bg-orange-100 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Margem de Lucro</p>
-                  <p className="text-2xl font-bold">68%</p>
-                  <p className="text-xs text-primary flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3" />
-                    +3% vs mês anterior
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Ticket Médio</p>
+                  <p className="text-2xl font-bold text-black">R$ 25,05</p>
+                  <p className="text-xs text-orange-600">+3% vs semana anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
+        {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Vendas por Dia */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Vendas por Dia da Semana</CardTitle>
-              <CardDescription>
-                Comparativo entre comandas e vendas livres
+              <CardTitle className="text-black">Vendas por Dia</CardTitle>
+              <CardDescription className="text-gray-600">
+                Faturamento diário da semana
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={salesData}>
+                <BarChart data={dailySales}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="day" />
                   <YAxis />
-                  <Tooltip 
-                    formatter={(value, name) => [
-                      `R$ ${value}`, 
-                      name === 'comandas' ? 'Comandas' : name === 'livre' ? 'Vendas Livres' : 'Total'
-                    ]}
-                  />
-                  <Bar dataKey="comandas" fill="#22c55e" name="comandas" />
-                  <Bar dataKey="livre" fill="#16a34a" name="livre" />
+                  <Tooltip formatter={(value) => [`R$ ${value}`, 'Vendas']} />
+                  <Bar dataKey="sales" fill="#10b981" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Faturamento Mensal */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Evolução do Faturamento</CardTitle>
-              <CardDescription>
-                Faturamento dos últimos 6 meses
+              <CardTitle className="text-black">Vendas por Categoria</CardTitle>
+              <CardDescription className="text-gray-600">
+                Distribuição de vendas por tipo de produto
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => [`R$ ${value}`, 'Faturamento']} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="#22c55e" 
-                    strokeWidth={3}
-                    dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
+                <PieChart>
+                  <Pie
+                    data={productCategories}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {productCategories.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Top Produtos */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Produtos Mais Vendidos</CardTitle>
-              <CardDescription>
-                Top 5 produtos por faturamento
+              <CardTitle className="text-black">Produtos Mais Vendidos</CardTitle>
+              <CardDescription className="text-gray-600">
+                Top 5 produtos por quantidade vendida
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {topProducts.map((product, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-primary">{index + 1}</span>
-                      </div>
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-muted-foreground">{product.quantity} unidades</div>
-                      </div>
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-black">{product.product}</div>
+                      <div className="text-sm text-gray-600">{product.quantity} unidades</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">R$ {product.revenue.toFixed(2)}</div>
+                      <div className="font-semibold text-green-600">R$ {product.revenue}</div>
                     </div>
                   </div>
                 ))}
@@ -237,45 +274,33 @@ const Reports = () => {
             </CardContent>
           </Card>
 
-          {/* Resumo por Categoria */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Vendas por Categoria</CardTitle>
-              <CardDescription>
-                Distribuição do faturamento por categoria
+              <CardTitle className="text-black">Métodos de Pagamento</CardTitle>
+              <CardDescription className="text-gray-600">
+                Distribuição dos tipos de pagamento
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 border rounded">
-                  <div>
-                    <div className="font-medium">Bebidas</div>
-                    <div className="text-sm text-muted-foreground">425 itens vendidos</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold">R$ 3.982,50</div>
-                    <div className="text-sm text-muted-foreground">68% do total</div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 border rounded">
-                  <div>
-                    <div className="font-medium">Lanches</div>
-                    <div className="text-sm text-muted-foreground">180 itens vendidos</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold">R$ 1.780,00</div>
-                    <div className="text-sm text-muted-foreground">32% do total</div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Total:</span>
-                    <span>R$ 5.762,50</span>
-                  </div>
-                </div>
-              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={paymentMethods}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {paymentMethods.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>

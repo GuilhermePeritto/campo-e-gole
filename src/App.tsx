@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,15 +16,19 @@ import NotFound from "./pages/NotFound";
 import NewReservation from "./pages/events/NewReservation";
 import Calendar from "./pages/events/Calendar";
 import Venues from "./pages/events/Venues";
+import NewVenue from "./pages/events/NewVenue";
+import EditVenue from "./pages/events/EditVenue";
 import Clients from "./pages/events/Clients";
+import NewClient from "./pages/events/NewClient";
+import EditClient from "./pages/events/EditClient";
+import ClientHistory from "./pages/events/ClientHistory";
 import EventReports from "./pages/events/Reports";
 // Bar pages
-import NewSale from "./pages/bar/NewSale";
+import UnifiedSale from "./pages/bar/UnifiedSale";
 import Comandas from "./pages/bar/Comandas";
 import Inventory from "./pages/bar/Inventory";
 import Products from "./pages/bar/Products";
 import BarReports from "./pages/bar/Reports";
-import NewComanda from "./pages/bar/NewComanda";
 import NewProduct from "./pages/bar/NewProduct";
 import EditProduct from "./pages/bar/EditProduct";
 import Checkout from "./pages/bar/Checkout";
@@ -94,10 +99,50 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/events/venues/new"
+        element={
+          <ProtectedRoute>
+            <NewVenue />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/venues/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditVenue />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/events/clients"
         element={
           <ProtectedRoute>
             <Clients />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/clients/new"
+        element={
+          <ProtectedRoute>
+            <NewClient />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/clients/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditClient />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/clients/:id/history"
+        element={
+          <ProtectedRoute>
+            <ClientHistory />
           </ProtectedRoute>
         }
       />
@@ -121,7 +166,7 @@ const AppRoutes = () => {
         path="/bar/sales/new"
         element={
           <ProtectedRoute>
-            <NewSale />
+            <UnifiedSale />
           </ProtectedRoute>
         }
       />
@@ -137,7 +182,7 @@ const AppRoutes = () => {
         path="/bar/comandas/new"
         element={
           <ProtectedRoute>
-            <NewComanda />
+            <UnifiedSale />
           </ProtectedRoute>
         }
       />

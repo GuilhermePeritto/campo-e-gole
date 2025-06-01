@@ -59,27 +59,30 @@ const Clients = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/events')}
-                className="gap-2"
+                className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Gerenciar Clientes</h1>
+              <div className="flex items-center gap-3">
+                <Users className="h-6 w-6 text-green-600" />
+                <h1 className="text-2xl font-medium text-black">Gerenciar Clientes</h1>
               </div>
             </div>
 
-            <Button className="gap-2">
+            <Button 
+              onClick={() => navigate('/events/clients/new')}
+              className="gap-2 bg-black text-white hover:bg-gray-800"
+            >
               <Plus className="h-4 w-4" />
               Novo Cliente
             </Button>
@@ -87,7 +90,7 @@ const Clients = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Busca */}
         <div className="mb-6">
           <div className="relative">
@@ -96,7 +99,7 @@ const Clients = () => {
               placeholder="Buscar clientes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-gray-300"
             />
           </div>
         </div>
@@ -104,12 +107,12 @@ const Clients = () => {
         {/* Lista de Clientes */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredClients.map((client) => (
-            <Card key={client.id} className="hover:shadow-lg transition-shadow">
+            <Card key={client.id} className="hover:shadow-lg transition-shadow border-gray-200">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg">{client.name}</CardTitle>
-                    <CardDescription>Cliente desde 2023</CardDescription>
+                    <CardTitle className="text-lg text-black">{client.name}</CardTitle>
+                    <CardDescription className="text-gray-600">Cliente desde 2023</CardDescription>
                   </div>
                   <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                     client.status === 'vip' 
@@ -127,21 +130,21 @@ const Clients = () => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       <Mail className="h-4 w-4 text-gray-500" />
-                      <span className="truncate">{client.email}</span>
+                      <span className="truncate text-gray-700">{client.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Phone className="h-4 w-4 text-gray-500" />
-                      <span>{client.phone}</span>
+                      <span className="text-gray-700">{client.phone}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="h-4 w-4 text-gray-500" />
-                      <span>Última reserva: {new Date(client.lastReservation).toLocaleDateString('pt-BR')}</span>
+                      <span className="text-gray-700">Última reserva: {new Date(client.lastReservation).toLocaleDateString('pt-BR')}</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+                  <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-primary">{client.totalReservations}</div>
+                      <div className="text-lg font-bold text-green-600">{client.totalReservations}</div>
                       <div className="text-xs text-gray-500">Reservas</div>
                     </div>
                     <div className="text-center">
@@ -151,11 +154,21 @@ const Clients = () => {
                   </div>
 
                   <div className="flex gap-2 pt-3">
-                    <Button variant="outline" size="sm" className="flex-1 gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 gap-1 border-gray-300 text-black hover:bg-gray-50"
+                      onClick={() => navigate(`/events/clients/${client.id}/edit`)}
+                    >
                       <Edit className="h-4 w-4" />
                       Editar
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 border-gray-300 text-black hover:bg-gray-50"
+                      onClick={() => navigate(`/events/clients/${client.id}/history`)}
+                    >
                       Histórico
                     </Button>
                   </div>
@@ -167,57 +180,57 @@ const Clients = () => {
 
         {/* Estatísticas */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total de Clientes</p>
-                  <p className="text-2xl font-bold">{mockClients.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <Users className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Clientes Ativos</p>
-                  <p className="text-2xl font-bold">{mockClients.filter(c => c.status === 'active' || c.status === 'vip').length}</p>
+                  <p className="text-sm font-medium text-gray-600">Total de Clientes</p>
+                  <p className="text-2xl font-bold text-black">{mockClients.length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Users className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Clientes Ativos</p>
+                  <p className="text-2xl font-bold text-black">{mockClients.filter(c => c.status === 'active' || c.status === 'vip').length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <Users className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Clientes VIP</p>
-                  <p className="text-2xl font-bold">{mockClients.filter(c => c.status === 'vip').length}</p>
+                  <p className="text-sm font-medium text-gray-600">Clientes VIP</p>
+                  <p className="text-2xl font-bold text-black">{mockClients.filter(c => c.status === 'vip').length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <Calendar className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Reservas Totais</p>
-                  <p className="text-2xl font-bold">{mockClients.reduce((acc, c) => acc + c.totalReservations, 0)}</p>
+                  <p className="text-sm font-medium text-gray-600">Reservas Totais</p>
+                  <p className="text-2xl font-bold text-black">{mockClients.reduce((acc, c) => acc + c.totalReservations, 0)}</p>
                 </div>
               </div>
             </CardContent>

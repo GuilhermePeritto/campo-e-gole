@@ -4,140 +4,189 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, BarChart3, Download, Calendar, DollarSign, Users, TrendingUp } from 'lucide-react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowLeft, BarChart3, Calendar as CalendarIcon, TrendingUp, Users, MapPin } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import ExportButton from '@/components/ExportButton';
 
 const Reports = () => {
   const navigate = useNavigate();
-  const [period, setPeriod] = useState('month');
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    to: new Date()
+  });
+  const [selectedVenue, setSelectedVenue] = useState('all');
 
-  const revenueData = [
-    { name: 'Jan', revenue: 15400, reservations: 124 },
-    { name: 'Fev', revenue: 18200, reservations: 145 },
-    { name: 'Mar', revenue: 22100, reservations: 178 },
-    { name: 'Abr', revenue: 19800, reservations: 156 },
-    { name: 'Mai', revenue: 24500, reservations: 189 },
-    { name: 'Jun', revenue: 26800, reservations: 198 }
+  // Mock data para relatórios
+  const monthlyRevenue = [
+    { month: 'Jan', revenue: 12500, reservations: 85 },
+    { month: 'Fev', revenue: 13200, reservations: 92 },
+    { month: 'Mar', revenue: 14800, reservations: 98 },
+    { month: 'Abr', revenue: 13900, reservations: 88 },
+    { month: 'Mai', revenue: 15600, reservations: 105 },
+    { month: 'Jun', revenue: 16200, reservations: 112 }
   ];
 
-  const venueOccupancyData = [
-    { name: 'Quadra A', value: 85, color: '#475569' },
-    { name: 'Campo 1', value: 72, color: '#6b7280' },
-    { name: 'Quadra B', value: 58, color: '#94a3b8' },
-    { name: 'Campo 2', value: 63, color: '#cbd5e1' }
+  const venueUsage = [
+    { name: 'Quadra A', value: 35, color: '#10b981' },
+    { name: 'Campo 1', value: 28, color: '#3b82f6' },
+    { name: 'Quadra B', value: 22, color: '#8b5cf6' },
+    { name: 'Campo 2', value: 15, color: '#f59e0b' }
   ];
 
-  const dailyReservations = [
-    { day: 'Seg', reservations: 12 },
-    { day: 'Ter', reservations: 15 },
-    { day: 'Qua', reservations: 8 },
-    { day: 'Qui', reservations: 18 },
-    { day: 'Sex', reservations: 22 },
-    { day: 'Sáb', reservations: 28 },
-    { day: 'Dom', reservations: 16 }
+  const peakHours = [
+    { hour: '06:00', reservations: 2 },
+    { hour: '08:00', reservations: 8 },
+    { hour: '10:00', reservations: 12 },
+    { hour: '12:00', reservations: 6 },
+    { hour: '14:00', reservations: 15 },
+    { hour: '16:00', reservations: 18 },
+    { hour: '18:00', reservations: 22 },
+    { hour: '20:00', reservations: 25 },
+    { hour: '22:00', reservations: 16 }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/events')}
-                className="gap-2"
+                className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Relatórios de Eventos</h1>
+              <div className="flex items-center gap-3">
+                <BarChart3 className="h-6 w-6 text-green-600" />
+                <h1 className="text-2xl font-medium text-black">Relatórios de Eventos</h1>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <Select value={period} onValueChange={setPeriod}>
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="week">Esta Semana</SelectItem>
-                  <SelectItem value="month">Este Mês</SelectItem>
-                  <SelectItem value="quarter">Último Trimestre</SelectItem>
-                  <SelectItem value="year">Este Ano</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button variant="outline" className="gap-2">
-                <Download className="h-4 w-4" />
-                Exportar
-              </Button>
-            </div>
+            <ExportButton 
+              data={monthlyRevenue} 
+              filename="relatorio-eventos" 
+              title="Relatório de Eventos"
+            />
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* KPIs principais */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Filtros */}
+        <Card className="mb-8 border-gray-200">
+          <CardHeader>
+            <CardTitle className="text-black">Filtros</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-end">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-black">Período</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange.from && dateRange.to 
+                        ? `${dateRange.from.toLocaleDateString('pt-BR')} - ${dateRange.to.toLocaleDateString('pt-BR')}`
+                        : 'Selecionar período'
+                      }
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="range"
+                      selected={{ from: dateRange.from, to: dateRange.to }}
+                      onSelect={(range) => setDateRange({ from: range?.from, to: range?.to })}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-black">Local</label>
+                <Select value={selectedVenue} onValueChange={setSelectedVenue}>
+                  <SelectTrigger className="w-48 border-gray-300">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os Locais</SelectItem>
+                    <SelectItem value="quadra-a">Quadra A</SelectItem>
+                    <SelectItem value="campo-1">Campo 1</SelectItem>
+                    <SelectItem value="quadra-b">Quadra B</SelectItem>
+                    <SelectItem value="campo-2">Campo 2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button className="bg-black text-white hover:bg-gray-800">
+                Aplicar Filtros
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Métricas Principais */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-primary" />
+                <div className="p-3 bg-green-100 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Receita Total</p>
-                  <p className="text-2xl font-bold">R$ 26.800</p>
+                  <p className="text-sm font-medium text-gray-600">Receita Total</p>
+                  <p className="text-2xl font-bold text-black">R$ 86.200</p>
                   <p className="text-xs text-green-600">+12% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-green-600" />
+                <div className="p-3 bg-blue-100 rounded-lg">
+                  <CalendarIcon className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Reservas</p>
-                  <p className="text-2xl font-bold">198</p>
-                  <p className="text-xs text-green-600">+8% vs mês anterior</p>
+                  <p className="text-sm font-medium text-gray-600">Total de Reservas</p>
+                  <p className="text-2xl font-bold text-black">580</p>
+                  <p className="text-xs text-blue-600">+8% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <Users className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Ticket Médio</p>
-                  <p className="text-2xl font-bold">R$ 135</p>
-                  <p className="text-xs text-green-600">+3% vs mês anterior</p>
+                  <p className="text-sm font-medium text-gray-600">Clientes Ativos</p>
+                  <p className="text-2xl font-bold text-black">127</p>
+                  <p className="text-xs text-purple-600">+15% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Users className="h-5 w-5 text-orange-600" />
+                <div className="p-3 bg-orange-100 rounded-lg">
+                  <MapPin className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Taxa Ocupação</p>
-                  <p className="text-2xl font-bold">69%</p>
-                  <p className="text-xs text-green-600">+5% vs mês anterior</p>
+                  <p className="text-sm font-medium text-gray-600">Taxa de Ocupação</p>
+                  <p className="text-2xl font-bold text-black">78%</p>
+                  <p className="text-xs text-orange-600">+5% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
@@ -145,53 +194,48 @@ const Reports = () => {
         </div>
 
         {/* Gráficos */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Receita Mensal */}
-          <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Receita Mensal</CardTitle>
-              <CardDescription>
-                Evolução da receita e número de reservas
+              <CardTitle className="text-black">Receita Mensal</CardTitle>
+              <CardDescription className="text-gray-600">
+                Evolução da receita nos últimos 6 meses
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={revenueData}>
+                <BarChart data={monthlyRevenue}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value, name) => [
-                    name === 'revenue' ? `R$ ${value.toLocaleString()}` : value,
-                    name === 'revenue' ? 'Receita' : 'Reservas'
-                  ]} />
-                  <Bar dataKey="revenue" fill="#475569" />
+                  <Tooltip formatter={(value) => [`R$ ${value}`, 'Receita']} />
+                  <Bar dataKey="revenue" fill="#10b981" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Ocupação por Local */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Ocupação por Local</CardTitle>
-              <CardDescription>
-                Taxa de ocupação dos locais esportivos
+              <CardTitle className="text-black">Uso por Local</CardTitle>
+              <CardDescription className="text-gray-600">
+                Distribuição de reservas por local
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={venueOccupancyData}
+                    data={venueUsage}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({name, value}) => `${name}: ${value}%`}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {venueOccupancyData.map((entry, index) => (
+                    {venueUsage.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -202,87 +246,24 @@ const Reports = () => {
           </Card>
         </div>
 
-        {/* Reservas por Dia da Semana */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Reservas por Dia da Semana</CardTitle>
-            <CardDescription>
-              Distribuição das reservas ao longo da semana
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={dailyReservations}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="reservations" stroke="#475569" strokeWidth={3} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Análises Detalhadas */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
+        <div className="grid grid-cols-1 gap-8">
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>Top Clientes</CardTitle>
-              <CardDescription>
-                Clientes que mais geraram receita
+              <CardTitle className="text-black">Horários de Pico</CardTitle>
+              <CardDescription className="text-gray-600">
+                Distribuição de reservas por horário
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { name: 'Time Unidos FC', revenue: 3240, reservations: 24 },
-                  { name: 'João Silva', revenue: 1850, reservations: 15 },
-                  { name: 'Grupo Amigos', revenue: 1420, reservations: 12 },
-                  { name: 'Maria Santos', revenue: 980, reservations: 8 }
-                ].map((client, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div>
-                      <div className="font-medium">{client.name}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{client.reservations} reservas</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-green-600">R$ {client.revenue.toLocaleString()}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Horários Mais Procurados</CardTitle>
-              <CardDescription>
-                Distribuição das reservas por horário
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { time: '19:00 - 20:00', bookings: 45, percentage: 85 },
-                  { time: '20:00 - 21:00', bookings: 42, percentage: 80 },
-                  { time: '18:00 - 19:00', bookings: 38, percentage: 72 },
-                  { time: '15:00 - 16:00', bookings: 32, percentage: 61 }
-                ].map((slot, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>{slot.time}</span>
-                      <span>{slot.bookings} reservas</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
-                        className="bg-primary h-2 rounded-full" 
-                        style={{width: `${slot.percentage}%`}}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={peakHours}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="hour" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="reservations" stroke="#10b981" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>

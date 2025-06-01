@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Filter } from 'lucide-react';
 
 const Calendar = () => {
   const navigate = useNavigate();
-  const [viewType, setViewType] = useState('week');
+  const [viewType, setViewType] = useState('month');
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -20,16 +20,16 @@ const Calendar = () => {
     { id: 'campo-2', name: 'Campo 2 - Futebol 7' }
   ];
 
-  const timeSlots = Array.from({ length: 18 }, (_, i) => {
-    const hour = i + 6;
+  const timeSlots = Array.from({ length: 15 }, (_, i) => {
+    const hour = i + 7;
     return `${hour.toString().padStart(2, '0')}:00`;
   });
 
   const mockReservations = [
-    { id: 1, venue: 'Quadra A', client: 'João Silva', time: '08:00', duration: 2, status: 'confirmed', day: 1 },
-    { id: 2, venue: 'Campo 1', client: 'Time Unidos', time: '14:00', duration: 1.5, status: 'pending', day: 2 },
-    { id: 3, venue: 'Quadra B', client: 'Maria Santos', time: '18:00', duration: 1, status: 'confirmed', day: 3 },
-    { id: 4, venue: 'Campo 2', client: 'Grupo Amigos', time: '20:00', duration: 2, status: 'confirmed', day: 1 }
+    { id: 1, venue: 'Quadra A', client: 'João Silva', startTime: '08:00', endTime: '10:00', status: 'confirmed', day: new Date(), color: '#10b981' },
+    { id: 2, venue: 'Campo 1', client: 'Time Unidos', startTime: '14:00', endTime: '15:30', status: 'pending', day: new Date(), color: '#f59e0b' },
+    { id: 3, venue: 'Quadra B', client: 'Maria Santos', startTime: '18:00', endTime: '19:00', status: 'confirmed', day: new Date(), color: '#10b981' },
+    { id: 4, venue: 'Campo 2', client: 'Grupo Amigos', startTime: '20:00', endTime: '22:00', status: 'confirmed', day: new Date(), color: '#10b981' }
   ];
 
   const getWeekDays = () => {
@@ -50,7 +50,6 @@ const Calendar = () => {
     const end = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     const days = [];
     
-    // Adicionar dias do mês anterior para completar a primeira semana
     const firstDayWeek = start.getDay();
     for (let i = firstDayWeek - 1; i >= 0; i--) {
       const day = new Date(start);
@@ -58,13 +57,11 @@ const Calendar = () => {
       days.push(day);
     }
     
-    // Adicionar todos os dias do mês
     for (let i = 1; i <= end.getDate(); i++) {
       const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
       days.push(day);
     }
     
-    // Adicionar dias do próximo mês para completar a última semana
     const totalCells = Math.ceil(days.length / 7) * 7;
     const remaining = totalCells - days.length;
     for (let i = 1; i <= remaining; i++) {
@@ -116,30 +113,36 @@ const Calendar = () => {
     }
   };
 
+  const isToday = (date: Date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/events')}
-                className="gap-2"
+                className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <div className="flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Agenda</h1>
+              <div className="flex items-center gap-3">
+                <CalendarIcon className="h-6 w-6 text-green-600" />
+                <h1 className="text-2xl font-medium text-black">Agenda</h1>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
               <Select value={selectedVenue} onValueChange={setSelectedVenue}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-48 border-gray-300">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue />
                 </SelectTrigger>
@@ -150,18 +153,23 @@ const Calendar = () => {
                 </SelectContent>
               </Select>
 
-              <Select value={viewType} onValueChange={setViewType}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="day">Dia</SelectItem>
-                  <SelectItem value="week">Semana</SelectItem>
-                  <SelectItem value="month">Mês</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex bg-gray-100 rounded-lg p-1">
+                {['month', 'week', 'day'].map((view) => (
+                  <button
+                    key={view}
+                    onClick={() => setViewType(view)}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                      viewType === view 
+                        ? 'bg-white text-black shadow-sm' 
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    {view === 'month' ? 'Mês' : view === 'week' ? 'Semana' : 'Dia'}
+                  </button>
+                ))}
+              </div>
 
-              <Button onClick={() => navigate('/events/reservations/new')} className="gap-2">
+              <Button className="gap-2 bg-black text-white hover:bg-gray-800">
                 <Plus className="h-4 w-4" />
                 Nova Reserva
               </Button>
@@ -170,66 +178,92 @@ const Calendar = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Navegação de Data */}
+      <main className="max-w-7xl mx-auto px-6 py-6">
+        {/* Navigation */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigateDate('prev')}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <h2 className="text-xl font-semibold min-w-[300px]">
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigateDate('prev')}
+                className="p-2 hover:bg-gray-100"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigateDate('next')}
+                className="p-2 hover:bg-gray-100"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
+            <h2 className="text-2xl font-medium text-black">
               {getDateTitle()}
             </h2>
-            <Button variant="outline" size="sm" onClick={() => navigateDate('next')}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
           </div>
-          <Button variant="outline" onClick={() => setCurrentDate(new Date())}>
+          <Button 
+            variant="outline" 
+            onClick={() => setCurrentDate(new Date())}
+            className="border-gray-300 text-black hover:bg-gray-50"
+          >
             Hoje
           </Button>
         </div>
 
-        {/* Vista Mensal */}
-        {viewType === 'month' && (
-          <Card>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-7 gap-1 mb-4">
+        {/* Calendar Views */}
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          {/* Month View */}
+          {viewType === 'month' && (
+            <div>
+              {/* Days Header */}
+              <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
                 {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-                  <div key={day} className="p-2 text-center font-medium text-muted-foreground">
+                  <div key={day} className="p-4 text-center text-sm font-medium text-gray-600 border-r border-gray-200 last:border-r-0">
                     {day}
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-7 gap-1">
+              
+              {/* Days Grid */}
+              <div className="grid grid-cols-7">
                 {monthDays.map((day, index) => {
                   const isCurrentMonth = day.getMonth() === currentDate.getMonth();
-                  const isToday = day.toDateString() === new Date().toDateString();
-                  const dayReservations = mockReservations.filter(r => r.day === day.getDate() && isCurrentMonth);
+                  const isTodayDate = isToday(day);
+                  const dayReservations = mockReservations.filter(r => 
+                    r.day.toDateString() === day.toDateString()
+                  );
                   
                   return (
                     <div 
                       key={index} 
-                      className={`min-h-[100px] p-2 border border-border cursor-pointer hover:bg-accent ${
-                        !isCurrentMonth ? 'opacity-50' : ''
-                      } ${isToday ? 'bg-primary/10 border-primary' : ''}`}
+                      className={`min-h-[120px] p-2 border-r border-b border-gray-200 last:border-r-0 cursor-pointer hover:bg-gray-50 ${
+                        !isCurrentMonth ? 'bg-gray-50 opacity-50' : 'bg-white'
+                      }`}
                       onClick={() => handleDateClick(day)}
                     >
-                      <div className={`text-sm font-medium mb-1 ${isToday ? 'text-primary' : ''}`}>
+                      <div className={`text-sm font-medium mb-2 ${
+                        isTodayDate 
+                          ? 'bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center' 
+                          : isCurrentMonth ? 'text-black' : 'text-gray-400'
+                      }`}>
                         {day.getDate()}
                       </div>
                       <div className="space-y-1">
-                        {dayReservations.slice(0, 2).map(reservation => (
-                          <div key={reservation.id} className={`text-xs p-1 rounded ${
-                            reservation.status === 'confirmed' 
-                              ? 'bg-primary text-primary-foreground' 
-                              : 'bg-secondary text-secondary-foreground'
-                          }`}>
-                            {reservation.time} {reservation.client}
+                        {dayReservations.slice(0, 3).map(reservation => (
+                          <div 
+                            key={reservation.id} 
+                            className="text-xs p-1 rounded text-white font-medium truncate"
+                            style={{ backgroundColor: reservation.color }}
+                          >
+                            {reservation.startTime} {reservation.client}
                           </div>
                         ))}
-                        {dayReservations.length > 2 && (
-                          <div className="text-xs text-muted-foreground">
-                            +{dayReservations.length - 2} mais
+                        {dayReservations.length > 3 && (
+                          <div className="text-xs text-gray-500">
+                            +{dayReservations.length - 3} mais
                           </div>
                         )}
                       </div>
@@ -237,188 +271,120 @@ const Calendar = () => {
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          )}
 
-        {/* Vista Semanal */}
-        {viewType === 'week' && (
-          <Card>
-            <CardContent className="p-6">
-              <div className="overflow-x-auto">
-                <div className="min-w-[800px]">
-                  {/* Cabeçalho dos dias */}
-                  <div className="grid grid-cols-8 gap-1 mb-4">
-                    <div className="p-2 text-sm font-medium text-muted-foreground">Horário</div>
-                    {weekDays.map((day, index) => {
-                      const isToday = day.toDateString() === new Date().toDateString();
+          {/* Week View */}
+          {viewType === 'week' && (
+            <div>
+              {/* Time Header */}
+              <div className="grid grid-cols-8 border-b border-gray-200">
+                <div className="p-4 border-r border-gray-200"></div>
+                {weekDays.map((day, index) => {
+                  const isTodayDate = isToday(day);
+                  return (
+                    <div 
+                      key={index} 
+                      className="p-4 text-center border-r border-gray-200 last:border-r-0 cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleDateClick(day)}
+                    >
+                      <div className="text-sm text-gray-600 mb-1">
+                        {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
+                      </div>
+                      <div className={`text-lg font-medium ${
+                        isTodayDate 
+                          ? 'bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto' 
+                          : 'text-black'
+                      }`}>
+                        {day.getDate()}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Time Grid */}
+              <div className="relative">
+                {timeSlots.map((time, timeIndex) => (
+                  <div key={time} className="grid grid-cols-8 border-b border-gray-100">
+                    <div className="p-3 text-sm text-gray-500 bg-gray-50 border-r border-gray-200 text-right pr-4">
+                      {time}
+                    </div>
+                    {weekDays.map((day, dayIndex) => {
+                      const reservation = mockReservations.find(
+                        r => r.startTime === time && r.day.toDateString() === day.toDateString()
+                      );
+                      
                       return (
-                        <div key={index} className="p-2 text-center cursor-pointer hover:bg-accent rounded" onClick={() => handleDateClick(day)}>
-                          <div className={`text-sm font-medium ${isToday ? 'text-primary' : ''}`}>
-                            {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
-                          </div>
-                          <div className={`text-lg font-semibold ${isToday ? 'text-primary' : ''}`}>
-                            {day.getDate()}
-                          </div>
+                        <div 
+                          key={dayIndex} 
+                          className="relative h-16 border-r border-gray-200 last:border-r-0 hover:bg-gray-50 cursor-pointer"
+                          onClick={() => handleDateClick(day)}
+                        >
+                          {reservation && (
+                            <div 
+                              className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-white text-xs font-medium"
+                              style={{ backgroundColor: reservation.color }}
+                            >
+                              <div className="font-semibold truncate">{reservation.client}</div>
+                              <div className="text-xs opacity-90">{reservation.venue}</div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
                   </div>
-
-                  {/* Grade de horários */}
-                  <div className="space-y-1">
-                    {timeSlots.map((time) => (
-                      <div key={time} className="grid grid-cols-8 gap-1">
-                        <div className="p-3 text-sm text-muted-foreground bg-muted rounded">
-                          {time}
-                        </div>
-                        {weekDays.map((day, dayIndex) => {
-                          const reservation = mockReservations.find(
-                            r => r.time === time && r.day === dayIndex + 1
-                          );
-                          
-                          return (
-                            <div 
-                              key={dayIndex} 
-                              className="p-1 h-14 border border-border rounded hover:bg-accent cursor-pointer"
-                              onClick={() => handleDateClick(day)}
-                            >
-                              {reservation && (
-                                <div className={`p-2 rounded text-xs font-medium h-full flex flex-col justify-center ${
-                                  reservation.status === 'confirmed' 
-                                    ? 'bg-primary text-primary-foreground' 
-                                    : 'bg-secondary text-secondary-foreground'
-                                }`}>
-                                  <div className="truncate font-semibold">{reservation.client}</div>
-                                  <div className="text-xs opacity-75">{reservation.venue}</div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Vista Diária */}
-        {viewType === 'day' && (
-          <Card>
-            <CardContent className="p-6">
-              <div className="max-w-2xl mx-auto">
-                <div className="space-y-1">
-                  {timeSlots.map((time) => {
-                    const reservation = mockReservations.find(r => r.time === time);
-                    
-                    return (
-                      <div key={time} className="flex items-center gap-4">
-                        <div className="w-20 text-sm text-muted-foreground">
-                          {time}
-                        </div>
-                        <div 
-                          className="flex-1 h-16 border border-border rounded hover:bg-accent cursor-pointer p-2"
-                          onClick={() => handleDateClick(currentDate)}
-                        >
-                          {reservation && (
-                            <div className={`p-3 rounded h-full flex items-center ${
-                              reservation.status === 'confirmed' 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'bg-secondary text-secondary-foreground'
-                            }`}>
-                              <div>
-                                <div className="font-semibold">{reservation.client}</div>
-                                <div className="text-sm opacity-75">{reservation.venue}</div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Resumo */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Resumo de Hoje</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span>Total de Reservas:</span>
-                  <span className="font-semibold">8</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Confirmadas:</span>
-                  <span className="font-semibold text-primary">6</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Pendentes:</span>
-                  <span className="font-semibold text-secondary">2</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Taxa de Ocupação:</span>
-                  <span className="font-semibold">75%</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Próximas Reservas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {mockReservations.slice(0, 3).map((reservation) => (
-                  <div key={reservation.id} className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      reservation.status === 'confirmed' ? 'bg-primary' : 'bg-secondary'
-                    }`} />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate">{reservation.client}</div>
-                      <div className="text-xs text-muted-foreground">{reservation.time} - {reservation.venue}</div>
-                    </div>
-                  </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Ações Rápidas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => navigate('/events/reservations/new')}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Reserva
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => navigate('/events/venues')}
-                >
-                  <CalendarIcon className="h-4 w-4 mr-2" />
-                  Gerenciar Locais
-                </Button>
+          {/* Day View */}
+          {viewType === 'day' && (
+            <div>
+              <div className="p-4 border-b border-gray-200 bg-gray-50">
+                <h3 className="text-lg font-medium text-black">
+                  {currentDate.toLocaleDateString('pt-BR', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long' 
+                  })}
+                </h3>
               </div>
-            </CardContent>
-          </Card>
+              
+              <div className="max-w-2xl mx-auto">
+                {timeSlots.map((time) => {
+                  const reservation = mockReservations.find(r => 
+                    r.startTime === time && 
+                    r.day.toDateString() === currentDate.toDateString()
+                  );
+                  
+                  return (
+                    <div key={time} className="flex border-b border-gray-100">
+                      <div className="w-20 p-4 text-sm text-gray-500 text-right bg-gray-50 border-r border-gray-200">
+                        {time}
+                      </div>
+                      <div 
+                        className="flex-1 p-4 hover:bg-gray-50 cursor-pointer min-h-[60px] flex items-center"
+                        onClick={() => handleDateClick(currentDate)}
+                      >
+                        {reservation && (
+                          <div 
+                            className="p-3 rounded text-white font-medium w-full"
+                            style={{ backgroundColor: reservation.color }}
+                          >
+                            <div className="font-semibold">{reservation.client}</div>
+                            <div className="text-sm opacity-90">{reservation.venue}</div>
+                            <div className="text-xs opacity-75">{reservation.startTime} - {reservation.endTime}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
