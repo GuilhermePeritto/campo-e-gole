@@ -1,10 +1,9 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, BarChart3, Settings, LogOut, Building2 } from 'lucide-react';
+import { BarChart3, Building2, Calendar, LogOut, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,8 +20,9 @@ const Dashboard = () => {
       title: 'Gestão de Eventos',
       description: 'Gerencie reservas esportivas, locais, agendas e análises financeiras',
       icon: Calendar,
-      color: 'bg-primary',
-      hoverColor: 'hover:bg-primary/90',
+      color: 'bg-blue-600',
+      hoverColor: 'hover:bg-blue-500',
+      textColor: 'text-white',
       features: [
         'Agenda com visualização diária, semanal e mensal',
         'Cadastro de locais esportivos',
@@ -37,8 +37,9 @@ const Dashboard = () => {
       title: 'Gestão de Bar',
       description: 'Controle completo do bar, estoque, comandas e caixa',
       icon: BarChart3,
-      color: 'bg-secondary',
-      hoverColor: 'hover:bg-secondary/90',
+      color: 'bg-orange-600',
+      hoverColor: 'hover:bg-orange-500',
+      textColor: 'text-black',
       features: [
         'Cadastro de produtos e controle de estoque',
         'Sistema de comandas digitais',
@@ -51,25 +52,24 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <div className="p-1.5 bg-primary rounded">
-                  <Calendar className="h-4 w-4 text-white" />
-                </div>
-                <div className="p-1.5 bg-secondary rounded">
-                  <BarChart3 className="h-4 w-4 text-white" />
-                </div>
+                <img 
+                  src="/logo.png" 
+                  alt="Ludus Gestão Logo" 
+                  className="h-8 w-8 rounded-full"
+                />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">SportManager</h1>
+              <h1 className="text-xl font-bold">Ludus Gestão</h1>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm">
                 <Building2 className="h-4 w-4" />
                 <span>{company?.name}</span>
               </div>
@@ -99,10 +99,10 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold mb-2">
             Bem-vindo, {user?.name}!
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">
             Escolha um módulo para começar a trabalhar
           </p>
         </div>
@@ -146,7 +146,7 @@ const Dashboard = () => {
                 <CardContent className="relative">
                   <ul className="space-y-2 mb-6">
                     {module.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                      <li key={index} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
                         {feature}
                       </li>
@@ -155,7 +155,7 @@ const Dashboard = () => {
                   
                   {hasAccess && (
                     <Button 
-                      className={`w-full ${module.color} ${module.hoverColor} text-white`}
+                      className={`w-full ${module.color} ${module.hoverColor} ${module.textColor} transition-colors`}
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(module.path);
@@ -179,8 +179,8 @@ const Dashboard = () => {
                   <Calendar className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Reservas Hoje</p>
-                  <p className="text-2xl font-bold text-gray-900">12</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Reservas Hoje</p>
+                  <p className="text-2xl font-bold">12</p>
                 </div>
               </div>
             </CardContent>
@@ -193,8 +193,8 @@ const Dashboard = () => {
                   <BarChart3 className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Vendas do Dia</p>
-                  <p className="text-2xl font-bold text-gray-900">R$ 2.450</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Vendas do Dia</p>
+                  <p className="text-2xl font-bold">R$ 2.450</p>
                 </div>
               </div>
             </CardContent>
@@ -207,8 +207,8 @@ const Dashboard = () => {
                   <Building2 className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Locais Ativos</p>
-                  <p className="text-2xl font-bold text-gray-900">8</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Locais Ativos</p>
+                  <p className="text-2xl font-bold">8</p>
                 </div>
               </div>
             </CardContent>

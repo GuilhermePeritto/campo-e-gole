@@ -1,9 +1,8 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, Package, Receipt, ShoppingCart, Plus, ArrowLeft, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, Package, Plus, Receipt, ShoppingCart, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Bar = () => {
   const navigate = useNavigate();
@@ -13,14 +12,14 @@ const Bar = () => {
       title: 'Nova Venda',
       description: 'Registrar venda livre no caixa',
       icon: Plus,
-      color: 'bg-primary',
+      color: 'bg-green-500',
       action: () => navigate('/bar/sales/new')
     },
     {
       title: 'Comandas',
       description: 'Gerenciar comandas abertas',
       icon: Receipt,
-      color: 'bg-secondary',
+      color: 'bg-orange-500',
       action: () => navigate('/bar/comandas')
     },
     {
@@ -34,14 +33,14 @@ const Bar = () => {
       title: 'Produtos',
       description: 'Cadastrar e gerenciar produtos',
       icon: ShoppingCart,
-      color: 'bg-orange-600',
+      color: 'bg-blue-600',
       action: () => navigate('/bar/products')
     },
     {
       title: 'Relatórios',
       description: 'Vendas e análises financeiras',
       icon: BarChart3,
-      color: 'bg-green-600',
+      color: 'bg-green-800',
       action: () => navigate('/bar/reports')
     }
   ];
@@ -60,9 +59,9 @@ const Bar = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
@@ -76,7 +75,7 @@ const Bar = () => {
             </Button>
             <div className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-secondary" />
-              <h1 className="text-xl font-semibold text-gray-900">Gestão de Bar</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-300">Gestão de Bar</h1>
             </div>
           </div>
         </div>
@@ -85,7 +84,7 @@ const Bar = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Ações Rápidas</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-300 mb-6">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
@@ -99,8 +98,8 @@ const Bar = () => {
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
                       <IconComponent className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{action.title}</h3>
-                    <p className="text-sm text-gray-600">{action.description}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-300 mb-1">{action.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{action.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -120,10 +119,10 @@ const Bar = () => {
             <CardContent>
               <div className="space-y-3">
                 {openComandas.map((comanda) => (
-                  <div key={comanda.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={comanda.id} className="flex items-center justify-between p-3 rounded-lg transition-colors bg-background border">
                     <div>
                       <div className="font-medium">#{comanda.number} - {comanda.client}</div>
-                      <div className="text-sm text-gray-600">{comanda.items} itens • {comanda.time}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">{comanda.items} itens • {comanda.time}</div>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold text-green-600">R$ {comanda.total.toFixed(2)}</div>
@@ -153,7 +152,7 @@ const Bar = () => {
                 {lowStockProducts.map((product, index) => (
                   <div key={index} className="border-l-4 border-orange-400 pl-3">
                     <div className="font-medium text-sm">{product.name}</div>
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-gray-600 dark:text-gray-300">
                       Estoque: {product.stock} • Mínimo: {product.min}
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
@@ -184,17 +183,17 @@ const Bar = () => {
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-2">R$ 1.248</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-300 mb-2">R$ 1.248</div>
                 <div className="text-sm text-green-600 mb-4">+8% vs ontem</div>
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center">
-                    <div className="font-semibold text-gray-900">42</div>
-                    <div className="text-gray-600">Vendas</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-300">42</div>
+                    <div className="text-gray-600 dark:text-gray-300">Vendas</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-gray-900">R$ 29,71</div>
-                    <div className="text-gray-600">Ticket Médio</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-300">R$ 29,71</div>
+                    <div className="text-gray-600 dark:text-gray-300">Ticket Médio</div>
                   </div>
                 </div>
 
@@ -229,8 +228,8 @@ const Bar = () => {
                   <ShoppingCart className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Produtos Ativos</p>
-                  <p className="text-2xl font-bold text-gray-900">124</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Produtos Ativos</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">124</p>
                 </div>
               </div>
             </CardContent>
@@ -243,8 +242,8 @@ const Bar = () => {
                   <Package className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Itens em Estoque</p>
-                  <p className="text-2xl font-bold text-gray-900">2.847</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Itens em Estoque</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">2.847</p>
                 </div>
               </div>
             </CardContent>
@@ -257,8 +256,8 @@ const Bar = () => {
                   <Receipt className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Comandas Hoje</p>
-                  <p className="text-2xl font-bold text-gray-900">28</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Comandas Hoje</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">28</p>
                 </div>
               </div>
             </CardContent>
@@ -271,8 +270,8 @@ const Bar = () => {
                   <Users className="h-5 w-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Funcionários</p>
-                  <p className="text-2xl font-bold text-gray-900">6</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Funcionários</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">6</p>
                 </div>
               </div>
             </CardContent>

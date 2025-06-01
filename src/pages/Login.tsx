@@ -1,13 +1,13 @@
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/hooks/use-toast';
+import { BarChart3, Calendar } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
-import { Calendar, BarChart3 } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('admin@exemplo.com');
@@ -58,7 +58,7 @@ const Login = () => {
               <BarChart3 className="h-6 w-6 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">SportManager</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Ludus Gestão</h1>
           <p className="text-gray-600 mt-2">Sistema de Gestão Esportiva e Bar</p>
         </div>
 

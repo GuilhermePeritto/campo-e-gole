@@ -1,9 +1,8 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, MapPin, Users, Plus, ArrowLeft, BarChart3 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, MapPin, Plus, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Events = () => {
   const navigate = useNavigate();
@@ -13,14 +12,14 @@ const Events = () => {
       title: 'Nova Reserva',
       description: 'Criar uma nova reserva esportiva',
       icon: Plus,
-      color: 'bg-primary',
+      color: 'bg-green-500',
       action: () => navigate('/events/reservations/new')
     },
     {
       title: 'Visualizar Agenda',
       description: 'Ver agenda completa dos locais',
       icon: Calendar,
-      color: 'bg-secondary',
+      color: 'bg-orange-500',
       action: () => navigate('/events/calendar')
     },
     {
@@ -34,14 +33,14 @@ const Events = () => {
       title: 'Clientes',
       description: 'Gerenciar clientes e histórico',
       icon: Users,
-      color: 'bg-orange-600',
+      color: 'bg-blue-600',
       action: () => navigate('/events/clients')
     },
     {
       title: 'Relatórios',
       description: 'Análises financeiras e ocupação',
       icon: BarChart3,
-      color: 'bg-green-600',
+      color: 'bg-green-800',
       action: () => navigate('/events/reports')
     }
   ];
@@ -54,9 +53,9 @@ const Events = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
@@ -70,7 +69,7 @@ const Events = () => {
             </Button>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold text-gray-900">Gestão de Eventos</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-300">Gestão de Eventos</h1>
             </div>
           </div>
         </div>
@@ -79,7 +78,7 @@ const Events = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Ações Rápidas</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-300 mb-6">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
@@ -93,8 +92,8 @@ const Events = () => {
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
                       <IconComponent className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{action.title}</h3>
-                    <p className="text-sm text-gray-600">{action.description}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-300 mb-1">{action.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{action.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -114,15 +113,15 @@ const Events = () => {
             <CardContent>
               <div className="space-y-3">
                 {todayReservations.map((reservation) => (
-                  <div key={reservation.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={reservation.id} className="flex items-center justify-between p-3 transition-colors bg-background border rounded-lg">
                     <div>
                       <div className="font-medium">{reservation.time} - {reservation.venue}</div>
-                      <div className="text-sm text-gray-600">{reservation.client}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">{reservation.client}</div>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
+                    <span className={`text-xs px-2 py-1 rounded-lg ${
                       reservation.status === 'confirmado' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-green-300 text-green-800' 
+                        : 'bg-yellow-200 text-yellow-800'
                     }`}>
                       {reservation.status}
                     </span>
@@ -154,7 +153,7 @@ const Events = () => {
                     <span>85%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{width: '85%'}}></div>
+                    <div className="bg-blue-600 h-2 rounded-full" style={{width: '85%'}}></div>
                   </div>
                 </div>
                 <div>
@@ -163,7 +162,7 @@ const Events = () => {
                     <span>72%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-secondary h-2 rounded-full" style={{width: '72%'}}></div>
+                    <div className="bg-orange-600 h-2 rounded-full" style={{width: '72%'}}></div>
                   </div>
                 </div>
                 <div>
@@ -172,7 +171,7 @@ const Events = () => {
                     <span>58%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-orange-500 h-2 rounded-full" style={{width: '58%'}}></div>
+                    <div className="bg-green-600 h-2 rounded-full" style={{width: '58%'}}></div>
                   </div>
                 </div>
               </div>
@@ -195,17 +194,17 @@ const Events = () => {
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-2">R$ 18.450</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-300 mb-2">R$ 18.450</div>
                 <div className="text-sm text-green-600 mb-4">+12% vs mês anterior</div>
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center">
-                    <div className="font-semibold text-gray-900">156</div>
-                    <div className="text-gray-600">Reservas</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-300">156</div>
+                    <div className="text-gray-600 dark:text-gray-300">Reservas</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-gray-900">R$ 118</div>
-                    <div className="text-gray-600">Ticket Médio</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-300">R$ 118</div>
+                    <div className="text-gray-600 dark:text-gray-300">Ticket Médio</div>
                   </div>
                 </div>
               </div>

@@ -1,14 +1,14 @@
 
-import React from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Download, FileText, FileSpreadsheet, Image } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { Download, FileSpreadsheet, FileText, Image } from 'lucide-react';
+import React from 'react';
 
 interface ExportButtonProps {
   data: any[];
@@ -65,7 +65,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, filename, title }) =>
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="gap-2 border-gray-300 text-black hover:bg-gray-50">
+        <Button variant="outline" className="gap-2 border-gray-300 text-gray-900 dark:text-gray-300">
           <Download className="h-4 w-4" />
           Exportar
         </Button>

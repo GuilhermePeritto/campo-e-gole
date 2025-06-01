@@ -1,12 +1,13 @@
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Users } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
 
 const NewClient = () => {
   const navigate = useNavigate();
@@ -44,32 +45,32 @@ const NewClient = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="shadow-sm border-b ">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/events/clients')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-900 dark:text-gray-300"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>
             <div className="flex items-center gap-3">
               <Users className="h-6 w-6 text-green-600" />
-              <h1 className="text-2xl font-medium text-black">Novo Cliente</h1>
+              <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Novo Cliente</h1>
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-8">
-        <Card className="border-gray-200">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-black">Cadastrar Cliente</CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardTitle className="text-gray-900 dark:text-gray-300">Cadastrar Cliente</CardTitle>
+            <CardDescription className="text-gray-900 dark:text-gray-300">
               Preencha as informações do novo cliente
             </CardDescription>
           </CardHeader>
@@ -77,40 +78,40 @@ const NewClient = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Nome Completo *</label>
+                  <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Nome Completo *</label>
                   <Input
                     placeholder="Ex: João da Silva"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="border-gray-300"
+                    className=""
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Email</label>
+                  <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Email</label>
                   <Input
                     type="email"
                     placeholder="joao@email.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="border-gray-300"
+                    className=""
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Telefone *</label>
+                  <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Telefone *</label>
                   <Input
                     placeholder="(11) 99999-9999"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="border-gray-300"
+                    className=""
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Tipo de Cliente</label>
+                  <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Tipo de Cliente</label>
                   <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                    <SelectTrigger className="border-gray-300">
+                    <SelectTrigger className="">
                       <SelectValue placeholder="Selecionar tipo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -122,30 +123,30 @@ const NewClient = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">CPF/CNPJ</label>
+                  <label className="text-sm font-medium text-gray-900 dark:text-gray-300">CPF/CNPJ</label>
                   <Input
                     placeholder="000.000.000-00"
                     value={formData.document}
                     onChange={(e) => handleInputChange('document', e.target.value)}
-                    className="border-gray-300"
+                    className=""
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Endereço</label>
+                  <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Endereço</label>
                   <Input
                     placeholder="Rua, Número, Bairro, Cidade"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="border-gray-300"
+                    className=""
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-black">Observações</label>
-                <textarea
-                  className="w-full p-3 border border-gray-300 rounded-md resize-none h-24"
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Observações</label>
+                <Textarea
+                  className="w-full p-3 border  rounded-md resize-none h-24"
                   placeholder="Informações adicionais sobre o cliente..."
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
@@ -153,14 +154,14 @@ const NewClient = () => {
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button type="submit" className="flex-1 bg-black text-white hover:bg-gray-800">
+                <Button type="submit" variant='outline' className="flex-1 bg-black text-white">
                   Cadastrar Cliente
                 </Button>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => navigate('/events/clients')}
-                  className="flex-1 border-gray-300 text-black hover:bg-gray-50"
+                  className="flex-1  text-gray-900 dark:text-gray-300"
                 >
                   Cancelar
                 </Button>

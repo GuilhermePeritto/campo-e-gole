@@ -1,14 +1,14 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ArrowLeft, BarChart3, Calendar as CalendarIcon, TrendingUp, Users, MapPin } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import ExportButton from '@/components/ExportButton';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, BarChart3, Calendar as CalendarIcon, MapPin, TrendingUp, Users } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -48,8 +48,8 @@ const Reports = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="shadow-sm border-b border">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -57,20 +57,20 @@ const Reports = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/events')}
-                className="gap-2 text-black hover:bg-gray-100"
+                className="gap-2 text-gray-900 dark:text-gray-300"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex items-center gap-3">
                 <BarChart3 className="h-6 w-6 text-green-600" />
-                <h1 className="text-2xl font-medium text-black">Relatórios de Eventos</h1>
+                <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Relatórios de Eventos</h1>
               </div>
             </div>
 
-            <ExportButton 
-              data={monthlyRevenue} 
-              filename="relatorio-eventos" 
+            <ExportButton
+              data={monthlyRevenue}
+              filename="relatorio-eventos"
               title="Relatório de Eventos"
             />
           </div>
@@ -79,19 +79,19 @@ const Reports = () => {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Filtros */}
-        <Card className="mb-8 border-gray-200">
+        <Card className="mb-8 border">
           <CardHeader>
-            <CardTitle className="text-black">Filtros</CardTitle>
+            <CardTitle className="text-gray-900 dark:text-gray-300">Filtros</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-4 items-end">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-black">Período</label>
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Período</label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="border-gray-300 text-black hover:bg-gray-50">
+                    <Button variant="outline" className="border text-gray-900 dark:text-gray-300">
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.from && dateRange.to 
+                      {dateRange.from && dateRange.to
                         ? `${dateRange.from.toLocaleDateString('pt-BR')} - ${dateRange.to.toLocaleDateString('pt-BR')}`
                         : 'Selecionar período'
                       }
@@ -108,9 +108,9 @@ const Reports = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-black">Local</label>
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-300">Local</label>
                 <Select value={selectedVenue} onValueChange={setSelectedVenue}>
-                  <SelectTrigger className="w-48 border-gray-300">
+                  <SelectTrigger className="w-48 border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -123,7 +123,7 @@ const Reports = () => {
                 </Select>
               </div>
 
-              <Button className="bg-black text-white hover:bg-gray-800">
+              <Button variant='outline'>
                 Aplicar Filtros
               </Button>
             </div>
@@ -132,7 +132,7 @@ const Reports = () => {
 
         {/* Métricas Principais */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-green-100 rounded-lg">
@@ -140,14 +140,14 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Receita Total</p>
-                  <p className="text-2xl font-bold text-black">R$ 86.200</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">R$ 86.200</p>
                   <p className="text-xs text-green-600">+12% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-blue-100 rounded-lg">
@@ -155,14 +155,14 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total de Reservas</p>
-                  <p className="text-2xl font-bold text-black">580</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">580</p>
                   <p className="text-xs text-blue-600">+8% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-purple-100 rounded-lg">
@@ -170,14 +170,14 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Clientes Ativos</p>
-                  <p className="text-2xl font-bold text-black">127</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">127</p>
                   <p className="text-xs text-purple-600">+15% vs mês anterior</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-orange-100 rounded-lg">
@@ -185,7 +185,7 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Taxa de Ocupação</p>
-                  <p className="text-2xl font-bold text-black">78%</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-300">78%</p>
                   <p className="text-xs text-orange-600">+5% vs mês anterior</p>
                 </div>
               </div>
@@ -195,9 +195,9 @@ const Reports = () => {
 
         {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Receita Mensal</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-300">Receita Mensal</CardTitle>
               <CardDescription className="text-gray-600">
                 Evolução da receita nos últimos 6 meses
               </CardDescription>
@@ -215,9 +215,9 @@ const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Uso por Local</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-300">Uso por Local</CardTitle>
               <CardDescription className="text-gray-600">
                 Distribuição de reservas por local
               </CardDescription>
@@ -247,9 +247,9 @@ const Reports = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-8">
-          <Card className="border-gray-200">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Horários de Pico</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-300">Horários de Pico</CardTitle>
               <CardDescription className="text-gray-600">
                 Distribuição de reservas por horário
               </CardDescription>
