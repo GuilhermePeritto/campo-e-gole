@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,12 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Building2, Users, Clock, DollarSign, Shield } from 'lucide-react';
+import { ArrowLeft, Building2, Users, Clock, DollarSign, Shield, Palette } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { company, user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState({
     companyName: company?.name || '',
     currency: company?.settings.currency || 'BRL',
@@ -33,7 +34,6 @@ const Settings = () => {
   });
 
   const handleSave = () => {
-    // Simular salvamento
     toast({
       title: "Configurações salvas",
       description: "As configurações foram atualizadas com sucesso.",
@@ -41,9 +41,9 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
@@ -55,17 +55,21 @@ const Settings = () => {
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>
-            <h1 className="text-xl font-semibold text-gray-900">Configurações do Sistema</h1>
+            <h1 className="text-xl font-semibold">Configurações do Sistema</h1>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="company" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
+            </TabsTrigger>
+            <TabsTrigger value="appearance" className="gap-2">
+              <Palette className="h-4 w-4" />
+              Aparência
             </TabsTrigger>
             <TabsTrigger value="modules" className="gap-2">
               <Shield className="h-4 w-4" />
@@ -153,6 +157,37 @@ const Settings = () => {
                         onChange={(e) => setSettings({...settings, businessEnd: e.target.value})}
                       />
                     </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Configurações de Aparência */}
+          <TabsContent value="appearance" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Aparência do Sistema</CardTitle>
+                <CardDescription>
+                  Personalize a aparência da interface
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="theme">Tema da Interface</Label>
+                    <Select value={theme} onValueChange={(value: 'light' | 'dark') => setTheme(value)}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Tema Claro</SelectItem>
+                        <SelectItem value="dark">Tema Escuro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Escolha entre o tema claro ou escuro para a interface
+                    </p>
                   </div>
                 </div>
               </CardContent>

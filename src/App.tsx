@@ -5,12 +5,19 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Events from "./pages/Events";
 import Bar from "./pages/Bar";
 import NotFound from "./pages/NotFound";
+// Event pages
+import NewReservation from "./pages/events/NewReservation";
+import Calendar from "./pages/events/Calendar";
+import Venues from "./pages/events/Venues";
+import Clients from "./pages/events/Clients";
+import EventReports from "./pages/events/Reports";
 
 const queryClient = new QueryClient();
 
@@ -46,10 +53,50 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/*"
+        path="/events"
         element={
           <ProtectedRoute>
             <Events />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/reservations/new"
+        element={
+          <ProtectedRoute>
+            <NewReservation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/calendar"
+        element={
+          <ProtectedRoute>
+            <Calendar />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/venues"
+        element={
+          <ProtectedRoute>
+            <Venues />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/clients"
+        element={
+          <ProtectedRoute>
+            <Clients />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/reports"
+        element={
+          <ProtectedRoute>
+            <EventReports />
           </ProtectedRoute>
         }
       />
@@ -68,15 +115,17 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
