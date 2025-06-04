@@ -51,18 +51,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    console.log('AuthProvider - verificando token salvo');
     // Simular verificação de token salvo
     const savedUser = localStorage.getItem('user');
     const savedCompany = localStorage.getItem('company');
     
     if (savedUser && savedCompany) {
+      console.log('AuthProvider - token encontrado, fazendo login automático');
       setUser(JSON.parse(savedUser));
       setCompany(JSON.parse(savedCompany));
       setIsAuthenticated(true);
+    } else {
+      console.log('AuthProvider - nenhum token encontrado');
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    console.log('AuthProvider - tentativa de login para:', email);
     // Simulação de login - em produção seria uma chamada à API
     if (email === 'admin@exemplo.com' && password === '123456') {
       const mockUser: User = {
@@ -88,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       };
 
+      console.log('AuthProvider - login bem-sucedido');
       setUser(mockUser);
       setCompany(mockCompany);
       setIsAuthenticated(true);
@@ -97,10 +103,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       return true;
     }
+    console.log('AuthProvider - login falhou');
     return false;
   };
 
   const logout = () => {
+    console.log('AuthProvider - fazendo logout');
     setUser(null);
     setCompany(null);
     setIsAuthenticated(false);
@@ -115,6 +123,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const hasModuleAccess = (module: 'events' | 'bar' | 'school'): boolean => {
     return company?.modules.includes(module) || false;
   };
+
+  console.log('AuthProvider - estado atual:', { user: !!user, company: !!company, isAuthenticated });
 
   return (
     <AuthContext.Provider value={{

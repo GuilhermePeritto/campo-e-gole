@@ -6,6 +6,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ isAuthenticated }: ProtectedRouteProps) => {
+  console.log('ProtectedRoute - isAuthenticated:', isAuthenticated);
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
