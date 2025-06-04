@@ -1,19 +1,21 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Building2, Palette, Shield, Users, GraduationCap, Calendar, DollarSign } from 'lucide-react';
+import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { company } = useAuth();
+  const { company, user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState({
     companyName: company?.name || '',
     currency: company?.settings.currency || 'BRL',
@@ -22,17 +24,13 @@ const Settings = () => {
     businessEnd: company?.settings.businessHours.end || '23:00',
     eventsModule: company?.modules.includes('events') || false,
     barModule: company?.modules.includes('bar') || false,
-    schoolModule: company?.modules.includes('school') || false,
     autoConfirmReservations: true,
     allowRecurringReservations: true,
     requireClientApproval: false,
     stockAlerts: true,
     lowStockThreshold: 10,
     printReceipts: true,
-    enableComandas: true,
-    autoGeneratePayments: true,
-    paymentReminderDays: 3,
-    enableProgressReports: true
+    enableComandas: true
   });
 
   const handleSave = () => {
@@ -78,12 +76,12 @@ const Settings = () => {
               Módulos
             </TabsTrigger>
             <TabsTrigger value="events" className="gap-2">
-              <Calendar className="h-4 w-4" />
+              <Clock className="h-4 w-4" />
               Eventos
             </TabsTrigger>
-            <TabsTrigger value="school" className="gap-2">
-              <GraduationCap className="h-4 w-4" />
-              Escolinha
+            <TabsTrigger value="bar" className="gap-2">
+              <DollarSign className="h-4 w-4" />
+              Bar
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
@@ -101,30 +99,64 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="companyName">Nome da Empresa</Label>
-                  <Input
-                    id="companyName"
-                    value={settings.companyName}
-                    onChange={(e) => setSettings({...settings, companyName: e.target.value})}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="currency">Moeda</Label>
+                    <Label htmlFor="companyName">Nome da Empresa</Label>
                     <Input
-                      id="currency"
-                      value={settings.currency}
-                      onChange={(e) => setSettings({...settings, currency: e.target.value})}
+                      id="companyName"
+                      value={settings.companyName}
+                      onChange={(e) => setSettings({...settings, companyName: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="currency">Moeda</Label>
+                    <Select value={settings.currency} onValueChange={(value) => setSettings({...settings, currency: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="BRL">Real (R$)</SelectItem>
+                        <SelectItem value="USD">Dólar ($)</SelectItem>
+                        <SelectItem value="EUR">Euro (€)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="timezone">Fuso Horário</Label>
-                    <Input
-                      id="timezone"
-                      value={settings.timezone}
-                      onChange={(e) => setSettings({...settings, timezone: e.target.value})}
-                    />
+                    <Select value={settings.timezone} onValueChange={(value) => setSettings({...settings, timezone: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="America/Sao_Paulo">São Paulo (GMT-3)</SelectItem>
+                        <SelectItem value="America/New_York">Nova York (GMT-5)</SelectItem>
+                        <SelectItem value="Europe/London">Londres (GMT+0)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4">
+                  <h4 className="text-sm font-medium mb-4">Horário de Funcionamento</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="businessStart">Abertura</Label>
+                      <Input
+                        id="businessStart"
+                        type="time"
+                        value={settings.businessStart}
+                        onChange={(e) => setSettings({...settings, businessStart: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="businessEnd">Fechamento</Label>
+                      <Input
+                        id="businessEnd"
+                        type="time"
+                        value={settings.businessEnd}
+                        onChange={(e) => setSettings({...settings, businessEnd: e.target.value})}
+                      />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -135,13 +167,29 @@ const Settings = () => {
           <TabsContent value="appearance" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Configurações de Aparência</CardTitle>
+                <CardTitle>Aparência do Sistema</CardTitle>
                 <CardDescription>
-                  Personalize a aparência do sistema
+                  Personalize a aparência da interface
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Configurações de tema em desenvolvimento...</p>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="theme">Tema da Interface</Label>
+                    <Select value={theme} onValueChange={(value: 'light' | 'dark') => setTheme(value)}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Tema Claro</SelectItem>
+                        <SelectItem value="dark">Tema Escuro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Escolha entre o tema claro ou escuro para a interface
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -181,19 +229,6 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({...settings, barModule: checked})}
                   />
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Módulo da Escolinha de Futebol</div>
-                    <div className="text-sm text-gray-500">
-                      Gestão de alunos, turmas, mensalidades e relatórios
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.schoolModule}
-                    onCheckedChange={(checked) => setSettings({...settings, schoolModule: checked})}
-                  />
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -212,7 +247,7 @@ const Settings = () => {
                   <div className="space-y-1">
                     <div className="font-medium">Confirmar Reservas Automaticamente</div>
                     <div className="text-sm text-gray-500">
-                      Reservas são confirmadas automaticamente ao serem criadas
+                      Reservas são confirmadas automaticamente sem aprovação manual
                     </div>
                   </div>
                   <Switch
@@ -220,12 +255,12 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({...settings, autoConfirmReservations: checked})}
                   />
                 </div>
-
+                
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Permitir Reservas Recorrentes</div>
                     <div className="text-sm text-gray-500">
-                      Clientes podem criar reservas que se repetem semanalmente
+                      Clientes podem criar reservas que se repetem automaticamente
                     </div>
                   </div>
                   <Switch
@@ -233,57 +268,80 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({...settings, allowRecurringReservations: checked})}
                   />
                 </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Exigir Aprovação do Cliente</div>
+                    <div className="text-sm text-gray-500">
+                      Cliente deve confirmar reserva por email/SMS
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.requireClientApproval}
+                    onCheckedChange={(checked) => setSettings({...settings, requireClientApproval: checked})}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Configurações da Escolinha */}
-          <TabsContent value="school" className="space-y-6">
+          {/* Configurações do Bar */}
+          <TabsContent value="bar" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Configurações da Escolinha</CardTitle>
+                <CardTitle>Configurações do Bar</CardTitle>
                 <CardDescription>
-                  Configure como o módulo da escolinha funciona
+                  Configure como o módulo de bar funciona
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <div className="font-medium">Gerar Mensalidades Automaticamente</div>
+                    <div className="font-medium">Alertas de Estoque</div>
                     <div className="text-sm text-gray-500">
-                      Mensalidades são geradas automaticamente todo mês
+                      Receba notificações quando produtos estiverem em baixa
                     </div>
                   </div>
                   <Switch
-                    checked={settings.autoGeneratePayments}
-                    onCheckedChange={(checked) => setSettings({...settings, autoGeneratePayments: checked})}
+                    checked={settings.stockAlerts}
+                    onCheckedChange={(checked) => setSettings({...settings, stockAlerts: checked})}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="paymentReminder">Dias de Antecedência para Lembrete</Label>
+                  <Label htmlFor="stockThreshold">Limite para Alerta de Estoque Baixo</Label>
                   <Input
-                    id="paymentReminder"
+                    id="stockThreshold"
                     type="number"
-                    value={settings.paymentReminderDays}
-                    onChange={(e) => setSettings({...settings, paymentReminderDays: parseInt(e.target.value)})}
+                    value={settings.lowStockThreshold}
+                    onChange={(e) => setSettings({...settings, lowStockThreshold: parseInt(e.target.value)})}
                     className="w-32"
                   />
-                  <p className="text-sm text-gray-500">
-                    Quantos dias antes do vencimento enviar lembrete
-                  </p>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <div className="font-medium">Relatórios de Progresso dos Alunos</div>
+                    <div className="font-medium">Imprimir Comprovantes</div>
                     <div className="text-sm text-gray-500">
-                      Habilitar sistema de avaliação e progresso dos alunos
+                      Imprimir automaticamente comprovantes de venda
                     </div>
                   </div>
                   <Switch
-                    checked={settings.enableProgressReports}
-                    onCheckedChange={(checked) => setSettings({...settings, enableProgressReports: checked})}
+                    checked={settings.printReceipts}
+                    onCheckedChange={(checked) => setSettings({...settings, printReceipts: checked})}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Sistema de Comandas</div>
+                    <div className="text-sm text-gray-500">
+                      Habilitar sistema de comandas digitais
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.enableComandas}
+                    onCheckedChange={(checked) => setSettings({...settings, enableComandas: checked})}
                   />
                 </div>
               </CardContent>
@@ -294,13 +352,30 @@ const Settings = () => {
           <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Configurações de Usuários</CardTitle>
+                <CardTitle>Gerenciamento de Usuários</CardTitle>
                 <CardDescription>
-                  Gerencie usuários e permissões do sistema
+                  Gerencie usuários e suas permissões no sistema
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">Configurações de usuários em desenvolvimento...</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <div className="font-medium">{user?.name}</div>
+                      <div className="text-sm text-gray-500">{user?.email}</div>
+                      <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full inline-block mt-1">
+                        {user?.role === 'admin' ? 'Administrador' : user?.role}
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      Editar
+                    </Button>
+                  </div>
+                  
+                  <Button className="w-full">
+                    Adicionar Novo Usuário
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

@@ -14,7 +14,7 @@ interface Company {
   id: string;
   name: string;
   logo?: string;
-  modules: ('events' | 'bar' | 'school')[];
+  modules: ('events' | 'bar')[];
   settings: {
     currency: string;
     timezone: string;
@@ -32,7 +32,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   hasPermission: (permission: string) => boolean;
-  hasModuleAccess: (module: 'events' | 'bar' | 'school') => boolean;
+  hasModuleAccess: (module: 'events' | 'bar') => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,23 +51,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    console.log('AuthProvider - verificando token salvo');
     // Simular verificação de token salvo
     const savedUser = localStorage.getItem('user');
     const savedCompany = localStorage.getItem('company');
     
     if (savedUser && savedCompany) {
-      console.log('AuthProvider - token encontrado, fazendo login automático');
       setUser(JSON.parse(savedUser));
       setCompany(JSON.parse(savedCompany));
       setIsAuthenticated(true);
-    } else {
-      console.log('AuthProvider - nenhum token encontrado');
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    console.log('AuthProvider - tentativa de login para:', email);
     // Simulação de login - em produção seria uma chamada à API
     if (email === 'admin@exemplo.com' && password === '123456') {
       const mockUser: User = {
@@ -76,13 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: 'admin@exemplo.com',
         role: 'admin',
         companyId: '1',
-        permissions: ['events.view', 'events.create', 'events.edit', 'bar.view', 'bar.create', 'bar.edit', 'school.view', 'school.create', 'school.edit', 'settings.view']
+        permissions: ['events.view', 'events.create', 'events.edit', 'bar.view', 'bar.create', 'bar.edit', 'settings.view']
       };
 
       const mockCompany: Company = {
         id: '1',
         name: 'Arena Sports Club',
-        modules: ['events', 'bar', 'school'],
+        modules: ['events', 'bar'],
         settings: {
           currency: 'BRL',
           timezone: 'America/Sao_Paulo',
@@ -93,7 +88,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       };
 
-      console.log('AuthProvider - login bem-sucedido');
       setUser(mockUser);
       setCompany(mockCompany);
       setIsAuthenticated(true);
@@ -103,12 +97,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       return true;
     }
-    console.log('AuthProvider - login falhou');
     return false;
   };
 
   const logout = () => {
-    console.log('AuthProvider - fazendo logout');
     setUser(null);
     setCompany(null);
     setIsAuthenticated(false);
@@ -120,11 +112,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return user?.permissions.includes(permission) || false;
   };
 
-  const hasModuleAccess = (module: 'events' | 'bar' | 'school'): boolean => {
+  const hasModuleAccess = (module: 'events' | 'bar'): boolean => {
     return company?.modules.includes(module) || false;
   };
-
-  console.log('AuthProvider - estado atual:', { user: !!user, company: !!company, isAuthenticated });
 
   return (
     <AuthContext.Provider value={{
