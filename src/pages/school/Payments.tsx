@@ -84,7 +84,7 @@ const Payments = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/escolinha')}
+              onClick={() => navigate('/school')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -196,7 +196,6 @@ const Payments = () => {
                         <Button
                           size="sm"
                           className="bg-green-600 text-white hover:bg-green-700"
-                          onClick={() => navigate(`/escolinha/mensalidades/${payment.id}/receber`)}
                         >
                           Receber
                         </Button>
