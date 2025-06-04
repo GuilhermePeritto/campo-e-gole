@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Events from "./pages/Events";
 import Bar from "./pages/Bar";
+import School from "./pages/School";
 import NotFound from "./pages/NotFound";
 // Event pages
 import NewReservation from "./pages/events/NewReservation";
@@ -22,6 +22,8 @@ import Clients from "./pages/events/Clients";
 import NewClient from "./pages/events/NewClient";
 import EditClient from "./pages/events/EditClient";
 import ClientHistory from "./pages/events/ClientHistory";
+import Receivables from "./pages/events/Receivables";
+import NewReceivable from "./pages/events/NewReceivable";
 import EventReports from "./pages/events/Reports";
 // Bar pages
 import UnifiedSale from "./pages/bar/UnifiedSale";
@@ -32,6 +34,12 @@ import BarReports from "./pages/bar/Reports";
 import NewProduct from "./pages/bar/NewProduct";
 import EditProduct from "./pages/bar/EditProduct";
 import Checkout from "./pages/bar/Checkout";
+// School pages
+import Students from "./pages/school/Students";
+import NewStudent from "./pages/school/NewStudent";
+import Payments from "./pages/school/Payments";
+import Classes from "./pages/school/Classes";
+import SchoolReports from "./pages/school/Reports";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +74,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      {/* Events Routes */}
       <Route
         path="/events"
         element={
@@ -147,6 +156,22 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/events/receivables"
+        element={
+          <ProtectedRoute>
+            <Receivables />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/receivables/new"
+        element={
+          <ProtectedRoute>
+            <NewReceivable />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/events/reports"
         element={
           <ProtectedRoute>
@@ -154,6 +179,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      {/* Bar Routes */}
       <Route
         path="/bar"
         element={
@@ -231,6 +257,55 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <BarReports />
+          </ProtectedRoute>
+        }
+      />
+      {/* School Routes */}
+      <Route
+        path="/school"
+        element={
+          <ProtectedRoute>
+            <School />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/students"
+        element={
+          <ProtectedRoute>
+            <Students />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/students/new"
+        element={
+          <ProtectedRoute>
+            <NewStudent />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/payments"
+        element={
+          <ProtectedRoute>
+            <Payments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/classes"
+        element={
+          <ProtectedRoute>
+            <Classes />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/reports"
+        element={
+          <ProtectedRoute>
+            <SchoolReports />
           </ProtectedRoute>
         }
       />
