@@ -14,7 +14,7 @@ interface Company {
   id: string;
   name: string;
   logo?: string;
-  modules: ('events' | 'bar')[];
+  modules: ('events' | 'bar' | 'school')[];
   settings: {
     currency: string;
     timezone: string;
@@ -32,7 +32,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   hasPermission: (permission: string) => boolean;
-  hasModuleAccess: (module: 'events' | 'bar') => boolean;
+  hasModuleAccess: (module: 'events' | 'bar' | 'school') => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,13 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: 'admin@exemplo.com',
         role: 'admin',
         companyId: '1',
-        permissions: ['events.view', 'events.create', 'events.edit', 'bar.view', 'bar.create', 'bar.edit', 'settings.view']
+        permissions: ['events.view', 'events.create', 'events.edit', 'bar.view', 'bar.create', 'bar.edit', 'school.view', 'school.create', 'school.edit', 'settings.view']
       };
 
       const mockCompany: Company = {
         id: '1',
         name: 'Arena Sports Club',
-        modules: ['events', 'bar'],
+        modules: ['events', 'bar', 'school'],
         settings: {
           currency: 'BRL',
           timezone: 'America/Sao_Paulo',
@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return user?.permissions.includes(permission) || false;
   };
 
-  const hasModuleAccess = (module: 'events' | 'bar'): boolean => {
+  const hasModuleAccess = (module: 'events' | 'bar' | 'school'): boolean => {
     return company?.modules.includes(module) || false;
   };
 

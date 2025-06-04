@@ -1,3 +1,4 @@
+
 import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -32,14 +33,14 @@ import EditReceivable from './pages/events/EditReceivable';
 import ReceivePayment from './pages/events/ReceivePayment';
 
 function App() {
-  const { isLoggedIn } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route path="/login" element={<Login />} />
 
-        <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
           <Route index element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />

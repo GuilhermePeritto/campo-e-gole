@@ -1,21 +1,19 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users, GraduationCap } from 'lucide-react';
+import { ArrowLeft, Building2, Palette, Shield, Users, GraduationCap, Calendar, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { company, user } = useAuth();
-  const { theme, setTheme } = useTheme();
+  const { company } = useAuth();
   const [settings, setSettings] = useState({
     companyName: company?.name || '',
     currency: company?.settings.currency || 'BRL',
@@ -66,7 +64,7 @@ const Settings = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="company" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
@@ -80,12 +78,8 @@ const Settings = () => {
               Módulos
             </TabsTrigger>
             <TabsTrigger value="events" className="gap-2">
-              <Clock className="h-4 w-4" />
+              <Calendar className="h-4 w-4" />
               Eventos
-            </TabsTrigger>
-            <TabsTrigger value="bar" className="gap-2">
-              <DollarSign className="h-4 w-4" />
-              Bar
             </TabsTrigger>
             <TabsTrigger value="school" className="gap-2">
               <GraduationCap className="h-4 w-4" />
@@ -107,64 +101,30 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="companyName">Nome da Empresa</Label>
+                  <Input
+                    id="companyName"
+                    value={settings.companyName}
+                    onChange={(e) => setSettings({...settings, companyName: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyName">Nome da Empresa</Label>
+                    <Label htmlFor="currency">Moeda</Label>
                     <Input
-                      id="companyName"
-                      value={settings.companyName}
-                      onChange={(e) => setSettings({...settings, companyName: e.target.value})}
+                      id="currency"
+                      value={settings.currency}
+                      onChange={(e) => setSettings({...settings, currency: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="currency">Moeda</Label>
-                    <Select value={settings.currency} onValueChange={(value) => setSettings({...settings, currency: value})}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="BRL">Real (R$)</SelectItem>
-                        <SelectItem value="USD">Dólar ($)</SelectItem>
-                        <SelectItem value="EUR">Euro (€)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
                     <Label htmlFor="timezone">Fuso Horário</Label>
-                    <Select value={settings.timezone} onValueChange={(value) => setSettings({...settings, timezone: value})}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="America/Sao_Paulo">São Paulo (GMT-3)</SelectItem>
-                        <SelectItem value="America/New_York">Nova York (GMT-5)</SelectItem>
-                        <SelectItem value="Europe/London">Londres (GMT+0)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <h4 className="text-sm font-medium mb-4">Horário de Funcionamento</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="businessStart">Abertura</Label>
-                      <Input
-                        id="businessStart"
-                        type="time"
-                        value={settings.businessStart}
-                        onChange={(e) => setSettings({...settings, businessStart: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="businessEnd">Fechamento</Label>
-                      <Input
-                        id="businessEnd"
-                        type="time"
-                        value={settings.businessEnd}
-                        onChange={(e) => setSettings({...settings, businessEnd: e.target.value})}
-                      />
-                    </div>
+                    <Input
+                      id="timezone"
+                      value={settings.timezone}
+                      onChange={(e) => setSettings({...settings, timezone: e.target.value})}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -175,29 +135,13 @@ const Settings = () => {
           <TabsContent value="appearance" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Aparência do Sistema</CardTitle>
+                <CardTitle>Configurações de Aparência</CardTitle>
                 <CardDescription>
-                  Personalize a aparência da interface
+                  Personalize a aparência do sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="theme">Tema da Interface</Label>
-                    <Select value={theme} onValueChange={(value: 'light' | 'dark') => setTheme(value)}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Tema Claro</SelectItem>
-                        <SelectItem value="dark">Tema Escuro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Escolha entre o tema claro ou escuro para a interface
-                    </p>
-                  </div>
-                </div>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Configurações de tema em desenvolvimento...</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -268,7 +212,7 @@ const Settings = () => {
                   <div className="space-y-1">
                     <div className="font-medium">Confirmar Reservas Automaticamente</div>
                     <div className="text-sm text-gray-500">
-                      Reservas são confirmadas automaticamente sem aprovação manual
+                      Reservas são confirmadas automaticamente ao serem criadas
                     </div>
                   </div>
                   <Switch
@@ -276,93 +220,17 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({...settings, autoConfirmReservations: checked})}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Permitir Reservas Recorrentes</div>
                     <div className="text-sm text-gray-500">
-                      Clientes podem criar reservas que se repetem automaticamente
+                      Clientes podem criar reservas que se repetem semanalmente
                     </div>
                   </div>
                   <Switch
                     checked={settings.allowRecurringReservations}
                     onCheckedChange={(checked) => setSettings({...settings, allowRecurringReservations: checked})}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Exigir Aprovação do Cliente</div>
-                    <div className="text-sm text-gray-500">
-                      Cliente deve confirmar reserva por email/SMS
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.requireClientApproval}
-                    onCheckedChange={(checked) => setSettings({...settings, requireClientApproval: checked})}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Configurações do Bar */}
-          <TabsContent value="bar" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configurações do Bar</CardTitle>
-                <CardDescription>
-                  Configure como o módulo de bar funciona
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Alertas de Estoque</div>
-                    <div className="text-sm text-gray-500">
-                      Receba notificações quando produtos estiverem em baixa
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.stockAlerts}
-                    onCheckedChange={(checked) => setSettings({...settings, stockAlerts: checked})}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="stockThreshold">Limite para Alerta de Estoque Baixo</Label>
-                  <Input
-                    id="stockThreshold"
-                    type="number"
-                    value={settings.lowStockThreshold}
-                    onChange={(e) => setSettings({...settings, lowStockThreshold: parseInt(e.target.value)})}
-                    className="w-32"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Imprimir Comprovantes</div>
-                    <div className="text-sm text-gray-500">
-                      Imprimir automaticamente comprovantes de venda
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.printReceipts}
-                    onCheckedChange={(checked) => setSettings({...settings, printReceipts: checked})}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Sistema de Comandas</div>
-                    <div className="text-sm text-gray-500">
-                      Habilitar sistema de comandas digitais
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.enableComandas}
-                    onCheckedChange={(checked) => setSettings({...settings, enableComandas: checked})}
                   />
                 </div>
               </CardContent>
@@ -426,30 +294,13 @@ const Settings = () => {
           <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciamento de Usuários</CardTitle>
+                <CardTitle>Configurações de Usuários</CardTitle>
                 <CardDescription>
-                  Gerencie usuários e suas permissões no sistema
+                  Gerencie usuários e permissões do sistema
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <div className="font-medium">{user?.name}</div>
-                      <div className="text-sm text-gray-500">{user?.email}</div>
-                      <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full inline-block mt-1">
-                        {user?.role === 'admin' ? 'Administrador' : user?.role}
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Editar
-                    </Button>
-                  </div>
-                  
-                  <Button className="w-full">
-                    Adicionar Novo Usuário
-                  </Button>
-                </div>
+                <p className="text-sm text-muted-foreground">Configurações de usuários em desenvolvimento...</p>
               </CardContent>
             </Card>
           </TabsContent>
