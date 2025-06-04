@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -220,6 +219,7 @@ const Receivables = () => {
                           <Button
                             size="sm"
                             className="bg-green-600 text-white hover:bg-green-700"
+                            onClick={() => navigate(`/events/receivables/${receivable.id}/receive`)}
                           >
                             Receber
                           </Button>

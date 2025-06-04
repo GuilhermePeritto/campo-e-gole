@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users } from 'lucide-react';
+import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,13 +24,17 @@ const Settings = () => {
     businessEnd: company?.settings.businessHours.end || '23:00',
     eventsModule: company?.modules.includes('events') || false,
     barModule: company?.modules.includes('bar') || false,
+    schoolModule: company?.modules.includes('school') || false,
     autoConfirmReservations: true,
     allowRecurringReservations: true,
     requireClientApproval: false,
     stockAlerts: true,
     lowStockThreshold: 10,
     printReceipts: true,
-    enableComandas: true
+    enableComandas: true,
+    autoGeneratePayments: true,
+    paymentReminderDays: 3,
+    enableProgressReports: true
   });
 
   const handleSave = () => {
@@ -62,7 +66,7 @@ const Settings = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="company" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
@@ -82,6 +86,10 @@ const Settings = () => {
             <TabsTrigger value="bar" className="gap-2">
               <DollarSign className="h-4 w-4" />
               Bar
+            </TabsTrigger>
+            <TabsTrigger value="school" className="gap-2">
+              <GraduationCap className="h-4 w-4" />
+              Escolinha
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
@@ -229,6 +237,19 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({...settings, barModule: checked})}
                   />
                 </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Módulo da Escolinha de Futebol</div>
+                    <div className="text-sm text-gray-500">
+                      Gestão de alunos, turmas, mensalidades e relatórios
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.schoolModule}
+                    onCheckedChange={(checked) => setSettings({...settings, schoolModule: checked})}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -342,6 +363,59 @@ const Settings = () => {
                   <Switch
                     checked={settings.enableComandas}
                     onCheckedChange={(checked) => setSettings({...settings, enableComandas: checked})}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Configurações da Escolinha */}
+          <TabsContent value="school" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configurações da Escolinha</CardTitle>
+                <CardDescription>
+                  Configure como o módulo da escolinha funciona
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Gerar Mensalidades Automaticamente</div>
+                    <div className="text-sm text-gray-500">
+                      Mensalidades são geradas automaticamente todo mês
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.autoGeneratePayments}
+                    onCheckedChange={(checked) => setSettings({...settings, autoGeneratePayments: checked})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="paymentReminder">Dias de Antecedência para Lembrete</Label>
+                  <Input
+                    id="paymentReminder"
+                    type="number"
+                    value={settings.paymentReminderDays}
+                    onChange={(e) => setSettings({...settings, paymentReminderDays: parseInt(e.target.value)})}
+                    className="w-32"
+                  />
+                  <p className="text-sm text-gray-500">
+                    Quantos dias antes do vencimento enviar lembrete
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Relatórios de Progresso dos Alunos</div>
+                    <div className="text-sm text-gray-500">
+                      Habilitar sistema de avaliação e progresso dos alunos
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.enableProgressReports}
+                    onCheckedChange={(checked) => setSettings({...settings, enableProgressReports: checked})}
                   />
                 </div>
               </CardContent>

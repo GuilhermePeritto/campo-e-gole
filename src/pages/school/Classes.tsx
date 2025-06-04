@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -121,6 +120,7 @@ const Classes = () => {
                       variant="outline"
                       size="sm"
                       className="flex-1 border-black text-black hover:bg-black hover:text-white"
+                      onClick={() => navigate(`/school/classes/${classItem.id}/edit`)}
                     >
                       Editar
                     </Button>
@@ -128,6 +128,7 @@ const Classes = () => {
                       variant="outline"
                       size="sm"
                       className="flex-1 border-black text-black hover:bg-black hover:text-white"
+                      onClick={() => navigate(`/school/classes/${classItem.id}/students`)}
                     >
                       Ver Alunos
                     </Button>
