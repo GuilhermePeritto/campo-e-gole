@@ -1,10 +1,12 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
@@ -24,6 +26,8 @@ import EditClient from "./pages/events/EditClient";
 import ClientHistory from "./pages/events/ClientHistory";
 import Receivables from "./pages/events/Receivables";
 import NewReceivable from "./pages/events/NewReceivable";
+import EditReceivable from "./pages/events/EditReceivable";
+import ReceivePayment from "./pages/events/ReceivePayment";
 import EventReports from "./pages/events/Reports";
 // Bar pages
 import UnifiedSale from "./pages/bar/UnifiedSale";
@@ -37,8 +41,12 @@ import Checkout from "./pages/bar/Checkout";
 // School pages
 import Students from "./pages/school/Students";
 import NewStudent from "./pages/school/NewStudent";
+import EditStudent from "./pages/school/EditStudent";
+import StudentHistory from "./pages/school/StudentHistory";
 import Payments from "./pages/school/Payments";
 import Classes from "./pages/school/Classes";
+import EditClass from "./pages/school/EditClass";
+import ClassStudents from "./pages/school/ClassStudents";
 import SchoolReports from "./pages/school/Reports";
 
 const queryClient = new QueryClient();
