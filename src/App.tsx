@@ -4,9 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./contexts/AuthContext";
+import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
@@ -180,6 +179,22 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/events/receivables/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditReceivable />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events/receivables/:id/receive"
+        element={
+          <ProtectedRoute>
+            <ReceivePayment />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/events/reports"
         element={
           <ProtectedRoute>
@@ -294,6 +309,22 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/school/students/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditStudent />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/students/:id/history"
+        element={
+          <ProtectedRoute>
+            <StudentHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/school/payments"
         element={
           <ProtectedRoute>
@@ -306,6 +337,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Classes />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/classes/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditClass />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/school/classes/:id/students"
+        element={
+          <ProtectedRoute>
+            <ClassStudents />
           </ProtectedRoute>
         }
       />
