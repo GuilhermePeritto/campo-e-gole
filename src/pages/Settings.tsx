@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users } from 'lucide-react';
+import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,13 +24,24 @@ const Settings = () => {
     businessEnd: company?.settings.businessHours.end || '23:00',
     eventsModule: company?.modules.includes('events') || false,
     barModule: company?.modules.includes('bar') || false,
+    schoolModule: company?.modules.includes('school') || true,
     autoConfirmReservations: true,
     allowRecurringReservations: true,
     requireClientApproval: false,
     stockAlerts: true,
     lowStockThreshold: 10,
     printReceipts: true,
-    enableComandas: true
+    enableComandas: true,
+    // School settings
+    monthlyFee: 150,
+    autoGenerateMonthlyFees: true,
+    sendPaymentReminders: true,
+    reminderDaysBefore: 5,
+    allowMultipleClasses: true,
+    requireMedicalCertificate: false,
+    enableAttendanceControl: true,
+    maxStudentsPerClass: 20,
+    enableProgressReports: true
   });
 
   const handleSave = () => {
@@ -49,7 +60,7 @@ const Settings = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/painel')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -62,7 +73,7 @@ const Settings = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="company" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
@@ -82,6 +93,10 @@ const Settings = () => {
             <TabsTrigger value="bar" className="gap-2">
               <DollarSign className="h-4 w-4" />
               Bar
+            </TabsTrigger>
+            <TabsTrigger value="school" className="gap-2">
+              <GraduationCap className="h-4 w-4" />
+              Escolinha
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
@@ -229,6 +244,19 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({...settings, barModule: checked})}
                   />
                 </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Módulo de Escolinha de Futebol</div>
+                    <div className="text-sm text-gray-500">
+                      Gestão de alunos, turmas, mensalidades e relatórios pedagógicos
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.schoolModule}
+                    onCheckedChange={(checked) => setSettings({...settings, schoolModule: checked})}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -348,6 +376,132 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
+          {/* Nova Tab - Configurações da Escolinha */}
+          <TabsContent value="school" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configurações da Escolinha</CardTitle>
+                <CardDescription>
+                  Configure como o módulo de escolinha funciona
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="monthlyFee">Valor da Mensalidade Padrão (R$)</Label>
+                    <Input
+                      id="monthlyFee"
+                      type="number"
+                      step="0.01"
+                      value={settings.monthlyFee}
+                      onChange={(e) => setSettings({...settings, monthlyFee: parseFloat(e.target.value)})}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="maxStudentsPerClass">Máximo de Alunos por Turma</Label>
+                    <Input
+                      id="maxStudentsPerClass"
+                      type="number"
+                      value={settings.maxStudentsPerClass}
+                      onChange={(e) => setSettings({...settings, maxStudentsPerClass: parseInt(e.target.value)})}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="reminderDaysBefore">Lembrete de Pagamento (dias antes)</Label>
+                    <Input
+                      id="reminderDaysBefore"
+                      type="number"
+                      value={settings.reminderDaysBefore}
+                      onChange={(e) => setSettings({...settings, reminderDaysBefore: parseInt(e.target.value)})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium">Gerar Mensalidades Automaticamente</div>
+                      <div className="text-sm text-gray-500">
+                        Cria automaticamente as mensalidades do mês para todos os alunos
+                      </div>
+                    </div>
+                    <Switch
+                      checked={settings.autoGenerateMonthlyFees}
+                      onCheckedChange={(checked) => setSettings({...settings, autoGenerateMonthlyFees: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium">Enviar Lembretes de Pagamento</div>
+                      <div className="text-sm text-gray-500">
+                        Envia notificações automáticas sobre vencimento de mensalidades
+                      </div>
+                    </div>
+                    <Switch
+                      checked={settings.sendPaymentReminders}
+                      onCheckedChange={(checked) => setSettings({...settings, sendPaymentReminders: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium">Permitir Múltiplas Turmas</div>
+                      <div className="text-sm text-gray-500">
+                        Aluno pode participar de mais de uma turma simultaneamente
+                      </div>
+                    </div>
+                    <Switch
+                      checked={settings.allowMultipleClasses}
+                      onCheckedChange={(checked) => setSettings({...settings, allowMultipleClasses: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium">Exigir Atestado Médico</div>
+                      <div className="text-sm text-gray-500">
+                        Obrigatório apresentar atestado médico para matrícula
+                      </div>
+                    </div>
+                    <Switch
+                      checked={settings.requireMedicalCertificate}
+                      onCheckedChange={(checked) => setSettings({...settings, requireMedicalCertificate: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium">Controle de Presença</div>
+                      <div className="text-sm text-gray-500">
+                        Habilitar sistema de controle de frequência dos alunos
+                      </div>
+                    </div>
+                    <Switch
+                      checked={settings.enableAttendanceControl}
+                      onCheckedChange={(checked) => setSettings({...settings, enableAttendanceControl: checked})}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium">Relatórios de Progresso</div>
+                      <div className="text-sm text-gray-500">
+                        Gerar relatórios pedagógicos sobre evolução dos alunos
+                      </div>
+                    </div>
+                    <Switch
+                      checked={settings.enableProgressReports}
+                      onCheckedChange={(checked) => setSettings({...settings, enableProgressReports: checked})}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Configurações de Usuários */}
           <TabsContent value="users" className="space-y-6">
             <Card>
@@ -382,7 +536,7 @@ const Settings = () => {
         </Tabs>
 
         <div className="flex justify-end gap-4 pt-6">
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+          <Button variant="outline" onClick={() => navigate('/painel')}>
             Cancelar
           </Button>
           <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
