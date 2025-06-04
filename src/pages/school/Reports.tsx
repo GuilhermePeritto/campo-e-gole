@@ -1,10 +1,9 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, BarChart3, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { ExportButton } from '@/components/ExportButton';
+import ExportButton from '@/components/ExportButton';
 
 const SchoolReports = () => {
   const navigate = useNavigate();
