@@ -1,15 +1,17 @@
-
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import EventDetailsPopup from '@/components/EventDetailsPopup';
 
 const Calendar = () => {
   const navigate = useNavigate();
   const [viewType, setViewType] = useState('month');
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const venues = [
     { id: 'all', name: 'Todos os Locais' },
@@ -25,10 +27,62 @@ const Calendar = () => {
   });
 
   const mockReservations = [
-    { id: 1, venue: 'Quadra A', client: 'João Silva', startTime: '08:00', endTime: '10:00', status: 'confirmed', day: new Date(), color: '#10b981' },
-    { id: 2, venue: 'Campo 1', client: 'Time Unidos', startTime: '14:00', endTime: '15:30', status: 'pending', day: new Date(), color: '#f59e0b' },
-    { id: 3, venue: 'Quadra B', client: 'Maria Santos', startTime: '18:00', endTime: '19:00', status: 'confirmed', day: new Date(), color: '#10b981' },
-    { id: 4, venue: 'Campo 2', client: 'Grupo Amigos', startTime: '20:00', endTime: '22:00', status: 'confirmed', day: new Date(), color: '#10b981' }
+    { 
+      id: 1, 
+      venue: 'Quadra A', 
+      client: 'João Silva', 
+      startTime: '08:00', 
+      endTime: '10:00', 
+      status: 'confirmed', 
+      day: new Date(), 
+      color: '#10b981',
+      sport: 'Futebol Society',
+      email: 'joao@email.com',
+      phone: '(11) 99999-9999',
+      price: 160,
+      observations: 'Cliente preferencial, sempre pontual'
+    },
+    { 
+      id: 2, 
+      venue: 'Campo 1', 
+      client: 'Time Unidos', 
+      startTime: '14:00', 
+      endTime: '15:30', 
+      status: 'pending', 
+      day: new Date(), 
+      color: '#f59e0b',
+      sport: 'Futebol 11',
+      email: 'unidos@time.com',
+      price: 225
+    },
+    { 
+      id: 3, 
+      venue: 'Quadra B', 
+      client: 'Maria Santos', 
+      startTime: '18:00', 
+      endTime: '19:00', 
+      status: 'confirmed', 
+      day: new Date(), 
+      color: '#10b981',
+      sport: 'Basquete',
+      email: 'maria@email.com',
+      phone: '(11) 88888-8888',
+      price: 60
+    },
+    { 
+      id: 4, 
+      venue: 'Campo 2', 
+      client: 'Grupo Amigos', 
+      startTime: '20:00', 
+      endTime: '22:00', 
+      status: 'confirmed', 
+      day: new Date(), 
+      color: '#10b981',
+      sport: 'Futebol 7',
+      email: 'amigos@grupo.com',
+      price: 200,
+      observations: 'Grupo que joga toda semana'
+    }
   ];
 
   const getWeekDays = () => {
@@ -90,6 +144,17 @@ const Calendar = () => {
   const handleDateClick = (date: Date) => {
     const formattedDate = date.toISOString().split('T')[0];
     navigate(`/events/reservations/new?date=${formattedDate}`);
+  };
+
+  const handleEventClick = (event: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedEvent(event);
+    setIsPopupOpen(true);
+  };
+
+  const handleEditEvent = () => {
+    setIsPopupOpen(false);
+    navigate(`/events/reservations/${selectedEvent.id}/edit`);
   };
 
   const getDateTitle = () => {
@@ -252,8 +317,9 @@ const Calendar = () => {
                         {dayReservations.slice(0, 3).map(reservation => (
                           <div
                             key={reservation.id}
-                            className="text-xs p-1 rounded text-gray-900 dark:text-gray-300 font-medium truncate"
+                            className="text-xs p-1 rounded text-white font-medium truncate cursor-pointer hover:opacity-80 transition-opacity"
                             style={{ backgroundColor: reservation.color }}
+                            onClick={(e) => handleEventClick(reservation, e)}
                           >
                             {reservation.startTime} {reservation.client}
                           </div>
@@ -319,8 +385,9 @@ const Calendar = () => {
                         >
                           {reservation && (
                             <div
-                              className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-gray-900 dark:text-gray-300 text-xs font-medium"
+                              className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-white text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity"
                               style={{ backgroundColor: reservation.color }}
+                              onClick={(e) => handleEventClick(reservation, e)}
                             >
                               <div className="font-semibold truncate">{reservation.client}</div>
                               <div className="text-xs opacity-90">{reservation.venue}</div>
@@ -366,8 +433,9 @@ const Calendar = () => {
                       >
                         {reservation && (
                           <div
-                            className="p-3 rounded text-gray-900 dark:text-gray-300 font-medium w-full"
+                            className="p-3 rounded text-white font-medium w-full cursor-pointer hover:opacity-80 transition-opacity"
                             style={{ backgroundColor: reservation.color }}
+                            onClick={(e) => handleEventClick(reservation, e)}
                           >
                             <div className="font-semibold">{reservation.client}</div>
                             <div className="text-sm opacity-90">{reservation.venue}</div>
@@ -383,6 +451,19 @@ const Calendar = () => {
           )}
         </div>
       </main>
+
+      {/* Event Details Popup */}
+      {selectedEvent && (
+        <EventDetailsPopup
+          isOpen={isPopupOpen}
+          onClose={() => {
+            setIsPopupOpen(false);
+            setSelectedEvent(null);
+          }}
+          onEdit={handleEditEvent}
+          event={selectedEvent}
+        />
+      )}
     </div>
   );
 };

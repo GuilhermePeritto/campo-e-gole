@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, MapPin, Plus, X } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, MapPin, Plus, X, Palette } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const EditVenue = () => {
@@ -20,12 +21,45 @@ const EditVenue = () => {
     capacity: '14',
     hourlyRate: '80.00',
     description: 'Quadra de grama sintética com iluminação LED',
+    color: '#10B981',
     active: true
   });
   const [equipment, setEquipment] = useState<string[]>(['Traves', 'Redes', 'Bolas']);
   const [newEquipment, setNewEquipment] = useState('');
+  const [characteristics, setCharacteristics] = useState({
+    covered: true,
+    lighting: true,
+    locker_room: false,
+    parking: true,
+    restroom: true,
+    snack_bar: false,
+    sound_system: false,
+    air_conditioning: false
+  });
 
-  const venueTypes = ['Futebol Society', 'Basquete', 'Futebol', 'Futebol 7', 'Vôlei', 'Tênis', 'Outros'];
+  const venueTypes = ['Futebol Society', 'Basquete', 'Futebol', 'Futebol 7', 'Vôlei', 'Tênis', 'Beach Tennis', 'Futvolei', 'Outros'];
+
+  const colorOptions = [
+    { name: 'Verde', value: '#10B981' },
+    { name: 'Azul', value: '#3B82F6' },
+    { name: 'Vermelho', value: '#EF4444' },
+    { name: 'Amarelo', value: '#F59E0B' },
+    { name: 'Roxo', value: '#8B5CF6' },
+    { name: 'Rosa', value: '#EC4899' },
+    { name: 'Laranja', value: '#F97316' },
+    { name: 'Cinza', value: '#6B7280' }
+  ];
+
+  const characteristicLabels = {
+    covered: 'Quadra coberta',
+    lighting: 'Iluminação artificial',
+    locker_room: 'Vestiário',
+    parking: 'Estacionamento',
+    restroom: 'Banheiros',
+    snack_bar: 'Lanchonete',
+    sound_system: 'Som ambiente',
+    air_conditioning: 'Ar condicionado'
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +102,10 @@ const EditVenue = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleCharacteristicChange = (characteristic: string, checked: boolean) => {
+    setCharacteristics(prev => ({ ...prev, [characteristic]: checked }));
+  };
+
   const addEquipment = () => {
     if (newEquipment.trim() && !equipment.includes(newEquipment.trim())) {
       setEquipment([...equipment, newEquipment.trim()]);
@@ -101,7 +139,7 @@ const EditVenue = () => {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-8">
+      <main className="max-w-4xl mx-auto px-6 py-8">
         <Card className="border-gray-200">
           <CardHeader>
             <CardTitle className="text-black">Editar Dados do Local</CardTitle>
@@ -110,66 +148,127 @@ const EditVenue = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Nome do Local *</label>
-                  <Input
-                    placeholder="Ex: Quadra A - Futebol Society"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="border-gray-300"
-                  />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Informações Básicas */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-black">Informações Básicas</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-black">Nome do Local *</label>
+                    <Input
+                      placeholder="Ex: Quadra A - Futebol Society"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="border-gray-300"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-black">Tipo de Esporte *</label>
+                    <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
+                      <SelectTrigger className="border-gray-300">
+                        <SelectValue placeholder="Selecionar tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {venueTypes.map((type) => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-black">Capacidade (pessoas) *</label>
+                    <Input
+                      type="number"
+                      placeholder="Ex: 14"
+                      value={formData.capacity}
+                      onChange={(e) => handleInputChange('capacity', e.target.value)}
+                      className="border-gray-300"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-black">Valor por Hora (R$) *</label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="Ex: 80.00"
+                      value={formData.hourlyRate}
+                      onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
+                      className="border-gray-300"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Tipo de Esporte *</label>
-                  <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                    <SelectTrigger className="border-gray-300">
-                      <SelectValue placeholder="Selecionar tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {venueTypes.map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Capacidade (pessoas) *</label>
-                  <Input
-                    type="number"
-                    placeholder="Ex: 14"
-                    value={formData.capacity}
-                    onChange={(e) => handleInputChange('capacity', e.target.value)}
-                    className="border-gray-300"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-black">Valor por Hora (R$) *</label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="Ex: 80.00"
-                    value={formData.hourlyRate}
-                    onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
-                    className="border-gray-300"
-                  />
+                {/* Cor do Local */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Palette className="h-4 w-4 text-gray-600" />
+                    <label className="text-sm font-medium text-black">Cor de Identificação</label>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {colorOptions.map((color) => (
+                      <button
+                        key={color.value}
+                        type="button"
+                        onClick={() => handleInputChange('color', color.value)}
+                        className={`w-12 h-12 rounded-lg border-2 transition-all ${
+                          formData.color === color.value ? 'border-black scale-110' : 'border-gray-300'
+                        }`}
+                        style={{ backgroundColor: color.value }}
+                        title={color.name}
+                      >
+                        {formData.color === color.value && (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    A cor será usada para identificar visualmente o local na agenda
+                  </p>
                 </div>
               </div>
 
+              {/* Características */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-black">Características do Local</h3>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {Object.entries(characteristicLabels).map(([key, label]) => (
+                    <div key={key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={key}
+                        checked={characteristics[key as keyof typeof characteristics]}
+                        onCheckedChange={(checked) => handleCharacteristicChange(key, checked as boolean)}
+                      />
+                      <label
+                        htmlFor={key}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Descrição */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-black">Descrição</label>
                 <textarea
                   className="w-full p-3 border border-gray-300 rounded-md resize-none h-24"
-                  placeholder="Descrição do local (ex: Quadra de grama sintética com iluminação LED)"
+                  placeholder="Descrição adicional do local (ex: Quadra de grama sintética com iluminação LED)"
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                 />
               </div>
 
+              {/* Equipamentos */}
               <div className="space-y-4">
                 <label className="text-sm font-medium text-black">Equipamentos Disponíveis</label>
                 <div className="flex gap-2">
@@ -202,6 +301,7 @@ const EditVenue = () => {
                 )}
               </div>
 
+              {/* Status */}
               <div className="flex items-center gap-3">
                 <Switch
                   checked={formData.active}
