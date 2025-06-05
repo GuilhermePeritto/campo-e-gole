@@ -102,7 +102,7 @@ const ClassStudents = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school/classes')}
+              onClick={() => navigate('/escolinha/turmas')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -129,7 +129,7 @@ const ClassStudents = () => {
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total de alunos: {students.length}</span>
               <Button
-                onClick={() => navigate('/school/students/new')}
+                onClick={() => navigate('/escolinha/alunos/novo')}
                 className="bg-black text-white hover:bg-gray-800 gap-2"
               >
                 <Plus className="h-4 w-4" />
@@ -175,7 +175,7 @@ const ClassStudents = () => {
                           variant="outline"
                           size="sm"
                           className="border-black text-black hover:bg-black hover:text-white"
-                          onClick={() => navigate(`/school/students/${student.id}/edit`)}
+                          onClick={() => navigate(`/escolinha/alunos/${student.id}/editar`)}
                         >
                           Editar
                         </Button>
@@ -183,7 +183,7 @@ const ClassStudents = () => {
                           variant="outline"
                           size="sm"
                           className="border-black text-black hover:bg-black hover:text-white"
-                          onClick={() => navigate(`/school/students/${student.id}/history`)}
+                          onClick={() => navigate(`/escolinha/alunos/${student.id}/historico`)}
                         >
                           Histórico
                         </Button>

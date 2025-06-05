@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -126,7 +127,7 @@ const Clients = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/events/clients/new')}
+              onClick={() => navigate('/eventos/clientes/novo')}
               className="gap-2 bg-black text-white hover:bg-gray-800"
             >
               <Plus className="h-4 w-4" />
@@ -204,7 +205,7 @@ const Clients = () => {
                       variant="outline" 
                       size="sm" 
                       className="flex-1 gap-1 text-gray-900 dark:text-gray-300"
-                      onClick={() => navigate(`/events/clients/${client.id}/edit`)}
+                      onClick={() => navigate(`/eventos/clientes/${client.id}/editar`)}
                     >
                       <Edit className="h-4 w-4" />
                       Editar
@@ -213,7 +214,7 @@ const Clients = () => {
                       variant="outline" 
                       size="sm" 
                       className="flex-1 text-gray-900 dark:text-gray-300"
-                      onClick={() => navigate(`/events/clients/${client.id}/history`)}
+                      onClick={() => navigate(`/eventos/clientes/${client.id}/historico`)}
                     >
                       Histórico
                     </Button>

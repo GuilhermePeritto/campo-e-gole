@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +12,7 @@ import Settings from "./pages/Settings";
 import Events from "./pages/Events";
 import Bar from "./pages/Bar";
 import School from "./pages/School";
+import Financial from "./pages/Financial";
 import NotFound from "./pages/NotFound";
 // Event pages
 import Calendar from "./pages/events/Calendar";
@@ -49,6 +51,8 @@ import EditClass from "./pages/school/EditClass";
 import ClassStudents from "./pages/school/ClassStudents";
 import Payments from "./pages/school/Payments";
 import SchoolReports from "./pages/school/Reports";
+// Financial pages
+import Revenues from "./pages/financial/Revenues";
 
 const queryClient = new QueryClient();
 
@@ -379,6 +383,23 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <SchoolReports />
+          </ProtectedRoute>
+        }
+      />
+      {/* Financial Routes */}
+      <Route
+        path="/financeiro"
+        element={
+          <ProtectedRoute>
+            <Financial />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financeiro/receitas"
+        element={
+          <ProtectedRoute>
+            <Revenues />
           </ProtectedRoute>
         }
       />
