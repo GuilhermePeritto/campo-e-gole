@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -53,6 +52,14 @@ import Payments from "./pages/school/Payments";
 import SchoolReports from "./pages/school/Reports";
 // Financial pages
 import Revenues from "./pages/financial/Revenues";
+import Expenses from "./pages/financial/Expenses";
+import AccountsReceivable from "./pages/financial/AccountsReceivable";
+import AccountsPayable from "./pages/financial/AccountsPayable";
+import CashFlow from "./pages/financial/CashFlow";
+import Reports from "./pages/financial/Reports";
+import NewRevenue from "./pages/financial/NewRevenue";
+import NewExpense from "./pages/financial/NewExpense";
+import ReceivePayment from "./pages/financial/ReceivePayment";
 
 const queryClient = new QueryClient();
 
@@ -388,7 +395,7 @@ const AppRoutes = () => {
       />
       {/* Financial Routes */}
       <Route
-        path="/financeiro"
+        path="/financial"
         element={
           <ProtectedRoute>
             <Financial />
@@ -396,10 +403,74 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/financeiro/receitas"
+        path="/financial/revenues"
         element={
           <ProtectedRoute>
             <Revenues />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/expenses"
+        element={
+          <ProtectedRoute>
+            <Expenses />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/accounts-receivable"
+        element={
+          <ProtectedRoute>
+            <AccountsReceivable />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/accounts-payable"
+        element={
+          <ProtectedRoute>
+            <AccountsPayable />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/cash-flow"
+        element={
+          <ProtectedRoute>
+            <CashFlow />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/reports"
+        element={
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/new-revenue"
+        element={
+          <ProtectedRoute>
+            <NewRevenue />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/new-expense"
+        element={
+          <ProtectedRoute>
+            <NewExpense />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financial/receive-payment"
+        element={
+          <ProtectedRoute>
+            <ReceivePayment />
           </ProtectedRoute>
         }
       />

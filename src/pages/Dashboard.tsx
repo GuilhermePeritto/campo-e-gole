@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
@@ -178,7 +179,7 @@ const Dashboard = () => {
           {/* Módulo Financeiro */}
           <Card 
             className="group hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 bg-gradient-to-br from-orange-500 to-orange-600 border-0"
-            onClick={() => navigate('/financeiro')}
+            onClick={() => navigate('/financial')}
           >
             <CardContent className="p-8 text-center">
               <div className="mb-6">

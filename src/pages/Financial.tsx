@@ -95,7 +95,7 @@ const Financial = () => {
 
         {/* Menu de Funcionalidades */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/receitas')}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financial/revenues')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-600">
                 <TrendingUp className="h-5 w-5" />
@@ -111,7 +111,7 @@ const Financial = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/despesas')}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financial/expenses')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-600">
                 <TrendingDown className="h-5 w-5" />
@@ -127,7 +127,7 @@ const Financial = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/contas-receber')}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financial/accounts-receivable')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-orange-600">
                 <Calendar className="h-5 w-5" />
@@ -143,7 +143,7 @@ const Financial = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/contas-pagar')}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financial/accounts-payable')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-purple-600">
                 <Calendar className="h-5 w-5" />
@@ -159,7 +159,7 @@ const Financial = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/fluxo-caixa')}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financial/cash-flow')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-600">
                 <BarChart3 className="h-5 w-5" />
@@ -175,7 +175,7 @@ const Financial = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/relatorios')}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financial/reports')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-indigo-600">
                 <PieChart className="h-5 w-5" />
@@ -244,7 +244,7 @@ const Financial = () => {
               <Button 
                 variant="outline" 
                 className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/nova-receita')}
+                onClick={() => navigate('/financial/new-revenue')}
               >
                 <TrendingUp className="h-5 w-5" />
                 Nova Receita
@@ -253,7 +253,7 @@ const Financial = () => {
               <Button 
                 variant="outline" 
                 className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/nova-despesa')}
+                onClick={() => navigate('/financial/new-expense')}
               >
                 <TrendingDown className="h-5 w-5" />
                 Nova Despesa
@@ -262,7 +262,7 @@ const Financial = () => {
               <Button 
                 variant="outline" 
                 className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/receber-titulo')}
+                onClick={() => navigate('/financial/receive-payment')}
               >
                 <Calendar className="h-5 w-5" />
                 Receber Título
@@ -271,7 +271,7 @@ const Financial = () => {
               <Button 
                 variant="outline" 
                 className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/relatorios')}
+                onClick={() => navigate('/financial/reports')}
               >
                 <Filter className="h-5 w-5" />
                 Gerar Relatório
