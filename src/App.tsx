@@ -1,66 +1,60 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useAuth, AuthProvider } from "./contexts/AuthContext";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Settings from "./pages/Settings";
-import Events from "./pages/Events";
 import Bar from "./pages/Bar";
-import School from "./pages/School";
-import Financial from "./pages/Financial";
-import NotFound from "./pages/NotFound";
-// Event pages
-import Calendar from "./pages/events/Calendar";
-import NewReservation from "./pages/events/NewReservation";
-import EditReservation from "./pages/events/EditReservation";
-import Venues from "./pages/events/Venues";
-import NewVenue from "./pages/events/NewVenue";
-import EditVenue from "./pages/events/EditVenue";
-import Clients from "./pages/events/Clients";
-import NewClient from "./pages/events/NewClient";
-import EditClient from "./pages/events/EditClient";
-import ClientHistory from "./pages/events/ClientHistory";
-import Receivables from "./pages/events/Receivables";
-import NewReceivable from "./pages/events/NewReceivable";
-import EditReceivable from "./pages/events/EditReceivable";
-import ReceivePayment from "./pages/events/ReceivePayment";
-import EventsReports from "./pages/events/Reports";
-// Bar pages
-import Products from "./pages/bar/Products";
-import NewProduct from "./pages/bar/NewProduct";
+import Checkout from "./pages/bar/Checkout";
+import Comandas from "./pages/bar/Comandas";
 import EditProduct from "./pages/bar/EditProduct";
 import Inventory from "./pages/bar/Inventory";
-import Comandas from "./pages/bar/Comandas";
 import NewComanda from "./pages/bar/NewComanda";
-import Checkout from "./pages/bar/Checkout";
+import NewProduct from "./pages/bar/NewProduct";
 import NewSale from "./pages/bar/NewSale";
+import Products from "./pages/bar/Products";
+import { default as BarRelatorios } from "./pages/bar/Reports";
 import UnifiedSale from "./pages/bar/UnifiedSale";
-import BarReports from "./pages/bar/Reports";
-// School pages
-import Students from "./pages/school/Students";
-import NewStudent from "./pages/school/NewStudent";
-import EditStudent from "./pages/school/EditStudent";
-import StudentHistory from "./pages/school/StudentHistory";
-import Classes from "./pages/school/Classes";
-import EditClass from "./pages/school/EditClass";
-import ClassStudents from "./pages/school/ClassStudents";
-import Payments from "./pages/school/Payments";
-import SchoolReports from "./pages/school/Reports";
-// Financial pages
-import Revenues from "./pages/financial/Revenues";
-import Expenses from "./pages/financial/Expenses";
-import AccountsReceivable from "./pages/financial/AccountsReceivable";
-import AccountsPayable from "./pages/financial/AccountsPayable";
-import CashFlow from "./pages/financial/CashFlow";
-import Reports from "./pages/financial/Reports";
-import NewRevenue from "./pages/financial/NewRevenue";
-import NewExpense from "./pages/financial/NewExpense";
-import ReceivePayment from "./pages/financial/ReceivePayment";
-
+import Dashboard from "./pages/Dashboard";
+import Classes from "./pages/escolinha/Classes";
+import ClassStudents from "./pages/escolinha/ClassStudents";
+import EditClass from "./pages/escolinha/EditClass";
+import EditStudent from "./pages/escolinha/EditStudent";
+import NewStudent from "./pages/escolinha/NewStudent";
+import Payments from "./pages/escolinha/Payments";
+import EscolinhaRelatorios from "./pages/escolinha/Reports";
+import StudentHistory from "./pages/escolinha/StudentHistory";
+import Students from "./pages/escolinha/Students";
+import Calendar from "./pages/eventos/Calendar";
+import ClientHistory from "./pages/eventos/ClientHistory";
+import Clients from "./pages/eventos/Clients";
+import EditClient from "./pages/eventos/EditClient";
+import EditReceivable from "./pages/eventos/EditReceivable";
+import EditReservation from "./pages/eventos/EditReservation";
+import EditVenue from "./pages/eventos/EditVenue";
+import NewClient from "./pages/eventos/NewClient";
+import NewReceivable from "./pages/eventos/NewReceivable";
+import NewReservation from "./pages/eventos/NewReservation";
+import NewVenue from "./pages/eventos/NewVenue";
+import Receivables from "./pages/eventos/Receivables";
+import ReceberPagamento from "./pages/eventos/ReceivePayment";
+import EventoRelatorios from "./pages/eventos/Reports";
+import Venues from "./pages/eventos/Venues";
+import Events from "./pages/Events";
+import ContasAPagar from "./pages/financeiro/AccountsPayable";
+import ContasAReceber from "./pages/financeiro/AccountsReceivable";
+import FluxoDeCaixa from "./pages/financeiro/CashFlow";
+import Despesas from "./pages/financeiro/Expenses";
+import NovaDespesa from "./pages/financeiro/NewExpense";
+import NovaReceita from "./pages/financeiro/NewRevenue";
+import FinanceiroRelatorios from "./pages/financeiro/Reports";
+import Receitas from "./pages/financeiro/Revenues";
+import Financeiro from "./pages/Financial";
+import Login from "./pages/Login";
+import NaoEncontrada from "./pages/NotFound";
+import School from "./pages/School";
+import Settings from "./pages/Settings";
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -75,11 +69,11 @@ const AppRoutes = () => {
     <Routes>
       <Route 
         path="/login" 
-        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} 
+        element={isAuthenticated ? <Navigate to="/painel" /> : <Login />} 
       />
       <Route path="/" element={<Navigate to="/login" />} />
       <Route
-        path="/dashboard"
+        path="/painel"
         element={
           <ProtectedRoute>
             <Dashboard />
@@ -87,7 +81,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/settings"
+        path="/configuracao"
         element={
           <ProtectedRoute>
             <Settings />
@@ -96,7 +90,7 @@ const AppRoutes = () => {
       />
       {/* Events Routes */}
       <Route
-        path="/events"
+        path="/eventos"
         element={
           <ProtectedRoute>
             <Events />
@@ -112,7 +106,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/eventos/nova-reserva"
+        path="/eventos/novo-reserva"
         element={
           <ProtectedRoute>
             <NewReservation />
@@ -192,7 +186,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/eventos/contas-a-receber/nova"
+        path="/eventos/contas-a-receber/novo"
         element={
           <ProtectedRoute>
             <NewReceivable />
@@ -211,7 +205,7 @@ const AppRoutes = () => {
         path="/eventos/contas-a-receber/:id/receber"
         element={
           <ProtectedRoute>
-            <ReceivePayment />
+            <ReceberPagamento />
           </ProtectedRoute>
         }
       />
@@ -219,7 +213,7 @@ const AppRoutes = () => {
         path="/eventos/relatorios"
         element={
           <ProtectedRoute>
-            <EventsReports />
+            <EventoRelatorios />
           </ProtectedRoute>
         }
       />
@@ -273,7 +267,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/comandas/nova"
+        path="/bar/comandas/novo"
         element={
           <ProtectedRoute>
             <NewComanda />
@@ -281,7 +275,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/comandas/:id/checkout"
+        path="/bar/comandas/:id/conferir"
         element={
           <ProtectedRoute>
             <Checkout />
@@ -289,7 +283,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/vendas/nova"
+        path="/bar/vendas/novo"
         element={
           <ProtectedRoute>
             <NewSale />
@@ -308,13 +302,13 @@ const AppRoutes = () => {
         path="/bar/relatorios"
         element={
           <ProtectedRoute>
-            <BarReports />
+            <BarRelatorios />
           </ProtectedRoute>
         }
       />
       {/* School Routes */}
       <Route
-        path="/school"
+        path="/escolinha"
         element={
           <ProtectedRoute>
             <School />
@@ -389,92 +383,92 @@ const AppRoutes = () => {
         path="/escolinha/relatorios"
         element={
           <ProtectedRoute>
-            <SchoolReports />
+            <EscolinhaRelatorios />
           </ProtectedRoute>
         }
       />
-      {/* Financial Routes */}
+      {/* Financeiro Routes */}
       <Route
-        path="/financial"
+        path="/financeiro"
         element={
           <ProtectedRoute>
-            <Financial />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/financial/revenues"
-        element={
-          <ProtectedRoute>
-            <Revenues />
+            <Financeiro />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/expenses"
+        path="/financeiro/receitas"
         element={
           <ProtectedRoute>
-            <Expenses />
+            <Receitas />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/accounts-receivable"
+        path="/financeiro/despesas"
         element={
           <ProtectedRoute>
-            <AccountsReceivable />
+            <Despesas />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/accounts-payable"
+        path="/financeiro/contas-a-receber"
         element={
           <ProtectedRoute>
-            <AccountsPayable />
+            <ContasAReceber />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/cash-flow"
+        path="/financeiro/contas-a-pagar"
         element={
           <ProtectedRoute>
-            <CashFlow />
+            <ContasAPagar />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/reports"
+        path="/financeiro/fluxo-de-caixa"
         element={
           <ProtectedRoute>
-            <Reports />
+            <FluxoDeCaixa />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/new-revenue"
+        path="/financeiro/relatorios"
         element={
           <ProtectedRoute>
-            <NewRevenue />
+            <FinanceiroRelatorios />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/new-expense"
+        path="/financeiro/novo-receita"
         element={
           <ProtectedRoute>
-            <NewExpense />
+            <NovaReceita />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/financial/receive-payment"
+        path="/financeiro/novo-despesa"
         element={
           <ProtectedRoute>
-            <ReceivePayment />
+            <NovaDespesa />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<NotFound />} />
+      <Route
+        path="/financeiro/receber-pagamento"
+        element={
+          <ProtectedRoute>
+            <ReceberPagamento />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<NaoEncontrada />} />
     </Routes>
   );
 };

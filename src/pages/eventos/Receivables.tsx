@@ -1,12 +1,12 @@
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Plus, Search, CreditCard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
+import { ArrowLeft, CreditCard, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Receivables = () => {
   const navigate = useNavigate();
@@ -127,7 +127,7 @@ const Receivables = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/events')}
+              onClick={() => navigate('/eventos')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -199,7 +199,7 @@ const Receivables = () => {
             />
           </div>
           <Button
-            onClick={() => navigate('/events/receivables/new')}
+            onClick={() => navigate('/eventos/contas-a-receber/novo')}
             className="bg-black text-white hover:bg-gray-800 gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -245,7 +245,7 @@ const Receivables = () => {
                           variant="outline"
                           size="sm"
                           className="border-black text-black hover:bg-black hover:text-white"
-                          onClick={() => navigate(`/events/receivables/${receivable.id}/edit`)}
+                          onClick={() => navigate(`/eventos/contas-a-receber/${receivable.id}/editar`)}
                         >
                           Editar
                         </Button>
@@ -253,7 +253,7 @@ const Receivables = () => {
                           <Button
                             size="sm"
                             className="bg-green-600 text-white hover:bg-green-700"
-                            onClick={() => navigate(`/events/receivables/${receivable.id}/receive`)}
+                            onClick={() => navigate(`/eventos/contas-a-receber/${receivable.id}/receber`)}
                           >
                             Receber
                           </Button>

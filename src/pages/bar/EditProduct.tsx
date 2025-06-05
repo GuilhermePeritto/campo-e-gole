@@ -1,13 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EditProduct = () => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const EditProduct = () => {
       title: "Produto atualizado!",
       description: `${formData.name} foi atualizado com sucesso.`,
     });
-    navigate('/bar/products');
+    navigate('/bar/produtos');
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -80,7 +80,7 @@ const EditProduct = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/bar/products')}
+                onClick={() => navigate('/bar/produtos')}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -184,7 +184,7 @@ const EditProduct = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/bar/products')}
+                  onClick={() => navigate('/bar/produtos')}
                   className="flex-1"
                 >
                   Cancelar

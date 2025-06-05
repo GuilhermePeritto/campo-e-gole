@@ -1,104 +1,93 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Search, Filter, Calendar, DollarSign } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
+import { ArrowLeft, Filter, Plus, Search, TrendingDown } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
 
-const AccountsPayable = () => {
+const Despesas = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
 
-  const mockPayables = [
+  const mockDespesas = [
     {
       id: 1,
-      description: 'Fornecedor de Bebidas - Pedido #123',
-      supplier: 'Distribuidora XYZ',
-      amount: 850.00,
-      dueDate: '2024-06-15',
-      category: 'Fornecedores',
-      status: 'Pendente'
+      description: 'Energia Elétrica - Janeiro',
+      amount: 450.00,
+      date: '2024-06-01',
+      category: 'Utilidades',
+      status: 'Pago'
     },
     {
       id: 2,
-      description: 'Energia Elétrica - Junho',
-      supplier: 'Companhia Elétrica',
-      amount: 450.00,
-      dueDate: '2024-06-10',
-      category: 'Utilidades',
-      status: 'Vencido'
+      description: 'Compra de Equipamentos',
+      amount: 1200.00,
+      date: '2024-06-03',
+      category: 'Equipamentos',
+      status: 'Pago'
     },
     {
       id: 3,
-      description: 'Salário - João da Silva',
-      supplier: 'Funcionário',
-      amount: 2500.00,
-      dueDate: '2024-06-30',
+      description: 'Salários - Junho',
+      amount: 3500.00,
+      date: '2024-06-05',
       category: 'Pessoal',
       status: 'Pendente'
     },
     {
       id: 4,
-      description: 'Material de Limpeza',
-      supplier: 'Limpeza Total Ltda',
-      amount: 180.00,
-      dueDate: '2024-06-08',
-      category: 'Manutenção',
-      status: 'Vencido'
+      description: 'Água - Janeiro',
+      amount: 120.00,
+      date: '2024-06-02',
+      category: 'Utilidades',
+      status: 'Pago'
     },
     {
       id: 5,
-      description: 'Equipamentos Esportivos',
-      supplier: 'Sport Equipment Inc',
-      amount: 1200.00,
-      dueDate: '2024-06-25',
-      category: 'Equipamentos',
-      status: 'Pendente'
+      description: 'Material de Limpeza',
+      amount: 85.00,
+      date: '2024-06-04',
+      category: 'Manutenção',
+      status: 'Pago'
     }
   ];
 
-  const filteredPayables = mockPayables.filter(payable => {
-    const matchesSearch = payable.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payable.supplier.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || payable.category === filterCategory;
+  const filteredDespesas = mockDespesas.filter(expense => {
+    const matchesSearch = expense.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === 'all' || expense.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const pagination = usePagination(filteredPayables, {
+  const pagination = usePagination(filteredDespesas, {
     pageSize: 10,
-    totalItems: filteredPayables.length
+    totalItems: filteredDespesas.length
   });
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Fornecedores': return 'bg-blue-100 text-blue-800';
       case 'Utilidades': return 'bg-yellow-100 text-yellow-800';
+      case 'Equipamentos': return 'bg-blue-100 text-blue-800';
       case 'Pessoal': return 'bg-green-100 text-green-800';
       case 'Manutenção': return 'bg-purple-100 text-purple-800';
-      case 'Equipamentos': return 'bg-indigo-100 text-indigo-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Pendente': return 'bg-orange-100 text-orange-800';
-      case 'Vencido': return 'bg-red-100 text-red-800';
       case 'Pago': return 'bg-green-100 text-green-800';
+      case 'Pendente': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const totalAmount = filteredPayables.reduce((sum, payable) => sum + payable.amount, 0);
-  const overdueAmount = filteredPayables
-    .filter(p => p.status === 'Vencido')
-    .reduce((sum, payable) => sum + payable.amount, 0);
+  const totalAmount = filteredDespesas.reduce((sum, expense) => sum + expense.amount, 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,20 +98,20 @@ const AccountsPayable = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/financial')}
+                onClick={() => navigate('/financeiro')}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-purple-600" />
-                <h1 className="text-xl font-semibold">Contas a Pagar</h1>
+                <TrendingDown className="h-5 w-5 text-red-600" />
+                <h1 className="text-xl font-semibold">Despesas</h1>
               </div>
             </div>
-            <Button onClick={() => navigate('/financial/new-payable')} className="gap-2">
+            <Button onClick={() => navigate('/financeiro/novo-despesa')} className="gap-2">
               <Plus className="h-4 w-4" />
-              Nova Conta
+              Nova Despesa
             </Button>
           </div>
         </div>
@@ -130,30 +119,16 @@ const AccountsPayable = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Resumo */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total a Pagar</p>
-                  <p className="text-2xl font-bold text-purple-600">R$ {totalAmount.toFixed(2).replace('.', ',')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-red-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-red-600" />
+                  <TrendingDown className="h-5 w-5 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Vencidos</p>
-                  <p className="text-2xl font-bold text-red-600">R$ {overdueAmount.toFixed(2).replace('.', ',')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Total Despesas</p>
+                  <p className="text-2xl font-bold text-red-600">R$ {totalAmount.toFixed(2).replace('.', ',')}</p>
                 </div>
               </div>
             </CardContent>
@@ -162,12 +137,12 @@ const AccountsPayable = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <TrendingDown className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total de Contas</p>
-                  <p className="text-2xl font-bold text-blue-600">{filteredPayables.length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Pagas</p>
+                  <p className="text-2xl font-bold text-green-600">{filteredDespesas.filter(e => e.status === 'Pago').length}</p>
                 </div>
               </div>
             </CardContent>
@@ -176,12 +151,12 @@ const AccountsPayable = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-yellow-600" />
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <TrendingDown className="h-5 w-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Vencidas</p>
-                  <p className="text-2xl font-bold text-yellow-600">{filteredPayables.filter(p => p.status === 'Vencido').length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Pendentes</p>
+                  <p className="text-2xl font-bold text-orange-600">{filteredDespesas.filter(e => e.status === 'Pendente').length}</p>
                 </div>
               </div>
             </CardContent>
@@ -195,7 +170,7 @@ const AccountsPayable = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Buscar por descrição ou fornecedor..."
+                  placeholder="Buscar despesas..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -208,23 +183,22 @@ const AccountsPayable = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as categorias</SelectItem>
-                  <SelectItem value="Fornecedores">Fornecedores</SelectItem>
                   <SelectItem value="Utilidades">Utilidades</SelectItem>
+                  <SelectItem value="Equipamentos">Equipamentos</SelectItem>
                   <SelectItem value="Pessoal">Pessoal</SelectItem>
                   <SelectItem value="Manutenção">Manutenção</SelectItem>
-                  <SelectItem value="Equipamentos">Equipamentos</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </CardContent>
         </Card>
 
-        {/* Tabela de Contas a Pagar */}
+        {/* Tabela de Despesas */}
         <Card>
           <CardHeader>
-            <CardTitle>Contas a Pagar</CardTitle>
+            <CardTitle>Lista de Despesas</CardTitle>
             <CardDescription>
-              Todas as contas pendentes de pagamento
+              Histórico completo de despesas do sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -232,42 +206,35 @@ const AccountsPayable = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Descrição</TableHead>
-                  <TableHead>Fornecedor</TableHead>
                   <TableHead>Valor</TableHead>
-                  <TableHead>Vencimento</TableHead>
+                  <TableHead>Data</TableHead>
                   <TableHead>Categoria</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pagination.paginatedData.map((payable) => (
-                  <TableRow key={payable.id}>
-                    <TableCell className="font-medium">{payable.description}</TableCell>
-                    <TableCell>{payable.supplier}</TableCell>
-                    <TableCell className="font-bold text-purple-600">
-                      R$ {payable.amount.toFixed(2).replace('.', ',')}
+                {pagination.paginatedData.map((expense) => (
+                  <TableRow key={expense.id}>
+                    <TableCell className="font-medium">{expense.description}</TableCell>
+                    <TableCell className="font-bold text-red-600">
+                      R$ {expense.amount.toFixed(2).replace('.', ',')}
                     </TableCell>
-                    <TableCell>{new Date(payable.dueDate).toLocaleDateString('pt-BR')}</TableCell>
+                    <TableCell>{new Date(expense.date).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(payable.category)}`}>
-                        {payable.category}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(expense.category)}`}>
+                        {expense.category}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(payable.status)}`}>
-                        {payable.status}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(expense.status)}`}>
+                        {expense.status}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          Pagar
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Detalhes
-                        </Button>
-                      </div>
+                      <Button variant="outline" size="sm">
+                        Detalhes
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -294,4 +261,4 @@ const AccountsPayable = () => {
   );
 };
 
-export default AccountsPayable;
+export default Despesas;

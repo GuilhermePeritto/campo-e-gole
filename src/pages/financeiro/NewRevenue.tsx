@@ -9,21 +9,22 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const NewExpense = () => {
+const NovaReceita = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
     date: '',
+    module: '',
     category: '',
-    supplier: '',
     observations: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Nova despesa:', formData);
-    navigate('/financial/expenses');
+    // Lógica para salvar a receita
+    console.log('Nova receita:', formData);
+    navigate('/financeiro/receitas');
   };
 
   return (
@@ -34,13 +35,13 @@ const NewExpense = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/financial/expenses')}
+              onClick={() => navigate('/financeiro/receitas')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>
-            <h1 className="text-xl font-semibold">Nova Despesa</h1>
+            <h1 className="text-xl font-semibold">Nova Receita</h1>
           </div>
         </div>
       </header>
@@ -48,9 +49,9 @@ const NewExpense = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Cadastrar Nova Despesa</CardTitle>
+            <CardTitle>Cadastrar Nova Receita</CardTitle>
             <CardDescription>
-              Registre uma nova saída de despesa no sistema
+              Registre uma nova entrada de receita no sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -62,7 +63,7 @@ const NewExpense = () => {
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    placeholder="Ex: Conta de energia elétrica"
+                    placeholder="Ex: Reserva Quadra A - Cliente"
                     required
                   />
                 </div>
@@ -92,30 +93,33 @@ const NewExpense = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="module">Módulo *</Label>
+                  <Select value={formData.module} onValueChange={(value) => setFormData({...formData, module: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o módulo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="eventos">Eventos</SelectItem>
+                      <SelectItem value="bar">Bar</SelectItem>
+                      <SelectItem value="escolinha">Escolinha</SelectItem>
+                      <SelectItem value="outros">Outros</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="category">Categoria *</Label>
                   <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="utilidades">Utilidades</SelectItem>
-                      <SelectItem value="equipamentos">Equipamentos</SelectItem>
-                      <SelectItem value="pessoal">Pessoal</SelectItem>
-                      <SelectItem value="manutencao">Manutenção</SelectItem>
-                      <SelectItem value="fornecedores">Fornecedores</SelectItem>
+                      <SelectItem value="reservas">Reservas</SelectItem>
+                      <SelectItem value="vendas">Vendas</SelectItem>
+                      <SelectItem value="mensalidades">Mensalidades</SelectItem>
                       <SelectItem value="outros">Outros</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="supplier">Fornecedor</Label>
-                  <Input
-                    id="supplier"
-                    value={formData.supplier}
-                    onChange={(e) => setFormData({...formData, supplier: e.target.value})}
-                    placeholder="Nome do fornecedor ou prestador de serviço"
-                  />
                 </div>
               </div>
 
@@ -133,12 +137,12 @@ const NewExpense = () => {
               <div className="flex gap-4 pt-4">
                 <Button type="submit" className="gap-2">
                   <Save className="h-4 w-4" />
-                  Salvar Despesa
+                  Salvar Receita
                 </Button>
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate('/financial/expenses')}
+                  onClick={() => navigate('/financeiro/receitas')}
                 >
                   Cancelar
                 </Button>
@@ -151,4 +155,4 @@ const NewExpense = () => {
   );
 };
 
-export default NewExpense;
+export default NovaReceita;

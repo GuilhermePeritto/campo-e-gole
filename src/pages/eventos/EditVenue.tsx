@@ -1,14 +1,14 @@
 
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, MapPin, Plus, X, Palette } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, MapPin, Palette, Plus, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EditVenue = () => {
   const navigate = useNavigate();
@@ -95,7 +95,7 @@ const EditVenue = () => {
       title: "Local atualizado!",
       description: `Dados de ${formData.name} foram atualizados.`,
     });
-    navigate('/events/venues');
+    navigate('/eventos/locais');
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -125,7 +125,7 @@ const EditVenue = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/events/venues')}
+              onClick={() => navigate('/eventos/locais')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -317,7 +317,7 @@ const EditVenue = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/events/venues')}
+                  onClick={() => navigate('/eventos/locais')}
                   className="flex-1 border-gray-300 text-black hover:bg-gray-50"
                 >
                   Cancelar

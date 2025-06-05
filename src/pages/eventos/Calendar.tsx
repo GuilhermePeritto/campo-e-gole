@@ -1,9 +1,9 @@
+import EventDetailsPopup from '@/components/EventDetailsPopup';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import EventDetailsPopup from '@/components/EventDetailsPopup';
 
 const Calendar = () => {
   const navigate = useNavigate();
@@ -143,7 +143,7 @@ const Calendar = () => {
 
   const handleDateClick = (date: Date) => {
     const formattedDate = date.toISOString().split('T')[0];
-    navigate(`/events/reservations/new?date=${formattedDate}`);
+    navigate(`/eventos/reservations/novo?date=${formattedDate}`);
   };
 
   const handleEventClick = (event: any, e: React.MouseEvent) => {
@@ -154,7 +154,7 @@ const Calendar = () => {
 
   const handleEditEvent = () => {
     setIsPopupOpen(false);
-    navigate(`/events/reservations/${selectedEvent.id}/edit`);
+    navigate(`/eventos/reservations/${selectedEvent.id}/editar`);
   };
 
   const getDateTitle = () => {
@@ -192,7 +192,7 @@ const Calendar = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/events')}
+                onClick={() => navigate('/eventos')}
                 className="gap-2 text-gray-900 dark:text-gray-300"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -232,7 +232,7 @@ const Calendar = () => {
                 ))}
               </div>
 
-              <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/events/reservations/new')}>
+              <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/eventos/reservations/novo')}>
                 <Plus className="h-4 w-4" />
                 Nova Reserva
               </Button>

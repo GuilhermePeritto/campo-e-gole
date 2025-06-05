@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Receipt, Search, Eye, X } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, Eye, Plus, Receipt, Search, X } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Comanda {
   id: number;
@@ -76,7 +75,7 @@ const Comandas = () => {
 
   const closeComanda = (comandaId: number) => {
     // Redirecionar para o checkout ao invés de fechar diretamente
-    navigate('/bar/checkout');
+    navigate('/bar/conferir');
   };
 
   return (
@@ -100,7 +99,7 @@ const Comandas = () => {
               </div>
             </div>
 
-            <Button onClick={() => navigate('/bar/comandas/new')} className="gap-2">
+            <Button onClick={() => navigate('/bar/comandas/novo')} className="gap-2">
               <Plus className="h-4 w-4" />
               Nova Comanda
             </Button>

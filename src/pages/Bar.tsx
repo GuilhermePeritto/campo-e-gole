@@ -13,7 +13,7 @@ const Bar = () => {
       description: 'Registrar venda livre no caixa',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/bar/sales/new')
+      action: () => navigate('/bar/sales/novo')
     },
     {
       title: 'Comandas',
@@ -27,21 +27,21 @@ const Bar = () => {
       description: 'Controlar produtos e estoque',
       icon: Package,
       color: 'bg-purple-600',
-      action: () => navigate('/bar/inventory')
+      action: () => navigate('/bar/estoque')
     },
     {
       title: 'Produtos',
       description: 'Cadastrar e gerenciar produtos',
       icon: ShoppingCart,
       color: 'bg-blue-600',
-      action: () => navigate('/bar/products')
+      action: () => navigate('/bar/produtos')
     },
     {
       title: 'Relatórios',
       description: 'Vendas e análises financeiras',
       icon: BarChart3,
       color: 'bg-green-800',
-      action: () => navigate('/bar/reports')
+      action: () => navigate('/bar/relatorios')
     }
   ];
 
@@ -67,7 +67,7 @@ const Bar = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/painel')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -167,7 +167,7 @@ const Bar = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4"
-                onClick={() => navigate('/bar/inventory')}
+                onClick={() => navigate('/bar/estoque')}
               >
                 Gerenciar Estoque
               </Button>
@@ -211,7 +211,7 @@ const Bar = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4"
-                onClick={() => navigate('/bar/reports')}
+                onClick={() => navigate('/bar/relatorios')}
               >
                 Relatório Detalhado
               </Button>

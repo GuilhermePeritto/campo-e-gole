@@ -1,13 +1,13 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ShoppingCart, Search, Edit, Trash2, Plus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, Edit, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -82,7 +82,7 @@ const Products = () => {
               </div>
             </div>
 
-            <Button onClick={() => navigate('/bar/products/new')} className="gap-2">
+            <Button onClick={() => navigate('/bar/produtos/novo')} className="gap-2">
               <Plus className="h-4 w-4" />
               Novo Produto
             </Button>
@@ -197,7 +197,7 @@ const Products = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate(`/bar/products/${product.id}/edit`)}
+                        onClick={() => navigate(`/bar/produtos/${product.id}/editar`)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

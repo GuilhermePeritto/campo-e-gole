@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-const Reports = () => {
+const EventoRelatorios = () => {
   const navigate = useNavigate();
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -56,7 +56,7 @@ const Reports = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/events')}
+                onClick={() => navigate('/eventos')}
                 className="gap-2 text-gray-900 dark:text-gray-300"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -272,4 +272,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default EventoRelatorios;

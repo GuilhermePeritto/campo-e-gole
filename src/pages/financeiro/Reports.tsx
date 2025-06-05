@@ -1,10 +1,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Download, Calendar, PieChart, BarChart3, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, Download, PieChart, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Reports = () => {
+const FinanceiroRelatorios = () => {
   const navigate = useNavigate();
 
   const reportTypes = [
@@ -42,7 +42,7 @@ const Reports = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/financial')}
+              onClick={() => navigate('/financeiro')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -127,4 +127,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default FinanceiroRelatorios;

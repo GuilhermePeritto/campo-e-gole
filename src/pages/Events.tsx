@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, MapPin, Plus, Users, CreditCard } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, CreditCard, MapPin, Plus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Events = () => {
@@ -13,42 +13,42 @@ const Events = () => {
       description: 'Criar uma nova reserva esportiva',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/events/reservations/new')
+      action: () => navigate('/eventos/reservations/novo')
     },
     {
       title: 'Visualizar Agenda',
       description: 'Ver agenda completa dos locais',
       icon: Calendar,
       color: 'bg-black',
-      action: () => navigate('/events/calendar')
+      action: () => navigate('/eventos/agenda')
     },
     {
       title: 'Gerenciar Locais',
       description: 'Cadastrar e gerenciar locais esportivos',
       icon: MapPin,
       color: 'bg-black',
-      action: () => navigate('/events/venues')
+      action: () => navigate('/eventos/locais')
     },
     {
       title: 'Clientes',
       description: 'Gerenciar clientes e histórico',
       icon: Users,
       color: 'bg-black',
-      action: () => navigate('/events/clients')
+      action: () => navigate('/eventos/clientes')
     },
     {
       title: 'Contas a Receber',
       description: 'Gerenciar pagamentos e cobranças',
       icon: CreditCard,
       color: 'bg-black',
-      action: () => navigate('/events/receivables')
+      action: () => navigate('/eventos/contas-a-receber')
     },
     {
       title: 'Relatórios',
       description: 'Análises financeiras e ocupação',
       icon: BarChart3,
       color: 'bg-black',
-      action: () => navigate('/events/reports')
+      action: () => navigate('/eventos/relatorios')
     }
   ];
 
@@ -74,7 +74,7 @@ const Events = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/painel')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -144,7 +144,7 @@ const Events = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/events/calendar')}
+                onClick={() => navigate('/eventos/agenda')}
               >
                 Ver Agenda Completa
               </Button>
@@ -191,7 +191,7 @@ const Events = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/events/reports')}
+                onClick={() => navigate('/eventos/relatorios')}
               >
                 Ver Relatório Completo
               </Button>
@@ -224,7 +224,7 @@ const Events = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/events/reports')}
+                onClick={() => navigate('/eventos/relatorios')}
               >
                 Análise Detalhada
               </Button>
@@ -259,7 +259,7 @@ const Events = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/events/receivables')}
+                onClick={() => navigate('/eventos/contas-a-receber')}
               >
                 Ver Todas as Contas
               </Button>

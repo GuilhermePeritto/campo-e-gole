@@ -49,7 +49,7 @@ const Settings = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/painel')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -382,7 +382,7 @@ const Settings = () => {
         </Tabs>
 
         <div className="flex justify-end gap-4 pt-6">
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+          <Button variant="outline" onClick={() => navigate('/painel')}>
             Cancelar
           </Button>
           <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">

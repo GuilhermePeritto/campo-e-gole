@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, DollarSign } from 'lucide-react';
+import { ArrowLeft, DollarSign, Save } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ReceivePayment = () => {
+const ReceberPagamento = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     receivableId: '',
@@ -28,7 +28,7 @@ const ReceivePayment = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Recebimento:', formData);
-    navigate('/financial/accounts-receivable');
+    navigate('/financeiro/contas-a-receber');
   };
 
   return (
@@ -39,7 +39,7 @@ const ReceivePayment = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/financial/accounts-receivable')}
+              onClick={() => navigate('/financeiro/contas-a-receber')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -140,7 +140,7 @@ const ReceivePayment = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate('/financial/accounts-receivable')}
+                  onClick={() => navigate('/financeiro/contas-a-receber')}
                 >
                   Cancelar
                 </Button>
@@ -153,4 +153,4 @@ const ReceivePayment = () => {
   );
 };
 
-export default ReceivePayment;
+export default ReceberPagamento;

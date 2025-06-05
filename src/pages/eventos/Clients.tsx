@@ -1,12 +1,12 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Calendar, Edit, Mail, Phone, Plus, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
 
 const Clients = () => {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ const Clients = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/events')}
+                onClick={() => navigate('/eventos')}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />

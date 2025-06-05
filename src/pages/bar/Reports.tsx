@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-const Reports = () => {
+const BarRelatorios = () => {
   const navigate = useNavigate();
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -309,4 +309,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default BarRelatorios;

@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, CreditCard, Save } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 
 const EditReceivable = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const EditReceivable = () => {
     e.preventDefault();
     console.log('Dados da conta atualizados:', formData);
     // Aqui seria feita a atualização no backend
-    navigate('/events/receivables');
+    navigate('/eventos/contas-a-receber');
   };
 
   const handleChange = (field: string, value: string) => {
@@ -49,7 +49,7 @@ const EditReceivable = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/events/receivables')}
+              onClick={() => navigate('/eventos/contas-a-receber')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -134,7 +134,7 @@ const EditReceivable = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/events/receivables')}
+                  onClick={() => navigate('/eventos/contas-a-receber')}
                   className="border-black text-black hover:bg-gray-100"
                 >
                   Cancelar

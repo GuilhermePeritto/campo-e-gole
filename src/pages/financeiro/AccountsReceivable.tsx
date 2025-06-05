@@ -1,16 +1,16 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Search, Filter, Calendar, DollarSign } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
+import { ArrowLeft, Calendar, DollarSign, Filter, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
 
-const AccountsReceivable = () => {
+const ContasAReceber = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterModule, setFilterModule] = useState('all');
@@ -105,7 +105,7 @@ const AccountsReceivable = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/financial')}
+              onClick={() => navigate('/financeiro')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -283,4 +283,4 @@ const AccountsReceivable = () => {
   );
 };
 
-export default AccountsReceivable;
+export default ContasAReceber;

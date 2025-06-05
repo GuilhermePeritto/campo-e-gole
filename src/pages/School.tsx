@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users2, Plus, CreditCard, Calendar, BarChart3 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const School = () => {
@@ -13,7 +13,7 @@ const School = () => {
       description: 'Cadastrar um novo aluno',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/school/students/new')
+      action: () => navigate('/school/students/novo')
     },
     {
       title: 'Gerenciar Alunos',
@@ -41,7 +41,7 @@ const School = () => {
       description: 'Análises e inadimplência',
       icon: BarChart3,
       color: 'bg-black',
-      action: () => navigate('/school/reports')
+      action: () => navigate('/school/relatorios')
     }
   ];
 
@@ -68,7 +68,7 @@ const School = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/painel')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -203,7 +203,7 @@ const School = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/school/reports')}
+                onClick={() => navigate('/school/relatorios')}
               >
                 Ver Relatórios
               </Button>

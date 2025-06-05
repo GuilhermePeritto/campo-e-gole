@@ -1,93 +1,97 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Search, Filter, TrendingDown } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
+import { ArrowLeft, Filter, Plus, Search, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
 
-const Expenses = () => {
+const Receitas = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterModule, setFilterModule] = useState('all');
 
-  const mockExpenses = [
+  const mockReceitas = [
     {
       id: 1,
-      description: 'Energia Elétrica - Janeiro',
-      amount: 450.00,
-      date: '2024-06-01',
-      category: 'Utilidades',
-      status: 'Pago'
+      description: 'Reserva Quadra A - João Silva',
+      amount: 120.00,
+      date: '2024-06-05',
+      module: 'eventos',
+      category: 'Reservas',
+      status: 'Recebido'
     },
     {
       id: 2,
-      description: 'Compra de Equipamentos',
-      amount: 1200.00,
-      date: '2024-06-03',
-      category: 'Equipamentos',
-      status: 'Pago'
+      description: 'Venda Bar - Mesa 5',
+      amount: 85.50,
+      date: '2024-06-05',
+      module: 'bar',
+      category: 'Vendas',
+      status: 'Recebido'
     },
     {
       id: 3,
-      description: 'Salários - Junho',
-      amount: 3500.00,
-      date: '2024-06-05',
-      category: 'Pessoal',
-      status: 'Pendente'
+      description: 'Mensalidade Junho - Pedro Martins',
+      amount: 150.00,
+      date: '2024-06-01',
+      module: 'escolinha',
+      category: 'Mensalidades',
+      status: 'Recebido'
     },
     {
       id: 4,
-      description: 'Água - Janeiro',
-      amount: 120.00,
-      date: '2024-06-02',
-      category: 'Utilidades',
-      status: 'Pago'
+      description: 'Reserva Campo 1 - Time Unidos FC',
+      amount: 200.00,
+      date: '2024-06-04',
+      module: 'eventos',
+      category: 'Reservas',
+      status: 'Pendente'
     },
     {
       id: 5,
-      description: 'Material de Limpeza',
-      amount: 85.00,
-      date: '2024-06-04',
-      category: 'Manutenção',
-      status: 'Pago'
+      description: 'Comanda Bar - Evento Corporativo',
+      amount: 450.00,
+      date: '2024-06-03',
+      module: 'bar',
+      category: 'Vendas',
+      status: 'Recebido'
     }
   ];
 
-  const filteredExpenses = mockExpenses.filter(expense => {
-    const matchesSearch = expense.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || expense.category === filterCategory;
-    return matchesSearch && matchesCategory;
+  const filteredReceitas = mockReceitas.filter(revenue => {
+    const matchesSearch = revenue.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesModule = filterModule === 'all' || revenue.module === filterModule;
+    return matchesSearch && matchesModule;
   });
 
-  const pagination = usePagination(filteredExpenses, {
+  const pagination = usePagination(filteredReceitas, {
     pageSize: 10,
-    totalItems: filteredExpenses.length
+    totalItems: filteredReceitas.length
   });
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Utilidades': return 'bg-yellow-100 text-yellow-800';
-      case 'Equipamentos': return 'bg-blue-100 text-blue-800';
-      case 'Pessoal': return 'bg-green-100 text-green-800';
-      case 'Manutenção': return 'bg-purple-100 text-purple-800';
+  const getModuleColor = (module: string) => {
+    switch (module) {
+      case 'eventos': return 'bg-green-100 text-green-800';
+      case 'bar': return 'bg-blue-100 text-blue-800';
+      case 'escolinha': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Pago': return 'bg-green-100 text-green-800';
+      case 'Recebido': return 'bg-green-100 text-green-800';
       case 'Pendente': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const totalAmount = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const totalAmount = filteredReceitas.reduce((sum, revenue) => sum + revenue.amount, 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,20 +102,20 @@ const Expenses = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/financial')}
+                onClick={() => navigate('/financeiro')}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex items-center gap-2">
-                <TrendingDown className="h-5 w-5 text-red-600" />
-                <h1 className="text-xl font-semibold">Despesas</h1>
+                <TrendingUp className="h-5 w-5 text-green-600" />
+                <h1 className="text-xl font-semibold">Receitas</h1>
               </div>
             </div>
-            <Button onClick={() => navigate('/financial/new-expense')} className="gap-2">
+            <Button onClick={() => navigate('/financeiro/novo-receita')} className="gap-2">
               <Plus className="h-4 w-4" />
-              Nova Despesa
+              Nova Receita
             </Button>
           </div>
         </div>
@@ -123,12 +127,12 @@ const Expenses = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <TrendingDown className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Despesas</p>
-                  <p className="text-2xl font-bold text-red-600">R$ {totalAmount.toFixed(2).replace('.', ',')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Total Receitas</p>
+                  <p className="text-2xl font-bold text-green-600">R$ {totalAmount.toFixed(2).replace('.', ',')}</p>
                 </div>
               </div>
             </CardContent>
@@ -137,12 +141,12 @@ const Expenses = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <TrendingDown className="h-5 w-5 text-green-600" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Pagas</p>
-                  <p className="text-2xl font-bold text-green-600">{filteredExpenses.filter(e => e.status === 'Pago').length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Recebidas</p>
+                  <p className="text-2xl font-bold text-blue-600">{filteredReceitas.filter(r => r.status === 'Recebido').length}</p>
                 </div>
               </div>
             </CardContent>
@@ -152,11 +156,11 @@ const Expenses = () => {
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-orange-100 rounded-lg">
-                  <TrendingDown className="h-5 w-5 text-orange-600" />
+                  <TrendingUp className="h-5 w-5 text-orange-600" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold text-orange-600">{filteredExpenses.filter(e => e.status === 'Pendente').length}</p>
+                  <p className="text-2xl font-bold text-orange-600">{filteredReceitas.filter(r => r.status === 'Pendente').length}</p>
                 </div>
               </div>
             </CardContent>
@@ -170,35 +174,34 @@ const Expenses = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Buscar despesas..."
+                  placeholder="Buscar receitas..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <Select value={filterModule} onValueChange={setFilterModule}>
                 <SelectTrigger className="w-48">
                   <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filtrar por categoria" />
+                  <SelectValue placeholder="Filtrar por módulo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas as categorias</SelectItem>
-                  <SelectItem value="Utilidades">Utilidades</SelectItem>
-                  <SelectItem value="Equipamentos">Equipamentos</SelectItem>
-                  <SelectItem value="Pessoal">Pessoal</SelectItem>
-                  <SelectItem value="Manutenção">Manutenção</SelectItem>
+                  <SelectItem value="all">Todos os módulos</SelectItem>
+                  <SelectItem value="eventos">Eventos</SelectItem>
+                  <SelectItem value="bar">Bar</SelectItem>
+                  <SelectItem value="escolinha">Escolinha</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </CardContent>
         </Card>
 
-        {/* Tabela de Despesas */}
+        {/* Tabela de Receitas */}
         <Card>
           <CardHeader>
-            <CardTitle>Lista de Despesas</CardTitle>
+            <CardTitle>Lista de Receitas</CardTitle>
             <CardDescription>
-              Histórico completo de despesas do sistema
+              Histórico completo de receitas do sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -208,27 +211,29 @@ const Expenses = () => {
                   <TableHead>Descrição</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Data</TableHead>
+                  <TableHead>Módulo</TableHead>
                   <TableHead>Categoria</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pagination.paginatedData.map((expense) => (
-                  <TableRow key={expense.id}>
-                    <TableCell className="font-medium">{expense.description}</TableCell>
-                    <TableCell className="font-bold text-red-600">
-                      R$ {expense.amount.toFixed(2).replace('.', ',')}
+                {pagination.paginatedData.map((revenue) => (
+                  <TableRow key={revenue.id}>
+                    <TableCell className="font-medium">{revenue.description}</TableCell>
+                    <TableCell className="font-bold text-green-600">
+                      R$ {revenue.amount.toFixed(2).replace('.', ',')}
                     </TableCell>
-                    <TableCell>{new Date(expense.date).toLocaleDateString('pt-BR')}</TableCell>
+                    <TableCell>{new Date(revenue.date).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(expense.category)}`}>
-                        {expense.category}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getModuleColor(revenue.module)}`}>
+                        {revenue.module === 'eventos' ? 'Eventos' : revenue.module === 'bar' ? 'Bar' : 'Escolinha'}
                       </span>
                     </TableCell>
+                    <TableCell>{revenue.category}</TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(expense.status)}`}>
-                        {expense.status}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(revenue.status)}`}>
+                        {revenue.status}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -261,4 +266,4 @@ const Expenses = () => {
   );
 };
 
-export default Expenses;
+export default Receitas;

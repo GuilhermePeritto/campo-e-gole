@@ -1,11 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowLeft, Plus, Search, Users2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Students = () => {
   const navigate = useNavigate();
@@ -102,7 +102,7 @@ const Students = () => {
             />
           </div>
           <Button
-            onClick={() => navigate('/school/students/new')}
+            onClick={() => navigate('/school/students/novo')}
             className="bg-black text-white hover:bg-gray-800 gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -150,7 +150,7 @@ const Students = () => {
                           variant="outline"
                           size="sm"
                           className="border-black text-black hover:bg-black hover:text-white"
-                          onClick={() => navigate(`/school/students/${student.id}/edit`)}
+                          onClick={() => navigate(`/school/students/${student.id}/editar`)}
                         >
                           Editar
                         </Button>

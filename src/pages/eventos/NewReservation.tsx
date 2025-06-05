@@ -7,13 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Calendar, Clock, MapPin, User, Search } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Search, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-const EditReservation = () => {
+const NewReservation = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     clientEmail: '',
     clientName: '',
@@ -32,27 +32,13 @@ const EditReservation = () => {
   const [emailSearching, setEmailSearching] = useState(false);
   const [clientFound, setClientFound] = useState(false);
 
-  // Carregar dados da reserva para edição
+  // Preencher data automaticamente se vier da agenda
   useEffect(() => {
-    // Simular carregamento dos dados da reserva
-    const mockReservationData = {
-      clientEmail: 'joao@exemplo.com',
-      clientName: 'João Silva',
-      clientPhone: '(11) 99999-9999',
-      venue: 'Quadra A - Futebol Society',
-      sport: 'Futebol Society',
-      date: '2024-06-15',
-      startTime: '19:00',
-      endTime: '20:00',
-      recurring: false,
-      recurringType: '',
-      customRecurringDays: '',
-      notes: 'Reserva para treino do time'
-    };
-    
-    setFormData(mockReservationData);
-    setClientFound(true);
-  }, [id]);
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      setFormData(prev => ({ ...prev, date: dateParam }));
+    }
+  }, [searchParams]);
 
   const venues = [
     { name: 'Quadra A - Futebol Society', color: '#10B981' },
@@ -80,7 +66,9 @@ const EditReservation = () => {
     
     setEmailSearching(true);
     
+    // Simular busca no banco de dados
     setTimeout(() => {
+      // Simular cliente encontrado (em produção, seria uma chamada real à API)
       const mockClientExists = formData.clientEmail === 'joao@exemplo.com';
       
       if (mockClientExists) {
@@ -124,10 +112,10 @@ const EditReservation = () => {
     }
 
     toast({
-      title: "Reserva atualizada com sucesso!",
-      description: "As alterações da reserva foram salvas.",
+      title: "Reserva criada com sucesso!",
+      description: "A nova reserva foi adicionada à agenda.",
     });
-    navigate('/events');
+    navigate('/eventos');
   };
 
   return (
@@ -138,7 +126,7 @@ const EditReservation = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/events')}
+              onClick={() => navigate('/eventos')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -146,7 +134,7 @@ const EditReservation = () => {
             </Button>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Editar Reserva</h1>
+              <h1 className="text-xl font-semibold">Nova Reserva</h1>
             </div>
           </div>
         </div>
@@ -155,9 +143,9 @@ const EditReservation = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Editar Reserva #{id}</CardTitle>
+            <CardTitle>Criar Nova Reserva</CardTitle>
             <CardDescription>
-              Atualize as informações da reserva esportiva
+              Preencha as informações para criar uma nova reserva esportiva
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -369,16 +357,16 @@ const EditReservation = () => {
                   className="w-full min-h-[100px] p-3 border rounded-md resize-none"
                   value={formData.notes}
                   onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                  placeholder="Informações adicionais sobre a reserva..."
+                  placeholder="Informações adicionais sobre a reserva, altura da rede necessária, equipamentos específicos..."
                 />
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button type="button" variant="outline" onClick={() => navigate('/events')} className="flex-1">
+                <Button type="button" variant="outline" onClick={() => navigate('/eventos')} className="flex-1">
                   Cancelar
                 </Button>
                 <Button type="submit" className="flex-1">
-                  Salvar Alterações
+                  Criar Reserva
                 </Button>
               </div>
             </form>
@@ -389,4 +377,4 @@ const EditReservation = () => {
   );
 };
 
-export default EditReservation;
+export default NewReservation;

@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, MapPin, Plus, Search, Edit, Trash2, Clock, Users } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, Clock, Edit, MapPin, Plus, Search, Trash2, Users } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Venues = () => {
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ const Venues = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/events')}
+                onClick={() => navigate('/eventos')}
                 className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -88,7 +88,7 @@ const Venues = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/events/venues/new')}
+              onClick={() => navigate('/eventos/locais/novo')}
               className="gap-2 bg-black text-white hover:bg-gray-800"
             >
               <Plus className="h-4 w-4" />
@@ -167,7 +167,7 @@ const Venues = () => {
                       variant="outline" 
                       size="sm" 
                       className="flex-1 gap-1 border-gray-300 text-black hover:bg-gray-50"
-                      onClick={() => navigate(`/events/venues/${venue.id}/edit`)}
+                      onClick={() => navigate(`/eventos/locais/${venue.id}/editar`)}
                     >
                       <Edit className="h-4 w-4" />
                       Editar
@@ -197,7 +197,7 @@ const Venues = () => {
               {searchTerm ? 'Tente ajustar sua busca' : 'Comece criando o primeiro local'}
             </p>
             <Button 
-              onClick={() => navigate('/events/venues/new')}
+              onClick={() => navigate('/eventos/locais/novo')}
               className="gap-2 bg-black text-white hover:bg-gray-800"
             >
               <Plus className="h-4 w-4" />

@@ -27,7 +27,7 @@ const Login = () => {
           title: "Login realizado com sucesso!",
           description: "Bem-vindo ao sistema de gestão esportiva.",
         });
-        navigate('/dashboard');
+        navigate('/painel');
       } else {
         toast({
           title: "Erro no login",

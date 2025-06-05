@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, CreditCard } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 interface ReceivableFormData {
   client: string;
@@ -35,7 +35,7 @@ const NewReceivable = () => {
     setTimeout(() => {
       console.log('Nova conta a receber:', data);
       setIsSubmitting(false);
-      navigate('/events/receivables');
+      navigate('/eventos/contas-a-receber');
     }, 1000);
   };
 
@@ -48,7 +48,7 @@ const NewReceivable = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/events/receivables')}
+              onClick={() => navigate('/eventos/contas-a-receber')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -162,7 +162,7 @@ const NewReceivable = () => {
                     type="button"
                     variant="outline"
                     className="flex-1 border-black text-black hover:bg-black hover:text-white"
-                    onClick={() => navigate('/events/receivables')}
+                    onClick={() => navigate('/eventos/contas-a-receber')}
                   >
                     Cancelar
                   </Button>

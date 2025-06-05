@@ -73,7 +73,7 @@ const ClientHistory = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/events/clients')}
+              onClick={() => navigate('/eventos/clientes')}
               className="gap-2 text-gray-900 dark:text-gray-300"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -135,7 +135,7 @@ const ClientHistory = () => {
 
                 <div className="pt-4">
                   <Button 
-                    onClick={() => navigate(`/events/clients/${id}/edit`)}
+                    onClick={() => navigate(`/eventos/clientes/${id}/editar`)}
                     className="w-full"
                     variant="outline"
                   >

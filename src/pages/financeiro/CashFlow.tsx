@@ -1,13 +1,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { ArrowLeft, DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const CashFlow = () => {
+const FluxoDeCaixa = () => {
   const navigate = useNavigate();
 
-  const mockCashFlow = [
+  const mockFluxoDeCaixa = [
     { date: '2024-06-01', description: 'Saldo Inicial', type: 'inicial', amount: 10000.00 },
     { date: '2024-06-02', description: 'Reserva Quadra A', type: 'entrada', amount: 120.00 },
     { date: '2024-06-02', description: 'Conta de Luz', type: 'saida', amount: -450.00 },
@@ -26,7 +26,7 @@ const CashFlow = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/financial')}
+              onClick={() => navigate('/financeiro')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -96,7 +96,7 @@ const CashFlow = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockCashFlow.map((item, index) => {
+              {mockFluxoDeCaixa.map((item, index) => {
                 if (item.type === 'inicial') {
                   runningBalance = item.amount;
                 } else {
@@ -149,4 +149,4 @@ const CashFlow = () => {
   );
 };
 
-export default CashFlow;
+export default FluxoDeCaixa;

@@ -129,7 +129,7 @@ const UnifiedSale = () => {
     if (saleType === 'comanda') {
       navigate('/bar/comandas');
     } else {
-      navigate('/bar/checkout', { 
+      navigate('/bar/conferir', { 
         state: { 
           items: saleItems, 
           total: getTotal(),

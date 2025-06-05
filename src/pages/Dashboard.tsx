@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Calendar, Coffee, GraduationCap, LogOut, Moon, Settings, Sun, Users, MapPin, DollarSign, Package, ShoppingCart, BarChart3, CreditCard, BookOpen, TrendingUp, PieChart } from "lucide-react";
+import { BarChart3, BookOpen, Calendar, Coffee, CreditCard, DollarSign, GraduationCap, LogOut, MapPin, Moon, Package, PieChart, Settings, ShoppingCart, Sun, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -46,7 +46,7 @@ const Dashboard = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/settings')}
+                onClick={() => navigate('/configuracao')}
                 className="gap-2"
               >
                 <Settings className="h-4 w-4" />
@@ -83,7 +83,7 @@ const Dashboard = () => {
           {/* Módulo Eventos */}
           <Card 
             className="group hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 bg-gradient-to-br from-green-500 to-green-600 border-0"
-            onClick={() => navigate('/events')}
+            onClick={() => navigate('/eventos')}
           >
             <CardContent className="p-8 text-center">
               <div className="mb-6">
@@ -179,7 +179,7 @@ const Dashboard = () => {
           {/* Módulo Financeiro */}
           <Card 
             className="group hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 bg-gradient-to-br from-orange-500 to-orange-600 border-0"
-            onClick={() => navigate('/financial')}
+            onClick={() => navigate('/financeiro')}
           >
             <CardContent className="p-8 text-center">
               <div className="mb-6">

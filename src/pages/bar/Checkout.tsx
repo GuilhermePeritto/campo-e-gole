@@ -1,13 +1,12 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, CreditCard, DollarSign, Receipt } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, CreditCard, Receipt } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface SaleItem {
   id: number;
@@ -196,7 +195,7 @@ const Checkout = () => {
                 <Button variant="outline" onClick={() => navigate('/bar/comandas')}>
                   Comandas
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/bar/sales/new')}>
+                <Button variant="outline" onClick={() => navigate('/bar/sales/novo')}>
                   Nova Venda
                 </Button>
               </div>

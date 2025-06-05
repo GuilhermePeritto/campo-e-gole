@@ -1,13 +1,13 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Package, Search, AlertTriangle, Plus, Minus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { AlertTriangle, ArrowLeft, Minus, Package, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -77,7 +77,7 @@ const Inventory = () => {
               </div>
             </div>
 
-            <Button onClick={() => navigate('/bar/products/new')} className="gap-2">
+            <Button onClick={() => navigate('/bar/produtos/novo')} className="gap-2">
               <Plus className="h-4 w-4" />
               Novo Produto
             </Button>

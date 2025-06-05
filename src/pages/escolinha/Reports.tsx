@@ -1,11 +1,11 @@
+import ExportButton from '@/components/ExportButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Download } from 'lucide-react';
+import { ArrowLeft, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import ExportButton from '@/components/ExportButton';
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-const SchoolReports = () => {
+const EscolinhaRelatorios = () => {
   const navigate = useNavigate();
 
   const monthlyData = [
@@ -179,4 +179,4 @@ const SchoolReports = () => {
   );
 };
 
-export default SchoolReports;
+export default EscolinhaRelatorios;
