@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Login from "./pages/Login";
@@ -14,8 +13,9 @@ import Bar from "./pages/Bar";
 import School from "./pages/School";
 import NotFound from "./pages/NotFound";
 // Event pages
-import NewReservation from "./pages/events/NewReservation";
 import Calendar from "./pages/events/Calendar";
+import NewReservation from "./pages/events/NewReservation";
+import EditReservation from "./pages/events/EditReservation";
 import Venues from "./pages/events/Venues";
 import NewVenue from "./pages/events/NewVenue";
 import EditVenue from "./pages/events/EditVenue";
@@ -27,25 +27,27 @@ import Receivables from "./pages/events/Receivables";
 import NewReceivable from "./pages/events/NewReceivable";
 import EditReceivable from "./pages/events/EditReceivable";
 import ReceivePayment from "./pages/events/ReceivePayment";
-import EventReports from "./pages/events/Reports";
+import EventsReports from "./pages/events/Reports";
 // Bar pages
-import UnifiedSale from "./pages/bar/UnifiedSale";
-import Comandas from "./pages/bar/Comandas";
-import Inventory from "./pages/bar/Inventory";
 import Products from "./pages/bar/Products";
-import BarReports from "./pages/bar/Reports";
 import NewProduct from "./pages/bar/NewProduct";
 import EditProduct from "./pages/bar/EditProduct";
+import Inventory from "./pages/bar/Inventory";
+import Comandas from "./pages/bar/Comandas";
+import NewComanda from "./pages/bar/NewComanda";
 import Checkout from "./pages/bar/Checkout";
+import NewSale from "./pages/bar/NewSale";
+import UnifiedSale from "./pages/bar/UnifiedSale";
+import BarReports from "./pages/bar/Reports";
 // School pages
 import Students from "./pages/school/Students";
 import NewStudent from "./pages/school/NewStudent";
 import EditStudent from "./pages/school/EditStudent";
 import StudentHistory from "./pages/school/StudentHistory";
-import Payments from "./pages/school/Payments";
 import Classes from "./pages/school/Classes";
 import EditClass from "./pages/school/EditClass";
 import ClassStudents from "./pages/school/ClassStudents";
+import Payments from "./pages/school/Payments";
 import SchoolReports from "./pages/school/Reports";
 
 const queryClient = new QueryClient();
@@ -91,15 +93,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/reservations/new"
-        element={
-          <ProtectedRoute>
-            <NewReservation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/events/calendar"
+        path="/eventos/agenda"
         element={
           <ProtectedRoute>
             <Calendar />
@@ -107,7 +101,23 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/venues"
+        path="/eventos/nova-reserva"
+        element={
+          <ProtectedRoute>
+            <NewReservation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos/reserva/:id/editar"
+        element={
+          <ProtectedRoute>
+            <EditReservation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos/locais"
         element={
           <ProtectedRoute>
             <Venues />
@@ -115,7 +125,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/venues/new"
+        path="/eventos/locais/novo"
         element={
           <ProtectedRoute>
             <NewVenue />
@@ -123,7 +133,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/venues/:id/edit"
+        path="/eventos/locais/:id/editar"
         element={
           <ProtectedRoute>
             <EditVenue />
@@ -131,7 +141,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/clients"
+        path="/eventos/clientes"
         element={
           <ProtectedRoute>
             <Clients />
@@ -139,7 +149,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/clients/new"
+        path="/eventos/clientes/novo"
         element={
           <ProtectedRoute>
             <NewClient />
@@ -147,7 +157,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/clients/:id/edit"
+        path="/eventos/clientes/:id/editar"
         element={
           <ProtectedRoute>
             <EditClient />
@@ -155,7 +165,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/clients/:id/history"
+        path="/eventos/clientes/:id/historico"
         element={
           <ProtectedRoute>
             <ClientHistory />
@@ -163,7 +173,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/receivables"
+        path="/eventos/contas-a-receber"
         element={
           <ProtectedRoute>
             <Receivables />
@@ -171,7 +181,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/receivables/new"
+        path="/eventos/contas-a-receber/nova"
         element={
           <ProtectedRoute>
             <NewReceivable />
@@ -179,7 +189,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/receivables/:id/edit"
+        path="/eventos/contas-a-receber/:id/editar"
         element={
           <ProtectedRoute>
             <EditReceivable />
@@ -187,7 +197,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/receivables/:id/receive"
+        path="/eventos/contas-a-receber/:id/receber"
         element={
           <ProtectedRoute>
             <ReceivePayment />
@@ -195,10 +205,10 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/events/reports"
+        path="/eventos/relatorios"
         element={
           <ProtectedRoute>
-            <EventReports />
+            <EventsReports />
           </ProtectedRoute>
         }
       />
@@ -212,10 +222,34 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/sales/new"
+        path="/bar/produtos"
         element={
           <ProtectedRoute>
-            <UnifiedSale />
+            <Products />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/produtos/novo"
+        element={
+          <ProtectedRoute>
+            <NewProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/produtos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <EditProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/estoque"
+        element={
+          <ProtectedRoute>
+            <Inventory />
           </ProtectedRoute>
         }
       />
@@ -228,47 +262,15 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/comandas/new"
+        path="/bar/comandas/nova"
         element={
           <ProtectedRoute>
-            <UnifiedSale />
+            <NewComanda />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/bar/inventory"
-        element={
-          <ProtectedRoute>
-            <Inventory />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/bar/products"
-        element={
-          <ProtectedRoute>
-            <Products />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/bar/products/new"
-        element={
-          <ProtectedRoute>
-            <NewProduct />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/bar/products/:id/edit"
-        element={
-          <ProtectedRoute>
-            <EditProduct />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/bar/checkout"
+        path="/bar/comandas/:id/checkout"
         element={
           <ProtectedRoute>
             <Checkout />
@@ -276,7 +278,23 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/reports"
+        path="/bar/vendas/nova"
+        element={
+          <ProtectedRoute>
+            <NewSale />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/vendas/unificada"
+        element={
+          <ProtectedRoute>
+            <UnifiedSale />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bar/relatorios"
         element={
           <ProtectedRoute>
             <BarReports />
@@ -293,7 +311,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/students"
+        path="/escolinha/alunos"
         element={
           <ProtectedRoute>
             <Students />
@@ -301,7 +319,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/students/new"
+        path="/escolinha/alunos/novo"
         element={
           <ProtectedRoute>
             <NewStudent />
@@ -309,7 +327,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/students/:id/edit"
+        path="/escolinha/alunos/:id/editar"
         element={
           <ProtectedRoute>
             <EditStudent />
@@ -317,7 +335,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/students/:id/history"
+        path="/escolinha/alunos/:id/historico"
         element={
           <ProtectedRoute>
             <StudentHistory />
@@ -325,15 +343,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/payments"
-        element={
-          <ProtectedRoute>
-            <Payments />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/school/classes"
+        path="/escolinha/turmas"
         element={
           <ProtectedRoute>
             <Classes />
@@ -341,7 +351,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/classes/:id/edit"
+        path="/escolinha/turmas/:id/editar"
         element={
           <ProtectedRoute>
             <EditClass />
@@ -349,7 +359,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/classes/:id/students"
+        path="/escolinha/turmas/:id/alunos"
         element={
           <ProtectedRoute>
             <ClassStudents />
@@ -357,7 +367,15 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/school/reports"
+        path="/escolinha/mensalidades"
+        element={
+          <ProtectedRoute>
+            <Payments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/escolinha/relatorios"
         element={
           <ProtectedRoute>
             <SchoolReports />
@@ -376,9 +394,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <BrowserRouter>
+          <Router>
             <AppRoutes />
-          </BrowserRouter>
+          </Router>
         </AuthProvider>
       </TooltipProvider>
     </ThemeProvider>

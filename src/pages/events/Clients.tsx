@@ -1,10 +1,11 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Calendar, Edit, Mail, Phone, Plus, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePagination } from '@/hooks/usePagination';
+import PaginationControls from '@/components/PaginationControls';
 
 const Clients = () => {
   const navigate = useNavigate();
@@ -50,6 +51,46 @@ const Clients = () => {
       lastReservation: '2023-12-20',
       status: 'inactive',
       totalSpent: 720
+    },
+    {
+      id: 5,
+      name: 'Ana Costa',
+      email: 'ana@email.com',
+      phone: '(11) 55555-5555',
+      totalReservations: 28,
+      lastReservation: '2024-01-08',
+      status: 'active',
+      totalSpent: 1680
+    },
+    {
+      id: 6,
+      name: 'Pedro Martins',
+      email: 'pedro@email.com',
+      phone: '(11) 44444-4444',
+      totalReservations: 55,
+      lastReservation: '2024-01-14',
+      status: 'vip',
+      totalSpent: 3300
+    },
+    {
+      id: 7,
+      name: 'Clube Esportivo',
+      email: 'clube@email.com',
+      phone: '(11) 33333-3333',
+      totalReservations: 89,
+      lastReservation: '2024-01-16',
+      status: 'vip',
+      totalSpent: 5340
+    },
+    {
+      id: 8,
+      name: 'Lucas Ferreira',
+      email: 'lucas@email.com',
+      phone: '(11) 22222-2222',
+      totalReservations: 18,
+      lastReservation: '2024-01-05',
+      status: 'active',
+      totalSpent: 1080
     }
   ];
 
@@ -57,6 +98,11 @@ const Clients = () => {
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const pagination = usePagination(filteredClients, {
+    pageSize: 6,
+    totalItems: filteredClients.length
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -106,7 +152,7 @@ const Clients = () => {
 
         {/* Lista de Clientes */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredClients.map((client) => (
+          {pagination.paginatedData.map((client) => (
             <Card key={client.id} className="hover:shadow-lg transition-shadow ">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -177,6 +223,21 @@ const Clients = () => {
             </Card>
           ))}
         </div>
+
+        {/* Paginação */}
+        <PaginationControls
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          pageSize={pagination.pageSize}
+          startIndex={pagination.startIndex}
+          endIndex={pagination.endIndex}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          onPageChange={pagination.goToPage}
+          onPageSizeChange={pagination.setPageSize}
+          pageSizeOptions={[6, 12, 18, 24]}
+        />
 
         {/* Estatísticas */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">

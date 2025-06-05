@@ -1,10 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Plus, Search, Filter, CreditCard } from 'lucide-react';
+import { ArrowLeft, Plus, Search, CreditCard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { usePagination } from '@/hooks/usePagination';
+import PaginationControls from '@/components/PaginationControls';
 
 const Receivables = () => {
   const navigate = useNavigate();
@@ -55,6 +57,33 @@ const Receivables = () => {
       status: 'vencido',
       description: 'Reserva Quadra A - 02/06',
       createdAt: '2024-05-25'
+    },
+    { 
+      id: 6, 
+      client: 'Pedro Martins', 
+      amount: 250, 
+      dueDate: '2024-06-12', 
+      status: 'pendente',
+      description: 'Reserva Campo 1 - 10/06',
+      createdAt: '2024-06-02'
+    },
+    { 
+      id: 7, 
+      client: 'Clube Esportivo', 
+      amount: 400, 
+      dueDate: '2024-06-18', 
+      status: 'pendente',
+      description: 'Reserva múltipla - 16/06',
+      createdAt: '2024-06-04'
+    },
+    { 
+      id: 8, 
+      client: 'Lucas Ferreira', 
+      amount: 160, 
+      dueDate: '2024-06-22', 
+      status: 'pendente',
+      description: 'Reserva Quadra C - 20/06',
+      createdAt: '2024-06-06'
     }
   ];
 
@@ -62,6 +91,11 @@ const Receivables = () => {
     receivable.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
     receivable.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const pagination = usePagination(filteredReceivables, {
+    pageSize: 5,
+    totalItems: filteredReceivables.length
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -194,7 +228,7 @@ const Receivables = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredReceivables.map((receivable) => (
+                {pagination.paginatedData.map((receivable) => (
                   <TableRow key={receivable.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-black">{receivable.client}</TableCell>
                     <TableCell className="text-gray-600">{receivable.description}</TableCell>
@@ -230,6 +264,21 @@ const Receivables = () => {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Paginação */}
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[5, 10, 20]}
+            />
           </CardContent>
         </Card>
       </main>

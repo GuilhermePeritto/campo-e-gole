@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowLeft, Users2, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { usePagination } from '@/hooks/usePagination';
+import PaginationControls from '@/components/PaginationControls';
 
 const ClassStudents = () => {
   const navigate = useNavigate();
@@ -29,8 +31,56 @@ const ClassStudents = () => {
       age: 9, 
       phone: '(11) 99999-4444',
       status: 'em dia'
+    },
+    // Adicionando mais alunos para demonstrar paginação
+    { 
+      id: 5, 
+      name: 'João Santos', 
+      age: 7, 
+      phone: '(11) 99999-5555',
+      status: 'atrasado'
+    },
+    { 
+      id: 6, 
+      name: 'Ana Costa', 
+      age: 8, 
+      phone: '(11) 99999-6666',
+      status: 'em dia'
+    },
+    { 
+      id: 7, 
+      name: 'Carlos Ferreira', 
+      age: 9, 
+      phone: '(11) 99999-7777',
+      status: 'em dia'
+    },
+    { 
+      id: 8, 
+      name: 'Laura Martins', 
+      age: 7, 
+      phone: '(11) 99999-8888',
+      status: 'atrasado'
+    },
+    { 
+      id: 9, 
+      name: 'Rafael Lima', 
+      age: 8, 
+      phone: '(11) 99999-9999',
+      status: 'em dia'
+    },
+    { 
+      id: 10, 
+      name: 'Beatriz Alves', 
+      age: 9, 
+      phone: '(11) 99999-0000',
+      status: 'em dia'
     }
   ];
+
+  const pagination = usePagination(students, {
+    pageSize: 5,
+    totalItems: students.length
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -109,7 +159,7 @@ const ClassStudents = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {students.map((student) => (
+                {pagination.paginatedData.map((student) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-black">{student.name}</TableCell>
                     <TableCell className="text-gray-600">{student.age} anos</TableCell>
@@ -143,6 +193,21 @@ const ClassStudents = () => {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Paginação */}
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[5, 10, 15]}
+            />
           </CardContent>
         </Card>
       </main>
