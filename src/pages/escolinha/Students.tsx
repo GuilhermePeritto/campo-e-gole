@@ -75,7 +75,7 @@ const Students = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school')}
+              onClick={() => navigate('/escolinha')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -102,7 +102,7 @@ const Students = () => {
             />
           </div>
           <Button
-            onClick={() => navigate('/school/students/novo')}
+            onClick={() => navigate('/escolinha/alunos/novo')}
             className="bg-black text-white hover:bg-gray-800 gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -150,7 +150,7 @@ const Students = () => {
                           variant="outline"
                           size="sm"
                           className="border-black text-black hover:bg-black hover:text-white"
-                          onClick={() => navigate(`/school/students/${student.id}/editar`)}
+                          onClick={() => navigate(`/escolinha/alunos/${student.id}/editar`)}
                         >
                           Editar
                         </Button>
@@ -158,7 +158,7 @@ const Students = () => {
                           variant="outline"
                           size="sm"
                           className="border-black text-black hover:bg-black hover:text-white"
-                          onClick={() => navigate(`/school/students/${student.id}/history`)}
+                          onClick={() => navigate(`/escolinha/alunos/${student.id}/history`)}
                         >
                           Histórico
                         </Button>

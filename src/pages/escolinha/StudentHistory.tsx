@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Users2, Calendar } from 'lucide-react';
+import { ArrowLeft, Users2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const StudentHistory = () => {
@@ -92,7 +92,7 @@ const StudentHistory = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school/students')}
+              onClick={() => navigate('/escolinha/alunos')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />

@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Calendar, Save } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 
 const EditClass = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const EditClass = () => {
     e.preventDefault();
     console.log('Dados da turma atualizados:', formData);
     // Aqui seria feita a atualização no backend
-    navigate('/school/classes');
+    navigate('/escolinha/turmas');
   };
 
   const handleChange = (field: string, value: string) => {
@@ -50,7 +50,7 @@ const EditClass = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school/classes')}
+              onClick={() => navigate('/escolinha/turmas')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -146,7 +146,7 @@ const EditClass = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/school/classes')}
+                  onClick={() => navigate('/escolinha/turmas')}
                   className="border-black text-black hover:bg-gray-100"
                 >
                   Cancelar

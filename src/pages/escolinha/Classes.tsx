@@ -56,7 +56,7 @@ const Classes = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school')}
+              onClick={() => navigate('/escolinha')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -121,7 +121,7 @@ const Classes = () => {
                       variant="outline"
                       size="sm"
                       className="flex-1 border-black text-black hover:bg-black hover:text-white"
-                      onClick={() => navigate(`/school/classes/${classItem.id}/editar`)}
+                      onClick={() => navigate(`/escolinha/turmas/${classItem.id}/editar`)}
                     >
                       Editar
                     </Button>
@@ -129,7 +129,7 @@ const Classes = () => {
                       variant="outline"
                       size="sm"
                       className="flex-1 border-black text-black hover:bg-black hover:text-white"
-                      onClick={() => navigate(`/school/classes/${classItem.id}/students`)}
+                      onClick={() => navigate(`/escolinha/turmas/${classItem.id}/alunos`)}
                     >
                       Ver Alunos
                     </Button>

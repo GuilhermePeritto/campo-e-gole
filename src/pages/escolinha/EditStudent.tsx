@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Users2, Save } from 'lucide-react';
+import { ArrowLeft, Save, Users2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 
 const EditStudent = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const EditStudent = () => {
     e.preventDefault();
     console.log('Dados do aluno atualizados:', formData);
     // Aqui seria feita a atualização no backend
-    navigate('/school/students');
+    navigate('/escolinha/alunos');
   };
 
   const handleChange = (field: string, value: string) => {
@@ -59,7 +59,7 @@ const EditStudent = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school/students')}
+              onClick={() => navigate('/escolinha/alunos')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -189,7 +189,7 @@ const EditStudent = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/school/students')}
+                  onClick={() => navigate('/escolinha/alunos')}
                   className="border-black text-black hover:bg-gray-100"
                 >
                   Cancelar

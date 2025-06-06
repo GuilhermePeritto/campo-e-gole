@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Users2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 interface StudentFormData {
   name: string;
@@ -43,7 +43,7 @@ const NewStudent = () => {
     setTimeout(() => {
       console.log('Novo aluno:', data);
       setIsSubmitting(false);
-      navigate('/school/students');
+      navigate('/escolinha/alunos');
     }, 1000);
   };
 
@@ -56,7 +56,7 @@ const NewStudent = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/school/students')}
+              onClick={() => navigate('/escolinha/alunos')}
               className="gap-2 text-black hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -256,7 +256,7 @@ const NewStudent = () => {
                     type="button"
                     variant="outline"
                     className="flex-1 border-black text-black hover:bg-black hover:text-white"
-                    onClick={() => navigate('/school/students')}
+                    onClick={() => navigate('/escolinha/alunos')}
                   >
                     Cancelar
                   </Button>

@@ -195,7 +195,7 @@ const Checkout = () => {
                 <Button variant="outline" onClick={() => navigate('/bar/comandas')}>
                   Comandas
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/bar/sales/novo')}>
+                <Button variant="outline" onClick={() => navigate('/bar/vendas/novo')}>
                   Nova Venda
                 </Button>
               </div>

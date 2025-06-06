@@ -39,7 +39,7 @@ const EscolinhaRelatorios = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/school')}
+                onClick={() => navigate('/escolinha')}
                 className="gap-2 text-black hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />

@@ -13,35 +13,35 @@ const School = () => {
       description: 'Cadastrar um novo aluno',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/school/students/novo')
+      action: () => navigate('/escolinha/alunos/novo')
     },
     {
       title: 'Gerenciar Alunos',
       description: 'Ver e editar alunos cadastrados',
       icon: Users2,
       color: 'bg-black',
-      action: () => navigate('/school/students')
+      action: () => navigate('/escolinha/alunos')
     },
     {
       title: 'Mensalidades',
       description: 'Controle de pagamentos',
       icon: CreditCard,
       color: 'bg-black',
-      action: () => navigate('/school/payments')
+      action: () => navigate('/escolinha/pagamentos')
     },
     {
       title: 'Turmas',
       description: 'Gerenciar turmas e horários',
       icon: Calendar,
       color: 'bg-black',
-      action: () => navigate('/school/classes')
+      action: () => navigate('/escolinha/turmas')
     },
     {
       title: 'Relatórios',
       description: 'Análises e inadimplência',
       icon: BarChart3,
       color: 'bg-black',
-      action: () => navigate('/school/relatorios')
+      action: () => navigate('/escolinha/relatorios')
     }
   ];
 
@@ -138,7 +138,7 @@ const School = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/school/students')}
+                onClick={() => navigate('/escolinha/alunos')}
               >
                 Ver Todos os Alunos
               </Button>
@@ -170,7 +170,7 @@ const School = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/school/payments')}
+                onClick={() => navigate('/escolinha/pagamentos')}
               >
                 Gerenciar Pagamentos
               </Button>
@@ -203,7 +203,7 @@ const School = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
-                onClick={() => navigate('/school/relatorios')}
+                onClick={() => navigate('/escolinha/relatorios')}
               >
                 Ver Relatórios
               </Button>

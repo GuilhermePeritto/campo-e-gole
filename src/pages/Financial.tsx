@@ -1,86 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, CreditCard, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, DollarSign, Filter, PieChart, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Financeiro = () => {
   const navigate = useNavigate();
-
-  const quickActions = [
-    {
-      title: 'Nova Receita',
-      description: 'Registrar uma nova receita',
-      icon: Plus,
-      color: 'bg-green-100 text-green-600',
-      path: '/financeiro/receitas/novo'
-    },
-    {
-      title: 'Nova Despesa',
-      description: 'Registrar uma nova despesa',
-      icon: Plus,
-      color: 'bg-red-100 text-red-600',
-      path: '/financeiro/despesas/novo'
-    },
-    {
-      title: 'Receber Pagamento',
-      description: 'Registrar recebimento de conta',
-      icon: CreditCard,
-      color: 'bg-blue-100 text-blue-600',
-      path: '/financeiro/receber-pagamento'
-    }
-  ];
-
-  const modules = [
-    {
-      title: 'Receitas',
-      description: 'Gerencie todas as receitas do sistema',
-      icon: TrendingUp,
-      color: 'bg-green-500',
-      path: '/financeiro/receitas',
-      stats: 'R$ 25.420 este mês'
-    },
-    {
-      title: 'Despesas',
-      description: 'Controle de gastos e despesas',
-      icon: TrendingDown,
-      color: 'bg-red-500',
-      path: '/financeiro/despesas',
-      stats: 'R$ 8.750 este mês'
-    },
-    {
-      title: 'Contas a Receber',
-      description: 'Pendências e recebimentos futuros',
-      icon: CreditCard,
-      color: 'bg-blue-500',
-      path: '/financeiro/contas-a-receber',
-      stats: '12 contas pendentes'
-    },
-    {
-      title: 'Contas a Pagar',
-      description: 'Compromissos e pagamentos futuros',
-      icon: FileText,
-      color: 'bg-orange-500',
-      path: '/financeiro/contas-a-pagar',
-      stats: '5 contas pendentes'
-    },
-    {
-      title: 'Fluxo de Caixa',
-      description: 'Visão completa do movimento financeiro',
-      icon: BarChart3,
-      color: 'bg-purple-500',
-      path: '/financeiro/fluxo-de-caixa',
-      stats: 'Saldo: R$ 16.670'
-    },
-    {
-      title: 'Relatórios',
-      description: 'Relatórios e análises financeiras',
-      icon: FileText,
-      color: 'bg-indigo-500',
-      path: '/financeiro/relatorios',
-      stats: 'DRE, Balanços e mais'
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,11 +19,11 @@ const Financeiro = () => {
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Voltar
+              Dashboard
             </Button>
             <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-orange-600" />
-              <h1 className="text-xl font-semibold">Módulo Financeiro</h1>
+              <DollarSign className="h-5 w-5 text-green-600" />
+              <h1 className="text-xl font-semibold">Controle Financeiro</h1>
             </div>
           </div>
         </div>
@@ -109,13 +34,14 @@ const Financeiro = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-green-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Receitas</p>
+                  <p className="text-sm font-medium text-muted-foreground">Receitas Totais</p>
                   <p className="text-2xl font-bold text-green-600">R$ 25.420</p>
+                  <p className="text-xs text-muted-foreground">+12% este mês</p>
                 </div>
               </div>
             </CardContent>
@@ -123,13 +49,14 @@ const Financeiro = () => {
 
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-red-100 rounded-lg">
-                  <TrendingDown className="h-6 w-6 text-red-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <TrendingDown className="h-5 w-5 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Despesas</p>
+                  <p className="text-sm font-medium text-muted-foreground">Despesas Totais</p>
                   <p className="text-2xl font-bold text-red-600">R$ 8.750</p>
+                  <p className="text-xs text-muted-foreground">-5% este mês</p>
                 </div>
               </div>
             </CardContent>
@@ -137,13 +64,14 @@ const Financeiro = () => {
 
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <DollarSign className="h-6 w-6 text-blue-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Saldo</p>
+                  <p className="text-sm font-medium text-muted-foreground">Lucro Líquido</p>
                   <p className="text-2xl font-bold text-blue-600">R$ 16.670</p>
+                  <p className="text-xs text-muted-foreground">+18% este mês</p>
                 </div>
               </div>
             </CardContent>
@@ -151,71 +79,206 @@ const Financeiro = () => {
 
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <BarChart3 className="h-6 w-6 text-purple-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Calendar className="h-5 w-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Lucro</p>
-                  <p className="text-2xl font-bold text-purple-600">65,6%</p>
+                  <p className="text-sm font-medium text-muted-foreground">A Receber</p>
+                  <p className="text-2xl font-bold text-orange-600">R$ 3.240</p>
+                  <p className="text-xs text-muted-foreground">15 pendências</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Menu de Funcionalidades */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/receitas')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-green-600">
+                <TrendingUp className="h-5 w-5" />
+                Receitas
+              </CardTitle>
+              <CardDescription>
+                Gerenciar todas as receitas do sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-green-600">R$ 25.420</p>
+              <p className="text-sm text-muted-foreground">Total este mês</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/despesas')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-600">
+                <TrendingDown className="h-5 w-5" />
+                Despesas
+              </CardTitle>
+              <CardDescription>
+                Controlar gastos e despesas operacionais
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-red-600">R$ 8.750</p>
+              <p className="text-sm text-muted-foreground">Total este mês</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/contas-a-receber')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-orange-600">
+                <Calendar className="h-5 w-5" />
+                Contas a Receber
+              </CardTitle>
+              <CardDescription>
+                Títulos pendentes de todos os módulos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-orange-600">R$ 3.240</p>
+              <p className="text-sm text-muted-foreground">15 pendências</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/contas-a-pagar')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-600">
+                <Calendar className="h-5 w-5" />
+                Contas a Pagar
+              </CardTitle>
+              <CardDescription>
+                Compromissos financeiros pendentes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-purple-600">R$ 1.850</p>
+              <p className="text-sm text-muted-foreground">8 pendências</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/fluxo-de-caixa')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-600">
+                <BarChart3 className="h-5 w-5" />
+                Fluxo de Caixa
+              </CardTitle>
+              <CardDescription>
+                Movimentação financeira detalhada
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-blue-600">R$ 16.670</p>
+              <p className="text-sm text-muted-foreground">Saldo atual</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/relatorios')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-indigo-600">
+                <PieChart className="h-5 w-5" />
+                Relatórios
+              </CardTitle>
+              <CardDescription>
+                Análises e relatórios financeiros
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">DRE, Balanço, Análises</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Comparativo por Módulos */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Receitas por Módulo</CardTitle>
+            <CardDescription>
+              Comparativo de faturamento entre os módulos do sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4 border rounded-lg">
+                <h3 className="font-semibold text-green-600 mb-2">Eventos</h3>
+                <p className="text-2xl font-bold">R$ 15.680</p>
+                <p className="text-sm text-muted-foreground">62% do total</p>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '62%' }}></div>
+                </div>
+              </div>
+              
+              <div className="text-center p-4 border rounded-lg">
+                <h3 className="font-semibold text-blue-600 mb-2">Bar</h3>
+                <p className="text-2xl font-bold">R$ 7.240</p>
+                <p className="text-sm text-muted-foreground">28% do total</p>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '28%' }}></div>
+                </div>
+              </div>
+              
+              <div className="text-center p-4 border rounded-lg">
+                <h3 className="font-semibold text-purple-600 mb-2">Escolinha</h3>
+                <p className="text-2xl font-bold">R$ 2.500</p>
+                <p className="text-sm text-muted-foreground">10% do total</p>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: '10%' }}></div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Ações Rápidas */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {quickActions.map((action, index) => (
-              <Card 
-                key={index} 
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => navigate(action.path)}
+        <Card>
+          <CardHeader>
+            <CardTitle>Ações Rápidas</CardTitle>
+            <CardDescription>
+              Funções mais utilizadas do controle financeiro
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button 
+                variant="outline" 
+                className="h-16 flex-col gap-2"
+                onClick={() => navigate('/financeiro/novo-receita')}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-lg ${action.color}`}>
-                      <action.icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{action.title}</h3>
-                      <p className="text-sm text-muted-foreground">{action.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Módulos Financeiros */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Módulos Financeiros</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {modules.map((module, index) => (
-              <Card 
-                key={index} 
-                className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                onClick={() => navigate(module.path)}
+                <TrendingUp className="h-5 w-5" />
+                Nova Receita
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="h-16 flex-col gap-2"
+                onClick={() => navigate('/financeiro/novo-despesa')}
               >
-                <CardContent className="p-0">
-                  <div className={`${module.color} p-6 text-white`}>
-                    <div className="flex items-center justify-between mb-4">
-                      <module.icon className="h-8 w-8" />
-                      <div className="text-right">
-                        <p className="text-sm opacity-90">{module.stats}</p>
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold mb-2">{module.title}</h3>
-                    <p className="text-sm opacity-90">{module.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+                <TrendingDown className="h-5 w-5" />
+                Nova Despesa
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="h-16 flex-col gap-2"
+                onClick={() => navigate('/financeiro/receber-pagamento')}
+              >
+                <Calendar className="h-5 w-5" />
+                Receber Título
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="h-16 flex-col gap-2"
+                onClick={() => navigate('/financeiro/relatorios')}
+              >
+                <Filter className="h-5 w-5" />
+                Gerar Relatório
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface User {
   id: string;
@@ -14,7 +14,7 @@ interface Company {
   id: string;
   name: string;
   logo?: string;
-  modules: ('events' | 'bar')[];
+  modules: ('events' | 'bar' | 'school' | 'financial')[];
   settings: {
     currency: string;
     timezone: string;
@@ -32,7 +32,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   hasPermission: (permission: string) => boolean;
-  hasModuleAccess: (module: 'events' | 'bar') => boolean;
+  hasModuleAccess: (module: 'events' | 'bar' | 'school' | 'financial') => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Simular verificação de token salvo
     const savedUser = localStorage.getItem('user');
     const savedCompany = localStorage.getItem('company');
-    
+
     if (savedUser && savedCompany) {
       setUser(JSON.parse(savedUser));
       setCompany(JSON.parse(savedCompany));
@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const mockCompany: Company = {
         id: '1',
         name: 'Arena Sports Club',
-        modules: ['events', 'bar'],
+        modules: ['events', 'bar', 'school', 'financial'],
         settings: {
           currency: 'BRL',
           timezone: 'America/Sao_Paulo',
@@ -91,10 +91,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(mockUser);
       setCompany(mockCompany);
       setIsAuthenticated(true);
-      
+
       localStorage.setItem('user', JSON.stringify(mockUser));
       localStorage.setItem('company', JSON.stringify(mockCompany));
-      
+
       return true;
     }
     return false;
@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return user?.permissions.includes(permission) || false;
   };
 
-  const hasModuleAccess = (module: 'events' | 'bar'): boolean => {
+  const hasModuleAccess = (module: 'events' | 'bar' | 'school' | 'financial'): boolean => {
     return company?.modules.includes(module) || false;
   };
 
