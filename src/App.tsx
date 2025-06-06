@@ -1,3 +1,4 @@
+
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,7 +37,7 @@ import EditVenue from "./pages/eventos/EditVenue";
 import NewClient from "./pages/eventos/NewClient";
 import NewReceivable from "./pages/eventos/NewReceivable";
 import NewReservation from "./pages/eventos/NewReservation";
-import NewVenue from "./pages/NewVenue";
+import NewVenue from "./pages/eventos/NewVenue";
 import Receivables from "./pages/eventos/Receivables";
 import { default as EventosReceivePayment } from "./pages/eventos/ReceivePayment";
 import EventoRelatorios from "./pages/eventos/Reports";
@@ -56,6 +57,7 @@ import Login from "./pages/Login";
 import NaoEncontrada from "./pages/NotFound";
 import School from "./pages/School";
 import Settings from "./pages/Settings";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -107,7 +109,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/eventos/novo-reserva"
+        path="/eventos/nova-reserva"
         element={
           <ProtectedRoute>
             <NewReservation />
@@ -268,7 +270,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/comandas/novo"
+        path="/bar/comandas/nova"
         element={
           <ProtectedRoute>
             <NewComanda />
@@ -284,7 +286,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/vendas/novo"
+        path="/bar/vendas/nova"
         element={
           <ProtectedRoute>
             <NewSale />
@@ -446,7 +448,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/financeiro/novo-receita"
+        path="/financeiro/nova-receita"
         element={
           <ProtectedRoute>
             <NovaReceita />
@@ -454,7 +456,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/financeiro/novo-despesa"
+        path="/financeiro/nova-despesa"
         element={
           <ProtectedRoute>
             <NovaDespesa />
