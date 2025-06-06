@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, DollarSign, Filter, PieChart, TrendingDown, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, DollarSign, PieChart, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Financeiro = () => {
@@ -93,192 +93,206 @@ const Financeiro = () => {
           </Card>
         </div>
 
-        {/* Menu de Funcionalidades */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/receitas')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-600">
-                <TrendingUp className="h-5 w-5" />
-                Receitas
-              </CardTitle>
-              <CardDescription>
-                Gerenciar todas as receitas do sistema
-              </CardDescription>
+        {/* Grid de Funcionalidades - Similar aos outros módulos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer group" 
+            onClick={() => navigate('/financeiro/receitas')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Receitas</CardTitle>
+                    <CardDescription className="text-sm">
+                      Gerenciar receitas do sistema
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-green-600">R$ 25.420</p>
-              <p className="text-sm text-muted-foreground">Total este mês</p>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Total este mês</span>
+                  <span className="font-bold text-green-600">R$ 25.420</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Transações</span>
+                  <span className="font-medium">234</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/despesas')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-600">
-                <TrendingDown className="h-5 w-5" />
-                Despesas
-              </CardTitle>
-              <CardDescription>
-                Controlar gastos e despesas operacionais
-              </CardDescription>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer group" 
+            onClick={() => navigate('/financeiro/despesas')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-red-100 rounded-lg group-hover:bg-red-200 transition-colors">
+                    <TrendingDown className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Despesas</CardTitle>
+                    <CardDescription className="text-sm">
+                      Controlar gastos operacionais
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-red-600">R$ 8.750</p>
-              <p className="text-sm text-muted-foreground">Total este mês</p>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Total este mês</span>
+                  <span className="font-bold text-red-600">R$ 8.750</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Contas</span>
+                  <span className="font-medium">45</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/contas-a-receber')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-orange-600">
-                <Calendar className="h-5 w-5" />
-                Contas a Receber
-              </CardTitle>
-              <CardDescription>
-                Títulos pendentes de todos os módulos
-              </CardDescription>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer group" 
+            onClick={() => navigate('/financeiro/contas-a-receber')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
+                    <Calendar className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Contas a Receber</CardTitle>
+                    <CardDescription className="text-sm">
+                      Títulos pendentes
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-orange-600">R$ 3.240</p>
-              <p className="text-sm text-muted-foreground">15 pendências</p>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Valor total</span>
+                  <span className="font-bold text-orange-600">R$ 3.240</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Pendências</span>
+                  <span className="font-medium">15</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/contas-a-pagar')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-600">
-                <Calendar className="h-5 w-5" />
-                Contas a Pagar
-              </CardTitle>
-              <CardDescription>
-                Compromissos financeiros pendentes
-              </CardDescription>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer group" 
+            onClick={() => navigate('/financeiro/contas-a-pagar')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                    <Calendar className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Contas a Pagar</CardTitle>
+                    <CardDescription className="text-sm">
+                      Compromissos pendentes
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-purple-600">R$ 1.850</p>
-              <p className="text-sm text-muted-foreground">8 pendências</p>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Valor total</span>
+                  <span className="font-bold text-purple-600">R$ 1.850</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Pendências</span>
+                  <span className="font-medium">8</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/fluxo-de-caixa')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-600">
-                <BarChart3 className="h-5 w-5" />
-                Fluxo de Caixa
-              </CardTitle>
-              <CardDescription>
-                Movimentação financeira detalhada
-              </CardDescription>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer group" 
+            onClick={() => navigate('/financeiro/fluxo-de-caixa')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Fluxo de Caixa</CardTitle>
+                    <CardDescription className="text-sm">
+                      Movimentação detalhada
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-blue-600">R$ 16.670</p>
-              <p className="text-sm text-muted-foreground">Saldo atual</p>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Saldo atual</span>
+                  <span className="font-bold text-blue-600">R$ 16.670</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Movimentações</span>
+                  <span className="font-medium">156</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/financeiro/relatorios')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-indigo-600">
-                <PieChart className="h-5 w-5" />
-                Relatórios
-              </CardTitle>
-              <CardDescription>
-                Análises e relatórios financeiros
-              </CardDescription>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer group" 
+            onClick={() => navigate('/financeiro/relatorios')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                    <PieChart className="h-5 w-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Relatórios</CardTitle>
+                    <CardDescription className="text-sm">
+                      Análises financeiras
+                    </CardDescription>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">DRE, Balanço, Análises</p>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Disponíveis</span>
+                  <span className="font-medium">12</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Último gerado</span>
+                  <span className="font-medium">Hoje</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
-
-        {/* Comparativo por Módulos */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Receitas por Módulo</CardTitle>
-            <CardDescription>
-              Comparativo de faturamento entre os módulos do sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 border rounded-lg">
-                <h3 className="font-semibold text-green-600 mb-2">Eventos</h3>
-                <p className="text-2xl font-bold">R$ 15.680</p>
-                <p className="text-sm text-muted-foreground">62% do total</p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '62%' }}></div>
-                </div>
-              </div>
-              
-              <div className="text-center p-4 border rounded-lg">
-                <h3 className="font-semibold text-blue-600 mb-2">Bar</h3>
-                <p className="text-2xl font-bold">R$ 7.240</p>
-                <p className="text-sm text-muted-foreground">28% do total</p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '28%' }}></div>
-                </div>
-              </div>
-              
-              <div className="text-center p-4 border rounded-lg">
-                <h3 className="font-semibold text-purple-600 mb-2">Escolinha</h3>
-                <p className="text-2xl font-bold">R$ 2.500</p>
-                <p className="text-sm text-muted-foreground">10% do total</p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: '10%' }}></div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ações Rápidas */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Ações Rápidas</CardTitle>
-            <CardDescription>
-              Funções mais utilizadas do controle financeiro
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button 
-                variant="outline" 
-                className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/novo-receita')}
-              >
-                <TrendingUp className="h-5 w-5" />
-                Nova Receita
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/novo-despesa')}
-              >
-                <TrendingDown className="h-5 w-5" />
-                Nova Despesa
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/receber-pagamento')}
-              >
-                <Calendar className="h-5 w-5" />
-                Receber Título
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-16 flex-col gap-2"
-                onClick={() => navigate('/financeiro/relatorios')}
-              >
-                <Filter className="h-5 w-5" />
-                Gerar Relatório
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </main>
     </div>
   );

@@ -1,5 +1,6 @@
-
 import PaginationControls from '@/components/PaginationControls';
+import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
+import ValueSkeleton from '@/components/ValueSkeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,13 +8,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Filter, Plus, Search, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Receitas = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterModule, setFilterModule] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simular carregamento
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const mockReceitas = [
     {
@@ -95,6 +103,7 @@ const Receitas = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
       <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -113,7 +122,7 @@ const Receitas = () => {
                 <h1 className="text-xl font-semibold">Receitas</h1>
               </div>
             </div>
-            <Button onClick={() => navigate('/financeiro/novo-receita')} className="gap-2">
+            <Button onClick={() => navigate('/financeiro/receitas/novo')} className="gap-2">
               <Plus className="h-4 w-4" />
               Nova Receita
             </Button>
@@ -124,47 +133,59 @@ const Receitas = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Resumo */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Receitas</p>
-                  <p className="text-2xl font-bold text-green-600">R$ {totalAmount.toFixed(2).replace('.', ',')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {isLoading ? (
+            <>
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Total Receitas</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        {isLoading ? <ValueSkeleton /> : `R$ ${totalAmount.toFixed(2).replace('.', ',')}`}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Recebidas</p>
-                  <p className="text-2xl font-bold text-blue-600">{filteredReceitas.filter(r => r.status === 'Recebido').length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Recebidas</p>
+                      <p className="text-2xl font-bold text-blue-600">{filteredReceitas.filter(r => r.status === 'Recebido').length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold text-orange-600">{filteredReceitas.filter(r => r.status === 'Pendente').length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-100 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Pendentes</p>
+                      <p className="text-2xl font-bold text-orange-600">{filteredReceitas.filter(r => r.status === 'Pendente').length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         {/* Filtros */}
@@ -222,7 +243,7 @@ const Receitas = () => {
                   <TableRow key={revenue.id}>
                     <TableCell className="font-medium">{revenue.description}</TableCell>
                     <TableCell className="font-bold text-green-600">
-                      R$ {revenue.amount.toFixed(2).replace('.', ',')}
+                      {isLoading ? <ValueSkeleton /> : `R$ ${revenue.amount.toFixed(2).replace('.', ',')}`}
                     </TableCell>
                     <TableCell>{new Date(revenue.date).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>

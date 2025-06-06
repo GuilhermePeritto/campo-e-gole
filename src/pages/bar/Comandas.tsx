@@ -1,86 +1,109 @@
-import { Badge } from '@/components/ui/badge';
+
+import PaginationControls from '@/components/PaginationControls';
+import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
+import ValueSkeleton from '@/components/ValueSkeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Eye, Plus, Receipt, Search, X } from 'lucide-react';
-import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
+import { ArrowLeft, CreditCard, Filter, Plus, Receipt, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface Comanda {
-  id: number;
-  number: string;
-  client: string;
-  table?: string;
-  items: Array<{
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-  }>;
-  total: number;
-  status: 'open' | 'closed';
-  createdAt: string;
-}
 
 const Comandas = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedComanda, setSelectedComanda] = useState<Comanda | null>(null);
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const mockComandas: Comanda[] = [
+  useEffect(() => {
+    // Simular carregamento
+    const timer = setTimeout(() => setIsLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const mockComandas = [
     {
       id: 1,
-      number: '001',
-      client: 'Mesa 5',
-      table: '5',
-      items: [
-        { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, quantity: 2 },
-        { id: 2, name: 'Sanduíche Natural', price: 12.00, quantity: 1 }
-      ],
-      total: 21.00,
-      status: 'open',
-      createdAt: '14:30'
+      number: 'CMD001',
+      client: 'João Silva',
+      items: 5,
+      total: 85.50,
+      status: 'Aberta',
+      openTime: '2024-06-05 19:30',
+      table: 'Mesa 03'
     },
     {
       id: 2,
-      number: '002',
-      client: 'João Silva',
-      items: [
-        { id: 1, name: 'Refrigerante Coca 600ml', price: 6.00, quantity: 1 },
-        { id: 2, name: 'Salgadinho Doritos', price: 8.00, quantity: 1 }
-      ],
-      total: 14.00,
-      status: 'open',
-      createdAt: '15:15'
+      number: 'CMD002',
+      client: 'Maria Santos',
+      items: 3,
+      total: 42.00,
+      status: 'Fechada',
+      openTime: '2024-06-05 20:15',
+      table: 'Mesa 07'
     },
     {
       id: 3,
-      number: '003',
-      client: 'Mesa 8',
-      table: '8',
-      items: [
-        { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, quantity: 4 },
-        { id: 2, name: 'Água Mineral 500ml', price: 2.50, quantity: 2 }
-      ],
-      total: 23.00,
-      status: 'open',
-      createdAt: '16:00'
+      number: 'CMD003',
+      client: 'Pedro Costa',
+      items: 8,
+      total: 120.75,
+      status: 'Aberta',
+      openTime: '2024-06-05 18:45',
+      table: 'Mesa 12'
+    },
+    {
+      id: 4,
+      number: 'CMD004',
+      client: 'Ana Oliveira',
+      items: 2,
+      total: 28.50,
+      status: 'Paga',
+      openTime: '2024-06-05 21:00',
+      table: 'Mesa 01'
+    },
+    {
+      id: 5,
+      number: 'CMD005',
+      client: 'Carlos Mendes',
+      items: 6,
+      total: 95.25,
+      status: 'Fechada',
+      openTime: '2024-06-05 19:00',
+      table: 'Mesa 15'
     }
   ];
 
-  const filteredComandas = mockComandas.filter(comanda =>
-    comanda.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    comanda.number.includes(searchTerm)
-  );
+  const filteredComandas = mockComandas.filter(comanda => {
+    const matchesSearch = comanda.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         comanda.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         comanda.table.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || comanda.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
-  const closeComanda = (comandaId: number) => {
-    // Redirecionar para o checkout ao invés de fechar diretamente
-    navigate('/bar/conferir');
+  const pagination = usePagination(filteredComandas, {
+    pageSize: 10,
+    totalItems: filteredComandas.length
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Aberta': return 'bg-green-100 text-green-800';
+      case 'Fechada': return 'bg-orange-100 text-orange-800';
+      case 'Paga': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
+
+  const totalValue = filteredComandas.reduce((sum, comanda) => sum + comanda.total, 0);
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -94,12 +117,11 @@ const Comandas = () => {
                 Voltar
               </Button>
               <div className="flex items-center gap-2">
-                <Receipt className="h-5 w-5 text-primary" />
+                <Receipt className="h-5 w-5 text-blue-600" />
                 <h1 className="text-xl font-semibold">Comandas</h1>
               </div>
             </div>
-
-            <Button onClick={() => navigate('/bar/comandas/novo')} className="gap-2">
+            <Button onClick={() => navigate('/bar/comandas/nova')} className="gap-2">
               <Plus className="h-4 w-4" />
               Nova Comanda
             </Button>
@@ -108,165 +130,179 @@ const Comandas = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Lista de Comandas */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Comandas Abertas</CardTitle>
-                <CardDescription>
-                  {filteredComandas.length} comandas em andamento
-                </CardDescription>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar por cliente ou número..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {filteredComandas.map((comanda) => (
-                    <div key={comanda.id} className="border rounded-lg p-4 hover:bg-accent">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">#{comanda.number}</Badge>
-                          <span className="font-medium">{comanda.client}</span>
-                          {comanda.table && (
-                            <Badge variant="secondary">Mesa {comanda.table}</Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={comanda.status === 'open' ? 'default' : 'secondary'}>
-                            {comanda.status === 'open' ? 'Aberta' : 'Fechada'}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">{comanda.createdAt}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm text-muted-foreground">
-                            {comanda.items.length} itens
-                          </div>
-                          <div className="font-semibold text-lg">
-                            R$ {comanda.total.toFixed(2)}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedComanda(comanda)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          {comanda.status === 'open' && (
-                            <Button
-                              size="sm"
-                              onClick={() => closeComanda(comanda.id)}
-                            >
-                              Fechar
-                            </Button>
-                          )}
-                        </div>
-                      </div>
+        {/* Resumo */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          {isLoading ? (
+            <>
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Receipt className="h-5 w-5 text-blue-600" />
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Detalhes da Comanda */}
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Detalhes da Comanda</CardTitle>
-                {selectedComanda && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedComanda(null)}
-                    className="w-fit"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </CardHeader>
-              <CardContent>
-                {selectedComanda ? (
-                  <div className="space-y-4">
                     <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline">#{selectedComanda.number}</Badge>
-                        <Badge variant={selectedComanda.status === 'open' ? 'default' : 'secondary'}>
-                          {selectedComanda.status === 'open' ? 'Aberta' : 'Fechada'}
-                        </Badge>
-                      </div>
-                      <div className="font-medium">{selectedComanda.client}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Aberta às {selectedComanda.createdAt}
-                      </div>
+                      <p className="text-sm font-medium text-muted-foreground">Total Comandas</p>
+                      <p className="text-2xl font-bold text-blue-600">{filteredComandas.length}</p>
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
 
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <CreditCard className="h-5 w-5 text-green-600" />
+                    </div>
                     <div>
-                      <h4 className="font-medium mb-2">Itens</h4>
-                      <div className="space-y-2">
-                        {selectedComanda.items.map((item) => (
-                          <div key={item.id} className="flex justify-between items-center p-2 bg-muted rounded">
-                            <div>
-                              <div className="font-medium">{item.name}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {item.quantity}x R$ {item.price.toFixed(2)}
-                              </div>
-                            </div>
-                            <div className="font-medium">
-                              R$ {(item.price * item.quantity).toFixed(2)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        {isLoading ? <ValueSkeleton /> : `R$ ${totalValue.toFixed(2).replace('.', ',')}`}
+                      </p>
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-                    <div className="border-t pt-4">
-                      <div className="flex justify-between text-lg font-semibold">
-                        <span>Total:</span>
-                        <span>R$ {selectedComanda.total.toFixed(2)}</span>
-                      </div>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-100 rounded-lg">
+                      <Receipt className="h-5 w-5 text-orange-600" />
                     </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Abertas</p>
+                      <p className="text-2xl font-bold text-orange-600">
+                        {filteredComandas.filter(c => c.status === 'Aberta').length}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-                    {selectedComanda.status === 'open' && (
-                      <div className="space-y-2">
-                        <Button
-                          variant="outline"
-                          className="w-full"
-                          onClick={() => navigate(`/bar/comandas/${selectedComanda.id}/add`)}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Item
-                        </Button>
-                        <Button
-                          className="w-full"
-                          onClick={() => closeComanda(selectedComanda.id)}
-                        >
-                          Fechar Comanda
-                        </Button>
-                      </div>
-                    )}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                      <CreditCard className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Pagas</p>
+                      <p className="text-2xl font-bold text-purple-600">
+                        {filteredComandas.filter(c => c.status === 'Paga').length}
+                      </p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    Selecione uma comanda para ver os detalhes
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
+
+        {/* Filtros */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Buscar comandas..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="w-48">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filtrar por status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os status</SelectItem>
+                  <SelectItem value="Aberta">Aberta</SelectItem>
+                  <SelectItem value="Fechada">Fechada</SelectItem>
+                  <SelectItem value="Paga">Paga</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tabela de Comandas */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Lista de Comandas</CardTitle>
+            <CardDescription>
+              Gerenciar todas as comandas do bar
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Número</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Mesa</TableHead>
+                  <TableHead>Itens</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pagination.paginatedData.map((comanda) => (
+                  <TableRow key={comanda.id}>
+                    <TableCell className="font-medium">{comanda.number}</TableCell>
+                    <TableCell>{comanda.client}</TableCell>
+                    <TableCell>{comanda.table}</TableCell>
+                    <TableCell>{comanda.items}</TableCell>
+                    <TableCell className="font-bold text-green-600">
+                      {isLoading ? <ValueSkeleton /> : `R$ ${comanda.total.toFixed(2).replace('.', ',')}`}
+                    </TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(comanda.status)}`}>
+                        {comanda.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          Ver
+                        </Button>
+                        {comanda.status === 'Aberta' && (
+                          <Button variant="outline" size="sm">
+                            Fechar
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[5, 10, 20]}
+            />
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
