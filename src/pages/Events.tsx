@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, BarChart3, Calendar, CreditCard, MapPin, Plus, Users } from 'lucide-react';
@@ -13,7 +12,7 @@ const Events = () => {
       description: 'Criar uma nova reserva esportiva',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/eventos/reservations/novo')
+      action: () => navigate('/eventos/reservas/novo')
     },
     {
       title: 'Visualizar Agenda',
@@ -120,26 +119,47 @@ const Events = () => {
             <CardHeader>
               <CardTitle className="text-black">Reservas de Hoje</CardTitle>
               <CardDescription>
-                {todayReservations.length} reservas agendadas para hoje
+                4 reservas agendadas para hoje
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {todayReservations.map((reservation) => (
-                  <div key={reservation.id} className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
-                    <div>
-                      <div className="font-medium text-black">{reservation.time} - {reservation.venue}</div>
-                      <div className="text-sm text-gray-600">{reservation.client}</div>
-                    </div>
-                    <span className={`text-xs px-2 py-1 rounded-lg ${
-                      reservation.status === 'confirmado' 
-                        ? 'bg-green-300 text-green-800' 
-                        : 'bg-yellow-200 text-yellow-800'
-                    }`}>
-                      {reservation.status}
-                    </span>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">08:00 - Quadra A</div>
+                    <div className="text-sm text-gray-600">João Silva</div>
                   </div>
-                ))}
+                  <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
+                    confirmado
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">14:00 - Campo 1</div>
+                    <div className="text-sm text-gray-600">Time Unidos</div>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
+                    pendente
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">18:00 - Quadra B</div>
+                    <div className="text-sm text-gray-600">Maria Santos</div>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
+                    confirmado
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">20:00 - Campo 2</div>
+                    <div className="text-sm text-gray-600">Grupo Amigos</div>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
+                    confirmado
+                  </span>
+                </div>
               </div>
               <Button 
                 variant="outline" 
@@ -240,21 +260,33 @@ const Events = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {receivables.map((receivable) => (
-                  <div key={receivable.id} className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
-                    <div>
-                      <div className="font-medium text-black">{receivable.client}</div>
-                      <div className="text-sm text-gray-600">R$ {receivable.amount} - {receivable.dueDate}</div>
-                    </div>
-                    <span className={`text-xs px-2 py-1 rounded-lg ${
-                      receivable.status === 'pendente' 
-                        ? 'bg-yellow-200 text-yellow-800' 
-                        : 'bg-red-200 text-red-800'
-                    }`}>
-                      {receivable.status}
-                    </span>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">João Silva</div>
+                    <div className="text-sm text-gray-600">R$ 150 - 2024-06-10</div>
                   </div>
-                ))}
+                  <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
+                    pendente
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">Time Unidos</div>
+                    <div className="text-sm text-gray-600">R$ 300 - 2024-06-08</div>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-lg bg-red-200 text-red-800">
+                    vencido
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                  <div>
+                    <div className="font-medium text-black">Maria Santos</div>
+                    <div className="text-sm text-gray-600">R$ 200 - 2024-06-15</div>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
+                    pendente
+                  </span>
+                </div>
               </div>
               <Button 
                 variant="outline" 
