@@ -36,9 +36,9 @@ import EditVenue from "./pages/eventos/EditVenue";
 import NewClient from "./pages/eventos/NewClient";
 import NewReceivable from "./pages/eventos/NewReceivable";
 import NewReservation from "./pages/eventos/NewReservation";
-import NewVenue from "./pages/eventos/NewVenue";
+import NewVenue from "./pages/NewVenue";
 import Receivables from "./pages/eventos/Receivables";
-import ReceberPagamento from "./pages/eventos/ReceivePayment";
+import { default as EventosReceivePayment } from "./pages/eventos/ReceivePayment";
 import EventoRelatorios from "./pages/eventos/Reports";
 import Venues from "./pages/eventos/Venues";
 import Events from "./pages/Events";
@@ -48,6 +48,7 @@ import FluxoDeCaixa from "./pages/financeiro/CashFlow";
 import Despesas from "./pages/financeiro/Expenses";
 import NovaDespesa from "./pages/financeiro/NewExpense";
 import NovaReceita from "./pages/financeiro/NewRevenue";
+import { default as FinanceiroReceivePayment } from "./pages/financeiro/ReceivePayment";
 import FinanceiroRelatorios from "./pages/financeiro/Reports";
 import Receitas from "./pages/financeiro/Revenues";
 import Financeiro from "./pages/Financial";
@@ -205,7 +206,7 @@ const AppRoutes = () => {
         path="/eventos/contas-a-receber/:id/receber"
         element={
           <ProtectedRoute>
-            <ReceberPagamento />
+            <EventosReceivePayment />
           </ProtectedRoute>
         }
       />
@@ -387,7 +388,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* Financeiro Routes */}
+      {/* Financial Routes */}
       <Route
         path="/financeiro"
         element={
@@ -464,7 +465,7 @@ const AppRoutes = () => {
         path="/financeiro/receber-pagamento"
         element={
           <ProtectedRoute>
-            <ReceberPagamento />
+            <FinanceiroReceivePayment />
           </ProtectedRoute>
         }
       />
