@@ -84,7 +84,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/configuracao"
+        path="/configuracoes"
         element={
           <ProtectedRoute>
             <Settings />
@@ -109,7 +109,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/eventos/nova-reserva"
+        path="/eventos/reservas/novo"
         element={
           <ProtectedRoute>
             <NewReservation />
@@ -117,7 +117,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/eventos/reserva/:id/editar"
+        path="/eventos/reservas/:id/editar"
         element={
           <ProtectedRoute>
             <EditReservation />
@@ -270,7 +270,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/comandas/nova"
+        path="/bar/comandas/novo"
         element={
           <ProtectedRoute>
             <NewComanda />
@@ -286,7 +286,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/bar/vendas/nova"
+        path="/bar/vendas/novo"
         element={
           <ProtectedRoute>
             <NewSale />
@@ -448,7 +448,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/financeiro/nova-receita"
+        path="/financeiro/receitas/novo"
         element={
           <ProtectedRoute>
             <NovaReceita />
@@ -456,7 +456,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/financeiro/nova-despesa"
+        path="/financeiro/despesas/novo"
         element={
           <ProtectedRoute>
             <NovaDespesa />

@@ -13,14 +13,14 @@ const Financeiro = () => {
       description: 'Registrar uma nova receita',
       icon: Plus,
       color: 'bg-green-100 text-green-600',
-      path: '/financeiro/nova-receita'
+      path: '/financeiro/receitas/novo'
     },
     {
       title: 'Nova Despesa',
       description: 'Registrar uma nova despesa',
       icon: Plus,
       color: 'bg-red-100 text-red-600',
-      path: '/financeiro/nova-despesa'
+      path: '/financeiro/despesas/novo'
     },
     {
       title: 'Receber Pagamento',

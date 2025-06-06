@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -115,7 +114,7 @@ const NewReservation = () => {
       title: "Reserva criada com sucesso!",
       description: "A nova reserva foi adicionada à agenda.",
     });
-    navigate('/eventos');
+    navigate('/eventos/agenda');
   };
 
   return (
@@ -126,7 +125,7 @@ const NewReservation = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/eventos')}
+              onClick={() => navigate('/eventos/agenda')}
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -362,7 +361,7 @@ const NewReservation = () => {
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button type="button" variant="outline" onClick={() => navigate('/eventos')} className="flex-1">
+                <Button type="button" variant="outline" onClick={() => navigate('/eventos/agenda')} className="flex-1">
                   Cancelar
                 </Button>
                 <Button type="submit" className="flex-1">
