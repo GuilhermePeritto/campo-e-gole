@@ -40,32 +40,32 @@ const NewReceivable = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/eventos/contas-a-receber')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Contas a Receber
             </Button>
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Nova Conta a Receber</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Nova Conta a Receber</h1>
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Criar Nova Conta a Receber</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Criar Nova Conta a Receber</CardTitle>
             <CardDescription>
               Adicione uma nova conta a receber manualmente
             </CardDescription>
@@ -80,11 +80,11 @@ const NewReceivable = () => {
                     rules={{ required: 'Nome do cliente é obrigatório' }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Cliente</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Cliente</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Nome do cliente"
-                            className="border-black"
+                            className="border"
                             {...field}
                           />
                         </FormControl>
@@ -102,13 +102,13 @@ const NewReceivable = () => {
                     }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Valor (R$)</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Valor (R$)</FormLabel>
                         <FormControl>
                           <Input 
                             type="number"
                             step="0.01"
                             placeholder="0,00"
-                            className="border-black"
+                            className="border"
                             {...field}
                             onChange={(e) => field.onChange(parseFloat(e.target.value))}
                           />
@@ -125,11 +125,11 @@ const NewReceivable = () => {
                   rules={{ required: 'Descrição é obrigatória' }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-black">Descrição</FormLabel>
+                      <FormLabel className="text-gray-600 dark:text-gray-300">Descrição</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Descrição da conta (ex: Reserva Quadra A - 10/06)"
-                          className="border-black"
+                          className="border"
                           {...field}
                         />
                       </FormControl>
@@ -144,11 +144,11 @@ const NewReceivable = () => {
                   rules={{ required: 'Data de vencimento é obrigatória' }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-black">Data de Vencimento</FormLabel>
+                      <FormLabel className="text-gray-600 dark:text-gray-300">Data de Vencimento</FormLabel>
                       <FormControl>
                         <Input 
                           type="date"
-                          className="border-black"
+                          className="border"
                           {...field}
                         />
                       </FormControl>
@@ -161,7 +161,7 @@ const NewReceivable = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex-1 border-black text-black hover:bg-black hover:text-white"
+                    className="flex-1 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                     onClick={() => navigate('/eventos/contas-a-receber')}
                   >
                     Cancelar
@@ -169,7 +169,7 @@ const NewReceivable = () => {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 bg-black text-white hover:bg-gray-800"
+                    className="flex-1 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800"
                   >
                     {isSubmitting ? 'Salvando...' : 'Salvar Conta'}
                   </Button>

@@ -23,7 +23,7 @@ const Dashboard = () => {
       icon: Calendar,
       color: 'bg-green-600',
       hoverColor: 'hover:bg-green-500',
-      textColor: 'text-white',
+      textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Agenda com visualização diária, semanal e mensal',
         'Cadastro de locais esportivos',
@@ -38,9 +38,9 @@ const Dashboard = () => {
       title: 'Gestão de Bar',
       description: 'Controle completo do bar, estoque, comandas e caixa',
       icon: BarChart3,
-      color: 'bg-black',
-      hoverColor: 'hover:bg-gray-800',
-      textColor: 'text-white',
+      color: 'bg-orange-600',
+      hoverColor: 'hover:bg-orange-500',
+      textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Cadastro de produtos e controle de estoque',
         'Sistema de comandas digitais',
@@ -55,9 +55,9 @@ const Dashboard = () => {
       title: 'Escolinha de Futebol',
       description: 'Gestão completa de alunos, mensalidades e turmas',
       icon: Users2,
-      color: 'bg-black',
-      hoverColor: 'hover:bg-gray-800',
-      textColor: 'text-white',
+      color: 'bg-purple-600',
+      hoverColor: 'hover:bg-purple-500',
+      textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Cadastro e gestão de alunos',
         'Controle de mensalidades e pagamentos',
@@ -72,9 +72,9 @@ const Dashboard = () => {
       title: 'Financeiro',
       description: 'Controle financeiro completo da empresa',
       icon: BarChart3,
-      color: 'bg-black',
-      hoverColor: 'hover:bg-gray-800',
-      textColor: 'text-white',
+      color: 'bg-blue-600',
+      hoverColor: 'hover:bg-blue-500',
+      textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Gestão de contas a pagar e receber',
         'Relatórios financeiros detalhados',
@@ -87,9 +87,9 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
@@ -100,19 +100,19 @@ const Dashboard = () => {
                   className="h-8 w-8 rounded-full"
                 />
               </div>
-              <h1 className="text-xl font-bold text-black">Ludus Gestão</h1>
+              <h1 className="text-xl font-bold text-gray-600 dark:text-gray-300">Ludus Gestão</h1>
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-black">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <Building2 className="h-4 w-4" />
                 <span>{company?.name}</span>
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate('/settings')}
-                className="gap-2 border-black text-black hover:bg-black hover:text-white"
+                onClick={() => navigate('/configuracoes')}
+                className="gap-2 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
               >
                 <Settings className="h-4 w-4" />
                 Configurações
@@ -121,7 +121,7 @@ const Dashboard = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="gap-2 border-black text-black hover:bg-black hover:text-white"
+                className="gap-2 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
               >
                 <LogOut className="h-4 w-4" />
                 Sair
@@ -134,7 +134,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-black">
+          <h1 className="text-3xl font-bold mb-2 text-gray-600 dark:text-gray-300">
             Bem-vindo, {user?.name}!
           </h1>
           <p className="text-gray-600">
@@ -150,7 +150,7 @@ const Dashboard = () => {
             return (
               <Card
                 key={module.id}
-                className={`relative overflow-hidden transition-all duration-300 border-black ${hasAccess
+                className={`relative overflow-hidden transition-all duration-300 border ${hasAccess
                   ? 'cursor-pointer hover:shadow-xl hover:scale-105'
                   : 'opacity-60 cursor-not-allowed'
                   }`}
@@ -161,12 +161,12 @@ const Dashboard = () => {
                 <CardHeader className="relative h-40 p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className={`p-3 ${module.color} rounded-lg`}>
-                      <IconComponent className="h-6 w-6 text-white" />
+                      <IconComponent className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-black">{module.title}</CardTitle>
+                      <CardTitle className="text-xl text-gray-600 dark:text-gray-300">{module.title}</CardTitle>
                       {!hasAccess && (
-                        <Badge className="mt-1 bg-red-500 text-white">
+                        <Badge className="mt-1 bg-red-500 text-gray-600 dark:text-gray-300">
                           Sem Acesso
                         </Badge>
                       )}
@@ -208,7 +208,7 @@ const Dashboard = () => {
 
         {/* Quick Stats */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
@@ -216,49 +216,49 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Reservas Hoje</p>
-                  <p className="text-2xl font-bold text-black">12</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">12</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-black rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-white" />
+                  <BarChart3 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Vendas do Bar</p>
-                  <p className="text-2xl font-bold text-black">R$ 2.450</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ 2.450</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-black rounded-lg">
-                  <Users2 className="h-5 w-5 text-white" />
+                  <Users2 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Alunos Matriculados</p>
-                  <p className="text-2xl font-bold text-black">150</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">150</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-black rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-white" />
+                  <BarChart3 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Receita Hoje</p>
-                  <p className="text-2xl font-bold text-black">R$ 15.000</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ 15.000</p>
                 </div>
               </div>
             </CardContent>

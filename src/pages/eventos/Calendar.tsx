@@ -317,7 +317,7 @@ const Calendar = () => {
                         {dayReservations.slice(0, 3).map(reservation => (
                           <div
                             key={reservation.id}
-                            className="text-xs p-1 rounded text-white font-medium truncate cursor-pointer hover:opacity-80 transition-opacity"
+                            className="text-xs p-1 rounded text-gray-600 dark:text-gray-300 font-medium truncate cursor-pointer hover:opacity-80 transition-opacity"
                             style={{ backgroundColor: reservation.color }}
                             onClick={(e) => handleEventClick(reservation, e)}
                           >
@@ -385,7 +385,7 @@ const Calendar = () => {
                         >
                           {reservation && (
                             <div
-                              className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-white text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity"
+                              className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-gray-600 dark:text-gray-300 text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity"
                               style={{ backgroundColor: reservation.color }}
                               onClick={(e) => handleEventClick(reservation, e)}
                             >
@@ -433,7 +433,7 @@ const Calendar = () => {
                       >
                         {reservation && (
                           <div
-                            className="p-3 rounded text-white font-medium w-full cursor-pointer hover:opacity-80 transition-opacity"
+                            className="p-3 rounded text-gray-600 dark:text-gray-300 font-medium w-full cursor-pointer hover:opacity-80 transition-opacity"
                             style={{ backgroundColor: reservation.color }}
                             onClick={(e) => handleEventClick(reservation, e)}
                           >

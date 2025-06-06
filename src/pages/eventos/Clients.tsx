@@ -128,7 +128,7 @@ const Clients = () => {
 
             <Button 
               onClick={() => navigate('/eventos/clientes/novo')}
-              className="gap-2 bg-black text-white hover:bg-gray-800"
+              className="gap-2 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800"
             >
               <Plus className="h-4 w-4" />
               Novo Cliente

@@ -18,35 +18,35 @@ const Events = () => {
       title: 'Visualizar Agenda',
       description: 'Ver agenda completa dos locais',
       icon: Calendar,
-      color: 'bg-black',
+      color: 'bg-orange-500',
       action: () => navigate('/eventos/agenda')
     },
     {
       title: 'Gerenciar Locais',
       description: 'Cadastrar e gerenciar locais esportivos',
       icon: MapPin,
-      color: 'bg-black',
+      color: 'bg-purple-500',
       action: () => navigate('/eventos/locais')
     },
     {
       title: 'Clientes',
       description: 'Gerenciar clientes e histórico',
       icon: Users,
-      color: 'bg-black',
+      color: 'bg-blue-500',
       action: () => navigate('/eventos/clientes')
     },
     {
       title: 'Contas a Receber',
       description: 'Gerenciar pagamentos e cobranças',
       icon: CreditCard,
-      color: 'bg-black',
+      color: 'bg-green-500',
       action: () => navigate('/eventos/contas-a-receber')
     },
     {
       title: 'Relatórios',
       description: 'Análises financeiras e ocupação',
       icon: BarChart3,
-      color: 'bg-black',
+      color: 'bg-yellow-500',
       action: () => navigate('/eventos/relatorios')
     }
   ];
@@ -65,7 +65,7 @@ const Events = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
       <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -81,7 +81,7 @@ const Events = () => {
             </Button>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Gestão de Eventos</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Gestão de Eventos</h1>
             </div>
           </div>
         </div>
@@ -90,21 +90,21 @@ const Events = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-black mb-6">Ações Rápidas</h2>
+          <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-6">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
                 <Card 
                   key={index}
-                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 border-black"
+                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 border"
                   onClick={action.action}
                 >
                   <CardContent className="p-6 text-center">
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
-                      <IconComponent className="h-6 w-6 text-white" />
+                      <IconComponent className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </div>
-                    <h3 className="font-semibold text-black mb-1">{action.title}</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-300 mb-1">{action.title}</h3>
                     <p className="text-sm text-gray-600">{action.description}</p>
                   </CardContent>
                 </Card>
@@ -115,45 +115,45 @@ const Events = () => {
 
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Reservas de Hoje</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Reservas de Hoje</CardTitle>
               <CardDescription>
                 4 reservas agendadas para hoje
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">08:00 - Quadra A</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">08:00 - Quadra A</div>
                     <div className="text-sm text-gray-600">João Silva</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
                     confirmado
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">14:00 - Campo 1</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">14:00 - Campo 1</div>
                     <div className="text-sm text-gray-600">Time Unidos</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
                     pendente
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">18:00 - Quadra B</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">18:00 - Quadra B</div>
                     <div className="text-sm text-gray-600">Maria Santos</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
                     confirmado
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">20:00 - Campo 2</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">20:00 - Campo 2</div>
                     <div className="text-sm text-gray-600">Grupo Amigos</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
@@ -163,7 +163,7 @@ const Events = () => {
               </div>
               <Button 
                 variant="outline" 
-                className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
+                className="w-full mt-4"
                 onClick={() => navigate('/eventos/agenda')}
               >
                 Ver Agenda Completa
@@ -171,9 +171,9 @@ const Events = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Ocupação Semanal</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Ocupação Semanal</CardTitle>
               <CardDescription>
                 Taxa de ocupação dos locais esta semana
               </CardDescription>
@@ -181,7 +181,7 @@ const Events = () => {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <div className="flex justify-between text-sm mb-1 text-black">
+                  <div className="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
                     <span>Quadra A</span>
                     <span>85%</span>
                   </div>
@@ -190,7 +190,7 @@ const Events = () => {
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-1 text-black">
+                  <div className="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
                     <span>Campo 1</span>
                     <span>72%</span>
                   </div>
@@ -199,7 +199,7 @@ const Events = () => {
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-1 text-black">
+                  <div className="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
                     <span>Quadra B</span>
                     <span>58%</span>
                   </div>
@@ -210,7 +210,7 @@ const Events = () => {
               </div>
               <Button 
                 variant="outline" 
-                className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
+                className="w-full mt-4"
                 onClick={() => navigate('/eventos/relatorios')}
               >
                 Ver Relatório Completo
@@ -218,32 +218,32 @@ const Events = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Receita do Mês</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Receita do Mês</CardTitle>
               <CardDescription>
                 Faturamento com reservas esportivas
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="text-3xl font-bold text-black mb-2">R$ 18.450</div>
+                <div className="text-3xl font-bold text-gray-600 dark:text-gray-300 mb-2">R$ 18.450</div>
                 <div className="text-sm text-green-600 mb-4">+12% vs mês anterior</div>
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center">
-                    <div className="font-semibold text-black">156</div>
+                    <div className="font-semibold text-gray-600 dark:text-gray-300">156</div>
                     <div className="text-gray-600">Reservas</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-black">R$ 118</div>
+                    <div className="font-semibold text-gray-600 dark:text-gray-300">R$ 118</div>
                     <div className="text-gray-600">Ticket Médio</div>
                   </div>
                 </div>
               </div>
               <Button 
                 variant="outline" 
-                className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
+                className="w-full mt-4"
                 onClick={() => navigate('/eventos/relatorios')}
               >
                 Análise Detalhada
@@ -251,36 +251,36 @@ const Events = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Contas a Receber</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Contas a Receber</CardTitle>
               <CardDescription>
                 Pagamentos pendentes e vencidos
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">João Silva</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">João Silva</div>
                     <div className="text-sm text-gray-600">R$ 150 - 2024-06-10</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
                     pendente
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">Time Unidos</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">Time Unidos</div>
                     <div className="text-sm text-gray-600">R$ 300 - 2024-06-08</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-red-200 text-red-800">
                     vencido
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border-black rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
                   <div>
-                    <div className="font-medium text-black">Maria Santos</div>
+                    <div className="font-medium text-gray-600 dark:text-gray-300">Maria Santos</div>
                     <div className="text-sm text-gray-600">R$ 200 - 2024-06-15</div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
@@ -290,7 +290,7 @@ const Events = () => {
               </div>
               <Button 
                 variant="outline" 
-                className="w-full mt-4 border-black text-black hover:bg-black hover:text-white"
+                className="w-full mt-4"
                 onClick={() => navigate('/eventos/contas-a-receber')}
               >
                 Ver Todas as Contas

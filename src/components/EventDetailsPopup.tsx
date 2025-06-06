@@ -1,8 +1,8 @@
 
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, User, MapPin, Phone, Mail, Edit3, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Calendar, Clock, Edit3, Mail, MapPin, Phone, User, X } from 'lucide-react';
+import React from 'react';
 
 interface EventDetailsPopupProps {
   isOpen: boolean;
@@ -187,7 +187,7 @@ const EventDetailsPopup: React.FC<EventDetailsPopupProps> = ({
         <div className="flex gap-3 pt-4 border-t">
           <Button 
             onClick={onEdit}
-            className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+            className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700 text-gray-600 dark:text-gray-300"
           >
             <Edit3 className="h-4 w-4" />
             Editar Reserva

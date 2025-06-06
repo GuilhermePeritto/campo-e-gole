@@ -154,7 +154,7 @@ const NewClient = () => {
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button type="submit" variant='outline' className="flex-1 bg-black text-white">
+                <Button type="submit" variant='outline' className="flex-1 bg-black text-gray-600 dark:text-gray-300">
                   Cadastrar Cliente
                 </Button>
                 <Button

@@ -119,23 +119,23 @@ const Receivables = () => {
     .reduce((sum, r) => sum + r.amount, 0);
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/eventos')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Eventos
             </Button>
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Contas a Receber</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Contas a Receber</h1>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ const Receivables = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-yellow-100 rounded-lg">
@@ -152,13 +152,13 @@ const Receivables = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pendente</p>
-                  <p className="text-2xl font-bold text-black">R$ {totalPendente.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ {totalPendente.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-red-100 rounded-lg">
@@ -166,13 +166,13 @@ const Receivables = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Vencido</p>
-                  <p className="text-2xl font-bold text-black">R$ {totalVencido.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ {totalVencido.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
@@ -180,7 +180,7 @@ const Receivables = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total</p>
-                  <p className="text-2xl font-bold text-black">R$ {(totalPendente + totalVencido).toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ {(totalPendente + totalVencido).toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
@@ -195,12 +195,12 @@ const Receivables = () => {
               placeholder="Buscar por cliente ou descrição..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-black"
+              className="pl-10 border"
             />
           </div>
           <Button
             onClick={() => navigate('/eventos/contas-a-receber/novo')}
-            className="bg-black text-white hover:bg-gray-800 gap-2"
+            className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800 gap-2"
           >
             <Plus className="h-4 w-4" />
             Nova Conta
@@ -208,9 +208,9 @@ const Receivables = () => {
         </div>
 
         {/* Receivables Table */}
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Lista de Contas a Receber</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Lista de Contas a Receber</CardTitle>
             <CardDescription>
               Gerencie todas as contas pendentes e vencidas
             </CardDescription>
@@ -219,20 +219,20 @@ const Receivables = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-black">Cliente</TableHead>
-                  <TableHead className="text-black">Descrição</TableHead>
-                  <TableHead className="text-black">Valor</TableHead>
-                  <TableHead className="text-black">Vencimento</TableHead>
-                  <TableHead className="text-black">Status</TableHead>
-                  <TableHead className="text-black">Ações</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Cliente</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Descrição</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Valor</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Vencimento</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pagination.paginatedData.map((receivable) => (
                   <TableRow key={receivable.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-black">{receivable.client}</TableCell>
+                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">{receivable.client}</TableCell>
                     <TableCell className="text-gray-600">{receivable.description}</TableCell>
-                    <TableCell className="font-medium text-black">R$ {receivable.amount.toFixed(2)}</TableCell>
+                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">R$ {receivable.amount.toFixed(2)}</TableCell>
                     <TableCell className="text-gray-600">{receivable.dueDate}</TableCell>
                     <TableCell>
                       <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(receivable.status)}`}>
@@ -244,7 +244,7 @@ const Receivables = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-black text-black hover:bg-black hover:text-white"
+                          className="border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                           onClick={() => navigate(`/eventos/contas-a-receber/${receivable.id}/editar`)}
                         >
                           Editar
@@ -252,7 +252,7 @@ const Receivables = () => {
                         {receivable.status !== 'pago' && (
                           <Button
                             size="sm"
-                            className="bg-green-600 text-white hover:bg-green-700"
+                            className="bg-green-600 text-gray-600 dark:text-gray-300 hover:bg-green-700"
                             onClick={() => navigate(`/eventos/contas-a-receber/${receivable.id}/receber`)}
                           >
                             Receber

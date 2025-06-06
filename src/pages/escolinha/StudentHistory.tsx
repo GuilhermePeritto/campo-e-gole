@@ -84,23 +84,23 @@ const StudentHistory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/escolinha/alunos')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Alunos
             </Button>
             <div className="flex items-center gap-2">
               <Users2 className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Histórico do Aluno</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Histórico do Aluno</h1>
             </div>
           </div>
         </div>
@@ -108,9 +108,9 @@ const StudentHistory = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Student Info */}
-        <Card className="border-black mb-6">
+        <Card className="border mb-6">
           <CardHeader>
-            <CardTitle className="text-black">{studentInfo.name}</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">{studentInfo.name}</CardTitle>
             <CardDescription>
               {studentInfo.age} anos • Turma: {studentInfo.class} • Matriculado em: {studentInfo.enrollDate}
             </CardDescription>
@@ -119,9 +119,9 @@ const StudentHistory = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Payment History */}
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Histórico de Pagamentos</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Histórico de Pagamentos</CardTitle>
               <CardDescription>
                 Últimos pagamentos de mensalidade
               </CardDescription>
@@ -130,15 +130,15 @@ const StudentHistory = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-black">Mês</TableHead>
-                    <TableHead className="text-black">Valor</TableHead>
-                    <TableHead className="text-black">Status</TableHead>
+                    <TableHead className="text-gray-600 dark:text-gray-300">Mês</TableHead>
+                    <TableHead className="text-gray-600 dark:text-gray-300">Valor</TableHead>
+                    <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paymentHistory.map((payment) => (
                     <TableRow key={payment.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium text-black">{payment.month}</TableCell>
+                      <TableCell className="font-medium text-gray-600 dark:text-gray-300">{payment.month}</TableCell>
                       <TableCell className="text-gray-600">R$ {payment.amount}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(payment.status)}`}>
@@ -153,9 +153,9 @@ const StudentHistory = () => {
           </Card>
 
           {/* Attendance History */}
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Histórico de Presença</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Histórico de Presença</CardTitle>
               <CardDescription>
                 Últimas presenças nos treinos
               </CardDescription>
@@ -164,15 +164,15 @@ const StudentHistory = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-black">Data</TableHead>
-                    <TableHead className="text-black">Presença</TableHead>
-                    <TableHead className="text-black">Observações</TableHead>
+                    <TableHead className="text-gray-600 dark:text-gray-300">Data</TableHead>
+                    <TableHead className="text-gray-600 dark:text-gray-300">Presença</TableHead>
+                    <TableHead className="text-gray-600 dark:text-gray-300">Observações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {attendanceHistory.map((attendance) => (
                     <TableRow key={attendance.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium text-black">{attendance.date}</TableCell>
+                      <TableCell className="font-medium text-gray-600 dark:text-gray-300">{attendance.date}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-lg ${attendance.present ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                           {attendance.present ? 'Presente' : 'Falta'}

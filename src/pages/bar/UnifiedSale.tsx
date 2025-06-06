@@ -243,7 +243,7 @@ const UnifiedSale = () => {
                                   R$ {product.price.toFixed(2)} • Estoque: {product.stock}
                                 </div>
                               </div>
-                              <Button size="sm" className="bg-black text-white hover:bg-gray-800">
+                              <Button size="sm" className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800">
                                 <Plus className="h-4 w-4" />
                               </Button>
                             </div>
@@ -370,7 +370,7 @@ const UnifiedSale = () => {
 
                     <Button 
                       onClick={handleFinalizeSale} 
-                      className="w-full bg-black text-white hover:bg-gray-800" 
+                      className="w-full bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800" 
                       size="lg"
                     >
                       {saleType === 'direct' ? 'Finalizar Venda' : comandaId ? 'Atualizar Comanda' : 'Criar Comanda'}

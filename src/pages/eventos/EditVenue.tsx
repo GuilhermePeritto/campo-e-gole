@@ -118,7 +118,7 @@ const EditVenue = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-4 h-16">
@@ -126,14 +126,14 @@ const EditVenue = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/eventos/locais')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>
             <div className="flex items-center gap-3">
               <MapPin className="h-6 w-6 text-green-600" />
-              <h1 className="text-2xl font-medium text-black">Editar Local</h1>
+              <h1 className="text-2xl font-medium text-gray-600 dark:text-gray-300">Editar Local</h1>
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ const EditVenue = () => {
       <main className="max-w-4xl mx-auto px-6 py-8">
         <Card className="border-gray-200">
           <CardHeader>
-            <CardTitle className="text-black">Editar Dados do Local</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Editar Dados do Local</CardTitle>
             <CardDescription className="text-gray-600">
               Atualize as informações do local
             </CardDescription>
@@ -151,11 +151,11 @@ const EditVenue = () => {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Informações Básicas */}
               <div className="space-y-6">
-                <h3 className="text-lg font-medium text-black">Informações Básicas</h3>
+                <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">Informações Básicas</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-black">Nome do Local *</label>
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Nome do Local *</label>
                     <Input
                       placeholder="Ex: Quadra A - Futebol Society"
                       value={formData.name}
@@ -165,7 +165,7 @@ const EditVenue = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-black">Tipo de Esporte *</label>
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Tipo de Esporte *</label>
                     <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
                       <SelectTrigger className="border-gray-300">
                         <SelectValue placeholder="Selecionar tipo" />
@@ -179,7 +179,7 @@ const EditVenue = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-black">Capacidade (pessoas) *</label>
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Capacidade (pessoas) *</label>
                     <Input
                       type="number"
                       placeholder="Ex: 14"
@@ -190,7 +190,7 @@ const EditVenue = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-black">Valor por Hora (R$) *</label>
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Valor por Hora (R$) *</label>
                     <Input
                       type="number"
                       step="0.01"
@@ -206,7 +206,7 @@ const EditVenue = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Palette className="h-4 w-4 text-gray-600" />
-                    <label className="text-sm font-medium text-black">Cor de Identificação</label>
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Cor de Identificação</label>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {colorOptions.map((color) => (
@@ -215,7 +215,7 @@ const EditVenue = () => {
                         type="button"
                         onClick={() => handleInputChange('color', color.value)}
                         className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                          formData.color === color.value ? 'border-black scale-110' : 'border-gray-300'
+                          formData.color === color.value ? 'border scale-110' : 'border-gray-300'
                         }`}
                         style={{ backgroundColor: color.value }}
                         title={color.name}
@@ -236,7 +236,7 @@ const EditVenue = () => {
 
               {/* Características */}
               <div className="space-y-6">
-                <h3 className="text-lg font-medium text-black">Características do Local</h3>
+                <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">Características do Local</h3>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {Object.entries(characteristicLabels).map(([key, label]) => (
@@ -259,7 +259,7 @@ const EditVenue = () => {
 
               {/* Descrição */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-black">Descrição</label>
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Descrição</label>
                 <textarea
                   className="w-full p-3 border border-gray-300 rounded-md resize-none h-24"
                   placeholder="Descrição adicional do local (ex: Quadra de grama sintética com iluminação LED)"
@@ -270,7 +270,7 @@ const EditVenue = () => {
 
               {/* Equipamentos */}
               <div className="space-y-4">
-                <label className="text-sm font-medium text-black">Equipamentos Disponíveis</label>
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Equipamentos Disponíveis</label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Ex: Traves, Redes, Bolas..."
@@ -307,18 +307,18 @@ const EditVenue = () => {
                   checked={formData.active}
                   onCheckedChange={(checked) => handleInputChange('active', checked)}
                 />
-                <label className="text-sm font-medium text-black">Local ativo</label>
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Local ativo</label>
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button type="submit" className="flex-1 bg-black text-white hover:bg-gray-800">
+                <Button type="submit" className="flex-1 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800">
                   Salvar Alterações
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/eventos/locais')}
-                  className="flex-1 border-gray-300 text-black hover:bg-gray-50"
+                  className="flex-1 border-gray-300 text-gray-600 dark:text-gray-300 hover:bg-gray-50"
                 >
                   Cancelar
                 </Button>

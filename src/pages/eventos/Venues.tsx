@@ -67,7 +67,7 @@ const Venues = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
@@ -76,20 +76,20 @@ const Venues = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/eventos')}
-                className="gap-2 text-black hover:bg-gray-100"
+                className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex items-center gap-3">
                 <MapPin className="h-6 w-6 text-green-600" />
-                <h1 className="text-2xl font-medium text-black">Gerenciar Locais</h1>
+                <h1 className="text-2xl font-medium text-gray-600 dark:text-gray-300">Gerenciar Locais</h1>
               </div>
             </div>
 
             <Button 
               onClick={() => navigate('/eventos/locais/novo')}
-              className="gap-2 bg-black text-white hover:bg-gray-800"
+              className="gap-2 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800"
             >
               <Plus className="h-4 w-4" />
               Novo Local
@@ -119,7 +119,7 @@ const Venues = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg text-black">{venue.name}</CardTitle>
+                    <CardTitle className="text-lg text-gray-600 dark:text-gray-300">{venue.name}</CardTitle>
                     <CardDescription className="text-gray-600">{venue.type}</CardDescription>
                   </div>
                   <div className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -149,7 +149,7 @@ const Venues = () => {
                   </div>
 
                   <div>
-                    <div className="text-sm font-medium mb-2 text-black">Equipamentos:</div>
+                    <div className="text-sm font-medium mb-2 text-gray-600 dark:text-gray-300">Equipamentos:</div>
                     <div className="flex flex-wrap gap-1">
                       {venue.equipment.map((item, index) => (
                         <span
@@ -166,7 +166,7 @@ const Venues = () => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex-1 gap-1 border-gray-300 text-black hover:bg-gray-50"
+                      className="flex-1 gap-1 border-gray-300 text-gray-600 dark:text-gray-300 hover:bg-gray-50"
                       onClick={() => navigate(`/eventos/locais/${venue.id}/editar`)}
                     >
                       <Edit className="h-4 w-4" />
@@ -190,7 +190,7 @@ const Venues = () => {
         {filteredVenues.length === 0 && (
           <div className="text-center py-12">
             <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-black mb-2">
+            <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">
               Nenhum local encontrado
             </h3>
             <p className="text-gray-500 mb-4">
@@ -198,7 +198,7 @@ const Venues = () => {
             </p>
             <Button 
               onClick={() => navigate('/eventos/locais/novo')}
-              className="gap-2 bg-black text-white hover:bg-gray-800"
+              className="gap-2 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800"
             >
               <Plus className="h-4 w-4" />
               Criar Novo Local

@@ -48,23 +48,23 @@ const Classes = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/escolinha')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Escolinha
             </Button>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Gerenciar Turmas</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Gerenciar Turmas</h1>
             </div>
           </div>
         </div>
@@ -74,11 +74,11 @@ const Classes = () => {
         {/* Header with Add Button */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-black">Turmas da Escolinha</h2>
+            <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300">Turmas da Escolinha</h2>
             <p className="text-gray-600">Gerencie as turmas e horários de treino</p>
           </div>
           <Button
-            className="bg-black text-white hover:bg-gray-800 gap-2"
+            className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800 gap-2"
           >
             <Plus className="h-4 w-4" />
             Nova Turma
@@ -88,9 +88,9 @@ const Classes = () => {
         {/* Classes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {classes.map((classItem) => (
-            <Card key={classItem.id} className="border-black">
+            <Card key={classItem.id} className="border">
               <CardHeader>
-                <CardTitle className="text-black">{classItem.name}</CardTitle>
+                <CardTitle className="text-gray-600 dark:text-gray-300">{classItem.name}</CardTitle>
                 <CardDescription>
                   {classItem.ageRange} • {classItem.schedule}
                 </CardDescription>
@@ -99,7 +99,7 @@ const Classes = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Alunos</span>
-                    <span className="font-semibold text-black">
+                    <span className="font-semibold text-gray-600 dark:text-gray-300">
                       {classItem.studentsCount}/{classItem.maxStudents}
                     </span>
                   </div>
@@ -113,14 +113,14 @@ const Classes = () => {
                   
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Mensalidade</span>
-                    <span className="font-semibold text-black">R$ {classItem.monthlyFee}</span>
+                    <span className="font-semibold text-gray-600 dark:text-gray-300">R$ {classItem.monthlyFee}</span>
                   </div>
                   
                   <div className="flex gap-2 pt-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 border-black text-black hover:bg-black hover:text-white"
+                      className="flex-1 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                       onClick={() => navigate(`/escolinha/turmas/${classItem.id}/editar`)}
                     >
                       Editar
@@ -128,7 +128,7 @@ const Classes = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 border-black text-black hover:bg-black hover:text-white"
+                      className="flex-1 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                       onClick={() => navigate(`/escolinha/turmas/${classItem.id}/alunos`)}
                     >
                       Ver Alunos
@@ -141,9 +141,9 @@ const Classes = () => {
         </div>
 
         {/* Schedule Table */}
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Cronograma Semanal</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Cronograma Semanal</CardTitle>
             <CardDescription>
               Visualização dos horários de todas as turmas
             </CardDescription>
@@ -152,17 +152,17 @@ const Classes = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-black">Horário</TableHead>
-                  <TableHead className="text-black">Segunda</TableHead>
-                  <TableHead className="text-black">Terça</TableHead>
-                  <TableHead className="text-black">Quarta</TableHead>
-                  <TableHead className="text-black">Quinta</TableHead>
-                  <TableHead className="text-black">Sexta</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Horário</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Segunda</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Terça</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Quarta</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Quinta</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Sexta</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow className="hover:bg-gray-50">
-                  <TableCell className="font-medium text-black">16:00-17:00</TableCell>
+                  <TableCell className="font-medium text-gray-600 dark:text-gray-300">16:00-17:00</TableCell>
                   <TableCell className="text-gray-600">Infantil A</TableCell>
                   <TableCell className="text-gray-600">Infantil B</TableCell>
                   <TableCell className="text-gray-600">Infantil A</TableCell>
@@ -170,7 +170,7 @@ const Classes = () => {
                   <TableCell className="text-gray-600">-</TableCell>
                 </TableRow>
                 <TableRow className="hover:bg-gray-50">
-                  <TableCell className="font-medium text-black">17:00-18:00</TableCell>
+                  <TableCell className="font-medium text-gray-600 dark:text-gray-300">17:00-18:00</TableCell>
                   <TableCell className="text-gray-600">Juvenil A</TableCell>
                   <TableCell className="text-gray-600">Juvenil B</TableCell>
                   <TableCell className="text-gray-600">Juvenil A</TableCell>

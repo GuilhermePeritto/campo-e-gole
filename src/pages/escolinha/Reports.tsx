@@ -30,9 +30,9 @@ const EscolinhaRelatorios = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -40,14 +40,14 @@ const EscolinhaRelatorios = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/escolinha')}
-                className="gap-2 text-black hover:bg-gray-100"
+                className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Escolinha
               </Button>
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-green-600" />
-                <h1 className="text-xl font-semibold text-black">Relatórios da Escolinha</h1>
+                <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Relatórios da Escolinha</h1>
               </div>
             </div>
             <ExportButton 
@@ -62,41 +62,41 @@ const EscolinhaRelatorios = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-600">Total de Alunos</p>
-                <p className="text-3xl font-bold text-black">85</p>
+                <p className="text-3xl font-bold text-gray-600 dark:text-gray-300">85</p>
                 <p className="text-sm text-green-600">+3 este mês</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-600">Receita Mensal</p>
-                <p className="text-3xl font-bold text-black">R$ 12.750</p>
+                <p className="text-3xl font-bold text-gray-600 dark:text-gray-300">R$ 12.750</p>
                 <p className="text-sm text-green-600">+6% vs mês anterior</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-600">Taxa de Ocupação</p>
-                <p className="text-3xl font-bold text-black">92%</p>
+                <p className="text-3xl font-bold text-gray-600 dark:text-gray-300">92%</p>
                 <p className="text-sm text-gray-600">55/60 vagas</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardContent className="p-6">
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-600">Inadimplência</p>
-                <p className="text-3xl font-bold text-black">9.4%</p>
+                <p className="text-3xl font-bold text-gray-600 dark:text-gray-300">9.4%</p>
                 <p className="text-sm text-red-600">8 alunos atrasados</p>
               </div>
             </CardContent>
@@ -105,9 +105,9 @@ const EscolinhaRelatorios = () => {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Evolução Mensal</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Evolução Mensal</CardTitle>
               <CardDescription>
                 Receita e número de alunos ao longo do ano
               </CardDescription>
@@ -125,9 +125,9 @@ const EscolinhaRelatorios = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-black">
+          <Card className="border">
             <CardHeader>
-              <CardTitle className="text-black">Status de Pagamentos</CardTitle>
+              <CardTitle className="text-gray-600 dark:text-gray-300">Status de Pagamentos</CardTitle>
               <CardDescription>
                 Distribuição dos alunos por situação financeira
               </CardDescription>
@@ -155,9 +155,9 @@ const EscolinhaRelatorios = () => {
         </div>
 
         {/* Class Distribution */}
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Distribuição por Turma</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Distribuição por Turma</CardTitle>
             <CardDescription>
               Número de alunos em cada turma
             </CardDescription>

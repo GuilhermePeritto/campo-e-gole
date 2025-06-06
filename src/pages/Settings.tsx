@@ -24,6 +24,8 @@ const Settings = () => {
     businessEnd: company?.settings.businessHours.end || '23:00',
     eventsModule: company?.modules.includes('events') || false,
     barModule: company?.modules.includes('bar') || false,
+    schoolModule: company?.modules.includes('school') || false,
+    financialModule: company?.modules.includes('financial') || false,
     autoConfirmReservations: true,
     allowRecurringReservations: true,
     requireClientApproval: false,
@@ -62,7 +64,7 @@ const Settings = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="company" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
@@ -82,6 +84,10 @@ const Settings = () => {
             <TabsTrigger value="bar" className="gap-2">
               <DollarSign className="h-4 w-4" />
               Bar
+            </TabsTrigger>
+            <TabsTrigger value="school" className="gap-2">
+              <Building2 className="h-4 w-4" />
+              Escolinha
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
@@ -105,12 +111,12 @@ const Settings = () => {
                     <Input
                       id="companyName"
                       value={settings.companyName}
-                      onChange={(e) => setSettings({...settings, companyName: e.target.value})}
+                      onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="currency">Moeda</Label>
-                    <Select value={settings.currency} onValueChange={(value) => setSettings({...settings, currency: value})}>
+                    <Select value={settings.currency} onValueChange={(value) => setSettings({ ...settings, currency: value })}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -123,7 +129,7 @@ const Settings = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="timezone">Fuso Horário</Label>
-                    <Select value={settings.timezone} onValueChange={(value) => setSettings({...settings, timezone: value})}>
+                    <Select value={settings.timezone} onValueChange={(value) => setSettings({ ...settings, timezone: value })}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -145,7 +151,7 @@ const Settings = () => {
                         id="businessStart"
                         type="time"
                         value={settings.businessStart}
-                        onChange={(e) => setSettings({...settings, businessStart: e.target.value})}
+                        onChange={(e) => setSettings({ ...settings, businessStart: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
@@ -154,7 +160,7 @@ const Settings = () => {
                         id="businessEnd"
                         type="time"
                         value={settings.businessEnd}
-                        onChange={(e) => setSettings({...settings, businessEnd: e.target.value})}
+                        onChange={(e) => setSettings({ ...settings, businessEnd: e.target.value })}
                       />
                     </div>
                   </div>
@@ -213,10 +219,10 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.eventsModule}
-                    onCheckedChange={(checked) => setSettings({...settings, eventsModule: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, eventsModule: checked })}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Módulo de Gestão de Bar</div>
@@ -226,7 +232,33 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.barModule}
-                    onCheckedChange={(checked) => setSettings({...settings, barModule: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, barModule: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Módulo de Gestão Escolar</div>
+                    <div className="text-sm text-gray-500">
+                      Controle de alunos, turmas e notas
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.schoolModule}
+                    onCheckedChange={(checked) => setSettings({ ...settings, schoolModule: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Módulo Financeiro</div>
+                    <div className="text-sm text-gray-500">
+                      Controle de contas a pagar/receber e fluxo de caixa
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.financialModule}
+                    onCheckedChange={(checked) => setSettings({ ...settings, financialModule: checked })}
                   />
                 </div>
               </CardContent>
@@ -252,10 +284,10 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.autoConfirmReservations}
-                    onCheckedChange={(checked) => setSettings({...settings, autoConfirmReservations: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, autoConfirmReservations: checked })}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Permitir Reservas Recorrentes</div>
@@ -265,7 +297,7 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.allowRecurringReservations}
-                    onCheckedChange={(checked) => setSettings({...settings, allowRecurringReservations: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, allowRecurringReservations: checked })}
                   />
                 </div>
 
@@ -278,7 +310,7 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.requireClientApproval}
-                    onCheckedChange={(checked) => setSettings({...settings, requireClientApproval: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, requireClientApproval: checked })}
                   />
                 </div>
               </CardContent>
@@ -304,7 +336,7 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.stockAlerts}
-                    onCheckedChange={(checked) => setSettings({...settings, stockAlerts: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, stockAlerts: checked })}
                   />
                 </div>
 
@@ -314,7 +346,7 @@ const Settings = () => {
                     id="stockThreshold"
                     type="number"
                     value={settings.lowStockThreshold}
-                    onChange={(e) => setSettings({...settings, lowStockThreshold: parseInt(e.target.value)})}
+                    onChange={(e) => setSettings({ ...settings, lowStockThreshold: parseInt(e.target.value) })}
                     className="w-32"
                   />
                 </div>
@@ -328,7 +360,7 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.printReceipts}
-                    onCheckedChange={(checked) => setSettings({...settings, printReceipts: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, printReceipts: checked })}
                   />
                 </div>
 
@@ -341,13 +373,41 @@ const Settings = () => {
                   </div>
                   <Switch
                     checked={settings.enableComandas}
-                    onCheckedChange={(checked) => setSettings({...settings, enableComandas: checked})}
+                    onCheckedChange={(checked) => setSettings({ ...settings, enableComandas: checked })}
                   />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Configurações da escolinha*/}
+          <TabsContent value="school" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configurações da Escolinha</CardTitle>
+                <CardDescription>
+                  Configure o módulo de gestão escolar
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Habilitar Módulo Escolar</div>
+                    <div className="text-sm text-gray-500">
+                      Ativar funcionalidades de gestão escolar
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.schoolModule}
+                    onCheckedChange={(checked) => setSettings({ ...settings, schoolModule: checked })}
+                  />
+                </div>
+
+                {/* Additional school settings can be added here */}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
           {/* Configurações de Usuários */}
           <TabsContent value="users" className="space-y-6">
             <Card>
@@ -371,7 +431,7 @@ const Settings = () => {
                       Editar
                     </Button>
                   </div>
-                  
+
                   <Button className="w-full">
                     Adicionar Novo Usuário
                   </Button>

@@ -41,32 +41,32 @@ const EditReceivable = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/eventos/contas-a-receber')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Contas a Receber
             </Button>
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Editar Conta a Receber</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Editar Conta a Receber</h1>
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Editar Informações da Conta</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Editar Informações da Conta</CardTitle>
             <CardDescription>
               Altere as informações da conta a receber conforme necessário
             </CardDescription>
@@ -75,49 +75,49 @@ const EditReceivable = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="client" className="text-black">Cliente</Label>
+                  <Label htmlFor="client" className="text-gray-600 dark:text-gray-300">Cliente</Label>
                   <Input
                     id="client"
                     value={formData.client}
                     onChange={(e) => handleChange('client', e.target.value)}
-                    className="border-black"
+                    className="border"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-black">Valor (R$)</Label>
+                  <Label htmlFor="amount" className="text-gray-600 dark:text-gray-300">Valor (R$)</Label>
                   <Input
                     id="amount"
                     type="number"
                     step="0.01"
                     value={formData.amount}
                     onChange={(e) => handleChange('amount', e.target.value)}
-                    className="border-black"
+                    className="border"
                     required
                   />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="dueDate" className="text-black">Data de Vencimento</Label>
+                  <Label htmlFor="dueDate" className="text-gray-600 dark:text-gray-300">Data de Vencimento</Label>
                   <Input
                     id="dueDate"
                     type="date"
                     value={formData.dueDate}
                     onChange={(e) => handleChange('dueDate', e.target.value)}
-                    className="border-black"
+                    className="border"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-black">Descrição</Label>
+                <Label htmlFor="description" className="text-gray-600 dark:text-gray-300">Descrição</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
-                  className="border-black"
+                  className="border"
                   placeholder="Descrição da conta a receber..."
                   required
                 />
@@ -126,7 +126,7 @@ const EditReceivable = () => {
               <div className="flex gap-4 pt-6">
                 <Button
                   type="submit"
-                  className="bg-black text-white hover:bg-gray-800 gap-2"
+                  className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800 gap-2"
                 >
                   <Save className="h-4 w-4" />
                   Salvar Alterações
@@ -135,7 +135,7 @@ const EditReceivable = () => {
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/eventos/contas-a-receber')}
-                  className="border-black text-black hover:bg-gray-100"
+                  className="border text-gray-600 dark:text-gray-300 hover:bg-gray-100"
                 >
                   Cancelar
                 </Button>

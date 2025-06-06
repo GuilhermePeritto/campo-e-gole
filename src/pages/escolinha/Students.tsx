@@ -67,23 +67,23 @@ const Students = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/escolinha')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Escolinha
             </Button>
             <div className="flex items-center gap-2">
               <Users2 className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Gerenciar Alunos</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Gerenciar Alunos</h1>
             </div>
           </div>
         </div>
@@ -98,12 +98,12 @@ const Students = () => {
               placeholder="Buscar por nome ou turma..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-black"
+              className="pl-10 border"
             />
           </div>
           <Button
             onClick={() => navigate('/escolinha/alunos/novo')}
-            className="bg-black text-white hover:bg-gray-800 gap-2"
+            className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800 gap-2"
           >
             <Plus className="h-4 w-4" />
             Novo Aluno
@@ -111,9 +111,9 @@ const Students = () => {
         </div>
 
         {/* Students Table */}
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Lista de Alunos</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Lista de Alunos</CardTitle>
             <CardDescription>
               Gerencie todos os alunos da escolinha
             </CardDescription>
@@ -122,23 +122,23 @@ const Students = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-black">Nome</TableHead>
-                  <TableHead className="text-black">Idade</TableHead>
-                  <TableHead className="text-black">Turma</TableHead>
-                  <TableHead className="text-black">Telefone</TableHead>
-                  <TableHead className="text-black">Mensalidade</TableHead>
-                  <TableHead className="text-black">Status</TableHead>
-                  <TableHead className="text-black">Ações</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Nome</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Idade</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Turma</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Telefone</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Mensalidade</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
+                  <TableHead className="text-gray-600 dark:text-gray-300">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredStudents.map((student) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-black">{student.name}</TableCell>
+                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">{student.name}</TableCell>
                     <TableCell className="text-gray-600">{student.age} anos</TableCell>
                     <TableCell className="text-gray-600">{student.class}</TableCell>
                     <TableCell className="text-gray-600">{student.phone}</TableCell>
-                    <TableCell className="font-medium text-black">R$ {student.monthlyFee}</TableCell>
+                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">R$ {student.monthlyFee}</TableCell>
                     <TableCell>
                       <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(student.status)}`}>
                         {student.status}
@@ -149,7 +149,7 @@ const Students = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-black text-black hover:bg-black hover:text-white"
+                          className="border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                           onClick={() => navigate(`/escolinha/alunos/${student.id}/editar`)}
                         >
                           Editar
@@ -157,7 +157,7 @@ const Students = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-black text-black hover:bg-black hover:text-white"
+                          className="border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                           onClick={() => navigate(`/escolinha/alunos/${student.id}/history`)}
                         >
                           Histórico

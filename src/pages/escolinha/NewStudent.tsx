@@ -48,32 +48,32 @@ const NewStudent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
-      <header className="shadow-sm border-b border-black">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/escolinha/alunos')}
-              className="gap-2 text-black hover:bg-gray-100"
+              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4" />
               Alunos
             </Button>
             <div className="flex items-center gap-2">
               <Users2 className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-black">Novo Aluno</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Novo Aluno</h1>
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="border-black">
+        <Card className="border">
           <CardHeader>
-            <CardTitle className="text-black">Cadastrar Novo Aluno</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Cadastrar Novo Aluno</CardTitle>
             <CardDescription>
               Adicione um novo aluno à escolinha de futebol
             </CardDescription>
@@ -88,11 +88,11 @@ const NewStudent = () => {
                     rules={{ required: 'Nome do aluno é obrigatório' }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Nome do Aluno</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Nome do Aluno</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Nome completo"
-                            className="border-black"
+                            className="border"
                             {...field}
                           />
                         </FormControl>
@@ -111,12 +111,12 @@ const NewStudent = () => {
                     }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Idade</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Idade</FormLabel>
                         <FormControl>
                           <Input 
                             type="number"
                             placeholder="Idade em anos"
-                            className="border-black"
+                            className="border"
                             {...field}
                             onChange={(e) => field.onChange(parseInt(e.target.value))}
                           />
@@ -134,11 +134,11 @@ const NewStudent = () => {
                     rules={{ required: 'Nome do responsável é obrigatório' }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Nome do Responsável</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Nome do Responsável</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Nome do pai/mãe ou responsável"
-                            className="border-black"
+                            className="border"
                             {...field}
                           />
                         </FormControl>
@@ -153,11 +153,11 @@ const NewStudent = () => {
                     rules={{ required: 'Telefone é obrigatório' }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Telefone</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Telefone</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="(11) 99999-9999"
-                            className="border-black"
+                            className="border"
                             {...field}
                           />
                         </FormControl>
@@ -172,12 +172,12 @@ const NewStudent = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-black">E-mail (opcional)</FormLabel>
+                      <FormLabel className="text-gray-600 dark:text-gray-300">E-mail (opcional)</FormLabel>
                       <FormControl>
                         <Input 
                           type="email"
                           placeholder="email@exemplo.com"
-                          className="border-black"
+                          className="border"
                           {...field}
                         />
                       </FormControl>
@@ -192,11 +192,11 @@ const NewStudent = () => {
                   rules={{ required: 'Endereço é obrigatório' }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-black">Endereço</FormLabel>
+                      <FormLabel className="text-gray-600 dark:text-gray-300">Endereço</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Endereço completo"
-                          className="border-black"
+                          className="border"
                           {...field}
                         />
                       </FormControl>
@@ -212,11 +212,11 @@ const NewStudent = () => {
                     rules={{ required: 'Turma é obrigatória' }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Turma</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Turma</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Ex: Infantil A, Juvenil B"
-                            className="border-black"
+                            className="border"
                             {...field}
                           />
                         </FormControl>
@@ -234,13 +234,13 @@ const NewStudent = () => {
                     }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black">Mensalidade (R$)</FormLabel>
+                        <FormLabel className="text-gray-600 dark:text-gray-300">Mensalidade (R$)</FormLabel>
                         <FormControl>
                           <Input 
                             type="number"
                             step="0.01"
                             placeholder="150.00"
-                            className="border-black"
+                            className="border"
                             {...field}
                             onChange={(e) => field.onChange(parseFloat(e.target.value))}
                           />
@@ -255,7 +255,7 @@ const NewStudent = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex-1 border-black text-black hover:bg-black hover:text-white"
+                    className="flex-1 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
                     onClick={() => navigate('/escolinha/alunos')}
                   >
                     Cancelar
@@ -263,7 +263,7 @@ const NewStudent = () => {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 bg-black text-white hover:bg-gray-800"
+                    className="flex-1 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800"
                   >
                     {isSubmitting ? 'Salvando...' : 'Salvar Aluno'}
                   </Button>
