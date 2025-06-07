@@ -1,8 +1,10 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Plus, Search, Users2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -54,6 +56,11 @@ const Students = () => {
     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.class.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const pagination = usePagination(filteredStudents, {
+    pageSize: 5,
+    totalItems: filteredStudents.length
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -132,7 +139,7 @@ const Students = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStudents.map((student) => (
+                {pagination.paginatedData.map((student) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-gray-600 dark:text-gray-300">{student.name}</TableCell>
                     <TableCell className="text-gray-600">{student.age} anos</TableCell>
@@ -168,6 +175,21 @@ const Students = () => {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Paginação */}
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[5, 10, 15]}
+            />
           </CardContent>
         </Card>
       </main>

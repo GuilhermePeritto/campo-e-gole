@@ -1,10 +1,12 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Edit, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +46,11 @@ const Products = () => {
                          (statusFilter === 'active' && product.active) ||
                          (statusFilter === 'inactive' && !product.active);
     return matchesSearch && matchesCategory && matchesStatus;
+  });
+
+  const pagination = usePagination(filteredProducts, {
+    pageSize: 8,
+    totalItems: filteredProducts.length
   });
 
   const toggleProductStatus = (productId: number) => {
@@ -167,7 +174,7 @@ const Products = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {filteredProducts.map((product) => (
+              {pagination.paginatedData.map((product) => (
                 <div key={product.id} className="border rounded-lg p-4 hover:bg-accent">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -226,6 +233,21 @@ const Products = () => {
                 </div>
               )}
             </div>
+
+            {/* Paginação */}
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[5, 8, 12, 20]}
+            />
           </CardContent>
         </Card>
       </main>

@@ -1,7 +1,9 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Calendar, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -47,6 +49,11 @@ const Classes = () => {
     }
   ];
 
+  const pagination = usePagination(classes, {
+    pageSize: 6,
+    totalItems: classes.length
+  });
+
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
@@ -87,7 +94,7 @@ const Classes = () => {
 
         {/* Classes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {classes.map((classItem) => (
+          {pagination.paginatedData.map((classItem) => (
             <Card key={classItem.id} className="border">
               <CardHeader>
                 <CardTitle className="text-gray-600 dark:text-gray-300">{classItem.name}</CardTitle>
@@ -138,6 +145,24 @@ const Classes = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Paginação para turmas */}
+        <div className="mb-8">
+          <PaginationControls
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            pageSize={pagination.pageSize}
+            startIndex={pagination.startIndex}
+            endIndex={pagination.endIndex}
+            hasNextPage={pagination.hasNextPage}
+            hasPreviousPage={pagination.hasPreviousPage}
+            onPageChange={pagination.goToPage}
+            onPageSizeChange={pagination.setPageSize}
+            pageSizeOptions={[4, 6, 8]}
+            showInfo={false}
+          />
         </div>
 
         {/* Schedule Table */}

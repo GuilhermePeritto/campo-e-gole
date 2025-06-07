@@ -1,8 +1,10 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, CreditCard, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -53,6 +55,11 @@ const Payments = () => {
   const filteredPayments = payments.filter(payment =>
     payment.studentName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const pagination = usePagination(filteredPayments, {
+    pageSize: 8,
+    totalItems: filteredPayments.length
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -179,7 +186,7 @@ const Payments = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPayments.map((payment) => (
+                {pagination.paginatedData.map((payment) => (
                   <TableRow key={payment.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-gray-600 dark:text-gray-300">{payment.studentName}</TableCell>
                     <TableCell className="text-gray-600">{payment.month}</TableCell>
@@ -205,6 +212,21 @@ const Payments = () => {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Paginação */}
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[5, 8, 12]}
+            />
           </CardContent>
         </Card>
       </main>

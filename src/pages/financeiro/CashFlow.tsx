@@ -1,6 +1,8 @@
 
+import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,8 +15,17 @@ const FluxoDeCaixa = () => {
     { date: '2024-06-02', description: 'Conta de Luz', type: 'saida', amount: -450.00 },
     { date: '2024-06-03', description: 'Venda Bar', type: 'entrada', amount: 85.50 },
     { date: '2024-06-04', description: 'Mensalidade Aluno', type: 'entrada', amount: 150.00 },
-    { date: '2024-06-05', description: 'Material de Limpeza', type: 'saida', amount: -80.00 }
+    { date: '2024-06-05', description: 'Material de Limpeza', type: 'saida', amount: -80.00 },
+    { date: '2024-06-06', description: 'Reserva Quadra B', type: 'entrada', amount: 200.00 },
+    { date: '2024-06-07', description: 'Fornecedor Bebidas', type: 'saida', amount: -300.00 },
+    { date: '2024-06-08', description: 'Aula Particular', type: 'entrada', amount: 100.00 },
+    { date: '2024-06-09', description: 'Internet', type: 'saida', amount: -150.00 }
   ];
+
+  const pagination = usePagination(mockFluxoDeCaixa, {
+    pageSize: 6,
+    totalItems: mockFluxoDeCaixa.length
+  });
 
   let runningBalance = 0;
 
@@ -51,7 +62,7 @@ const FluxoDeCaixa = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Entradas</p>
-                  <p className="text-2xl font-bold text-green-600">R$ 355,50</p>
+                  <p className="text-2xl font-bold text-green-600">R$ 655,50</p>
                 </div>
               </div>
             </CardContent>
@@ -65,7 +76,7 @@ const FluxoDeCaixa = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Saídas</p>
-                  <p className="text-2xl font-bold text-red-600">R$ 530,00</p>
+                  <p className="text-2xl font-bold text-red-600">R$ 980,00</p>
                 </div>
               </div>
             </CardContent>
@@ -79,7 +90,7 @@ const FluxoDeCaixa = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Saldo Atual</p>
-                  <p className="text-2xl font-bold text-blue-600">R$ 9.825,50</p>
+                  <p className="text-2xl font-bold text-blue-600">R$ 9.675,50</p>
                 </div>
               </div>
             </CardContent>
@@ -96,7 +107,12 @@ const FluxoDeCaixa = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockFluxoDeCaixa.map((item, index) => {
+              {pagination.paginatedData.map((item, index) => {
+                // Reset running balance for first item when paginated
+                if (index === 0 && pagination.currentPage === 1) {
+                  runningBalance = 0;
+                }
+                
                 if (item.type === 'inicial') {
                   runningBalance = item.amount;
                 } else {
@@ -142,6 +158,21 @@ const FluxoDeCaixa = () => {
                 );
               })}
             </div>
+
+            {/* Paginação */}
+            <PaginationControls
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              pageSize={pagination.pageSize}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              onPageChange={pagination.goToPage}
+              onPageSizeChange={pagination.setPageSize}
+              pageSizeOptions={[6, 10, 15]}
+            />
           </CardContent>
         </Card>
       </main>
