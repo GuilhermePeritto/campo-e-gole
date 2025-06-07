@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, UserEdit } from 'lucide-react';
+import { ArrowLeft, Edit } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -71,7 +70,7 @@ const EditUser = () => {
               Usuários
             </Button>
             <div className="flex items-center gap-2">
-              <UserEdit className="h-5 w-5 text-primary" />
+              <Edit className="h-5 w-5 text-primary" />
               <h1 className="text-xl font-semibold">Editar Usuário</h1>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Plus, Search, Users } from 'lucide-react';
+import { ArrowLeft, Plus, Search, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -99,7 +99,7 @@ const Users = () => {
               Configurações
             </Button>
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
+              <User className="h-5 w-5 text-primary" />
               <h1 className="text-xl font-semibold">Gerenciar Usuários</h1>
             </div>
           </div>
