@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,8 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users } from 'lucide-react';
+import { usePagination } from '@/hooks/usePagination';
+import PaginationControls from '@/components/PaginationControls';
+import UserModal from '@/components/UserModal';
+import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users, Plus, Search, Edit, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,6 +20,12 @@ const Settings = () => {
   const navigate = useNavigate();
   const { company, user } = useAuth();
   const { theme, setTheme } = useTheme();
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [userModalOpen, setUserModalOpen] = useState(false);
+  const [userModalMode, setUserModalMode] = useState<'create' | 'edit'>('create');
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
   const [settings, setSettings] = useState({
     companyName: company?.name || '',
     currency: company?.settings.currency || 'BRL',
@@ -35,6 +44,88 @@ const Settings = () => {
     printReceipts: true,
     enableComandas: true
   });
+
+  const users = [
+    { 
+      id: 1, 
+      name: 'João Silva', 
+      email: 'joao@empresa.com', 
+      role: 'admin',
+      status: 'ativo',
+      lastAccess: '2024-01-15'
+    },
+    { 
+      id: 2, 
+      name: 'Maria Santos', 
+      email: 'maria@empresa.com', 
+      role: 'manager',
+      status: 'ativo',
+      lastAccess: '2024-01-14'
+    },
+    { 
+      id: 3, 
+      name: 'Pedro Costa', 
+      email: 'pedro@empresa.com', 
+      role: 'employee',
+      status: 'inativo',
+      lastAccess: '2024-01-10'
+    },
+    { 
+      id: 4, 
+      name: 'Ana Oliveira', 
+      email: 'ana@empresa.com', 
+      role: 'employee',
+      status: 'ativo',
+      lastAccess: '2024-01-15'
+    }
+  ];
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const pagination = usePagination(filteredUsers, {
+    pageSize: 5,
+    totalItems: filteredUsers.length
+  });
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'manager':
+        return 'Gerente';
+      case 'employee':
+        return 'Funcionário';
+      default:
+        return role;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'ativo':
+        return 'bg-green-200 text-green-800';
+      case 'inativo':
+        return 'bg-red-200 text-red-800';
+      default:
+        return 'bg-gray-200 text-gray-800';
+    }
+  };
+
+  const handleCreateUser = () => {
+    setSelectedUser(null);
+    setUserModalMode('create');
+    setUserModalOpen(true);
+  };
+
+  const handleEditUser = (user: any) => {
+    setSelectedUser(user);
+    setUserModalMode('edit');
+    setUserModalOpen(true);
+  };
 
   const handleSave = () => {
     toast({
@@ -411,31 +502,82 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <div className="font-medium">{user?.name}</div>
-                      <div className="text-sm text-muted-foreground">{user?.email}</div>
-                      <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-2 py-1 rounded-full inline-block mt-1">
-                        {user?.role === 'admin' ? 'Administrador' : user?.role}
-                      </div>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate(`/configuracoes/usuarios/${user?.id}/editar`)}
-                    >
-                      Editar
-                    </Button>
+                {/* Actions and Filters */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      placeholder="Buscar por nome, email ou função..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
                   </div>
-
-                  <Button 
-                    className="w-full"
-                    onClick={() => navigate('/configuracoes/usuarios')}
+                  <Button
+                    onClick={handleCreateUser}
+                    className="gap-2"
                   >
-                    Gerenciar Todos os Usuários
+                    <Plus className="h-4 w-4" />
+                    Novo Usuário
                   </Button>
                 </div>
+
+                {/* Users Table */}
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Função</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Último Acesso</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pagination.paginatedData.map((user) => (
+                      <TableRow key={user.id} className="hover:bg-muted/50">
+                        <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                        <TableCell>{getRoleLabel(user.role)}</TableCell>
+                        <TableCell>
+                          <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(user.status)}`}>
+                            {user.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{user.lastAccess}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditUser(user)}
+                              className="gap-1"
+                            >
+                              <Edit className="h-3 w-3" />
+                              Editar
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {/* Paginação */}
+                <PaginationControls
+                  currentPage={pagination.currentPage}
+                  totalPages={pagination.totalPages}
+                  totalItems={pagination.totalItems}
+                  pageSize={pagination.pageSize}
+                  startIndex={pagination.startIndex}
+                  endIndex={pagination.endIndex}
+                  hasNextPage={pagination.hasNextPage}
+                  hasPreviousPage={pagination.hasPreviousPage}
+                  onPageChange={pagination.goToPage}
+                  onPageSizeChange={pagination.setPageSize}
+                  pageSizeOptions={[5, 10, 15]}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -450,6 +592,14 @@ const Settings = () => {
           </Button>
         </div>
       </main>
+
+      {/* User Modal */}
+      <UserModal
+        open={userModalOpen}
+        onClose={() => setUserModalOpen(false)}
+        user={selectedUser}
+        mode={userModalMode}
+      />
     </div>
   );
 };
