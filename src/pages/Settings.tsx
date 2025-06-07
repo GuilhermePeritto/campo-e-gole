@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -169,7 +170,6 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          {/* Configurações de Aparência */}
           <TabsContent value="appearance" className="space-y-6">
             <Card>
               <CardHeader>
@@ -191,7 +191,7 @@ const Settings = () => {
                         <SelectItem value="dark">Tema Escuro</SelectItem>
                       </SelectContent>
                     </Select>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Escolha entre o tema claro ou escuro para a interface
                     </p>
                   </div>
@@ -200,7 +200,6 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          {/* Configurações de Módulos */}
           <TabsContent value="modules" className="space-y-6">
             <Card>
               <CardHeader>
@@ -213,7 +212,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Módulo de Gestão de Eventos</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Reservas esportivas, agendas e controle de locais
                     </div>
                   </div>
@@ -226,7 +225,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Módulo de Gestão de Bar</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Controle de estoque, comandas e caixa
                     </div>
                   </div>
@@ -239,7 +238,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Módulo de Gestão Escolar</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Controle de alunos, turmas e notas
                     </div>
                   </div>
@@ -252,7 +251,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Módulo Financeiro</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Controle de contas a pagar/receber e fluxo de caixa
                     </div>
                   </div>
@@ -265,7 +264,6 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          {/* Configurações de Eventos */}
           <TabsContent value="events" className="space-y-6">
             <Card>
               <CardHeader>
@@ -278,7 +276,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Confirmar Reservas Automaticamente</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Reservas são confirmadas automaticamente sem aprovação manual
                     </div>
                   </div>
@@ -291,7 +289,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Permitir Reservas Recorrentes</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Clientes podem criar reservas que se repetem automaticamente
                     </div>
                   </div>
@@ -304,7 +302,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Exigir Aprovação do Cliente</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Cliente deve confirmar reserva por email/SMS
                     </div>
                   </div>
@@ -317,7 +315,6 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          {/* Configurações do Bar */}
           <TabsContent value="bar" className="space-y-6">
             <Card>
               <CardHeader>
@@ -330,7 +327,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Alertas de Estoque</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Receba notificações quando produtos estiverem em baixa
                     </div>
                   </div>
@@ -354,7 +351,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Imprimir Comprovantes</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Imprimir automaticamente comprovantes de venda
                     </div>
                   </div>
@@ -367,7 +364,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Sistema de Comandas</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Habilitar sistema de comandas digitais
                     </div>
                   </div>
@@ -380,7 +377,6 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          {/* Configurações da escolinha*/}
           <TabsContent value="school" className="space-y-6">
             <Card>
               <CardHeader>
@@ -393,7 +389,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Habilitar Módulo Escolar</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Ativar funcionalidades de gestão escolar
                     </div>
                   </div>
@@ -402,13 +398,10 @@ const Settings = () => {
                     onCheckedChange={(checked) => setSettings({ ...settings, schoolModule: checked })}
                   />
                 </div>
-
-                {/* Additional school settings can be added here */}
               </CardContent>
             </Card>
           </TabsContent>
           
-          {/* Configurações de Usuários */}
           <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
@@ -422,18 +415,25 @@ const Settings = () => {
                   <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <div className="font-medium">{user?.name}</div>
-                      <div className="text-sm text-gray-500">{user?.email}</div>
-                      <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full inline-block mt-1">
+                      <div className="text-sm text-muted-foreground">{user?.email}</div>
+                      <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-2 py-1 rounded-full inline-block mt-1">
                         {user?.role === 'admin' ? 'Administrador' : user?.role}
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate(`/configuracoes/usuarios/${user?.id}/editar`)}
+                    >
                       Editar
                     </Button>
                   </div>
 
-                  <Button className="w-full">
-                    Adicionar Novo Usuário
+                  <Button 
+                    className="w-full"
+                    onClick={() => navigate('/configuracoes/usuarios')}
+                  >
+                    Gerenciar Todos os Usuários
                   </Button>
                 </div>
               </CardContent>

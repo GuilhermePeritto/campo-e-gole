@@ -1,4 +1,3 @@
-
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -57,6 +56,9 @@ import Login from "./pages/Login";
 import NaoEncontrada from "./pages/NotFound";
 import School from "./pages/School";
 import Settings from "./pages/Settings";
+import Users from "./pages/settings/Users";
+import NewUser from "./pages/settings/NewUser";
+import EditUser from "./pages/settings/EditUser";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +90,30 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracoes/usuarios"
+        element={
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracoes/usuarios/novo"
+        element={
+          <ProtectedRoute>
+            <NewUser />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracoes/usuarios/:id/editar"
+        element={
+          <ProtectedRoute>
+            <EditUser />
           </ProtectedRoute>
         }
       />
