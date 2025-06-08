@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/toaster';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -12,6 +11,7 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import School from './pages/School';
 import Settings from './pages/Settings';
+import UniversalReceivePayment from './pages/UniversalReceivePayment';
 
 // Events pages
 import EventsCalendar from './pages/eventos/Calendar';
@@ -79,6 +79,10 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/painel" element={<Dashboard />} />
+              
+              {/* Rota universal de recebimento */}
+              <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
+              
               <Route path="/eventos" element={<Events />} />
               <Route path="/eventos/reservas" element={<EventsCalendar />} />
               <Route path="/eventos/clientes" element={<EventsClients />} />
