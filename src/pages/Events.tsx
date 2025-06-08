@@ -12,14 +12,14 @@ const Events = () => {
       description: 'Criar uma nova reserva esportiva',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/eventos/reservas/novo')
+      action: () => navigate('/eventos/novo')
     },
     {
       title: 'Visualizar Agenda',
       description: 'Ver agenda completa dos locais',
       icon: Calendar,
       color: 'bg-orange-500',
-      action: () => navigate('/eventos/agenda')
+      action: () => navigate('/eventos/reservas')
     },
     {
       title: 'Gerenciar Locais',
@@ -164,7 +164,7 @@ const Events = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-4"
-                onClick={() => navigate('/eventos/agenda')}
+                onClick={() => navigate('/eventos/reservas')}
               >
                 Ver Agenda Completa
               </Button>

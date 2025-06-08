@@ -13,7 +13,7 @@ const Bar = () => {
       description: 'Registrar venda livre no caixa',
       icon: Plus,
       color: 'bg-green-500',
-      action: () => navigate('/bar/vendas/novo')
+      action: () => navigate('/bar/nova-venda')
     },
     {
       title: 'Comandas',
