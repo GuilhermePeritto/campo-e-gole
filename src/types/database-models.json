@@ -1,0 +1,340 @@
+
+{
+  "entities": {
+    "User": {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "password": "string",
+      "role": "admin | manager | user",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Student": {
+      "id": "number",
+      "name": "string",
+      "age": "number",
+      "parentName": "string",
+      "phone": "string",
+      "email": "string?",
+      "address": "string",
+      "class": "string",
+      "monthlyFee": "number",
+      "status": "active | inactive",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Class": {
+      "id": "number",
+      "name": "string",
+      "description": "string?",
+      "ageGroup": "string",
+      "maxStudents": "number",
+      "monthlyFee": "number",
+      "schedule": "string",
+      "instructor": "string",
+      "status": "active | inactive",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "StudentPayment": {
+      "id": "number",
+      "studentId": "number",
+      "studentName": "string",
+      "month": "string",
+      "amount": "number",
+      "dueDate": "Date",
+      "paidDate": "Date?",
+      "status": "pago | pendente | atrasado",
+      "paymentMethod": "string?",
+      "notes": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Event": {
+      "id": "number",
+      "title": "string",
+      "description": "string?",
+      "date": "Date",
+      "startTime": "string",
+      "endTime": "string",
+      "venue": "string",
+      "clientId": "number",
+      "status": "scheduled | confirmed | completed | cancelled",
+      "totalAmount": "number",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "EventClient": {
+      "id": "number",
+      "name": "string",
+      "email": "string?",
+      "phone": "string",
+      "address": "string?",
+      "cpfCnpj": "string?",
+      "notes": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Venue": {
+      "id": "number",
+      "name": "string",
+      "description": "string?",
+      "capacity": "number",
+      "hourlyRate": "number",
+      "amenities": "string[]",
+      "status": "available | maintenance | unavailable",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "EventReceivable": {
+      "id": "number",
+      "eventId": "number",
+      "clientId": "number",
+      "description": "string",
+      "amount": "number",
+      "dueDate": "Date",
+      "paidDate": "Date?",
+      "status": "pendente | pago | atrasado",
+      "paymentMethod": "string?",
+      "notes": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Product": {
+      "id": "number",
+      "name": "string",
+      "description": "string?",
+      "price": "number",
+      "cost": "number?",
+      "stock": "number",
+      "minStock": "number",
+      "category": "string",
+      "barcode": "string?",
+      "status": "active | inactive",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Comanda": {
+      "id": "number",
+      "customerName": "string?",
+      "tableNumber": "string?",
+      "status": "aberta | fechada | paga",
+      "totalAmount": "number",
+      "openedAt": "Date",
+      "closedAt": "Date?",
+      "paidAt": "Date?",
+      "paymentMethod": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "ComandaItem": {
+      "id": "number",
+      "comandaId": "number",
+      "productId": "number",
+      "productName": "string",
+      "quantity": "number",
+      "unitPrice": "number",
+      "totalPrice": "number",
+      "createdAt": "Date"
+    },
+    "Sale": {
+      "id": "number",
+      "type": "comanda | avulsa",
+      "comandaId": "number?",
+      "totalAmount": "number",
+      "paymentMethod": "string?",
+      "status": "pendente | pago | cancelada",
+      "saleDate": "Date",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "SaleItem": {
+      "id": "number",
+      "saleId": "number",
+      "productId": "number",
+      "productName": "string",
+      "quantity": "number",
+      "unitPrice": "number",
+      "totalPrice": "number",
+      "createdAt": "Date"
+    },
+    "FinancialTransaction": {
+      "id": "number",
+      "type": "receita | despesa",
+      "category": "string",
+      "description": "string",
+      "amount": "number",
+      "date": "Date",
+      "paymentMethod": "string?",
+      "status": "pendente | pago | cancelado",
+      "dueDate": "Date?",
+      "paidDate": "Date?",
+      "reference": "string?",
+      "notes": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "AccountsReceivable": {
+      "id": "number",
+      "clientName": "string",
+      "description": "string",
+      "amount": "number",
+      "dueDate": "Date",
+      "paidDate": "Date?",
+      "status": "pendente | pago | atrasado",
+      "paymentMethod": "string?",
+      "category": "string",
+      "origin": "evento | escolinha | bar | outros",
+      "originId": "number?",
+      "notes": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "AccountsPayable": {
+      "id": "number",
+      "supplierName": "string",
+      "description": "string",
+      "amount": "number",
+      "dueDate": "Date",
+      "paidDate": "Date?",
+      "status": "pendente | pago | atrasado",
+      "paymentMethod": "string?",
+      "category": "string",
+      "notes": "string?",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Expense": {
+      "id": "number",
+      "description": "string",
+      "category": "string",
+      "amount": "number",
+      "date": "Date",
+      "paymentMethod": "string",
+      "supplier": "string?",
+      "notes": "string?",
+      "status": "pendente | pago",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Revenue": {
+      "id": "number",
+      "description": "string",
+      "category": "string",
+      "amount": "number",
+      "date": "Date",
+      "paymentMethod": "string",
+      "client": "string?",
+      "notes": "string?",
+      "status": "pendente | recebido",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Payment": {
+      "id": "number",
+      "type": "school_payment | event_receivable | bar_comanda | bar_sale | financial_receivable",
+      "originId": "string",
+      "amount": "number",
+      "amountReceived": "number",
+      "discount": "number",
+      "paymentDate": "Date",
+      "paymentMethod": "string",
+      "installments": "number?",
+      "interestRate": "number?",
+      "notes": "string?",
+      "status": "processando | concluido | cancelado",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    }
+  },
+  "enums": {
+    "UserRole": ["admin", "manager", "user"],
+    "StudentStatus": ["active", "inactive"],
+    "ClassStatus": ["active", "inactive"],
+    "PaymentStatus": ["pago", "pendente", "atrasado"],
+    "EventStatus": ["scheduled", "confirmed", "completed", "cancelled"],
+    "VenueStatus": ["available", "maintenance", "unavailable"],
+    "ProductStatus": ["active", "inactive"],
+    "ComandaStatus": ["aberta", "fechada", "paga"],
+    "SaleStatus": ["pendente", "pago", "cancelada"],
+    "SaleType": ["comanda", "avulsa"],
+    "TransactionType": ["receita", "despesa"],
+    "TransactionStatus": ["pendente", "pago", "cancelado"],
+    "ReceivableStatus": ["pendente", "pago", "atrasado"],
+    "PayableStatus": ["pendente", "pago", "atrasado"],
+    "ExpenseStatus": ["pendente", "pago"],
+    "RevenueStatus": ["pendente", "recebido"],
+    "PaymentType": ["school_payment", "event_receivable", "bar_comanda", "bar_sale", "financial_receivable"],
+    "PaymentProcessStatus": ["processando", "concluido", "cancelado"],
+    "PaymentMethod": ["dinheiro", "cartao_credito", "cartao_debito", "pix", "transferencia", "boleto"],
+    "OriginType": ["evento", "escolinha", "bar", "outros"],
+    "Categories": {
+      "expense": ["aluguel", "funcionarios", "utilities", "marketing", "equipamentos", "manutencao", "outros"],
+      "revenue": ["mensalidades", "eventos", "bar", "outros"],
+      "financial": ["operacional", "investimento", "emprestimo", "outros"]
+    }
+  },
+  "relationships": {
+    "Student": {
+      "belongsTo": {
+        "class": "Class"
+      },
+      "hasMany": {
+        "payments": "StudentPayment"
+      }
+    },
+    "Class": {
+      "hasMany": {
+        "students": "Student"
+      }
+    },
+    "Event": {
+      "belongsTo": {
+        "client": "EventClient",
+        "venue": "Venue"
+      },
+      "hasMany": {
+        "receivables": "EventReceivable"
+      }
+    },
+    "EventClient": {
+      "hasMany": {
+        "events": "Event",
+        "receivables": "EventReceivable"
+      }
+    },
+    "Comanda": {
+      "hasMany": {
+        "items": "ComandaItem"
+      }
+    },
+    "Sale": {
+      "belongsTo": {
+        "comanda": "Comanda"
+      },
+      "hasMany": {
+        "items": "SaleItem"
+      }
+    },
+    "Product": {
+      "hasMany": {
+        "comandaItems": "ComandaItem",
+        "saleItems": "SaleItem"
+      }
+    }
+  },
+  "indexes": {
+    "Student": ["email", "phone", "class"],
+    "StudentPayment": ["studentId", "status", "dueDate"],
+    "Event": ["date", "clientId", "venue", "status"],
+    "EventReceivable": ["eventId", "clientId", "status", "dueDate"],
+    "Product": ["category", "status", "barcode"],
+    "Comanda": ["status", "openedAt"],
+    "Sale": ["type", "status", "saleDate"],
+    "FinancialTransaction": ["type", "category", "status", "date"],
+    "AccountsReceivable": ["status", "dueDate", "origin"],
+    "AccountsPayable": ["status", "dueDate"],
+    "Payment": ["type", "status", "paymentDate"]
+  }
+}
