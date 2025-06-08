@@ -4,12 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
+import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 import { ArrowLeft, CreditCard, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Payments = () => {
   const navigate = useNavigate();
+  const { navigateToPayment } = useUniversalPayment();
   const [searchTerm, setSearchTerm] = useState('');
 
   const payments = [
@@ -80,6 +82,13 @@ const Payments = () => {
   const totalPending = payments
     .filter(p => p.status !== 'pago')
     .reduce((sum, p) => sum + p.amount, 0);
+
+  const handleReceivePayment = (paymentId: number) => {
+    navigateToPayment({
+      type: 'school_payment',
+      id: paymentId.toString()
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
@@ -202,7 +211,7 @@ const Payments = () => {
                         <Button
                           size="sm"
                           className="bg-green-600 text-gray-600 dark:text-gray-300 hover:bg-green-700"
-                          onClick={() => navigate(`/escolinha/mensalidades/${payment.id}/receber`)}
+                          onClick={() => handleReceivePayment(payment.id)}
                         >
                           Receber
                         </Button>
