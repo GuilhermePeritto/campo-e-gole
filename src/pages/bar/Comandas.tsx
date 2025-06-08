@@ -273,11 +273,19 @@ const Comandas = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/bar/comandas/${comanda.id}`)}
+                        >
                           Ver
                         </Button>
                         {comanda.status === 'Aberta' && (
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => navigate(`/bar/comandas/${comanda.id}`)}
+                          >
                             Fechar
                           </Button>
                         )}

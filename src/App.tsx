@@ -41,14 +41,17 @@ import BarNewSale from './pages/bar/NewSale';
 import BarProducts from './pages/bar/Products';
 import BarReports from './pages/bar/Reports';
 import BarUnifiedSale from './pages/bar/UnifiedSale';
+import BarViewComanda from './pages/bar/ViewComanda';
 
 // School pages
 import SchoolClasses from './pages/escolinha/Classes';
 import SchoolClassStudents from './pages/escolinha/ClassStudents';
 import SchoolEditClass from './pages/escolinha/EditClass';
 import SchoolEditStudent from './pages/escolinha/EditStudent';
+import SchoolNewClass from './pages/escolinha/NewClass';
 import SchoolNewStudent from './pages/escolinha/NewStudent';
 import SchoolPayments from './pages/escolinha/Payments';
+import SchoolReceivePayment from './pages/escolinha/ReceivePayment';
 import SchoolReports from './pages/escolinha/Reports';
 import SchoolStudentHistory from './pages/escolinha/StudentHistory';
 import SchoolStudents from './pages/escolinha/Students';
@@ -99,6 +102,7 @@ function App() {
               <Route path="/bar/estoque" element={<BarInventory />} />
               <Route path="/bar/comandas" element={<BarComandas />} />
               <Route path="/bar/comandas/novo" element={<BarNewComanda />} />
+              <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
               <Route path="/bar/venda-unificada" element={<BarUnifiedSale />} />
               <Route path="/bar/nova-venda" element={<BarNewSale />} />
               <Route path="/bar/checkout" element={<BarCheckout />} />
@@ -109,9 +113,11 @@ function App() {
               <Route path="/escolinha/alunos/:id/editar" element={<SchoolEditStudent />} />
               <Route path="/escolinha/alunos/:id/historico" element={<SchoolStudentHistory />} />
               <Route path="/escolinha/turmas" element={<SchoolClasses />} />
+              <Route path="/escolinha/turmas/nova" element={<SchoolNewClass />} />
               <Route path="/escolinha/turmas/:id/editar" element={<SchoolEditClass />} />
               <Route path="/escolinha/turmas/:id/alunos" element={<SchoolClassStudents />} />
               <Route path="/escolinha/mensalidades" element={<SchoolPayments />} />
+              <Route path="/escolinha/mensalidades/:id/receber" element={<SchoolReceivePayment />} />
               <Route path="/escolinha/relatorios" element={<SchoolReports />} />
               <Route path="/financeiro" element={<Financial />} />
               <Route path="/financeiro/receitas" element={<FinancialRevenues />} />

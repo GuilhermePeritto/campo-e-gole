@@ -1,4 +1,3 @@
-
 import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -203,6 +202,7 @@ const Payments = () => {
                         <Button
                           size="sm"
                           className="bg-green-600 text-gray-600 dark:text-gray-300 hover:bg-green-700"
+                          onClick={() => navigate(`/escolinha/mensalidades/${payment.id}/receber`)}
                         >
                           Receber
                         </Button>
