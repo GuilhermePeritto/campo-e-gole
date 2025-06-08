@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -64,7 +63,6 @@ const UniversalReceivePayment = () => {
   };
 
   const getPaymentConfig = async (type: string, id: string): Promise<{ config: PaymentConfig, data: PaymentData }> => {
-    // Mock data - aqui você implementaria a lógica para cada tipo
     const configs: Record<string, () => { config: PaymentConfig, data: PaymentData }> = {
       school_payment: () => ({
         config: {
@@ -145,6 +143,55 @@ const UniversalReceivePayment = () => {
           description: 'Consumo no bar',
           amount: 45.50,
           clientName: 'Mesa 5'
+        }
+      }),
+      bar_sale: () => ({
+        config: {
+          type: 'bar_sale',
+          title: 'Finalizar Venda',
+          backUrl: '/bar/nova-venda',
+          backLabel: 'Nova Venda',
+          showDiscount: true,
+          onSubmit: async (formData, paymentData) => {
+            console.log('Finalizando venda:', formData, paymentData);
+            toast({
+              title: "Venda finalizada!",
+              description: `Venda processada com sucesso. Total: R$ ${paymentData.amount.toFixed(2)}`,
+            });
+          }
+        },
+        data: {
+          id,
+          title: `Venda #${id}`,
+          description: 'Venda de produtos do bar',
+          amount: 89.50,
+          clientName: 'Cliente Balcão'
+        }
+      }),
+      financial_receivable: () => ({
+        config: {
+          type: 'financial_receivable',
+          title: 'Receber Conta Financeira',
+          backUrl: '/financeiro/contas-a-receber',
+          backLabel: 'Contas a Receber',
+          showDiscount: true,
+          showInstallments: true,
+          showInterestRate: true,
+          onSubmit: async (formData, paymentData) => {
+            console.log('Processando recebimento financeiro:', formData, paymentData);
+            toast({
+              title: "Conta recebida!",
+              description: `Recebimento processado com sucesso.`,
+            });
+          }
+        },
+        data: {
+          id,
+          title: 'Conta a Receber',
+          description: 'Recebimento de conta financeira',
+          amount: 500,
+          dueDate: '2024-06-15',
+          clientName: 'Cliente Diversos'
         }
       })
     };

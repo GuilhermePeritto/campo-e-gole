@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 
 interface Product {
   id: number;
@@ -24,9 +24,9 @@ interface SaleItem {
 
 const NewSale = () => {
   const navigate = useNavigate();
+  const { navigateToPayment } = useUniversalPayment();
   const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
-  const [paymentMethod, setPaymentMethod] = useState<string>('');
 
   const mockProducts: Product[] = [
     { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, stock: 120, category: 'Bebidas' },
@@ -87,20 +87,14 @@ const NewSale = () => {
       return;
     }
 
-    if (!paymentMethod) {
-      toast({
-        title: "Erro",
-        description: "Selecione um método de pagamento.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    toast({
-      title: "Venda realizada com sucesso!",
-      description: `Total: R$ ${getTotal().toFixed(2)}`,
+    // Criar um ID único para a venda
+    const saleId = Date.now().toString();
+    
+    // Navegar para o sistema de pagamento universal
+    navigateToPayment({
+      type: 'bar_sale',
+      id: saleId
     });
-    navigate('/bar');
   };
 
   return (
@@ -233,25 +227,9 @@ const NewSale = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="paymentMethod">Método de Pagamento</Label>
-                      <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o método de pagamento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cash">Dinheiro</SelectItem>
-                          <SelectItem value="card">Cartão</SelectItem>
-                          <SelectItem value="pix">PIX</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Button onClick={handleFinalizeSale} className="w-full" size="lg">
-                      Finalizar Venda
-                    </Button>
-                  </div>
+                  <Button onClick={handleFinalizeSale} className="w-full" size="lg">
+                    Finalizar Venda - R$ {getTotal().toFixed(2)}
+                  </Button>
                 </div>
               )}
             </CardContent>

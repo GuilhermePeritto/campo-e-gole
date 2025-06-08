@@ -1,4 +1,3 @@
-
 import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Calendar, DollarSign, Filter, Search } from 'lucide-react';
+import { useUniversalPayment } from '@/hooks/useUniversalPayment';
+import { ArrowLeft, Calendar, DollarSign, Filter, Search, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ContasAReceber = () => {
   const navigate = useNavigate();
+  const { navigateToPayment } = useUniversalPayment();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterModule, setFilterModule] = useState('all');
 
@@ -74,6 +75,13 @@ const ContasAReceber = () => {
     pageSize: 10,
     totalItems: filteredReceivables.length
   });
+
+  const handleReceivePayment = (receivableId: number) => {
+    navigateToPayment({
+      type: 'financial_receivable',
+      id: receivableId.toString()
+    });
+  };
 
   const getModuleColor = (module: string) => {
     switch (module) {
@@ -250,11 +258,14 @@ const ContasAReceber = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleReceivePayment(receivable.id)}
+                          className="gap-2"
+                        >
+                          <CreditCard className="h-4 w-4" />
                           Receber
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Detalhes
                         </Button>
                       </div>
                     </TableCell>
