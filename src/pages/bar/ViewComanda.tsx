@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Edit, Minus, Plus, Receipt, Trash2 } from 'lucide-react';
+import { ArrowLeft, CreditCard, Edit, Minus, Plus, Receipt, Trash2, Package } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -16,6 +17,7 @@ interface ComandaItem {
   quantity: number;
   unitPrice: number;
   total: number;
+  stock: number;
 }
 
 const ViewComanda = () => {
@@ -33,9 +35,9 @@ const ViewComanda = () => {
     status: 'Aberta',
     openTime: '2024-06-05 19:30',
     items: [
-      { id: 1, productName: 'Cerveja Skol 350ml', quantity: 2, unitPrice: 4.50, total: 9.00 },
-      { id: 2, productName: 'Sanduíche Natural', quantity: 1, unitPrice: 12.00, total: 12.00 },
-      { id: 3, productName: 'Refrigerante Coca 600ml', quantity: 1, unitPrice: 6.00, total: 6.00 }
+      { id: 1, productName: 'Cerveja Skol 350ml', quantity: 2, unitPrice: 4.50, total: 9.00, stock: 43 },
+      { id: 2, productName: 'Sanduíche Natural', quantity: 1, unitPrice: 12.00, total: 12.00, stock: 7 },
+      { id: 3, productName: 'Refrigerante Coca 600ml', quantity: 1, unitPrice: 6.00, total: 6.00, stock: 22 }
     ] as ComandaItem[]
   });
 
@@ -43,9 +45,35 @@ const ViewComanda = () => {
   const discountAmount = discount ? parseFloat(discount) : 0;
   const total = subtotal - discountAmount;
 
+  const getStockColor = (stock: number) => {
+    if (stock <= 5) return 'text-destructive';
+    if (stock <= 15) return 'text-orange-600';
+    return 'text-green-600';
+  };
+
+  const getStockBadgeVariant = (stock: number) => {
+    if (stock <= 5) return 'destructive';
+    if (stock <= 15) return 'secondary';
+    return 'outline';
+  };
+
   const updateQuantity = (itemId: number, newQuantity: number) => {
+    const item = comanda.items.find(item => item.id === itemId);
+    if (!item) return;
+
     if (newQuantity <= 0) {
       removeItem(itemId);
+      return;
+    }
+
+    // Verificar se a nova quantidade não excede o estoque disponível
+    const maxQuantity = item.stock + item.quantity; // estoque atual + quantidade já na comanda
+    if (newQuantity > maxQuantity) {
+      toast({
+        title: "Estoque insuficiente",
+        description: `Apenas ${maxQuantity} unidades disponíveis.`,
+        variant: "destructive"
+      });
       return;
     }
 
@@ -53,17 +81,25 @@ const ViewComanda = () => {
       ...prev,
       items: prev.items.map(item => 
         item.id === itemId 
-          ? { ...item, quantity: newQuantity, total: newQuantity * item.unitPrice }
+          ? { 
+              ...item, 
+              quantity: newQuantity, 
+              total: newQuantity * item.unitPrice,
+              stock: item.stock + item.quantity - newQuantity // ajustar estoque
+            }
           : item
       )
     }));
   };
 
   const removeItem = (itemId: number) => {
-    setComanda(prev => ({
-      ...prev,
-      items: prev.items.filter(item => item.id !== itemId)
-    }));
+    const item = comanda.items.find(item => item.id === itemId);
+    if (item) {
+      setComanda(prev => ({
+        ...prev,
+        items: prev.items.filter(item => item.id !== itemId)
+      }));
+    }
   };
 
   const handleCloseComanda = () => {
@@ -164,6 +200,7 @@ const ViewComanda = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Produto</TableHead>
+                      <TableHead>Estoque</TableHead>
                       <TableHead>Preço Unit.</TableHead>
                       <TableHead>Quantidade</TableHead>
                       <TableHead>Total</TableHead>
@@ -173,7 +210,17 @@ const ViewComanda = () => {
                   <TableBody>
                     {comanda.items.map((item) => (
                       <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.productName}</TableCell>
+                        <TableCell>
+                          <div className="font-medium">{item.productName}</div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getStockBadgeVariant(item.stock)} className="gap-1">
+                            <Package className="h-3 w-3" />
+                            <span className={getStockColor(item.stock)}>
+                              {item.stock}
+                            </span>
+                          </Badge>
+                        </TableCell>
                         <TableCell>R$ {item.unitPrice.toFixed(2)}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -190,7 +237,7 @@ const ViewComanda = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              disabled={comanda.status !== 'Aberta'}
+                              disabled={comanda.status !== 'Aberta' || item.stock === 0}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>

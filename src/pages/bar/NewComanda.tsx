@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Minus, Search, Receipt } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Search, Receipt, Package } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Product {
@@ -14,6 +14,7 @@ interface Product {
   name: string;
   price: number;
   category: string;
+  stock: number;
 }
 
 interface ComandaItem {
@@ -29,11 +30,11 @@ const NewComanda = () => {
   const [items, setItems] = useState<ComandaItem[]>([]);
 
   const mockProducts: Product[] = [
-    { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, category: 'Bebidas' },
-    { id: 2, name: 'Refrigerante Coca 600ml', price: 6.00, category: 'Bebidas' },
-    { id: 3, name: 'Água Mineral 500ml', price: 2.50, category: 'Bebidas' },
-    { id: 4, name: 'Salgadinho Doritos', price: 8.00, category: 'Lanches' },
-    { id: 5, name: 'Sanduíche Natural', price: 12.00, category: 'Lanches' }
+    { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, category: 'Bebidas', stock: 45 },
+    { id: 2, name: 'Refrigerante Coca 600ml', price: 6.00, category: 'Bebidas', stock: 23 },
+    { id: 3, name: 'Água Mineral 500ml', price: 2.50, category: 'Bebidas', stock: 67 },
+    { id: 4, name: 'Salgadinho Doritos', price: 8.00, category: 'Lanches', stock: 12 },
+    { id: 5, name: 'Sanduíche Natural', price: 12.00, category: 'Lanches', stock: 8 }
   ];
 
   const filteredProducts = mockProducts.filter(product =>
@@ -41,6 +42,17 @@ const NewComanda = () => {
   );
 
   const addItem = (product: Product) => {
+    const currentQuantity = items.find(item => item.product.id === product.id)?.quantity || 0;
+    
+    if (currentQuantity >= product.stock) {
+      toast({
+        title: "Estoque insuficiente",
+        description: `Apenas ${product.stock} unidades disponíveis em estoque.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     const existingItem = items.find(item => item.product.id === product.id);
     if (existingItem) {
       setItems(items.map(item =>
@@ -68,6 +80,18 @@ const NewComanda = () => {
 
   const getTotal = () => {
     return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  };
+
+  const getStockColor = (stock: number) => {
+    if (stock <= 5) return 'text-destructive';
+    if (stock <= 15) return 'text-orange-600';
+    return 'text-green-600';
+  };
+
+  const getStockBadgeVariant = (stock: number) => {
+    if (stock <= 5) return 'destructive';
+    if (stock <= 15) return 'secondary';
+    return 'outline';
   };
 
   const handleSave = () => {
@@ -172,6 +196,12 @@ const NewComanda = () => {
                           <div className="text-xs text-muted-foreground">
                             R$ {item.product.price.toFixed(2)} cada
                           </div>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Package className="h-3 w-3" />
+                            <span className={`text-xs ${getStockColor(item.product.stock)}`}>
+                              {item.product.stock} em estoque
+                            </span>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <Button
@@ -186,6 +216,7 @@ const NewComanda = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => addItem(item.product)}
+                            disabled={item.quantity >= item.product.stock}
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -229,21 +260,53 @@ const NewComanda = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      className="border rounded-lg p-4 hover:bg-accent cursor-pointer transition-colors"
-                      onClick={() => addItem(product)}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">{product.name}</span>
-                        <Badge variant="outline">{product.category}</Badge>
+                  {filteredProducts.map((product) => {
+                    const itemInComanda = items.find(item => item.product.id === product.id);
+                    const isOutOfStock = product.stock === 0;
+                    const isAtMaxCapacity = itemInComanda && itemInComanda.quantity >= product.stock;
+                    
+                    return (
+                      <div
+                        key={product.id}
+                        className={`border rounded-lg p-4 transition-colors ${
+                          isOutOfStock || isAtMaxCapacity 
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : 'hover:bg-accent cursor-pointer'
+                        }`}
+                        onClick={() => !isOutOfStock && !isAtMaxCapacity && addItem(product)}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <span className="font-medium">{product.name}</span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline">{product.category}</Badge>
+                              <Badge variant={getStockBadgeVariant(product.stock)}>
+                                <Package className="h-3 w-3 mr-1" />
+                                {product.stock}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-lg font-semibold text-primary">
+                            R$ {product.price.toFixed(2)}
+                          </div>
+                          
+                          <div className="text-right">
+                            {itemInComanda && (
+                              <div className="text-sm text-muted-foreground">
+                                {itemInComanda.quantity} na comanda
+                              </div>
+                            )}
+                            <div className={`text-xs ${getStockColor(product.stock)}`}>
+                              {product.stock === 0 ? 'Sem estoque' : `${product.stock} disponível`}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-lg font-semibold text-primary">
-                        R$ {product.price.toFixed(2)}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
