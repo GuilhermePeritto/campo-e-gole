@@ -1,9 +1,16 @@
+
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
+
+// Main pages
+import Dashboard from './pages/Dashboard';
+import Events from './pages/Events';
+import Bar from './pages/Bar';
+import Financial from './pages/Financial';
 
 // Events pages
 import EventsCalendar from './pages/eventos/Calendar';
