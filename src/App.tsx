@@ -1,3 +1,4 @@
+
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -91,12 +92,15 @@ function App() {
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/painel" element={<Dashboard />} />
+                <Route path="/configuracoes" element={<Settings />} />
                 
                 {/* Rota universal de recebimento */}
                 <Route path="/pagamento-universal" element={<UniversalReceivePayment />} />
                 
                 <Route path="/eventos" element={<Events />} />
                 <Route path="/eventos/calendario" element={<EventsCalendar />} />
+                <Route path="/eventos/reservas" element={<EventsCalendar />} />
+                <Route path="/eventos/novo" element={<EventsReservation />} />
                 <Route path="/eventos/locais" element={<EventsVenues />} />
                 <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
                 <Route path="/eventos/locais/editar/:id" element={<EventsEditVenue />} />

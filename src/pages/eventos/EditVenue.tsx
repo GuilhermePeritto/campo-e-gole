@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, MapPin, Palette, Plus, X } from 'lucide-react';
@@ -21,7 +23,11 @@ const EditVenue = () => {
     hourlyRate: '80.00',
     description: 'Quadra de grama sintética com iluminação LED',
     color: '#10B981',
-    active: true
+    active: true,
+    hasPeakHours: true,
+    peakHourRate: '120.00',
+    peakHourStart: '18:00',
+    peakHourEnd: '22:00'
   });
   
   const [equipment, setEquipment] = useState<string[]>(['Traves', 'Redes', 'Bolas']);
@@ -117,6 +123,14 @@ const EditVenue = () => {
     setEquipment(equipment.filter(eq => eq !== item));
   };
 
+  const calculatePeakRate = () => {
+    if (formData.hourlyRate && !formData.peakHourRate) {
+      const baseRate = parseFloat(formData.hourlyRate);
+      const peakRate = baseRate * 1.5; // 50% a mais
+      setFormData(prev => ({ ...prev, peakHourRate: peakRate.toFixed(2) }));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="shadow-sm border-b">
@@ -132,7 +146,7 @@ const EditVenue = () => {
               Voltar
             </Button>
             <div className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-green-600" />
+              <MapPin className="h-5 w-5 text-primary" />
               <h1 className="text-xl font-semibold">Editar Local</h1>
             </div>
           </div>
@@ -155,16 +169,18 @@ const EditVenue = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Nome do Local *</label>
+                    <Label htmlFor="name">Nome do Local *</Label>
                     <Input
+                      id="name"
                       placeholder="Ex: Quadra A - Futebol Society"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
+                      required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Tipo de Esporte *</label>
+                    <Label htmlFor="type">Tipo de Esporte *</Label>
                     <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecionar tipo" />
@@ -178,23 +194,28 @@ const EditVenue = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Capacidade (pessoas) *</label>
+                    <Label htmlFor="capacity">Capacidade (pessoas) *</Label>
                     <Input
+                      id="capacity"
                       type="number"
                       placeholder="Ex: 14"
                       value={formData.capacity}
                       onChange={(e) => handleInputChange('capacity', e.target.value)}
+                      required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Valor por Hora (R$) *</label>
+                    <Label htmlFor="hourlyRate">Valor por Hora (R$) *</Label>
                     <Input
+                      id="hourlyRate"
                       type="number"
                       step="0.01"
                       placeholder="Ex: 80.00"
                       value={formData.hourlyRate}
                       onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
+                      onBlur={calculatePeakRate}
+                      required
                     />
                   </div>
                 </div>
@@ -203,7 +224,7 @@ const EditVenue = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Palette className="h-4 w-4" />
-                    <label className="text-sm font-medium">Cor de Identificação</label>
+                    <Label>Cor de Identificação</Label>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {colorOptions.map((color) => (
@@ -243,12 +264,12 @@ const EditVenue = () => {
                         checked={characteristics[key as keyof typeof characteristics]}
                         onCheckedChange={(checked) => handleCharacteristicChange(key, checked as boolean)}
                       />
-                      <label
+                      <Label
                         htmlFor={key}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {label}
-                      </label>
+                      </Label>
                     </div>
                   ))}
                 </div>
@@ -256,18 +277,19 @@ const EditVenue = () => {
 
               {/* Descrição */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Descrição</label>
-                <textarea
-                  className="w-full p-3 border rounded-md resize-none h-24"
-                  placeholder="Descrição adicional do local (ex: Quadra de grama sintética com iluminação LED)"
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
+                  placeholder="Descrição adicional do local (ex: Quadra de grama sintética com iluminação LED)"
+                  rows={3}
                 />
               </div>
 
               {/* Equipamentos */}
               <div className="space-y-4">
-                <label className="text-sm font-medium">Equipamentos Disponíveis</label>
+                <Label>Equipamentos Disponíveis</Label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Ex: Traves, Redes, Bolas..."
@@ -298,13 +320,71 @@ const EditVenue = () => {
                 )}
               </div>
 
+              {/* Preços */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Configuração de Preços</h3>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="space-y-1">
+                    <div className="font-medium">Horário Nobre</div>
+                    <div className="text-sm text-muted-foreground">
+                      Ativar preços diferenciados para horários de maior demanda
+                    </div>
+                  </div>
+                  <Switch
+                    checked={formData.hasPeakHours}
+                    onCheckedChange={(checked) => handleInputChange('hasPeakHours', checked)}
+                  />
+                </div>
+
+                {formData.hasPeakHours && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
+                    <div className="space-y-2">
+                      <Label htmlFor="peakHourStart">Início do Horário Nobre</Label>
+                      <Input
+                        id="peakHourStart"
+                        type="time"
+                        value={formData.peakHourStart}
+                        onChange={(e) => handleInputChange('peakHourStart', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="peakHourEnd">Fim do Horário Nobre</Label>
+                      <Input
+                        id="peakHourEnd"
+                        type="time"
+                        value={formData.peakHourEnd}
+                        onChange={(e) => handleInputChange('peakHourEnd', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="peakHourRate">Valor Horário Nobre (R$) *</Label>
+                      <Input
+                        id="peakHourRate"
+                        type="number"
+                        step="0.01"
+                        value={formData.peakHourRate}
+                        onChange={(e) => handleInputChange('peakHourRate', e.target.value)}
+                        placeholder="Ex: 120.00"
+                        required={formData.hasPeakHours}
+                      />
+                      {formData.hourlyRate && formData.peakHourRate && (
+                        <p className="text-xs text-muted-foreground">
+                          {(((parseFloat(formData.peakHourRate) / parseFloat(formData.hourlyRate)) - 1) * 100).toFixed(0)}% mais caro
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Status */}
               <div className="flex items-center gap-3">
                 <Switch
                   checked={formData.active}
                   onCheckedChange={(checked) => handleInputChange('active', checked)}
                 />
-                <label className="text-sm font-medium">Local ativo</label>
+                <Label>Local ativo</Label>
               </div>
 
               <div className="flex gap-4 pt-6">
