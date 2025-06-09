@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { usePagination } from '@/hooks/usePagination';
 import PaginationControls from '@/components/PaginationControls';
@@ -19,7 +18,7 @@ import { useTheme } from '../contexts/ThemeContext';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { company, user } = useAuth();
+  const { company, user, updateCompanySettings } = useAuth();
   const { theme, setTheme } = useTheme();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,34 +29,32 @@ const Settings = () => {
   const [settings, setSettings] = useState({
     // Empresa
     companyName: company?.name || 'Minha Empresa',
-    currency: 'BRL',
-    timezone: 'America/Sao_Paulo',
-    businessStart: '06:00',
-    businessEnd: '23:00',
+    currency: company?.settings.currency || 'BRL',
+    timezone: company?.settings.timezone || 'America/Sao_Paulo',
+    businessStart: company?.settings.businessHours.start || '06:00',
+    businessEnd: company?.settings.businessHours.end || '23:00',
     
     // Módulos
-    eventsModule: true,
-    barModule: true,
-    schoolModule: true,
-    financialModule: true,
+    eventsModule: company?.settings.eventsModule || true,
+    barModule: company?.settings.barModule || true,
+    schoolModule: company?.settings.schoolModule || true,
+    financialModule: company?.settings.financialModule || true,
     
     // Eventos - Horários Nobre
-    enablePeakHours: false,
-    peakHourStart: '18:00',
-    peakHourEnd: '22:00',
-    peakHourMultiplier: 1.5,
+    enablePeakHours: company?.settings.enablePeakHours || false,
+    peakHourStart: company?.settings.peakHourStart || '18:00',
+    peakHourEnd: company?.settings.peakHourEnd || '22:00',
+    peakHourMultiplier: company?.settings.peakHourMultiplier || 1.5,
     
     // Bar - Estoque
-    allowNegativeStock: false,
-    stockAlerts: true,
-    lowStockThreshold: 10,
-    printReceipts: true,
-    enableComandas: true,
+    allowNegativeStock: company?.settings.allowNegativeStock || false,
+    stockAlerts: company?.settings.stockAlerts || true,
+    lowStockThreshold: company?.settings.lowStockThreshold || 10,
+    enableComandas: company?.settings.enableComandas || true,
     
     // Eventos
-    autoConfirmReservations: true,
-    allowRecurringReservations: true,
-    requireClientApproval: false
+    autoConfirmReservations: company?.settings.autoConfirmReservations || true,
+    allowRecurringReservations: company?.settings.allowRecurringReservations || true
   });
 
   const availablePermissions = {
@@ -105,7 +102,9 @@ const Settings = () => {
       role: 'admin',
       status: 'ativo',
       lastAccess: '2024-01-15',
-      permissions: ['events.view', 'events.create', 'school.view', 'bar.view', 'financial.view', 'general.view_dashboard']
+      permissions: ['events.view', 'events.create', 'school.view', 'bar.view', 'financial.view', 'general.view_dashboard'],
+      userGroupId: '1',
+      useGroupPermissions: true
     },
     { 
       id: 2, 
@@ -114,7 +113,9 @@ const Settings = () => {
       role: 'manager',
       status: 'ativo',
       lastAccess: '2024-01-14',
-      permissions: ['events.view', 'events.create', 'school.view', 'bar.view']
+      permissions: ['events.view', 'events.create', 'school.view', 'bar.view'],
+      userGroupId: '2',
+      useGroupPermissions: true
     },
     { 
       id: 3, 
@@ -123,7 +124,9 @@ const Settings = () => {
       role: 'employee',
       status: 'inativo',
       lastAccess: '2024-01-10',
-      permissions: ['bar.view', 'bar.cashier']
+      permissions: ['bar.view', 'bar.cashier'],
+      userGroupId: null,
+      useGroupPermissions: false
     }
   ];
 
@@ -175,6 +178,30 @@ const Settings = () => {
   };
 
   const handleSave = () => {
+    // Atualizar as configurações da empresa
+    updateCompanySettings({
+      currency: settings.currency,
+      timezone: settings.timezone,
+      businessHours: {
+        start: settings.businessStart,
+        end: settings.businessEnd
+      },
+      eventsModule: settings.eventsModule,
+      barModule: settings.barModule,
+      schoolModule: settings.schoolModule,
+      financialModule: settings.financialModule,
+      enablePeakHours: settings.enablePeakHours,
+      peakHourStart: settings.peakHourStart,
+      peakHourEnd: settings.peakHourEnd,
+      peakHourMultiplier: settings.peakHourMultiplier,
+      allowNegativeStock: settings.allowNegativeStock,
+      stockAlerts: settings.stockAlerts,
+      lowStockThreshold: settings.lowStockThreshold,
+      enableComandas: settings.enableComandas,
+      autoConfirmReservations: settings.autoConfirmReservations,
+      allowRecurringReservations: settings.allowRecurringReservations
+    });
+
     toast({
       title: "Configurações salvas",
       description: "As configurações foram atualizadas com sucesso.",
@@ -684,8 +711,6 @@ const Settings = () => {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* ... keep existing code (other tabs) */}
         </Tabs>
 
         <div className="flex justify-end gap-4 pt-6">
