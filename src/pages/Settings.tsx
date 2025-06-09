@@ -1,301 +1,207 @@
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
-import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
+import { useAuth } from '@/contexts/AuthContext';
 import UserModal from '@/components/UserModal';
-import { ArrowLeft, Building2, Clock, DollarSign, Palette, Shield, Users, Plus, Search, Edit, Eye } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
+import { 
+  Settings as SettingsIcon, 
+  Building2, 
+  Clock, 
+  DollarSign, 
+  Users, 
+  Shield, 
+  Package, 
+  Calendar,
+  Bell,
+  Plus,
+  Edit,
+  Trash2,
+  UserCheck,
+  User
+} from 'lucide-react';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastAccess: string;
+  userGroupId?: string;
+  useGroupPermissions: boolean;
+  permissions: string[];
+}
 
 const Settings = () => {
-  const navigate = useNavigate();
-  const { company, user, updateCompanySettings } = useAuth();
-  const { theme, setTheme } = useTheme();
-  
-  const [searchTerm, setSearchTerm] = useState('');
+  const { company, updateCompanySettings, userGroups } = useAuth();
   const [userModalOpen, setUserModalOpen] = useState(false);
-  const [userModalMode, setUserModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
 
-  const [settings, setSettings] = useState({
-    // Empresa
-    companyName: company?.name || 'Minha Empresa',
-    currency: company?.settings.currency || 'BRL',
-    timezone: company?.settings.timezone || 'America/Sao_Paulo',
-    businessStart: company?.settings.businessHours.start || '06:00',
-    businessEnd: company?.settings.businessHours.end || '23:00',
-    
-    // Módulos
-    eventsModule: company?.settings.eventsModule || true,
-    barModule: company?.settings.barModule || true,
-    schoolModule: company?.settings.schoolModule || true,
-    financialModule: company?.settings.financialModule || true,
-    
-    // Eventos - Horários Nobre
-    enablePeakHours: company?.settings.enablePeakHours || false,
-    peakHourStart: company?.settings.peakHourStart || '18:00',
-    peakHourEnd: company?.settings.peakHourEnd || '22:00',
-    peakHourMultiplier: company?.settings.peakHourMultiplier || 1.5,
-    
-    // Bar - Estoque
-    allowNegativeStock: company?.settings.allowNegativeStock || false,
-    stockAlerts: company?.settings.stockAlerts || true,
-    lowStockThreshold: company?.settings.lowStockThreshold || 10,
-    enableComandas: company?.settings.enableComandas || true,
-    
-    // Eventos
-    autoConfirmReservations: company?.settings.autoConfirmReservations || true,
-    allowRecurringReservations: company?.settings.allowRecurringReservations || true
-  });
-
-  const availablePermissions = {
-    events: [
-      { id: 'events.view', name: 'Visualizar Eventos', description: 'Pode ver a lista de eventos' },
-      { id: 'events.create', name: 'Criar Eventos', description: 'Pode criar novos eventos' },
-      { id: 'events.edit', name: 'Editar Eventos', description: 'Pode editar eventos existentes' },
-      { id: 'events.delete', name: 'Excluir Eventos', description: 'Pode excluir eventos' },
-      { id: 'events.manage_venues', name: 'Gerenciar Locais', description: 'Pode gerenciar locais de eventos' },
-      { id: 'events.manage_clients', name: 'Gerenciar Clientes', description: 'Pode gerenciar clientes de eventos' },
-      { id: 'events.receive_payments', name: 'Receber Pagamentos', description: 'Pode processar pagamentos de eventos' }
-    ],
-    school: [
-      { id: 'school.view', name: 'Visualizar Escolinha', description: 'Pode ver informações da escolinha' },
-      { id: 'school.manage_students', name: 'Gerenciar Alunos', description: 'Pode gerenciar alunos' },
-      { id: 'school.manage_teachers', name: 'Gerenciar Professores', description: 'Pode gerenciar professores' },
-      { id: 'school.manage_classes', name: 'Gerenciar Turmas', description: 'Pode gerenciar turmas' },
-      { id: 'school.receive_payments', name: 'Receber Mensalidades', description: 'Pode processar mensalidades' }
-    ],
-    bar: [
-      { id: 'bar.view', name: 'Visualizar Bar', description: 'Pode ver informações do bar' },
-      { id: 'bar.manage_products', name: 'Gerenciar Produtos', description: 'Pode gerenciar produtos' },
-      { id: 'bar.manage_stock', name: 'Gerenciar Estoque', description: 'Pode gerenciar estoque' },
-      { id: 'bar.manage_comandas', name: 'Gerenciar Comandas', description: 'Pode gerenciar comandas' },
-      { id: 'bar.cashier', name: 'Operador de Caixa', description: 'Pode operar o caixa' }
-    ],
-    financial: [
-      { id: 'financial.view', name: 'Visualizar Financeiro', description: 'Pode ver informações financeiras' },
-      { id: 'financial.manage_receivables', name: 'Gerenciar Recebíveis', description: 'Pode gerenciar contas a receber' },
-      { id: 'financial.manage_payables', name: 'Gerenciar Pagáveis', description: 'Pode gerenciar contas a pagar' },
-      { id: 'financial.view_reports', name: 'Ver Relatórios', description: 'Pode visualizar relatórios financeiros' }
-    ],
-    general: [
-      { id: 'general.view_dashboard', name: 'Ver Dashboard', description: 'Pode acessar o dashboard principal' },
-      { id: 'general.manage_settings', name: 'Gerenciar Configurações', description: 'Pode alterar configurações do sistema' },
-      { id: 'general.manage_users', name: 'Gerenciar Usuários', description: 'Pode gerenciar usuários do sistema' }
-    ]
-  };
-
-  const users = [
-    { 
-      id: 1, 
-      name: 'João Silva', 
-      email: 'joao@empresa.com', 
+  // Mock users data
+  const [users] = useState<User[]>([
+    {
+      id: 1,
+      name: 'Administrador',
+      email: 'admin@exemplo.com',
       role: 'admin',
       status: 'ativo',
-      lastAccess: '2024-01-15',
-      permissions: ['events.view', 'events.create', 'school.view', 'bar.view', 'financial.view', 'general.view_dashboard'],
+      lastAccess: '2024-01-15 14:30',
       userGroupId: '1',
-      useGroupPermissions: true
+      useGroupPermissions: true,
+      permissions: []
     },
-    { 
-      id: 2, 
-      name: 'Maria Santos', 
-      email: 'maria@empresa.com', 
+    {
+      id: 2,
+      name: 'João Silva',
+      email: 'joao@exemplo.com',
       role: 'manager',
       status: 'ativo',
-      lastAccess: '2024-01-14',
-      permissions: ['events.view', 'events.create', 'school.view', 'bar.view'],
+      lastAccess: '2024-01-15 10:15',
       userGroupId: '2',
-      useGroupPermissions: true
+      useGroupPermissions: true,
+      permissions: []
     },
-    { 
-      id: 3, 
-      name: 'Pedro Costa', 
-      email: 'pedro@empresa.com', 
+    {
+      id: 3,
+      name: 'Maria Santos',
+      email: 'maria@exemplo.com',
       role: 'employee',
       status: 'inativo',
-      lastAccess: '2024-01-10',
-      permissions: ['bar.view', 'bar.cashier'],
-      userGroupId: null,
-      useGroupPermissions: false
+      lastAccess: '2024-01-10 16:45',
+      useGroupPermissions: false,
+      permissions: ['bar.view', 'bar.cashier', 'general.view_dashboard']
     }
-  ];
+  ]);
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  if (!company) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Carregando configurações...</h1>
+          <p className="text-muted-foreground">Por favor, aguarde.</p>
+        </div>
+      </div>
+    );
+  }
 
-  const pagination = usePagination(filteredUsers, {
-    pageSize: 5,
-    totalItems: filteredUsers.length
-  });
-
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'Administrador';
-      case 'manager':
-        return 'Gerente';
-      case 'employee':
-        return 'Funcionário';
-      default:
-        return role;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ativo':
-        return 'bg-green-200 text-green-800';
-      case 'inativo':
-        return 'bg-red-200 text-red-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
-    }
+  const handleSettingChange = (key: string, value: any) => {
+    updateCompanySettings({ [key]: value });
+    toast({
+      title: "Configuração atualizada",
+      description: "As alterações foram salvas com sucesso.",
+    });
   };
 
   const handleCreateUser = () => {
     setSelectedUser(null);
-    setUserModalMode('create');
+    setModalMode('create');
     setUserModalOpen(true);
   };
 
-  const handleEditUser = (user: any) => {
+  const handleEditUser = (user: User) => {
     setSelectedUser(user);
-    setUserModalMode('edit');
+    setModalMode('edit');
     setUserModalOpen(true);
   };
 
-  const handleSave = () => {
-    // Atualizar as configurações da empresa
-    updateCompanySettings({
-      currency: settings.currency,
-      timezone: settings.timezone,
-      businessHours: {
-        start: settings.businessStart,
-        end: settings.businessEnd
-      },
-      eventsModule: settings.eventsModule,
-      barModule: settings.barModule,
-      schoolModule: settings.schoolModule,
-      financialModule: settings.financialModule,
-      enablePeakHours: settings.enablePeakHours,
-      peakHourStart: settings.peakHourStart,
-      peakHourEnd: settings.peakHourEnd,
-      peakHourMultiplier: settings.peakHourMultiplier,
-      allowNegativeStock: settings.allowNegativeStock,
-      stockAlerts: settings.stockAlerts,
-      lowStockThreshold: settings.lowStockThreshold,
-      enableComandas: settings.enableComandas,
-      autoConfirmReservations: settings.autoConfirmReservations,
-      allowRecurringReservations: settings.allowRecurringReservations
-    });
+  const getRoleInfo = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return { label: 'Administrador', color: 'bg-red-500', icon: Shield };
+      case 'manager':
+        return { label: 'Gerente', color: 'bg-blue-500', icon: UserCheck };
+      case 'employee':
+        return { label: 'Funcionário', color: 'bg-green-500', icon: User };
+      default:
+        return { label: role, color: 'bg-gray-500', icon: User };
+    }
+  };
 
-    toast({
-      title: "Configurações salvas",
-      description: "As configurações foram atualizadas com sucesso.",
-    });
+  const getStatusColor = (status: string) => {
+    return status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="bg-background shadow-sm border-b">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/painel')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h1 className="text-xl font-semibold">Configurações do Sistema</h1>
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <SettingsIcon className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl font-bold">Configurações</h1>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="company" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
             </TabsTrigger>
-            <TabsTrigger value="appearance" className="gap-2">
-              <Palette className="h-4 w-4" />
-              Aparência
-            </TabsTrigger>
             <TabsTrigger value="modules" className="gap-2">
-              <Shield className="h-4 w-4" />
+              <Package className="h-4 w-4" />
               Módulos
-            </TabsTrigger>
-            <TabsTrigger value="events" className="gap-2">
-              <Clock className="h-4 w-4" />
-              Eventos
-            </TabsTrigger>
-            <TabsTrigger value="bar" className="gap-2">
-              <DollarSign className="h-4 w-4" />
-              Bar
-            </TabsTrigger>
-            <TabsTrigger value="school" className="gap-2">
-              <Building2 className="h-4 w-4" />
-              Escolinha
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
               Usuários
             </TabsTrigger>
+            <TabsTrigger value="notifications" className="gap-2">
+              <Bell className="h-4 w-4" />
+              Notificações
+            </TabsTrigger>
           </TabsList>
 
-          {/* Configurações da Empresa */}
           <TabsContent value="company" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Informações da Empresa</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Informações da Empresa
+                </CardTitle>
                 <CardDescription>
-                  Configure as informações básicas da sua empresa
+                  Configurações básicas da sua empresa
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="companyName">Nome da Empresa</Label>
                     <Input
                       id="companyName"
-                      value={settings.companyName}
-                      onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
+                      value={company.name}
+                      onChange={(e) => handleSettingChange('name', e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="currency">Moeda</Label>
-                    <Select value={settings.currency} onValueChange={(value) => setSettings({ ...settings, currency: value })}>
+                    <Select value={company.settings.currency} onValueChange={(value) => handleSettingChange('currency', value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BRL">Real (R$)</SelectItem>
-                        <SelectItem value="USD">Dólar ($)</SelectItem>
-                        <SelectItem value="EUR">Euro (€)</SelectItem>
+                        <SelectItem value="BRL">Real Brasileiro (BRL)</SelectItem>
+                        <SelectItem value="USD">Dólar Americano (USD)</SelectItem>
+                        <SelectItem value="EUR">Euro (EUR)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="timezone">Fuso Horário</Label>
-                    <Select value={settings.timezone} onValueChange={(value) => setSettings({ ...settings, timezone: value })}>
+                    <Select value={company.settings.timezone} onValueChange={(value) => handleSettingChange('timezone', value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -308,57 +214,38 @@ const Settings = () => {
                   </div>
                 </div>
 
-                <div className="border-t pt-4">
-                  <h4 className="text-sm font-medium mb-4">Horário de Funcionamento</h4>
-                  <div className="grid grid-cols-2 gap-4">
+                <Separator />
+
+                <div>
+                  <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Horário de Funcionamento
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="businessStart">Abertura</Label>
+                      <Label htmlFor="businessStart">Horário de Abertura</Label>
                       <Input
                         id="businessStart"
                         type="time"
-                        value={settings.businessStart}
-                        onChange={(e) => setSettings({ ...settings, businessStart: e.target.value })}
+                        value={company.settings.businessHours.start}
+                        onChange={(e) => handleSettingChange('businessHours', {
+                          ...company.settings.businessHours,
+                          start: e.target.value
+                        })}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="businessEnd">Fechamento</Label>
+                      <Label htmlFor="businessEnd">Horário de Fechamento</Label>
                       <Input
                         id="businessEnd"
                         type="time"
-                        value={settings.businessEnd}
-                        onChange={(e) => setSettings({ ...settings, businessEnd: e.target.value })}
+                        value={company.settings.businessHours.end}
+                        onChange={(e) => handleSettingChange('businessHours', {
+                          ...company.settings.businessHours,
+                          end: e.target.value
+                        })}
                       />
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="appearance" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Aparência do Sistema</CardTitle>
-                <CardDescription>
-                  Personalize a aparência da interface
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="theme">Tema da Interface</Label>
-                    <Select value={theme} onValueChange={(value: 'light' | 'dark') => setTheme(value)}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Tema Claro</SelectItem>
-                        <SelectItem value="dark">Tema Escuro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Escolha entre o tema claro ou escuro para a interface
-                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -366,369 +253,383 @@ const Settings = () => {
           </TabsContent>
 
           <TabsContent value="modules" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Módulos Disponíveis</CardTitle>
-                <CardDescription>
-                  Ative ou desative os módulos que sua empresa utiliza
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Módulo de Gestão de Eventos</div>
-                    <div className="text-sm text-muted-foreground">
-                      Reservas esportivas, agendas e controle de locais
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.eventsModule}
-                    onCheckedChange={(checked) => setSettings({ ...settings, eventsModule: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Módulo de Gestão de Bar</div>
-                    <div className="text-sm text-muted-foreground">
-                      Controle de estoque, comandas e caixa
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.barModule}
-                    onCheckedChange={(checked) => setSettings({ ...settings, barModule: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Módulo de Gestão Escolar</div>
-                    <div className="text-sm text-muted-foreground">
-                      Controle de alunos, turmas e notas
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.schoolModule}
-                    onCheckedChange={(checked) => setSettings({ ...settings, schoolModule: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Módulo Financeiro</div>
-                    <div className="text-sm text-muted-foreground">
-                      Controle de contas a pagar/receber e fluxo de caixa
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.financialModule}
-                    onCheckedChange={(checked) => setSettings({ ...settings, financialModule: checked })}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="events" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configurações de Eventos</CardTitle>
-                <CardDescription>
-                  Configure como o módulo de eventos funciona
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Confirmar Reservas Automaticamente</div>
-                    <div className="text-sm text-muted-foreground">
-                      Reservas são confirmadas automaticamente sem aprovação manual
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.autoConfirmReservations}
-                    onCheckedChange={(checked) => setSettings({ ...settings, autoConfirmReservations: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Permitir Reservas Recorrentes</div>
-                    <div className="text-sm text-muted-foreground">
-                      Clientes podem criar reservas que se repetem automaticamente
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.allowRecurringReservations}
-                    onCheckedChange={(checked) => setSettings({ ...settings, allowRecurringReservations: checked })}
-                  />
-                </div>
-
-                <div className="border-t pt-4">
-                  <h4 className="text-lg font-medium mb-4">Horários Nobre</h4>
-                  
-                  <div className="flex items-center justify-between mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Módulo Eventos */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Eventos
+                    </span>
+                    <Switch
+                      checked={company.settings.eventsModule}
+                      onCheckedChange={(checked) => handleSettingChange('eventsModule', checked)}
+                    />
+                  </CardTitle>
+                  <CardDescription>
+                    Gestão de reservas, locais e eventos
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <div className="font-medium">Ativar Horários Nobre</div>
-                      <div className="text-sm text-muted-foreground">
-                        Define preços diferenciados para horários de maior demanda
+                      <div className="font-medium text-sm">Confirmação Automática</div>
+                      <div className="text-xs text-muted-foreground">
+                        Confirmar reservas automaticamente
                       </div>
                     </div>
                     <Switch
-                      checked={settings.enablePeakHours}
-                      onCheckedChange={(checked) => setSettings({ ...settings, enablePeakHours: checked })}
+                      checked={company.settings.autoConfirmReservations}
+                      onCheckedChange={(checked) => handleSettingChange('autoConfirmReservations', checked)}
+                      disabled={!company.settings.eventsModule}
                     />
                   </div>
-
-                  {settings.enablePeakHours && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="peakHourStart">Início do Horário Nobre</Label>
-                        <Input
-                          id="peakHourStart"
-                          type="time"
-                          value={settings.peakHourStart}
-                          onChange={(e) => setSettings({ ...settings, peakHourStart: e.target.value })}
-                        />
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium text-sm">Reservas Recorrentes</div>
+                      <div className="text-xs text-muted-foreground">
+                        Permitir reservas que se repetem
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="peakHourEnd">Fim do Horário Nobre</Label>
-                        <Input
-                          id="peakHourEnd"
-                          type="time"
-                          value={settings.peakHourEnd}
-                          onChange={(e) => setSettings({ ...settings, peakHourEnd: e.target.value })}
-                        />
+                    </div>
+                    <Switch
+                      checked={company.settings.allowRecurringReservations}
+                      onCheckedChange={(checked) => handleSettingChange('allowRecurringReservations', checked)}
+                      disabled={!company.settings.eventsModule}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium text-sm">Horário de Pico</div>
+                      <div className="text-xs text-muted-foreground">
+                        Ativar preços diferenciados no horário de pico
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="peakHourMultiplier">Multiplicador de Preço</Label>
+                    </div>
+                    <Switch
+                      checked={company.settings.enablePeakHours}
+                      onCheckedChange={(checked) => handleSettingChange('enablePeakHours', checked)}
+                      disabled={!company.settings.eventsModule}
+                    />
+                  </div>
+                  
+                  {company.settings.enablePeakHours && company.settings.eventsModule && (
+                    <div className="space-y-3 p-3 bg-muted/30 rounded-lg border">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Início</Label>
+                          <Input
+                            type="time"
+                            value={company.settings.peakHourStart}
+                            onChange={(e) => handleSettingChange('peakHourStart', e.target.value)}
+                            className="h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Fim</Label>
+                          <Input
+                            type="time"
+                            value={company.settings.peakHourEnd}
+                            onChange={(e) => handleSettingChange('peakHourEnd', e.target.value)}
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Multiplicador de Preço</Label>
                         <Input
-                          id="peakHourMultiplier"
                           type="number"
                           step="0.1"
                           min="1"
-                          value={settings.peakHourMultiplier}
-                          onChange={(e) => setSettings({ ...settings, peakHourMultiplier: parseFloat(e.target.value) })}
+                          max="5"
+                          value={company.settings.peakHourMultiplier}
+                          onChange={(e) => handleSettingChange('peakHourMultiplier', parseFloat(e.target.value))}
+                          className="h-8"
                         />
-                        <p className="text-xs text-muted-foreground">
-                          Ex: 1.5 = 50% mais caro no horário nobre
-                        </p>
                       </div>
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </CardContent>
+              </Card>
 
-          <TabsContent value="bar" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configurações do Bar</CardTitle>
-                <CardDescription>
-                  Configure como o módulo de bar funciona
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Permitir Estoque Negativo</div>
-                    <div className="text-sm text-muted-foreground">
-                      Permite vender produtos mesmo com estoque zerado
+              {/* Módulo Bar */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      Bar
+                    </span>
+                    <Switch
+                      checked={company.settings.barModule}
+                      onCheckedChange={(checked) => handleSettingChange('barModule', checked)}
+                    />
+                  </CardTitle>
+                  <CardDescription>
+                    Gestão de produtos, estoque e vendas
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium text-sm">Estoque Negativo</div>
+                      <div className="text-xs text-muted-foreground">
+                        Permitir vendas com estoque negativo
+                      </div>
                     </div>
+                    <Switch
+                      checked={company.settings.allowNegativeStock}
+                      onCheckedChange={(checked) => handleSettingChange('allowNegativeStock', checked)}
+                      disabled={!company.settings.barModule}
+                    />
                   </div>
-                  <Switch
-                    checked={settings.allowNegativeStock}
-                    onCheckedChange={(checked) => setSettings({ ...settings, allowNegativeStock: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Alertas de Estoque</div>
-                    <div className="text-sm text-muted-foreground">
-                      Receba notificações quando produtos estiverem em baixa
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium text-sm">Alertas de Estoque</div>
+                      <div className="text-xs text-muted-foreground">
+                        Notificar quando estoque estiver baixo
+                      </div>
                     </div>
+                    <Switch
+                      checked={company.settings.stockAlerts}
+                      onCheckedChange={(checked) => handleSettingChange('stockAlerts', checked)}
+                      disabled={!company.settings.barModule}
+                    />
                   </div>
-                  <Switch
-                    checked={settings.stockAlerts}
-                    onCheckedChange={(checked) => setSettings({ ...settings, stockAlerts: checked })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="stockThreshold">Limite para Alerta de Estoque Baixo</Label>
-                  <Input
-                    id="stockThreshold"
-                    type="number"
-                    value={settings.lowStockThreshold}
-                    onChange={(e) => setSettings({ ...settings, lowStockThreshold: parseInt(e.target.value) })}
-                    className="w-32"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Sistema de Comandas</div>
-                    <div className="text-sm text-muted-foreground">
-                      Habilitar sistema de comandas digitais
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="font-medium text-sm">Comandas</div>
+                      <div className="text-xs text-muted-foreground">
+                        Habilitar sistema de comandas
+                      </div>
                     </div>
+                    <Switch
+                      checked={company.settings.enableComandas}
+                      onCheckedChange={(checked) => handleSettingChange('enableComandas', checked)}
+                      disabled={!company.settings.barModule}
+                    />
                   </div>
-                  <Switch
-                    checked={settings.enableComandas}
-                    onCheckedChange={(checked) => setSettings({ ...settings, enableComandas: checked })}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                  
+                  {company.settings.stockAlerts && company.settings.barModule && (
+                    <div className="p-3 bg-muted/30 rounded-lg border">
+                      <Label className="text-xs">Limite para alerta de estoque baixo</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={company.settings.lowStockThreshold}
+                        onChange={(e) => handleSettingChange('lowStockThreshold', parseInt(e.target.value))}
+                        className="h-8 mt-1"
+                      />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Módulo Escolinha */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-5 w-5" />
+                      Escolinha
+                    </span>
+                    <Switch
+                      checked={company.settings.schoolModule}
+                      onCheckedChange={(checked) => handleSettingChange('schoolModule', checked)}
+                    />
+                  </CardTitle>
+                  <CardDescription>
+                    Gestão de alunos, turmas e mensalidades
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Configurações específicas da escolinha estarão disponíveis em breve.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Módulo Financeiro */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <DollarSign className="h-5 w-5" />
+                      Financeiro
+                    </span>
+                    <Switch
+                      checked={company.settings.financialModule}
+                      onCheckedChange={(checked) => handleSettingChange('financialModule', checked)}
+                    />
+                  </CardTitle>
+                  <CardDescription>
+                    Gestão financeira e relatórios
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Configurações específicas do módulo financeiro estarão disponíveis em breve.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
+            {/* User Groups Section */}
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciamento de Usuários e Permissões</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Grupos de Usuários
+                </CardTitle>
                 <CardDescription>
-                  Gerencie usuários e configure permissões específicas para cada módulo
+                  Grupos predefinidos com conjuntos de permissões específicas
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Actions and Filters */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      placeholder="Buscar por nome, email ou função..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {userGroups.map((group) => (
+                    <div key={group.id} className="border rounded-lg p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className={`w-4 h-4 rounded-full ${group.color}`} />
+                        <div>
+                          <h4 className="font-medium text-sm">{group.name}</h4>
+                          <p className="text-xs text-muted-foreground">{group.description}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-medium">Permissões ({group.permissions.length}):</p>
+                        <div className="flex flex-wrap gap-1">
+                          {group.permissions.slice(0, 3).map((permission) => (
+                            <Badge key={permission} variant="outline" className="text-xs">
+                              {permission.split('.')[1]}
+                            </Badge>
+                          ))}
+                          {group.permissions.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{group.permissions.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Users Management Section */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="h-5 w-5" />
+                      Usuários do Sistema
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar usuários e suas permissões
+                    </CardDescription>
                   </div>
-                  <Button
-                    onClick={handleCreateUser}
-                    className="gap-2"
-                  >
+                  <Button onClick={handleCreateUser} className="gap-2">
                     <Plus className="h-4 w-4" />
                     Novo Usuário
                   </Button>
                 </div>
-
-                {/* Users Table */}
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Função</TableHead>
-                      <TableHead>Permissões</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Último Acesso</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pagination.paginatedData.map((user) => (
-                      <TableRow key={user.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                        <TableCell>{getRoleLabel(user.role)}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {user.permissions.slice(0, 3).map((permission) => (
-                              <span key={permission} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                                {permission.split('.')[1]}
-                              </span>
-                            ))}
-                            {user.permissions.length > 3 && (
-                              <span className="text-xs text-muted-foreground">
-                                +{user.permissions.length - 3} mais
-                              </span>
-                            )}
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {users.map((user) => {
+                    const roleInfo = getRoleInfo(user.role);
+                    const RoleIcon = roleInfo.icon;
+                    const userGroup = userGroups.find(group => group.id === user.userGroupId);
+                    
+                    return (
+                      <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-2 rounded-full ${roleInfo.color} text-white`}>
+                            <RoleIcon className="h-4 w-4" />
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(user.status)}`}>
-                            {user.status}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">{user.lastAccess}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEditUser(user)}
-                              className="gap-1"
-                            >
-                              <Edit className="h-3 w-3" />
-                              Editar
-                            </Button>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium">{user.name}</h4>
+                              <Badge className={getStatusColor(user.status)}>
+                                {user.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{user.email}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline">{roleInfo.label}</Badge>
+                              {user.useGroupPermissions && userGroup ? (
+                                <Badge variant="secondary" className="gap-1">
+                                  <div className={`w-2 h-2 rounded-full ${userGroup.color}`} />
+                                  {userGroup.name}
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline">
+                                  {user.permissions.length} permissões específicas
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Último acesso: {user.lastAccess}
+                            </p>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                {/* Paginação */}
-                <PaginationControls
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalItems={pagination.totalItems}
-                  pageSize={pagination.pageSize}
-                  startIndex={pagination.startIndex}
-                  endIndex={pagination.endIndex}
-                  hasNextPage={pagination.hasNextPage}
-                  hasPreviousPage={pagination.hasPreviousPage}
-                  onPageChange={pagination.goToPage}
-                  onPageSizeChange={pagination.setPageSize}
-                  pageSizeOptions={[5, 10, 15]}
-                />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditUser(user)}
+                            className="gap-2"
+                          >
+                            <Edit className="h-3 w-3" />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Excluir
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* Permissions Overview */}
+          <TabsContent value="notifications" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Permissões Disponíveis por Módulo</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Configurações de Notificações
+                </CardTitle>
                 <CardDescription>
-                  Visualize todas as permissões disponíveis no sistema
+                  Configure quando e como receber notificações
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {Object.entries(availablePermissions).map(([module, permissions]) => (
-                  <div key={module} className="space-y-3">
-                    <h4 className="font-medium capitalize">{module === 'events' ? 'Eventos' : module === 'school' ? 'Escolinha' : module === 'bar' ? 'Bar' : module === 'financial' ? 'Financeiro' : 'Geral'}</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {permissions.map((permission) => (
-                        <div key={permission.id} className="border rounded-lg p-3">
-                          <div className="font-medium text-sm">{permission.name}</div>
-                          <div className="text-xs text-muted-foreground">{permission.description}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Configurações de notificações estarão disponíveis em breve.
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-
-        <div className="flex justify-end gap-4 pt-6">
-          <Button variant="outline" onClick={() => navigate('/painel')}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
-            Salvar Configurações
-          </Button>
-        </div>
       </main>
 
-      {/* User Modal */}
       <UserModal
         open={userModalOpen}
         onClose={() => setUserModalOpen(false)}
         user={selectedUser}
-        mode={userModalMode}
+        mode={modalMode}
       />
     </div>
   );
