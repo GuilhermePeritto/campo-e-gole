@@ -1,96 +1,86 @@
 
-import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Plus, Search, GraduationCap, Eye } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, GraduationCap, Plus, Search, Edit, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePagination } from '@/hooks/usePagination';
+import PaginationControls from '@/components/PaginationControls';
 
 const Teachers = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const teachers = [
-    { 
-      id: 1, 
-      name: 'Prof. Carlos Silva', 
-      specialization: 'Futebol Infantil',
-      phone: '(11) 99999-1111',
+  // Mock data for teachers
+  const mockTeachers = [
+    {
+      id: 1,
+      name: 'Carlos Silva',
       email: 'carlos.silva@email.com',
-      valuePerClass: 80,
+      phone: '(11) 99999-1111',
+      specialization: 'Futebol',
+      valuePerClass: 80.00,
       commissionPercentage: 15,
       status: 'ativo'
     },
-    { 
-      id: 2, 
-      name: 'Prof. Ana Costa', 
-      specialization: 'Educação Física',
+    {
+      id: 2,
+      name: 'Ana Santos',
+      email: 'ana.santos@email.com',
       phone: '(11) 99999-2222',
-      email: 'ana.costa@email.com',
-      valuePerClass: 70,
+      specialization: 'Educação Física',
+      valuePerClass: 75.00,
       commissionPercentage: 20,
       status: 'ativo'
     },
-    { 
-      id: 3, 
-      name: 'Prof. João Santos', 
-      specialization: 'Futebol Juvenil',
+    {
+      id: 3,
+      name: 'João Pereira',
+      email: 'joao.pereira@email.com',
       phone: '(11) 99999-3333',
-      email: 'joao.santos@email.com',
-      valuePerClass: 90,
+      specialization: 'Natação',
+      valuePerClass: 90.00,
       commissionPercentage: 18,
+      status: 'inativo'
+    },
+    {
+      id: 4,
+      name: 'Maria Oliveira',
+      email: 'maria.oliveira@email.com',
+      phone: '(11) 99999-4444',
+      specialization: 'Vôlei',
+      valuePerClass: 85.00,
+      commissionPercentage: 16,
       status: 'ativo'
     },
-    { 
-      id: 4, 
-      name: 'Prof. Maria Oliveira', 
-      specialization: 'Natação',
-      phone: '(11) 99999-4444',
-      email: 'maria.oliveira@email.com',
-      valuePerClass: 85,
+    {
+      id: 5,
+      name: 'Pedro Costa',
+      email: 'pedro.costa@email.com',
+      phone: '(11) 99999-5555',
+      specialization: 'Basquete',
+      valuePerClass: 78.00,
       commissionPercentage: 17,
-      status: 'inativo'
+      status: 'ativo'
     }
   ];
 
-  const filteredTeachers = teachers.filter(teacher =>
+  const filteredTeachers = mockTeachers.filter(teacher =>
     teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     teacher.specialization.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const pagination = usePagination(filteredTeachers, {
-    pageSize: 10,
-    totalItems: filteredTeachers.length
+    totalItems: filteredTeachers.length,
+    pageSize: 10
   });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ativo':
-        return 'bg-green-200 text-green-800';
-      case 'inativo':
-        return 'bg-red-200 text-red-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'ativo':
-        return 'Ativo';
-      case 'inativo':
-        return 'Inativo';
-      default:
-        return status;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
@@ -105,39 +95,34 @@ const Teachers = () => {
             </Button>
             <div className="flex items-center gap-2">
               <GraduationCap className="h-5 w-5 text-blue-600" />
-              <h1 className="text-xl font-semibold">Gerenciar Professores</h1>
+              <h1 className="text-xl font-semibold">Professores</h1>
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Actions and Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Buscar por nome ou especialização..."
+              placeholder="Buscar professores por nome, email ou especialização..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
-          <Button
-            onClick={() => navigate('/escolinha/professores/novo')}
-            className="gap-2"
-          >
+          <Button onClick={() => navigate('/escolinha/professores/novo')} className="gap-2">
             <Plus className="h-4 w-4" />
             Novo Professor
           </Button>
         </div>
 
-        {/* Teachers Table */}
         <Card>
           <CardHeader>
             <CardTitle>Lista de Professores</CardTitle>
             <CardDescription>
-              Gerencie todos os professores da escolinha
+              Gerencie os professores da escolinha
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -146,45 +131,46 @@ const Teachers = () => {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Especialização</TableHead>
-                  <TableHead>Telefone</TableHead>
-                  <TableHead>E-mail</TableHead>
+                  <TableHead>Contato</TableHead>
                   <TableHead>Valor/Aula</TableHead>
                   <TableHead>Comissão</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pagination.paginatedData.map((teacher) => (
-                  <TableRow key={teacher.id} className="hover:bg-muted/50">
-                    <TableCell className="font-medium">{teacher.name}</TableCell>
+                  <TableRow key={teacher.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{teacher.name}</div>
+                        <div className="text-sm text-muted-foreground">{teacher.email}</div>
+                      </div>
+                    </TableCell>
                     <TableCell>{teacher.specialization}</TableCell>
                     <TableCell>{teacher.phone}</TableCell>
-                    <TableCell>{teacher.email}</TableCell>
-                    <TableCell className="font-medium">R$ {teacher.valuePerClass.toFixed(2)}</TableCell>
+                    <TableCell>R$ {teacher.valuePerClass.toFixed(2)}</TableCell>
                     <TableCell>{teacher.commissionPercentage}%</TableCell>
                     <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(teacher.status)}`}>
-                        {getStatusLabel(teacher.status)}
-                      </span>
+                      <Badge variant={teacher.status === 'ativo' ? 'default' : 'secondary'}>
+                        {teacher.status}
+                      </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate(`/escolinha/professores/${teacher.id}/relatorio`)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
                           size="sm"
                           onClick={() => navigate(`/escolinha/professores/${teacher.id}/editar`)}
                         >
-                          Editar
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="gap-1"
-                          onClick={() => navigate(`/escolinha/professores/${teacher.id}/relatorio`)}
-                        >
-                          <Eye className="h-3 w-3" />
-                          Relatório
+                          <Edit className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -193,7 +179,6 @@ const Teachers = () => {
               </TableBody>
             </Table>
 
-            {/* Paginação */}
             <PaginationControls
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
@@ -205,7 +190,6 @@ const Teachers = () => {
               hasPreviousPage={pagination.hasPreviousPage}
               onPageChange={pagination.goToPage}
               onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[10, 20, 30]}
             />
           </CardContent>
         </Card>

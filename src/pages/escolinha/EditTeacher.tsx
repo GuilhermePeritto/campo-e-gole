@@ -5,13 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, GraduationCap } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const NewTeacher = () => {
+const EditTeacher = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -23,8 +25,27 @@ const NewTeacher = () => {
     chargeType: 'por-aula',
     valuePerClass: '',
     commissionPercentage: '',
+    status: true,
     notes: ''
   });
+
+  useEffect(() => {
+    // Simular carregamento dos dados do professor
+    const mockData = {
+      name: 'Carlos Silva',
+      email: 'carlos.silva@email.com',
+      phone: '(11) 99999-1111',
+      cpf: '123.456.789-00',
+      address: 'Rua das Flores, 123, Centro, São Paulo - SP',
+      specialization: 'futebol',
+      chargeType: 'por-aula',
+      valuePerClass: '80.00',
+      commissionPercentage: '15',
+      status: true,
+      notes: 'Professor experiente em futebol infantil'
+    };
+    setFormData(mockData);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,14 +56,14 @@ const NewTeacher = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: "Professor cadastrado com sucesso!",
-        description: "O novo professor foi adicionado ao sistema.",
+        title: "Professor atualizado com sucesso!",
+        description: "As informações do professor foram atualizadas.",
       });
       
       navigate('/escolinha/professores');
     } catch (error) {
       toast({
-        title: "Erro ao cadastrar professor",
+        title: "Erro ao atualizar professor",
         description: "Tente novamente em alguns minutos.",
         variant: "destructive",
       });
@@ -51,7 +72,7 @@ const NewTeacher = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -71,7 +92,7 @@ const NewTeacher = () => {
             </Button>
             <div className="flex items-center gap-2">
               <GraduationCap className="h-5 w-5 text-blue-600" />
-              <h1 className="text-xl font-semibold">Novo Professor</h1>
+              <h1 className="text-xl font-semibold">Editar Professor</h1>
             </div>
           </div>
         </div>
@@ -80,7 +101,7 @@ const NewTeacher = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Cadastrar Novo Professor</CardTitle>
+            <CardTitle>Editar Informações do Professor</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -213,6 +234,15 @@ const NewTeacher = () => {
                   </div>
                 </div>
 
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="status"
+                    checked={formData.status}
+                    onCheckedChange={(checked) => handleInputChange('status', checked)}
+                  />
+                  <Label htmlFor="status">Professor Ativo</Label>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="notes">Observações</Label>
                   <Textarea
@@ -239,7 +269,7 @@ const NewTeacher = () => {
                   disabled={isLoading}
                   className="flex-1"
                 >
-                  {isLoading ? 'Cadastrando...' : 'Cadastrar Professor'}
+                  {isLoading ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
               </div>
             </form>
@@ -250,4 +280,4 @@ const NewTeacher = () => {
   );
 };
 
-export default NewTeacher;
+export default EditTeacher;

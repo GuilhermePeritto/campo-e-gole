@@ -3,20 +3,34 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Calendar, Save } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowLeft, Calendar, Save, Check, ChevronsUpDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const EditClass = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     ageRange: '',
     schedule: '',
     maxStudents: '',
-    monthlyFee: ''
+    monthlyFee: '',
+    teacherId: ''
   });
+
+  // Mock data for teachers
+  const teachers = [
+    { id: '1', name: 'Carlos Silva', specialization: 'Futebol' },
+    { id: '2', name: 'Ana Santos', specialization: 'Educação Física' },
+    { id: '3', name: 'João Pereira', specialization: 'Natação' },
+    { id: '4', name: 'Maria Oliveira', specialization: 'Vôlei' },
+    { id: '5', name: 'Pedro Costa', specialization: 'Basquete' }
+  ];
 
   useEffect(() => {
     // Simular carregamento dos dados da turma
@@ -25,7 +39,8 @@ const EditClass = () => {
       ageRange: '4-6 anos',
       schedule: 'Segunda/Quarta 16:00-17:00',
       maxStudents: '15',
-      monthlyFee: '150'
+      monthlyFee: '150',
+      teacherId: '1'
     };
     setFormData(mockData);
   }, [id]);
@@ -40,6 +55,8 @@ const EditClass = () => {
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const selectedTeacher = teachers.find(teacher => teacher.id === formData.teacherId);
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
@@ -132,6 +149,56 @@ const EditClass = () => {
                     className="border"
                     required
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-gray-600 dark:text-gray-300">Professor</Label>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between border"
+                      >
+                        {selectedTeacher
+                          ? `${selectedTeacher.name} - ${selectedTeacher.specialization}`
+                          : "Selecione um professor..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Buscar professor..." />
+                        <CommandList>
+                          <CommandEmpty>Nenhum professor encontrado.</CommandEmpty>
+                          <CommandGroup>
+                            {teachers.map((teacher) => (
+                              <CommandItem
+                                key={teacher.id}
+                                value={`${teacher.name} ${teacher.specialization}`}
+                                onSelect={() => {
+                                  handleChange('teacherId', teacher.id);
+                                  setOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    formData.teacherId === teacher.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <div>
+                                  <div className="font-medium">{teacher.name}</div>
+                                  <div className="text-sm text-muted-foreground">{teacher.specialization}</div>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
 
