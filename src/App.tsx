@@ -1,3 +1,4 @@
+
 import { Toaster } from '@/components/ui/toaster';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -48,13 +49,16 @@ import SchoolClasses from './pages/escolinha/Classes';
 import SchoolClassStudents from './pages/escolinha/ClassStudents';
 import SchoolEditClass from './pages/escolinha/EditClass';
 import SchoolEditStudent from './pages/escolinha/EditStudent';
+import SchoolEditTeacher from './pages/escolinha/EditTeacher';
 import SchoolNewClass from './pages/escolinha/NewClass';
 import SchoolNewStudent from './pages/escolinha/NewStudent';
+import SchoolNewTeacher from './pages/escolinha/NewTeacher';
 import SchoolPayments from './pages/escolinha/Payments';
 import SchoolReceivePayment from './pages/escolinha/ReceivePayment';
 import SchoolReports from './pages/escolinha/Reports';
 import SchoolStudentHistory from './pages/escolinha/StudentHistory';
 import SchoolStudents from './pages/escolinha/Students';
+import SchoolTeachers from './pages/escolinha/Teachers';
 
 // Financial pages
 import FinancialAccountsPayable from './pages/financeiro/AccountsPayable';
@@ -120,6 +124,9 @@ function App() {
               <Route path="/escolinha/turmas/nova" element={<SchoolNewClass />} />
               <Route path="/escolinha/turmas/:id/editar" element={<SchoolEditClass />} />
               <Route path="/escolinha/turmas/:id/alunos" element={<SchoolClassStudents />} />
+              <Route path="/escolinha/professores" element={<SchoolTeachers />} />
+              <Route path="/escolinha/professores/novo" element={<SchoolNewTeacher />} />
+              <Route path="/escolinha/professores/:id/editar" element={<SchoolEditTeacher />} />
               <Route path="/escolinha/mensalidades" element={<SchoolPayments />} />
               <Route path="/escolinha/mensalidades/:id/receber" element={<SchoolReceivePayment />} />
               <Route path="/escolinha/relatorios" element={<SchoolReports />} />
