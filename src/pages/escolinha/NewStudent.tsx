@@ -1,89 +1,46 @@
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Users } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const NewStudent = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     birthDate: '',
+    cpf: '',
     parentName: '',
     parentPhone: '',
     parentEmail: '',
-    parentCpf: '',
+    address: '',
     emergencyContact: '',
     emergencyPhone: '',
-    address: '',
     medicalInfo: '',
-    allergies: '',
-    class: '',
-    monthlyFee: ''
+    classId: ''
   });
 
+  // Mock data for classes
   const classes = [
-    { id: '1', name: 'Infantil A (4-6 anos)', fee: 150 },
-    { id: '2', name: 'Infantil B (7-9 anos)', fee: 150 },
-    { id: '3', name: 'Juvenil A (10-12 anos)', fee: 180 },
-    { id: '4', name: 'Juvenil B (13-15 anos)', fee: 180 }
+    { id: '1', name: 'Infantil A', ageRange: '4-6 anos' },
+    { id: '2', name: 'Infantil B', ageRange: '7-9 anos' },
+    { id: '3', name: 'Juvenil A', ageRange: '10-12 anos' },
+    { id: '4', name: 'Juvenil B', ageRange: '13-17 anos' }
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Aluno cadastrado com sucesso!",
-        description: "O novo aluno foi adicionado ao sistema.",
-      });
-      
-      navigate('/escolinha/alunos');
-    } catch (error) {
-      toast({
-        title: "Erro ao cadastrar aluno",
-        description: "Tente novamente em alguns minutos.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    console.log('Novo aluno:', formData);
+    navigate('/escolinha/alunos');
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleClassChange = (classId: string) => {
-    const selectedClass = classes.find(c => c.id === classId);
-    setFormData(prev => ({ 
-      ...prev, 
-      class: classId,
-      monthlyFee: selectedClass ? selectedClass.fee.toString() : ''
-    }));
-  };
-
-  const calculateAge = (birthDate: string) => {
-    if (!birthDate) return '';
-    const today = new Date();
-    const birth = new Date(birthDate);
-    const age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      return age - 1;
-    }
-    return age;
   };
 
   return (
@@ -98,232 +55,190 @@ const NewStudent = () => {
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Voltar
+              Alunos
             </Button>
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-600" />
+              <UserPlus className="h-5 w-5 text-blue-600" />
               <h1 className="text-xl font-semibold">Novo Aluno</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Dados do Aluno */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dados do Aluno</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome Completo *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="Nome completo do aluno"
-                    required
-                  />
-                </div>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Cadastrar Novo Aluno</CardTitle>
+            <CardDescription>
+              Preencha os dados pessoais e de contato do aluno
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Dados do Aluno */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Dados do Aluno</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome Completo *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      placeholder="Nome completo do aluno"
+                      required
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="birthDate">Data de Nascimento *</Label>
-                  <Input
-                    id="birthDate"
-                    type="date"
-                    value={formData.birthDate}
-                    onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                    required
-                  />
-                  {formData.birthDate && (
-                    <p className="text-sm text-muted-foreground">
-                      Idade: {calculateAge(formData.birthDate)} anos
-                    </p>
-                  )}
-                </div>
-              </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="birthDate">Data de Nascimento *</Label>
+                    <Input
+                      id="birthDate"
+                      type="date"
+                      value={formData.birthDate}
+                      onChange={(e) => handleChange('birthDate', e.target.value)}
+                      required
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="class">Turma *</Label>
-                  <Select value={formData.class} onValueChange={handleClassChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a turma" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classes.map((classItem) => (
-                        <SelectItem key={classItem.id} value={classItem.id}>
-                          {classItem.name} - R$ {classItem.fee.toFixed(2)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="monthlyFee">Mensalidade (R$)</Label>
-                  <Input
-                    id="monthlyFee"
-                    type="number"
-                    step="0.01"
-                    value={formData.monthlyFee}
-                    onChange={(e) => handleInputChange('monthlyFee', e.target.value)}
-                    placeholder="Valor da mensalidade"
-                    readOnly
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Dados do Responsável */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dados do Responsável</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="parentName">Nome do Responsável *</Label>
-                  <Input
-                    id="parentName"
-                    value={formData.parentName}
-                    onChange={(e) => handleInputChange('parentName', e.target.value)}
-                    placeholder="Nome completo do responsável"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="parentCpf">CPF do Responsável</Label>
-                  <Input
-                    id="parentCpf"
-                    value={formData.parentCpf}
-                    onChange={(e) => handleInputChange('parentCpf', e.target.value)}
-                    placeholder="000.000.000-00"
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="cpf">CPF</Label>
+                    <Input
+                      id="cpf"
+                      value={formData.cpf}
+                      onChange={(e) => handleChange('cpf', e.target.value)}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="parentPhone">Telefone do Responsável *</Label>
-                  <Input
-                    id="parentPhone"
-                    value={formData.parentPhone}
-                    onChange={(e) => handleInputChange('parentPhone', e.target.value)}
-                    placeholder="(11) 99999-9999"
-                    required
-                  />
-                </div>
+              {/* Dados do Responsável */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Dados do Responsável</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="parentName">Nome do Responsável *</Label>
+                    <Input
+                      id="parentName"
+                      value={formData.parentName}
+                      onChange={(e) => handleChange('parentName', e.target.value)}
+                      placeholder="Nome completo do responsável"
+                      required
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="parentEmail">E-mail do Responsável</Label>
-                  <Input
-                    id="parentEmail"
-                    type="email"
-                    value={formData.parentEmail}
-                    onChange={(e) => handleInputChange('parentEmail', e.target.value)}
-                    placeholder="responsavel@email.com"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                  <div className="space-y-2">
+                    <Label htmlFor="parentPhone">Telefone *</Label>
+                    <Input
+                      id="parentPhone"
+                      value={formData.parentPhone}
+                      onChange={(e) => handleChange('parentPhone', e.target.value)}
+                      placeholder="(11) 99999-9999"
+                      required
+                    />
+                  </div>
 
-          {/* Contato de Emergência */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Contato de Emergência</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyContact">Nome do Contato de Emergência *</Label>
-                  <Input
-                    id="emergencyContact"
-                    value={formData.emergencyContact}
-                    onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
-                    placeholder="Nome do contato alternativo"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyPhone">Telefone de Emergência *</Label>
-                  <Input
-                    id="emergencyPhone"
-                    value={formData.emergencyPhone}
-                    onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
-                    placeholder="(11) 99999-9999"
-                    required
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="parentEmail">E-mail</Label>
+                    <Input
+                      id="parentEmail"
+                      type="email"
+                      value={formData.parentEmail}
+                      onChange={(e) => handleChange('parentEmail', e.target.value)}
+                      placeholder="email@exemplo.com"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="address">Endereço Completo *</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="Rua, número, bairro, cidade, CEP"
-                  required
-                />
-              </div>
-            </CardContent>
-          </Card>
+              {/* Endereço e Contato de Emergência */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Endereço e Emergência</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Endereço Completo</Label>
+                    <Textarea
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => handleChange('address', e.target.value)}
+                      placeholder="Rua, número, bairro, cidade, CEP"
+                      rows={3}
+                    />
+                  </div>
 
-          {/* Informações de Saúde */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações de Saúde</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="medicalInfo">Informações Médicas</Label>
-                <Textarea
-                  id="medicalInfo"
-                  value={formData.medicalInfo}
-                  onChange={(e) => handleInputChange('medicalInfo', e.target.value)}
-                  placeholder="Problemas de saúde, medicamentos em uso, restrições médicas..."
-                  rows={3}
-                />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="emergencyContact">Contato de Emergência</Label>
+                      <Input
+                        id="emergencyContact"
+                        value={formData.emergencyContact}
+                        onChange={(e) => handleChange('emergencyContact', e.target.value)}
+                        placeholder="Nome do contato"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="emergencyPhone">Telefone de Emergência</Label>
+                      <Input
+                        id="emergencyPhone"
+                        value={formData.emergencyPhone}
+                        onChange={(e) => handleChange('emergencyPhone', e.target.value)}
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="allergies">Alergias</Label>
-                <Textarea
-                  id="allergies"
-                  value={formData.allergies}
-                  onChange={(e) => handleInputChange('allergies', e.target.value)}
-                  placeholder="Alergias alimentares, medicamentosas ou de contato..."
-                  rows={3}
-                />
-              </div>
-            </CardContent>
-          </Card>
+              {/* Informações Médicas e Turma */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Informações Adicionais</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="medicalInfo">Informações Médicas</Label>
+                    <Textarea
+                      id="medicalInfo"
+                      value={formData.medicalInfo}
+                      onChange={(e) => handleChange('medicalInfo', e.target.value)}
+                      placeholder="Alergias, medicamentos, observações médicas..."
+                      rows={4}
+                    />
+                  </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/escolinha/alunos')}
-              className="flex-1"
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1"
-            >
-              {isLoading ? 'Cadastrando...' : 'Cadastrar Aluno'}
-            </Button>
-          </div>
-        </form>
+                  <div className="space-y-2">
+                    <Label htmlFor="classId">Turma *</Label>
+                    <Select value={formData.classId} onValueChange={(value) => handleChange('classId', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma turma" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classes.map((classItem) => (
+                          <SelectItem key={classItem.id} value={classItem.id}>
+                            {classItem.name} - {classItem.ageRange}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-6">
+                <Button type="submit">
+                  Cadastrar Aluno
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/escolinha/alunos')}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
