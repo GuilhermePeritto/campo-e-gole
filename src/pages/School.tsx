@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, Users2, UserCheck } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, UserCheck, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const School = () => {
@@ -93,7 +93,7 @@ const School = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
