@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, Users2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, Users2, UserCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const School = () => {
@@ -21,6 +21,13 @@ const School = () => {
       icon: Users2,
       color: 'bg-orange-500',
       action: () => navigate('/escolinha/alunos')
+    },
+    {
+      title: 'Professores',
+      description: 'Gerenciar professores',
+      icon: UserCheck,
+      color: 'bg-indigo-500',
+      action: () => navigate('/escolinha/professores')
     },
     {
       title: 'Mensalidades',
