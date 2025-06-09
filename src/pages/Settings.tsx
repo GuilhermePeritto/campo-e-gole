@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { usePagination } from '@/hooks/usePagination';
 import PaginationControls from '@/components/PaginationControls';
@@ -27,23 +28,74 @@ const Settings = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
   const [settings, setSettings] = useState({
-    companyName: company?.name || '',
-    currency: company?.settings.currency || 'BRL',
-    timezone: company?.settings.timezone || 'America/Sao_Paulo',
-    businessStart: company?.settings.businessHours.start || '06:00',
-    businessEnd: company?.settings.businessHours.end || '23:00',
-    eventsModule: company?.modules.includes('events') || false,
-    barModule: company?.modules.includes('bar') || false,
-    schoolModule: company?.modules.includes('school') || false,
-    financialModule: company?.modules.includes('financial') || false,
-    autoConfirmReservations: true,
-    allowRecurringReservations: true,
-    requireClientApproval: false,
+    // Empresa
+    companyName: company?.name || 'Minha Empresa',
+    currency: 'BRL',
+    timezone: 'America/Sao_Paulo',
+    businessStart: '06:00',
+    businessEnd: '23:00',
+    
+    // Módulos
+    eventsModule: true,
+    barModule: true,
+    schoolModule: true,
+    financialModule: true,
+    
+    // Eventos - Horários Nobre
+    enablePeakHours: false,
+    peakHourStart: '18:00',
+    peakHourEnd: '22:00',
+    peakHourMultiplier: 1.5,
+    
+    // Bar - Estoque
+    allowNegativeStock: false,
     stockAlerts: true,
     lowStockThreshold: 10,
     printReceipts: true,
-    enableComandas: true
+    enableComandas: true,
+    
+    // Eventos
+    autoConfirmReservations: true,
+    allowRecurringReservations: true,
+    requireClientApproval: false
   });
+
+  const availablePermissions = {
+    events: [
+      { id: 'events.view', name: 'Visualizar Eventos', description: 'Pode ver a lista de eventos' },
+      { id: 'events.create', name: 'Criar Eventos', description: 'Pode criar novos eventos' },
+      { id: 'events.edit', name: 'Editar Eventos', description: 'Pode editar eventos existentes' },
+      { id: 'events.delete', name: 'Excluir Eventos', description: 'Pode excluir eventos' },
+      { id: 'events.manage_venues', name: 'Gerenciar Locais', description: 'Pode gerenciar locais de eventos' },
+      { id: 'events.manage_clients', name: 'Gerenciar Clientes', description: 'Pode gerenciar clientes de eventos' },
+      { id: 'events.receive_payments', name: 'Receber Pagamentos', description: 'Pode processar pagamentos de eventos' }
+    ],
+    school: [
+      { id: 'school.view', name: 'Visualizar Escolinha', description: 'Pode ver informações da escolinha' },
+      { id: 'school.manage_students', name: 'Gerenciar Alunos', description: 'Pode gerenciar alunos' },
+      { id: 'school.manage_teachers', name: 'Gerenciar Professores', description: 'Pode gerenciar professores' },
+      { id: 'school.manage_classes', name: 'Gerenciar Turmas', description: 'Pode gerenciar turmas' },
+      { id: 'school.receive_payments', name: 'Receber Mensalidades', description: 'Pode processar mensalidades' }
+    ],
+    bar: [
+      { id: 'bar.view', name: 'Visualizar Bar', description: 'Pode ver informações do bar' },
+      { id: 'bar.manage_products', name: 'Gerenciar Produtos', description: 'Pode gerenciar produtos' },
+      { id: 'bar.manage_stock', name: 'Gerenciar Estoque', description: 'Pode gerenciar estoque' },
+      { id: 'bar.manage_comandas', name: 'Gerenciar Comandas', description: 'Pode gerenciar comandas' },
+      { id: 'bar.cashier', name: 'Operador de Caixa', description: 'Pode operar o caixa' }
+    ],
+    financial: [
+      { id: 'financial.view', name: 'Visualizar Financeiro', description: 'Pode ver informações financeiras' },
+      { id: 'financial.manage_receivables', name: 'Gerenciar Recebíveis', description: 'Pode gerenciar contas a receber' },
+      { id: 'financial.manage_payables', name: 'Gerenciar Pagáveis', description: 'Pode gerenciar contas a pagar' },
+      { id: 'financial.view_reports', name: 'Ver Relatórios', description: 'Pode visualizar relatórios financeiros' }
+    ],
+    general: [
+      { id: 'general.view_dashboard', name: 'Ver Dashboard', description: 'Pode acessar o dashboard principal' },
+      { id: 'general.manage_settings', name: 'Gerenciar Configurações', description: 'Pode alterar configurações do sistema' },
+      { id: 'general.manage_users', name: 'Gerenciar Usuários', description: 'Pode gerenciar usuários do sistema' }
+    ]
+  };
 
   const users = [
     { 
@@ -52,7 +104,8 @@ const Settings = () => {
       email: 'joao@empresa.com', 
       role: 'admin',
       status: 'ativo',
-      lastAccess: '2024-01-15'
+      lastAccess: '2024-01-15',
+      permissions: ['events.view', 'events.create', 'school.view', 'bar.view', 'financial.view', 'general.view_dashboard']
     },
     { 
       id: 2, 
@@ -60,7 +113,8 @@ const Settings = () => {
       email: 'maria@empresa.com', 
       role: 'manager',
       status: 'ativo',
-      lastAccess: '2024-01-14'
+      lastAccess: '2024-01-14',
+      permissions: ['events.view', 'events.create', 'school.view', 'bar.view']
     },
     { 
       id: 3, 
@@ -68,15 +122,8 @@ const Settings = () => {
       email: 'pedro@empresa.com', 
       role: 'employee',
       status: 'inativo',
-      lastAccess: '2024-01-10'
-    },
-    { 
-      id: 4, 
-      name: 'Ana Oliveira', 
-      email: 'ana@empresa.com', 
-      role: 'employee',
-      status: 'ativo',
-      lastAccess: '2024-01-15'
+      lastAccess: '2024-01-10',
+      permissions: ['bar.view', 'bar.cashier']
     }
   ];
 
@@ -390,17 +437,58 @@ const Settings = () => {
                   />
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Exigir Aprovação do Cliente</div>
-                    <div className="text-sm text-muted-foreground">
-                      Cliente deve confirmar reserva por email/SMS
+                <div className="border-t pt-4">
+                  <h4 className="text-lg font-medium mb-4">Horários Nobre</h4>
+                  
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="space-y-1">
+                      <div className="font-medium">Ativar Horários Nobre</div>
+                      <div className="text-sm text-muted-foreground">
+                        Define preços diferenciados para horários de maior demanda
+                      </div>
                     </div>
+                    <Switch
+                      checked={settings.enablePeakHours}
+                      onCheckedChange={(checked) => setSettings({ ...settings, enablePeakHours: checked })}
+                    />
                   </div>
-                  <Switch
-                    checked={settings.requireClientApproval}
-                    onCheckedChange={(checked) => setSettings({ ...settings, requireClientApproval: checked })}
-                  />
+
+                  {settings.enablePeakHours && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="peakHourStart">Início do Horário Nobre</Label>
+                        <Input
+                          id="peakHourStart"
+                          type="time"
+                          value={settings.peakHourStart}
+                          onChange={(e) => setSettings({ ...settings, peakHourStart: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="peakHourEnd">Fim do Horário Nobre</Label>
+                        <Input
+                          id="peakHourEnd"
+                          type="time"
+                          value={settings.peakHourEnd}
+                          onChange={(e) => setSettings({ ...settings, peakHourEnd: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="peakHourMultiplier">Multiplicador de Preço</Label>
+                        <Input
+                          id="peakHourMultiplier"
+                          type="number"
+                          step="0.1"
+                          min="1"
+                          value={settings.peakHourMultiplier}
+                          onChange={(e) => setSettings({ ...settings, peakHourMultiplier: parseFloat(e.target.value) })}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Ex: 1.5 = 50% mais caro no horário nobre
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -415,6 +503,19 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium">Permitir Estoque Negativo</div>
+                    <div className="text-sm text-muted-foreground">
+                      Permite vender produtos mesmo com estoque zerado
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.allowNegativeStock}
+                    onCheckedChange={(checked) => setSettings({ ...settings, allowNegativeStock: checked })}
+                  />
+                </div>
+
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="font-medium">Alertas de Estoque</div>
@@ -441,19 +542,6 @@ const Settings = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <div className="font-medium">Imprimir Comprovantes</div>
-                    <div className="text-sm text-muted-foreground">
-                      Imprimir automaticamente comprovantes de venda
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.printReceipts}
-                    onCheckedChange={(checked) => setSettings({ ...settings, printReceipts: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
                     <div className="font-medium">Sistema de Comandas</div>
                     <div className="text-sm text-muted-foreground">
                       Habilitar sistema de comandas digitais
@@ -468,37 +556,12 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="school" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configurações da Escolinha</CardTitle>
-                <CardDescription>
-                  Configure o módulo de gestão escolar
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="font-medium">Habilitar Módulo Escolar</div>
-                    <div className="text-sm text-muted-foreground">
-                      Ativar funcionalidades de gestão escolar
-                    </div>
-                  </div>
-                  <Switch
-                    checked={settings.schoolModule}
-                    onCheckedChange={(checked) => setSettings({ ...settings, schoolModule: checked })}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
           <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciamento de Usuários</CardTitle>
+                <CardTitle>Gerenciamento de Usuários e Permissões</CardTitle>
                 <CardDescription>
-                  Gerencie usuários e suas permissões no sistema
+                  Gerencie usuários e configure permissões específicas para cada módulo
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -529,6 +592,7 @@ const Settings = () => {
                       <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Função</TableHead>
+                      <TableHead>Permissões</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Último Acesso</TableHead>
                       <TableHead>Ações</TableHead>
@@ -540,6 +604,20 @@ const Settings = () => {
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell className="text-muted-foreground">{user.email}</TableCell>
                         <TableCell>{getRoleLabel(user.role)}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {user.permissions.slice(0, 3).map((permission) => (
+                              <span key={permission} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                                {permission.split('.')[1]}
+                              </span>
+                            ))}
+                            {user.permissions.length > 3 && (
+                              <span className="text-xs text-muted-foreground">
+                                +{user.permissions.length - 3} mais
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell>
                           <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(user.status)}`}>
                             {user.status}
@@ -580,7 +658,34 @@ const Settings = () => {
                 />
               </CardContent>
             </Card>
+
+            {/* Permissions Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Permissões Disponíveis por Módulo</CardTitle>
+                <CardDescription>
+                  Visualize todas as permissões disponíveis no sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {Object.entries(availablePermissions).map(([module, permissions]) => (
+                  <div key={module} className="space-y-3">
+                    <h4 className="font-medium capitalize">{module === 'events' ? 'Eventos' : module === 'school' ? 'Escolinha' : module === 'bar' ? 'Bar' : module === 'financial' ? 'Financeiro' : 'Geral'}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {permissions.map((permission) => (
+                        <div key={permission.id} className="border rounded-lg p-3">
+                          <div className="font-medium text-sm">{permission.name}</div>
+                          <div className="text-xs text-muted-foreground">{permission.description}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </TabsContent>
+
+          {/* ... keep existing code (other tabs) */}
         </Tabs>
 
         <div className="flex justify-end gap-4 pt-6">

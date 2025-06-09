@@ -7,6 +7,8 @@
       "email": "string",
       "password": "string",
       "role": "admin | manager | user",
+      "permissions": "string[]",
+      "groupPermissions": "string[]",
       "createdAt": "Date",
       "updatedAt": "Date"
     },
@@ -14,12 +16,32 @@
       "id": "number",
       "name": "string",
       "age": "number",
+      "birthDate": "Date",
       "parentName": "string",
-      "phone": "string",
-      "email": "string?",
+      "parentPhone": "string",
+      "parentEmail": "string?",
+      "parentCpf": "string?",
+      "emergencyContact": "string",
+      "emergencyPhone": "string",
       "address": "string",
+      "medicalInfo": "string?",
+      "allergies": "string?",
       "class": "string",
       "monthlyFee": "number",
+      "status": "active | inactive",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "Teacher": {
+      "id": "number",
+      "name": "string",
+      "email": "string?",
+      "phone": "string",
+      "cpf": "string?",
+      "address": "string?",
+      "specialization": "string",
+      "valuePerClass": "number",
+      "commissionPercentage": "number",
       "status": "active | inactive",
       "createdAt": "Date",
       "updatedAt": "Date"
@@ -32,10 +54,23 @@
       "maxStudents": "number",
       "monthlyFee": "number",
       "schedule": "string",
-      "instructor": "string",
+      "teacherId": "number",
       "status": "active | inactive",
       "createdAt": "Date",
       "updatedAt": "Date"
+    },
+    "TeacherClass": {
+      "id": "number",
+      "teacherId": "number",
+      "classId": "number",
+      "date": "Date",
+      "duration": "number",
+      "studentsPresent": "number",
+      "totalValue": "number",
+      "commission": "number",
+      "status": "realizada | cancelada",
+      "notes": "string?",
+      "createdAt": "Date"
     },
     "StudentPayment": {
       "id": "number",
@@ -58,10 +93,13 @@
       "date": "Date",
       "startTime": "string",
       "endTime": "string",
-      "venue": "string",
+      "venueId": "number",
       "clientId": "number",
       "status": "scheduled | confirmed | completed | cancelled",
+      "baseAmount": "number",
+      "peakHourAmount": "number?",
       "totalAmount": "number",
+      "isPeakHour": "boolean",
       "createdAt": "Date",
       "updatedAt": "Date"
     },
@@ -82,6 +120,9 @@
       "description": "string?",
       "capacity": "number",
       "hourlyRate": "number",
+      "peakHourRate": "number?",
+      "peakHourStart": "string?",
+      "peakHourEnd": "string?",
       "amenities": "string[]",
       "status": "available | maintenance | unavailable",
       "createdAt": "Date",
@@ -109,6 +150,7 @@
       "cost": "number?",
       "stock": "number",
       "minStock": "number",
+      "allowNegativeStock": "boolean",
       "category": "string",
       "barcode": "string?",
       "status": "active | inactive",
@@ -246,11 +288,37 @@
       "status": "processando | concluido | cancelado",
       "createdAt": "Date",
       "updatedAt": "Date"
+    },
+    "SystemSettings": {
+      "id": "number",
+      "module": "events | school | bar | financial | general",
+      "key": "string",
+      "value": "string",
+      "dataType": "string | number | boolean | json",
+      "description": "string",
+      "updatedAt": "Date"
+    },
+    "UserPermission": {
+      "id": "number",
+      "userId": "string",
+      "module": "string",
+      "permission": "string",
+      "granted": "boolean",
+      "createdAt": "Date"
+    },
+    "PermissionGroup": {
+      "id": "number",
+      "name": "string",
+      "description": "string",
+      "permissions": "string[]",
+      "createdAt": "Date",
+      "updatedAt": "Date"
     }
   },
   "enums": {
     "UserRole": ["admin", "manager", "user"],
     "StudentStatus": ["active", "inactive"],
+    "TeacherStatus": ["active", "inactive"],
     "ClassStatus": ["active", "inactive"],
     "PaymentStatus": ["pago", "pendente", "atrasado"],
     "EventStatus": ["scheduled", "confirmed", "completed", "cancelled"],
@@ -269,10 +337,20 @@
     "PaymentProcessStatus": ["processando", "concluido", "cancelado"],
     "PaymentMethod": ["dinheiro", "cartao_credito", "cartao_debito", "pix", "transferencia", "boleto"],
     "OriginType": ["evento", "escolinha", "bar", "outros"],
+    "SystemModule": ["events", "school", "bar", "financial", "general"],
+    "DataType": ["string", "number", "boolean", "json"],
+    "TeacherClassStatus": ["realizada", "cancelada"],
     "Categories": {
       "expense": ["aluguel", "funcionarios", "utilities", "marketing", "equipamentos", "manutencao", "outros"],
       "revenue": ["mensalidades", "eventos", "bar", "outros"],
       "financial": ["operacional", "investimento", "emprestimo", "outros"]
+    },
+    "Permissions": {
+      "events": ["view", "create", "edit", "delete", "manage_venues", "manage_clients", "receive_payments"],
+      "school": ["view", "create", "edit", "delete", "manage_teachers", "manage_students", "manage_classes", "receive_payments"],
+      "bar": ["view", "create", "edit", "delete", "manage_products", "manage_stock", "manage_comandas", "cashier"],
+      "financial": ["view", "create", "edit", "delete", "manage_receivables", "manage_payables", "view_reports"],
+      "general": ["view_dashboard", "manage_settings", "manage_users", "view_all_modules"]
     }
   },
   "relationships": {
@@ -284,9 +362,25 @@
         "payments": "StudentPayment"
       }
     },
-    "Class": {
+    "Teacher": {
       "hasMany": {
-        "students": "Student"
+        "classes": "Class",
+        "teacherClasses": "TeacherClass"
+      }
+    },
+    "Class": {
+      "belongsTo": {
+        "teacher": "Teacher"
+      },
+      "hasMany": {
+        "students": "Student",
+        "teacherClasses": "TeacherClass"
+      }
+    },
+    "TeacherClass": {
+      "belongsTo": {
+        "teacher": "Teacher",
+        "class": "Class"
       }
     },
     "Event": {
@@ -302,6 +396,11 @@
       "hasMany": {
         "events": "Event",
         "receivables": "EventReceivable"
+      }
+    },
+    "Venue": {
+      "hasMany": {
+        "events": "Event"
       }
     },
     "Comanda": {
@@ -322,12 +421,19 @@
         "comandaItems": "ComandaItem",
         "saleItems": "SaleItem"
       }
+    },
+    "User": {
+      "hasMany": {
+        "permissions": "UserPermission"
+      }
     }
   },
   "indexes": {
-    "Student": ["email", "phone", "class"],
+    "Student": ["email", "parentPhone", "class", "status"],
+    "Teacher": ["email", "phone", "status"],
     "StudentPayment": ["studentId", "status", "dueDate"],
-    "Event": ["date", "clientId", "venue", "status"],
+    "TeacherClass": ["teacherId", "classId", "date", "status"],
+    "Event": ["date", "clientId", "venueId", "status"],
     "EventReceivable": ["eventId", "clientId", "status", "dueDate"],
     "Product": ["category", "status", "barcode"],
     "Comanda": ["status", "openedAt"],
@@ -335,6 +441,9 @@
     "FinancialTransaction": ["type", "category", "status", "date"],
     "AccountsReceivable": ["status", "dueDate", "origin"],
     "AccountsPayable": ["status", "dueDate"],
-    "Payment": ["type", "status", "paymentDate"]
+    "Payment": ["type", "status", "paymentDate"],
+    "SystemSettings": ["module", "key"],
+    "UserPermission": ["userId", "module", "permission"],
+    "PermissionGroup": ["name"]
   }
 }
