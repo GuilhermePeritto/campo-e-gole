@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import UserModal from '@/components/UserModal';
+import { Link, useNavigate } from 'react-router-dom';
+import PaginationControls from '@/components/PaginationControls';
+import { usePagination } from '@/hooks/usePagination';
 import { 
   Settings as SettingsIcon, 
   Building2, 
@@ -26,7 +27,8 @@ import {
   Edit,
   Trash2,
   UserCheck,
-  User
+  User,
+  ArrowLeft
 } from 'lucide-react';
 
 interface User {
@@ -39,13 +41,22 @@ interface User {
   userGroupId?: string;
   useGroupPermissions: boolean;
   permissions: string[];
+  avatar?: string;
+}
+
+interface UserGroup {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  permissions: string[];
+  createdAt: string;
+  userCount: number;
 }
 
 const Settings = () => {
-  const { company, updateCompanySettings, userGroups } = useAuth();
-  const [userModalOpen, setUserModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const { company, updateCompanySettings } = useAuth();
+  const navigate = useNavigate();
 
   // Mock users data
   const [users] = useState<User[]>([
@@ -58,7 +69,8 @@ const Settings = () => {
       lastAccess: '2024-01-15 14:30',
       userGroupId: '1',
       useGroupPermissions: true,
-      permissions: []
+      permissions: [],
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
     },
     {
       id: 2,
@@ -69,7 +81,8 @@ const Settings = () => {
       lastAccess: '2024-01-15 10:15',
       userGroupId: '2',
       useGroupPermissions: true,
-      permissions: []
+      permissions: [],
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
     },
     {
       id: 3,
@@ -79,9 +92,62 @@ const Settings = () => {
       status: 'inativo',
       lastAccess: '2024-01-10 16:45',
       useGroupPermissions: false,
-      permissions: ['bar.view', 'bar.cashier', 'general.view_dashboard']
+      permissions: ['bar.view', 'bar.cashier', 'general.view_dashboard'],
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face'
     }
   ]);
+
+  // Mock user groups data
+  const [userGroups] = useState<UserGroup[]>([
+    {
+      id: '1',
+      name: 'Administradores',
+      description: 'Acesso total ao sistema',
+      color: 'bg-red-500',
+      permissions: ['*'],
+      createdAt: '2024-01-01',
+      userCount: 1
+    },
+    {
+      id: '2',
+      name: 'Gerentes',
+      description: 'Acesso de gerenciamento',
+      color: 'bg-blue-500',
+      permissions: ['bar.*', 'events.*', 'school.*', 'reports.view'],
+      createdAt: '2024-01-01',
+      userCount: 1
+    },
+    {
+      id: '3',
+      name: 'Funcionários Bar',
+      description: 'Acesso ao módulo bar',
+      color: 'bg-green-500',
+      permissions: ['bar.view', 'bar.cashier', 'bar.products.view'],
+      createdAt: '2024-01-01',
+      userCount: 0
+    },
+    {
+      id: '4',
+      name: 'Professores',
+      description: 'Acesso ao módulo escolinha',
+      color: 'bg-purple-500',
+      permissions: ['school.view', 'school.attendance', 'school.students.view'],
+      createdAt: '2024-01-01',
+      userCount: 0
+    }
+  ]);
+
+  // Pagination for users
+  const usersPagination = usePagination(users, {
+    pageSize: 10,
+    totalItems: users.length
+  });
+
+  // Pagination for groups
+  const groupsPagination = usePagination(userGroups, {
+    pageSize: 5,
+    totalItems: userGroups.length
+  });
 
   if (!company) {
     return (
@@ -102,18 +168,6 @@ const Settings = () => {
     });
   };
 
-  const handleCreateUser = () => {
-    setSelectedUser(null);
-    setModalMode('create');
-    setUserModalOpen(true);
-  };
-
-  const handleEditUser = (user: User) => {
-    setSelectedUser(user);
-    setModalMode('edit');
-    setUserModalOpen(true);
-  };
-
   const getRoleInfo = (role: string) => {
     switch (role) {
       case 'admin':
@@ -131,20 +185,28 @@ const Settings = () => {
     return status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
 
+  const getUserGroupById = (groupId: string) => {
+    return userGroups.find(group => group.id === groupId);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <SettingsIcon className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">Configurações</h1>
+      {/* Standard Header */}
+      <div className="bg-card border-b">
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/painel')}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">Configurações</h1>
+              <p className="text-muted-foreground">Gerencie as configurações do sistema</p>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="container mx-auto p-6">
         <Tabs defaultValue="company" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="company" className="gap-2">
@@ -159,9 +221,9 @@ const Settings = () => {
               <Users className="h-4 w-4" />
               Usuários
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="gap-2">
-              <Bell className="h-4 w-4" />
-              Notificações
+            <TabsTrigger value="groups" className="gap-2">
+              <Shield className="h-4 w-4" />
+              Grupos
             </TabsTrigger>
           </TabsList>
 
@@ -476,50 +538,6 @@ const Settings = () => {
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
-            {/* User Groups Section */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Grupos de Usuários
-                </CardTitle>
-                <CardDescription>
-                  Grupos predefinidos com conjuntos de permissões específicas
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {userGroups.map((group) => (
-                    <div key={group.id} className="border rounded-lg p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-4 h-4 rounded-full ${group.color}`} />
-                        <div>
-                          <h4 className="font-medium text-sm">{group.name}</h4>
-                          <p className="text-xs text-muted-foreground">{group.description}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-xs font-medium">Permissões ({group.permissions.length}):</p>
-                        <div className="flex flex-wrap gap-1">
-                          {group.permissions.slice(0, 3).map((permission) => (
-                            <Badge key={permission} variant="outline" className="text-xs">
-                              {permission.split('.')[1]}
-                            </Badge>
-                          ))}
-                          {group.permissions.length > 3 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{group.permissions.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Users Management Section */}
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -532,7 +550,7 @@ const Settings = () => {
                       Gerenciar usuários e suas permissões
                     </CardDescription>
                   </div>
-                  <Button onClick={handleCreateUser} className="gap-2">
+                  <Button onClick={() => navigate('/configuracoes/usuarios/novo')} className="gap-2">
                     <Plus className="h-4 w-4" />
                     Novo Usuário
                   </Button>
@@ -540,16 +558,27 @@ const Settings = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {users.map((user) => {
+                  {usersPagination.paginatedData.map((user) => {
                     const roleInfo = getRoleInfo(user.role);
                     const RoleIcon = roleInfo.icon;
-                    const userGroup = userGroups.find(group => group.id === user.userGroupId);
+                    const userGroup = getUserGroupById(user.userGroupId || '');
                     
                     return (
                       <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex items-center gap-4">
-                          <div className={`p-2 rounded-full ${roleInfo.color} text-white`}>
-                            <RoleIcon className="h-4 w-4" />
+                          <div className="relative">
+                            {user.avatar ? (
+                              <img 
+                                src={user.avatar} 
+                                alt={user.name}
+                                className="w-12 h-12 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className={`p-3 rounded-full ${roleInfo.color} text-white`}>
+                                <RoleIcon className="h-6 w-6" />
+                              </div>
+                            )}
+                            <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${user.status === 'ativo' ? 'bg-green-500' : 'bg-red-500'}`} />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -560,7 +589,6 @@ const Settings = () => {
                             </div>
                             <p className="text-sm text-muted-foreground">{user.email}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline">{roleInfo.label}</Badge>
                               {user.useGroupPermissions && userGroup ? (
                                 <Badge variant="secondary" className="gap-1">
                                   <div className={`w-2 h-2 rounded-full ${userGroup.color}`} />
@@ -581,7 +609,7 @@ const Settings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleEditUser(user)}
+                            onClick={() => navigate(`/configuracoes/usuarios/${user.id}/editar`)}
                             className="gap-2"
                           >
                             <Edit className="h-3 w-3" />
@@ -600,37 +628,110 @@ const Settings = () => {
                     );
                   })}
                 </div>
+                
+                <PaginationControls
+                  currentPage={usersPagination.currentPage}
+                  totalPages={usersPagination.totalPages}
+                  totalItems={usersPagination.totalItems}
+                  pageSize={usersPagination.pageSize}
+                  startIndex={usersPagination.startIndex}
+                  endIndex={usersPagination.endIndex}
+                  hasNextPage={usersPagination.hasNextPage}
+                  hasPreviousPage={usersPagination.hasPreviousPage}
+                  onPageChange={usersPagination.goToPage}
+                  onPageSizeChange={usersPagination.setPageSize}
+                />
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="notifications" className="space-y-6">
+          <TabsContent value="groups" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  Configurações de Notificações
-                </CardTitle>
-                <CardDescription>
-                  Configure quando e como receber notificações
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5" />
+                      Grupos de Usuários
+                    </CardTitle>
+                    <CardDescription>
+                      Grupos predefinidos com conjuntos de permissões específicas
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => navigate('/configuracoes/grupos/novo')} className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Novo Grupo
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Configurações de notificações estarão disponíveis em breve.
-                </p>
+                <div className="space-y-4">
+                  {groupsPagination.paginatedData.map((group) => (
+                    <div key={group.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-4 h-4 rounded-full ${group.color}`} />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium">{group.name}</h4>
+                            <Badge variant="outline">{group.userCount} usuários</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{group.description}</p>
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {group.permissions.slice(0, 3).map((permission) => (
+                              <Badge key={permission} variant="secondary" className="text-xs">
+                                {permission === '*' ? 'Todas' : permission.split('.')[1] || permission}
+                              </Badge>
+                            ))}
+                            {group.permissions.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{group.permissions.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate(`/configuracoes/grupos/${group.id}/editar`)}
+                          className="gap-2"
+                        >
+                          <Edit className="h-3 w-3" />
+                          Editar
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 text-destructive hover:text-destructive"
+                          disabled={group.userCount > 0}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Excluir
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <PaginationControls
+                  currentPage={groupsPagination.currentPage}
+                  totalPages={groupsPagination.totalPages}
+                  totalItems={groupsPagination.totalItems}
+                  pageSize={groupsPagination.pageSize}
+                  startIndex={groupsPagination.startIndex}
+                  endIndex={groupsPagination.endIndex}
+                  hasNextPage={groupsPagination.hasNextPage}
+                  hasPreviousPage={groupsPagination.hasPreviousPage}
+                  onPageChange={groupsPagination.goToPage}
+                  onPageSizeChange={groupsPagination.setPageSize}
+                  pageSizeOptions={[5, 10, 20]}
+                />
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </main>
-
-      <UserModal
-        open={userModalOpen}
-        onClose={() => setUserModalOpen(false)}
-        user={selectedUser}
-        mode={modalMode}
-      />
     </div>
   );
 };
