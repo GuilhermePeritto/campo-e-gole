@@ -19,12 +19,14 @@ import {
   Clock,
   Users
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
 const PublicAttendanceCall = () => {
-  const { classId } = useParams();
+  const params = useParams();
+  const classId = params?.classId;
+  
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessCode, setAccessCode] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -48,6 +50,11 @@ const PublicAttendanceCall = () => {
   ]);
 
   const [attendance, setAttendance] = useState<Record<number, boolean>>({});
+
+  // Add console log to debug
+  useEffect(() => {
+    console.log('PublicAttendanceCall mounted, classId:', classId);
+  }, [classId]);
 
   const handleAccessCodeSubmit = () => {
     // Simulação de validação do código
@@ -90,6 +97,19 @@ const PublicAttendanceCall = () => {
   };
 
   const presentCount = Object.values(attendance).filter(Boolean).length;
+
+  // Early return if no classId (should not happen in normal routing)
+  if (!classId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md mx-auto">
+          <CardContent className="pt-6 text-center">
+            <p>Erro: ID da turma não encontrado</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
