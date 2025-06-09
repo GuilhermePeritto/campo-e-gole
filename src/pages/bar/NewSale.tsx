@@ -1,11 +1,11 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, ShoppingCart, Trash2, Search } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 
@@ -27,6 +27,7 @@ const NewSale = () => {
   const { navigateToPayment } = useUniversalPayment();
   const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const mockProducts: Product[] = [
     { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, stock: 120, category: 'Bebidas' },
@@ -36,10 +37,16 @@ const NewSale = () => {
     { id: 5, name: 'Sanduíche Natural', price: 12.00, stock: 20, category: 'Lanches' }
   ];
 
-  const addProduct = () => {
-    if (!selectedProduct) return;
+  const filteredProducts = mockProducts.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const addProduct = (productId?: number) => {
+    const id = productId || parseInt(selectedProduct);
+    if (!id) return;
     
-    const product = mockProducts.find(p => p.id.toString() === selectedProduct);
+    const product = mockProducts.find(p => p.id === id);
     if (!product) return;
 
     const existingItem = saleItems.find(item => item.product.id === product.id);
@@ -87,10 +94,7 @@ const NewSale = () => {
       return;
     }
 
-    // Criar um ID único para a venda
     const saleId = Date.now().toString();
-    
-    // Navegar para o sistema de pagamento universal
     navigateToPayment({
       type: 'bar_sale',
       id: saleId
@@ -99,7 +103,7 @@ const NewSale = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
@@ -119,121 +123,125 @@ const NewSale = () => {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Seleção de Produtos */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Adicionar Produtos</CardTitle>
-              <CardDescription>
-                Selecione produtos para adicionar à venda
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                  <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Selecione um produto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockProducts.map((product) => (
-                      <SelectItem key={product.id} value={product.id.toString()}>
-                        {product.name} - R$ {product.price.toFixed(2)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button onClick={addProduct} disabled={!selectedProduct}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Produtos */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Adicionar Produtos</CardTitle>
+                <CardDescription>
+                  Busque e adicione produtos à venda
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Buscar produtos..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <h4 className="font-medium">Produtos Disponíveis</h4>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {mockProducts.map((product) => (
-                    <div key={product.id} className="flex items-center justify-between p-2 border rounded hover:bg-accent cursor-pointer"
-                         onClick={() => setSelectedProduct(product.id.toString())}>
-                      <div>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {filteredProducts.map((product) => (
+                    <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors">
+                      <div className="flex-1">
                         <div className="font-medium">{product.name}</div>
                         <div className="text-sm text-muted-foreground">
-                          R$ {product.price.toFixed(2)} • Estoque: {product.stock}
+                          R$ {product.price.toFixed(2)} • {product.category} • Estoque: {product.stock}
                         </div>
                       </div>
+                      <Button
+                        size="sm"
+                        onClick={() => addProduct(product.id)}
+                        className="shrink-0"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Carrinho */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Carrinho de Venda</CardTitle>
-              <CardDescription>
-                Itens selecionados para a venda
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {saleItems.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Nenhum produto adicionado
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {saleItems.map((item) => (
-                    <div key={item.product.id} className="flex items-center justify-between p-3 border rounded">
-                      <div className="flex-1">
-                        <div className="font-medium">{item.product.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          R$ {item.product.price.toFixed(2)} cada
+          <div className="lg:sticky lg:top-24 lg:h-fit">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Carrinho</span>
+                  <span className="text-lg font-bold text-primary">
+                    R$ {getTotal().toFixed(2)}
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  {saleItems.length} {saleItems.length === 1 ? 'item' : 'itens'} selecionados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {saleItems.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Nenhum produto adicionado</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="max-h-64 overflow-y-auto space-y-3">
+                      {saleItems.map((item) => (
+                        <div key={item.product.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium truncate">{item.product.name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              R$ {item.product.price.toFixed(2)} cada
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 ml-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeItem(item.product.id)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeItem(item.product.id)}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <div className="w-20 text-right font-medium">
-                        R$ {(item.product.price * item.quantity).toFixed(2)}
-                      </div>
+                      ))}
                     </div>
-                  ))}
 
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-semibold">
-                      <span>Total:</span>
-                      <span>R$ {getTotal().toFixed(2)}</span>
+                    <div className="border-t pt-4 space-y-4">
+                      <div className="flex justify-between text-lg font-semibold">
+                        <span>Total:</span>
+                        <span>R$ {getTotal().toFixed(2)}</span>
+                      </div>
+                      <Button onClick={handleFinalizeSale} className="w-full" size="lg">
+                        Finalizar Venda
+                      </Button>
                     </div>
                   </div>
-
-                  <Button onClick={handleFinalizeSale} className="w-full" size="lg">
-                    Finalizar Venda - R$ {getTotal().toFixed(2)}
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>

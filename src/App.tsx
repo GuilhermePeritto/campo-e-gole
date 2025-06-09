@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -58,7 +57,7 @@ import StudentHistory from '@/pages/escolinha/StudentHistory';
 import Students from '@/pages/escolinha/Students';
 import TeacherReport from '@/pages/escolinha/TeacherReport';
 import Teachers from '@/pages/escolinha/Teachers';
-import AttendanceCall from '@/pages/escolinha/AttendanceCall';
+import PublicAttendanceCall from '@/pages/escolinha/PublicAttendanceCall';
 
 // Financeiro pages
 import AccountsPayable from '@/pages/financeiro/AccountsPayable';
@@ -138,6 +137,7 @@ function App() {
                 <Route path="/escolinha/turmas/nova" element={<NewClass />} />
                 <Route path="/escolinha/turmas/:id/editar" element={<EditClass />} />
                 <Route path="/escolinha/turmas/:classId/alunos" element={<ClassStudents />} />
+                <Route path="/escolinha/turmas/:classId/chamada" element={<PublicAttendanceCall />} />
                 <Route path="/escolinha/professores" element={<Teachers />} />
                 <Route path="/escolinha/professores/novo" element={<NewTeacher />} />
                 <Route path="/escolinha/professores/:id/editar" element={<EditTeacher />} />
