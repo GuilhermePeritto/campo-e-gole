@@ -1,7 +1,15 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, Users2 } from 'lucide-react';
+import { 
+  Users, 
+  Calendar, 
+  DollarSign, 
+  BookOpen, 
+  GraduationCap,
+  UserCheck,
+  ArrowRight 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const School = () => {
@@ -9,98 +17,154 @@ const School = () => {
 
   const quickActions = [
     {
-      title: 'Novo Aluno',
-      description: 'Cadastrar um novo aluno',
-      icon: Plus,
-      color: 'bg-green-500',
-      action: () => navigate('/escolinha/alunos/novo')
+      title: 'Alunos',
+      description: 'Gerenciar cadastro de alunos',
+      icon: Users,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
+      path: '/escolinha/alunos'
     },
     {
-      title: 'Gerenciar Alunos',
-      description: 'Ver e editar alunos cadastrados',
-      icon: Users2,
-      color: 'bg-orange-500',
-      action: () => navigate('/escolinha/alunos')
-    },
-    {
-      title: 'Mensalidades',
-      description: 'Controle de pagamentos',
-      icon: CreditCard,
-      color: 'bg-purple-500',
-      action: () => navigate('/escolinha/mensalidades')
+      title: 'Professores',
+      description: 'Gerenciar cadastro de professores',
+      icon: GraduationCap,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+      path: '/escolinha/professores'
     },
     {
       title: 'Turmas',
       description: 'Gerenciar turmas e horários',
-      icon: Calendar,
-      color: 'bg-blue-500',
-      action: () => navigate('/escolinha/turmas')
+      icon: BookOpen,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+      path: '/escolinha/turmas'
     },
     {
-      title: 'Relatórios',
-      description: 'Análises e inadimplência',
-      icon: BarChart3,
-      color: 'bg-green-500',
-      action: () => navigate('/escolinha/relatorios')
+      title: 'Pagamentos',
+      description: 'Controle de mensalidades',
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+      path: '/escolinha/pagamentos'
     }
   ];
 
-  const recentStudents = [
-    { id: 1, name: 'Pedro Silva', age: 8, class: 'Infantil A', status: 'em dia' },
-    { id: 2, name: 'Ana Costa', age: 10, class: 'Infantil B', status: 'atrasado' },
-    { id: 3, name: 'João Santos', age: 12, class: 'Juvenil A', status: 'em dia' },
-    { id: 4, name: 'Maria Oliveira', age: 9, class: 'Infantil A', status: 'em dia' }
+  const reports = [
+    {
+      title: 'Relatório de Alunos',
+      description: 'Visualizar estatísticas dos alunos',
+      path: '/escolinha/relatorios'
+    },
+    {
+      title: 'Relatório Financeiro',
+      description: 'Receitas e inadimplência',
+      path: '/escolinha/relatorios'
+    }
   ];
 
-  const monthlyStats = {
-    totalStudents: 85,
-    activeStudents: 82,
-    pendingPayments: 8,
-    monthlyRevenue: 12750
-  };
-
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/painel')}
-              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <div className="flex items-center gap-2">
-              <Users2 className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Escolinha de Futebol</h1>
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center gap-3">
+            <BookOpen className="h-8 w-8" />
+            <div>
+              <h1 className="text-3xl font-bold">Escolinha de Futebol</h1>
+              <p className="text-blue-100 mt-1">
+                Gerencie alunos, professores, turmas e pagamentos
+              </p>
             </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total de Alunos</p>
+                  <p className="text-3xl font-bold">42</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <GraduationCap className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Professores</p>
+                  <p className="text-3xl font-bold">8</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <BookOpen className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Turmas Ativas</p>
+                  <p className="text-3xl font-bold">6</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <DollarSign className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Receita Mensal</p>
+                  <p className="text-3xl font-bold text-green-600">R$ 8.640</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {quickActions.map((action, index) => {
-              const IconComponent = action.icon;
+          <h2 className="text-2xl font-bold mb-6">Acesso Rápido</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
               return (
                 <Card 
-                  key={index}
-                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 border"
-                  onClick={action.action}
+                  key={action.title} 
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => navigate(action.path)}
                 >
-                  <CardContent className="p-6 text-center">
-                    <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
-                      <IconComponent className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                  <CardContent className="p-6">
+                    <div className="flex flex-col items-center text-center gap-4">
+                      <div className={`p-4 ${action.bgColor} rounded-lg`}>
+                        <Icon className={`h-8 w-8 ${action.color}`} />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{action.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {action.description}
+                        </p>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-300 mb-1">{action.title}</h3>
-                    <p className="text-sm text-gray-600">{action.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -108,105 +172,77 @@ const School = () => {
           </div>
         </div>
 
-        {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="border">
+        {/* Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Alunos Recentes</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-blue-600" />
+                Atividades Recentes
+              </CardTitle>
               <CardDescription>
-                Últimos alunos cadastrados
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {recentStudents.map((student) => (
-                  <div key={student.id} className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                    <div>
-                      <div className="font-medium text-gray-600 dark:text-gray-300">{student.name}</div>
-                      <div className="text-sm text-gray-600">{student.age} anos - {student.class}</div>
-                    </div>
-                    <span className={`text-xs px-2 py-1 rounded-lg ${
-                      student.status === 'em dia' 
-                        ? 'bg-green-200 text-green-800' 
-                        : 'bg-red-200 text-red-800'
-                    }`}>
-                      {student.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <Button 
-                variant="outline" 
-                className="w-full mt-4"
-                onClick={() => navigate('/escolinha/alunos')}
-              >
-                Ver Todos os Alunos
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Situação Financeira</CardTitle>
-              <CardDescription>
-                Status dos pagamentos mensais
+                Últimas atividades do sistema
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Alunos em dia</span>
-                  <span className="font-semibold text-green-600">{monthlyStats.activeStudents - monthlyStats.pendingPayments}</span>
+                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Novo aluno cadastrado</p>
+                    <p className="text-xs text-muted-foreground">Ana Silva - Infantil A</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">2h atrás</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Pagamentos pendentes</span>
-                  <span className="font-semibold text-red-600">{monthlyStats.pendingPayments}</span>
+                
+                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Pagamento recebido</p>
+                    <p className="text-xs text-muted-foreground">João Santos - R$ 150,00</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">4h atrás</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Taxa de inadimplência</span>
-                  <span className="font-semibold text-gray-600 dark:text-gray-300">{((monthlyStats.pendingPayments / monthlyStats.totalStudents) * 100).toFixed(1)}%</span>
+                
+                <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Nova turma criada</p>
+                    <p className="text-xs text-muted-foreground">Juvenil C - Prof. Carlos</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">1d atrás</span>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
-                className="w-full mt-4"
-                onClick={() => navigate('/escolinha/mensalidades')}
-              >
-                Gerenciar Pagamentos
-              </Button>
             </CardContent>
           </Card>
 
-          <Card className="border">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Resumo do Mês</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-purple-600" />
+                Relatórios
+              </CardTitle>
               <CardDescription>
-                Estatísticas gerais da escolinha
+                Acesse relatórios e estatísticas
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-600 dark:text-gray-300 mb-2">R$ {monthlyStats.monthlyRevenue.toLocaleString()}</div>
-                <div className="text-sm text-green-600 mb-4">Receita mensal</div>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-center">
-                    <div className="font-semibold text-gray-600 dark:text-gray-300">{monthlyStats.totalStudents}</div>
-                    <div className="text-gray-600">Total de Alunos</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-semibold text-gray-600 dark:text-gray-300">{monthlyStats.activeStudents}</div>
-                    <div className="text-gray-600">Alunos Ativos</div>
-                  </div>
-                </div>
+              <div className="space-y-3">
+                {reports.map((report) => (
+                  <Button
+                    key={report.title}
+                    variant="outline"
+                    className="w-full justify-between h-auto p-4"
+                    onClick={() => navigate(report.path)}
+                  >
+                    <div className="text-left">
+                      <p className="font-medium">{report.title}</p>
+                      <p className="text-sm text-muted-foreground">{report.description}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                ))}
               </div>
-              <Button 
-                variant="outline" 
-                className="w-full mt-4"
-                onClick={() => navigate('/escolinha/relatorios')}
-              >
-                Ver Relatórios
-              </Button>
             </CardContent>
           </Card>
         </div>
