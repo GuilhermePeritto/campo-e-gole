@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -168,19 +169,6 @@ const Settings = () => {
     });
   };
 
-  const getRoleInfo = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return { label: 'Administrador', color: 'bg-red-500', icon: Shield };
-      case 'manager':
-        return { label: 'Gerente', color: 'bg-blue-500', icon: UserCheck };
-      case 'employee':
-        return { label: 'Funcionário', color: 'bg-green-500', icon: User };
-      default:
-        return { label: role, color: 'bg-gray-500', icon: User };
-    }
-  };
-
   const getStatusColor = (status: string) => {
     return status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
@@ -191,7 +179,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Standard Header */}
+      {/* Header */}
       <div className="bg-card border-b">
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-4">
@@ -559,25 +547,18 @@ const Settings = () => {
               <CardContent>
                 <div className="space-y-4">
                   {usersPagination.paginatedData.map((user) => {
-                    const roleInfo = getRoleInfo(user.role);
-                    const RoleIcon = roleInfo.icon;
                     const userGroup = getUserGroupById(user.userGroupId || '');
                     
                     return (
                       <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex items-center gap-4">
                           <div className="relative">
-                            {user.avatar ? (
-                              <img 
-                                src={user.avatar} 
-                                alt={user.name}
-                                className="w-12 h-12 rounded-full object-cover"
-                              />
-                            ) : (
-                              <div className={`p-3 rounded-full ${roleInfo.color} text-white`}>
-                                <RoleIcon className="h-6 w-6" />
-                              </div>
-                            )}
+                            <Avatar className="w-12 h-12">
+                              <AvatarImage src={user.avatar} />
+                              <AvatarFallback>
+                                <User className="h-6 w-6" />
+                              </AvatarFallback>
+                            </Avatar>
                             <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${user.status === 'ativo' ? 'bg-green-500' : 'bg-red-500'}`} />
                           </div>
                           <div>

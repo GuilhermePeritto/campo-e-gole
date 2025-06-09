@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -76,6 +75,8 @@ import TeacherPaymentReport from '@/pages/financeiro/TeacherPaymentReport';
 // Settings pages
 import NewUser from '@/pages/configuracoes/NewUser';
 import EditUser from '@/pages/configuracoes/EditUser';
+import NewGroup from '@/pages/configuracoes/NewGroup';
+import EditGroup from '@/pages/configuracoes/EditGroup';
 
 import Index from './pages/Index';
 import Login from './pages/Login';
@@ -100,6 +101,8 @@ function App() {
                 <Route path="/configuracoes" element={<Settings />} />
                 <Route path="/configuracoes/usuarios/novo" element={<NewUser />} />
                 <Route path="/configuracoes/usuarios/:id/editar" element={<EditUser />} />
+                <Route path="/configuracoes/grupos/novo" element={<NewGroup />} />
+                <Route path="/configuracoes/grupos/:id/editar" element={<EditGroup />} />
                 
                 {/* Rota universal de recebimento */}
                 <Route path="/pagamento-universal" element={<UniversalReceivePayment />} />
