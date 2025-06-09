@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -100,7 +99,7 @@ function App() {
                 <Route path="/eventos/calendario" element={<EventsCalendar />} />
                 <Route path="/eventos/locais" element={<EventsVenues />} />
                 <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
-                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
+                <Route path="/eventos/locais/editar/:id" element={<EventsEditVenue />} />
                 <Route path="/eventos/clientes" element={<EventsClients />} />
                 <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
                 <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
