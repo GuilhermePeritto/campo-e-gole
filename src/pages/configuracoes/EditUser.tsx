@@ -164,14 +164,14 @@ const EditUser = () => {
   const getFilteredPermissions = () => {
     if (!permissionSearch) return permissionCategories;
     
-    const filtered: typeof permissionCategories = {};
+    const filtered = {} as typeof permissionCategories;
     Object.entries(permissionCategories).forEach(([category, permissions]) => {
       const filteredPerms = permissions.filter(perm => 
         perm.label.toLowerCase().includes(permissionSearch.toLowerCase()) ||
         perm.key.toLowerCase().includes(permissionSearch.toLowerCase())
       );
       if (filteredPerms.length > 0) {
-        filtered[category] = filteredPerms;
+        filtered[category as keyof typeof permissionCategories] = filteredPerms;
       }
     });
     return filtered;
