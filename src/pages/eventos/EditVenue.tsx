@@ -14,7 +14,6 @@ const EditVenue = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  // Mock data - em produção viria de uma API
   const [formData, setFormData] = useState({
     name: 'Quadra A - Futebol Society',
     type: 'Futebol Society',
@@ -24,6 +23,7 @@ const EditVenue = () => {
     color: '#10B981',
     active: true
   });
+  
   const [equipment, setEquipment] = useState<string[]>(['Traves', 'Redes', 'Bolas']);
   const [newEquipment, setNewEquipment] = useState('');
   const [characteristics, setCharacteristics] = useState({
@@ -119,31 +119,31 @@ const EditVenue = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
+      <header className="shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/eventos/locais')}
-              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
+              className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>
-            <div className="flex items-center gap-3">
-              <MapPin className="h-6 w-6 text-green-600" />
-              <h1 className="text-2xl font-medium text-gray-600 dark:text-gray-300">Editar Local</h1>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-green-600" />
+              <h1 className="text-xl font-semibold">Editar Local</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        <Card className="border-gray-200">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-gray-600 dark:text-gray-300">Editar Dados do Local</CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardTitle>Editar Dados do Local</CardTitle>
+            <CardDescription>
               Atualize as informações do local
             </CardDescription>
           </CardHeader>
@@ -151,23 +151,22 @@ const EditVenue = () => {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Informações Básicas */}
               <div className="space-y-6">
-                <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">Informações Básicas</h3>
+                <h3 className="text-lg font-medium">Informações Básicas</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Nome do Local *</label>
+                    <label className="text-sm font-medium">Nome do Local *</label>
                     <Input
                       placeholder="Ex: Quadra A - Futebol Society"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="border-gray-300"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Tipo de Esporte *</label>
+                    <label className="text-sm font-medium">Tipo de Esporte *</label>
                     <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                      <SelectTrigger className="border-gray-300">
+                      <SelectTrigger>
                         <SelectValue placeholder="Selecionar tipo" />
                       </SelectTrigger>
                       <SelectContent>
@@ -179,25 +178,23 @@ const EditVenue = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Capacidade (pessoas) *</label>
+                    <label className="text-sm font-medium">Capacidade (pessoas) *</label>
                     <Input
                       type="number"
                       placeholder="Ex: 14"
                       value={formData.capacity}
                       onChange={(e) => handleInputChange('capacity', e.target.value)}
-                      className="border-gray-300"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Valor por Hora (R$) *</label>
+                    <label className="text-sm font-medium">Valor por Hora (R$) *</label>
                     <Input
                       type="number"
                       step="0.01"
                       placeholder="Ex: 80.00"
                       value={formData.hourlyRate}
                       onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
-                      className="border-gray-300"
                     />
                   </div>
                 </div>
@@ -205,8 +202,8 @@ const EditVenue = () => {
                 {/* Cor do Local */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Palette className="h-4 w-4 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Cor de Identificação</label>
+                    <Palette className="h-4 w-4" />
+                    <label className="text-sm font-medium">Cor de Identificação</label>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {colorOptions.map((color) => (
@@ -215,7 +212,7 @@ const EditVenue = () => {
                         type="button"
                         onClick={() => handleInputChange('color', color.value)}
                         className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                          formData.color === color.value ? 'border scale-110' : 'border-gray-300'
+                          formData.color === color.value ? 'border-gray-900 scale-110' : 'border-gray-300'
                         }`}
                         style={{ backgroundColor: color.value }}
                         title={color.name}
@@ -228,7 +225,7 @@ const EditVenue = () => {
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     A cor será usada para identificar visualmente o local na agenda
                   </p>
                 </div>
@@ -236,7 +233,7 @@ const EditVenue = () => {
 
               {/* Características */}
               <div className="space-y-6">
-                <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">Características do Local</h3>
+                <h3 className="text-lg font-medium">Características do Local</h3>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {Object.entries(characteristicLabels).map(([key, label]) => (
@@ -259,9 +256,9 @@ const EditVenue = () => {
 
               {/* Descrição */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Descrição</label>
+                <label className="text-sm font-medium">Descrição</label>
                 <textarea
-                  className="w-full p-3 border border-gray-300 rounded-md resize-none h-24"
+                  className="w-full p-3 border rounded-md resize-none h-24"
                   placeholder="Descrição adicional do local (ex: Quadra de grama sintética com iluminação LED)"
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
@@ -270,28 +267,28 @@ const EditVenue = () => {
 
               {/* Equipamentos */}
               <div className="space-y-4">
-                <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Equipamentos Disponíveis</label>
+                <label className="text-sm font-medium">Equipamentos Disponíveis</label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Ex: Traves, Redes, Bolas..."
                     value={newEquipment}
                     onChange={(e) => setNewEquipment(e.target.value)}
-                    className="flex-1 border-gray-300"
+                    className="flex-1"
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addEquipment())}
                   />
-                  <Button type="button" onClick={addEquipment} variant="outline" className="border-gray-300">
+                  <Button type="button" onClick={addEquipment} variant="outline">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
                 {equipment.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {equipment.map((item, index) => (
-                      <div key={index} className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full text-sm">
+                      <div key={index} className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full text-sm">
                         <span>{item}</span>
                         <button
                           type="button"
                           onClick={() => removeEquipment(item)}
-                          className="text-gray-500 hover:text-red-500"
+                          className="text-muted-foreground hover:text-red-500"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -307,18 +304,18 @@ const EditVenue = () => {
                   checked={formData.active}
                   onCheckedChange={(checked) => handleInputChange('active', checked)}
                 />
-                <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Local ativo</label>
+                <label className="text-sm font-medium">Local ativo</label>
               </div>
 
               <div className="flex gap-4 pt-6">
-                <Button type="submit" className="flex-1 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800">
+                <Button type="submit" className="flex-1">
                   Salvar Alterações
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/eventos/locais')}
-                  className="flex-1 border-gray-300 text-gray-600 dark:text-gray-300 hover:bg-gray-50"
+                  className="flex-1"
                 >
                   Cancelar
                 </Button>

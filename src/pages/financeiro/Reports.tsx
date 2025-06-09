@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, Download, PieChart, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, Download, PieChart, TrendingUp, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const FinanceiroRelatorios = () => {
@@ -12,25 +12,36 @@ const FinanceiroRelatorios = () => {
       title: 'DRE - Demonstração do Resultado',
       description: 'Receitas, despesas e resultado líquido do período',
       icon: TrendingUp,
-      color: 'bg-green-100 text-green-600'
+      color: 'bg-green-100 text-green-600',
+      action: () => console.log('Gerar DRE')
     },
     {
       title: 'Relatório de Receitas',
       description: 'Detalhamento completo das receitas por módulo',
       icon: BarChart3,
-      color: 'bg-blue-100 text-blue-600'
+      color: 'bg-blue-100 text-blue-600',
+      action: () => console.log('Gerar receitas')
     },
     {
       title: 'Relatório de Despesas',
       description: 'Análise das despesas por categoria e período',
       icon: PieChart,
-      color: 'bg-red-100 text-red-600'
+      color: 'bg-red-100 text-red-600',
+      action: () => console.log('Gerar despesas')
     },
     {
       title: 'Fluxo de Caixa Mensal',
       description: 'Movimentação financeira detalhada do mês',
       icon: Calendar,
-      color: 'bg-purple-100 text-purple-600'
+      color: 'bg-purple-100 text-purple-600',
+      action: () => console.log('Gerar fluxo')
+    },
+    {
+      title: 'Pagamento de Professores',
+      description: 'Relatório detalhado de pagamentos aos professores',
+      icon: Users,
+      color: 'bg-indigo-100 text-indigo-600',
+      action: () => navigate('/financeiro/relatorios/professores')
     }
   ];
 
@@ -64,9 +75,9 @@ const FinanceiroRelatorios = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {reportTypes.map((report, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={report.action}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg ${report.color}`}>
@@ -77,7 +88,7 @@ const FinanceiroRelatorios = () => {
                 <CardDescription>{report.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full gap-2">
+                <Button className="w-full gap-2" onClick={report.action}>
                   <Download className="h-4 w-4" />
                   Gerar Relatório
                 </Button>

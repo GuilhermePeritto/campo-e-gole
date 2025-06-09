@@ -1,18 +1,9 @@
-
 import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import Bar from './pages/Bar';
-import Dashboard from './pages/Dashboard';
-import Events from './pages/Events';
-import Financial from './pages/Financial';
-import Index from './pages/Index';
-import Login from './pages/Login';
-import NotFound from './pages/NotFound';
-import School from './pages/School';
-import Settings from './pages/Settings';
-import UniversalReceivePayment from './pages/UniversalReceivePayment';
+import './App.css';
 
 // Events pages
 import EventsCalendar from './pages/eventos/Calendar';
@@ -45,109 +36,128 @@ import BarUnifiedSale from './pages/bar/UnifiedSale';
 import BarViewComanda from './pages/bar/ViewComanda';
 
 // School pages
-import SchoolClasses from './pages/escolinha/Classes';
-import SchoolClassStudents from './pages/escolinha/ClassStudents';
-import SchoolEditClass from './pages/escolinha/EditClass';
-import SchoolEditStudent from './pages/escolinha/EditStudent';
-import SchoolEditTeacher from './pages/escolinha/EditTeacher';
-import SchoolNewClass from './pages/escolinha/NewClass';
-import SchoolNewStudent from './pages/escolinha/NewStudent';
-import SchoolNewTeacher from './pages/escolinha/NewTeacher';
-import SchoolPayments from './pages/escolinha/Payments';
-import SchoolReceivePayment from './pages/escolinha/ReceivePayment';
-import SchoolReports from './pages/escolinha/Reports';
-import SchoolStudentHistory from './pages/escolinha/StudentHistory';
-import SchoolStudents from './pages/escolinha/Students';
-import SchoolTeachers from './pages/escolinha/Teachers';
+import ClassStudents from '@/pages/escolinha/ClassStudents';
+import Classes from '@/pages/escolinha/Classes';
+import EditClass from '@/pages/escolinha/EditClass';
+import EditStudent from '@/pages/escolinha/EditStudent';
+import EditTeacher from '@/pages/escolinha/EditTeacher';
+import NewClass from '@/pages/escolinha/NewClass';
+import NewStudent from '@/pages/escolinha/NewStudent';
+import NewTeacher from '@/pages/escolinha/NewTeacher';
+import Payments from '@/pages/escolinha/Payments';
+import ReceivePayment from '@/pages/escolinha/ReceivePayment';
+import Reports from '@/pages/escolinha/Reports';
+import StudentHistory from '@/pages/escolinha/StudentHistory';
+import Students from '@/pages/escolinha/Students';
+import TeacherReport from '@/pages/escolinha/TeacherReport';
+import Teachers from '@/pages/escolinha/Teachers';
+import AttendanceCall from '@/pages/escolinha/AttendanceCall';
 
-// Financial pages
-import FinancialAccountsPayable from './pages/financeiro/AccountsPayable';
-import FinancialAccountsReceivable from './pages/financeiro/AccountsReceivable';
-import FinancialCashFlow from './pages/financeiro/CashFlow';
-import FinancialExpenses from './pages/financeiro/Expenses';
-import FinancialNewExpense from './pages/financeiro/NewExpense';
-import FinancialNewRevenue from './pages/financeiro/NewRevenue';
-import FinancialReceivePayment from './pages/financeiro/ReceivePayment';
-import FinancialReports from './pages/financeiro/Reports';
-import FinancialRevenues from './pages/financeiro/Revenues';
+// Financeiro pages
+import AccountsPayable from '@/pages/financeiro/AccountsPayable';
+import AccountsReceivable from '@/pages/financeiro/AccountsReceivable';
+import CashFlow from '@/pages/financeiro/CashFlow';
+import Expenses from '@/pages/financeiro/Expenses';
+import FinanceiroRelatorios from '@/pages/financeiro/Reports';
+import NewExpense from '@/pages/financeiro/NewExpense';
+import NewRevenue from '@/pages/financeiro/NewRevenue';
+import FinanceiroReceivePayment from '@/pages/financeiro/ReceivePayment';
+import Revenues from '@/pages/financeiro/Revenues';
+import TeacherPaymentReport from '@/pages/financeiro/TeacherPaymentReport';
 
-import './App.css';
+import Index from './pages/Index';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
+import School from './pages/School';
+import Settings from './pages/Settings';
+import UniversalReceivePayment from './pages/UniversalReceivePayment';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/painel" element={<Dashboard />} />
-              
-              {/* Rota universal de recebimento */}
-              <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
-              
-              <Route path="/eventos" element={<Events />} />
-              <Route path="/eventos/reservas" element={<EventsCalendar />} />
-              <Route path="/eventos/clientes" element={<EventsClients />} />
-              <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
-              <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
-              <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
-              <Route path="/eventos/locais" element={<EventsVenues />} />
-              <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
-              <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
-              <Route path="/eventos/novo" element={<EventsReservation />} />
-              <Route path="/eventos/:id/editar" element={<EventsEditReservation />} />
-              <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
-              <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
-              <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
-              <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
-              <Route path="/eventos/relatorios" element={<EventsReports />} />
-              <Route path="/bar" element={<Bar />} />
-              <Route path="/bar/produtos" element={<BarProducts />} />
-              <Route path="/bar/produtos/novo" element={<BarNewProduct />} />
-              <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />
-              <Route path="/bar/estoque" element={<BarInventory />} />
-              <Route path="/bar/comandas" element={<BarComandas />} />
-              <Route path="/bar/comandas/novo" element={<BarNewComanda />} />
-              <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
-              <Route path="/bar/venda-unificada" element={<BarUnifiedSale />} />
-              <Route path="/bar/nova-venda" element={<BarNewSale />} />
-              <Route path="/bar/checkout" element={<BarCheckout />} />
-              <Route path="/bar/relatorios" element={<BarReports />} />
-              <Route path="/escolinha" element={<School />} />
-              <Route path="/escolinha/alunos" element={<SchoolStudents />} />
-              <Route path="/escolinha/alunos/novo" element={<SchoolNewStudent />} />
-              <Route path="/escolinha/alunos/:id/editar" element={<SchoolEditStudent />} />
-              <Route path="/escolinha/alunos/:id/historico" element={<SchoolStudentHistory />} />
-              <Route path="/escolinha/turmas" element={<SchoolClasses />} />
-              <Route path="/escolinha/turmas/nova" element={<SchoolNewClass />} />
-              <Route path="/escolinha/turmas/:id/editar" element={<SchoolEditClass />} />
-              <Route path="/escolinha/turmas/:id/alunos" element={<SchoolClassStudents />} />
-              <Route path="/escolinha/professores" element={<SchoolTeachers />} />
-              <Route path="/escolinha/professores/novo" element={<SchoolNewTeacher />} />
-              <Route path="/escolinha/professores/:id/editar" element={<SchoolEditTeacher />} />
-              <Route path="/escolinha/mensalidades" element={<SchoolPayments />} />
-              <Route path="/escolinha/mensalidades/:id/receber" element={<SchoolReceivePayment />} />
-              <Route path="/escolinha/relatorios" element={<SchoolReports />} />
-              <Route path="/financeiro" element={<Financial />} />
-              <Route path="/financeiro/receitas" element={<FinancialRevenues />} />
-              <Route path="/financeiro/receitas/novo" element={<FinancialNewRevenue />} />
-              <Route path="/financeiro/despesas" element={<FinancialExpenses />} />
-              <Route path="/financeiro/despesas/novo" element={<FinancialNewExpense />} />
-              <Route path="/financeiro/contas-a-pagar" element={<FinancialAccountsPayable />} />
-              <Route path="/financeiro/contas-a-receber" element={<FinancialAccountsReceivable />} />
-              <Route path="/financeiro/contas-a-receber/:id/receber" element={<FinancialReceivePayment />} />
-              <Route path="/financeiro/fluxo-de-caixa" element={<FinancialCashFlow />} />
-              <Route path="/financeiro/relatorios" element={<FinancialReports />} />
-              <Route path="/configuracoes" element={<Settings />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </div>
-        </Router>
+        <ThemeProvider>
+          <Router>
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/painel" element={<Dashboard />} />
+                
+                {/* Rota universal de recebimento */}
+                <Route path="/pagamento-universal" element={<UniversalReceivePayment />} />
+                
+                <Route path="/eventos" element={<Events />} />
+                <Route path="/eventos/calendario" element={<EventsCalendar />} />
+                <Route path="/eventos/locais" element={<EventsVenues />} />
+                <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
+                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
+                <Route path="/eventos/clientes" element={<EventsClients />} />
+                <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
+                <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
+                <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
+                <Route path="/eventos/reservas/nova" element={<EventsReservation />} />
+                <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
+                <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
+                <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
+                <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
+                <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
+                <Route path="/eventos/relatorios" element={<EventsReports />} />
+                
+                <Route path="/bar" element={<Bar />} />
+                <Route path="/bar/produtos" element={<BarProducts />} />
+                <Route path="/bar/produtos/novo" element={<BarNewProduct />} />
+                <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />
+                <Route path="/bar/estoque" element={<BarInventory />} />
+                <Route path="/bar/comandas" element={<BarComandas />} />
+                <Route path="/bar/comandas/novo" element={<BarNewComanda />} />
+                <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
+                <Route path="/bar/venda-unificada" element={<BarUnifiedSale />} />
+                <Route path="/bar/nova-venda" element={<BarNewSale />} />
+                <Route path="/bar/checkout" element={<BarCheckout />} />
+                <Route path="/bar/relatorios" element={<BarReports />} />
+                
+                <Route path="/escolinha" element={<School />} />
+                <Route path="/escolinha/alunos" element={<Students />} />
+                <Route path="/escolinha/alunos/novo" element={<NewStudent />} />
+                <Route path="/escolinha/alunos/:id/editar" element={<EditStudent />} />
+                <Route path="/escolinha/alunos/:id/historico" element={<StudentHistory />} />
+                <Route path="/escolinha/turmas" element={<Classes />} />
+                <Route path="/escolinha/turmas/nova" element={<NewClass />} />
+                <Route path="/escolinha/turmas/:id/editar" element={<EditClass />} />
+                <Route path="/escolinha/turmas/:classId/alunos" element={<ClassStudents />} />
+                <Route path="/escolinha/professores" element={<Teachers />} />
+                <Route path="/escolinha/professores/novo" element={<NewTeacher />} />
+                <Route path="/escolinha/professores/:id/editar" element={<EditTeacher />} />
+                <Route path="/escolinha/professores/:id/relatorio" element={<TeacherReport />} />
+                <Route path="/escolinha/mensalidades" element={<Payments />} />
+                <Route path="/escolinha/receber" element={<ReceivePayment />} />
+                <Route path="/escolinha/receber/:id" element={<ReceivePayment />} />
+                <Route path="/escolinha/relatorios" element={<Reports />} />
+                
+                <Route path="/financeiro" element={<Financial />} />
+                <Route path="/financeiro/receitas" element={<Revenues />} />
+                <Route path="/financeiro/receitas/nova" element={<NewRevenue />} />
+                <Route path="/financeiro/despesas" element={<Expenses />} />
+                <Route path="/financeiro/despesas/nova" element={<NewExpense />} />
+                <Route path="/financeiro/contas-receber" element={<AccountsReceivable />} />
+                <Route path="/financeiro/contas-pagar" element={<AccountsPayable />} />
+                <Route path="/financeiro/fluxo-caixa" element={<CashFlow />} />
+                <Route path="/financeiro/receber" element={<FinanceiroReceivePayment />} />
+                <Route path="/financeiro/receber/:id" element={<FinanceiroReceivePayment />} />
+                <Route path="/financeiro/relatorios" element={<FinanceiroRelatorios />} />
+                <Route path="/financeiro/relatorios/professores" element={<TeacherPaymentReport />} />
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </Router>
+          <Toaster />
+        </ThemeProvider>
       </AuthProvider>
-    </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

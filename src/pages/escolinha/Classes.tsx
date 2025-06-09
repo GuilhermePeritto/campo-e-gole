@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Calendar, Plus } from 'lucide-react';
+import { ArrowLeft, Calendar, Plus, UserCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Classes = () => {
@@ -124,11 +124,10 @@ const Classes = () => {
                     <span className="font-semibold">R$ {classItem.monthlyFee}</span>
                   </div>
                   
-                  <div className="flex gap-2 pt-2">
+                  <div className="grid grid-cols-2 gap-2 pt-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1"
                       onClick={() => navigate(`/escolinha/turmas/${classItem.id}/editar`)}
                     >
                       Editar
@@ -136,10 +135,18 @@ const Classes = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1"
                       onClick={() => navigate(`/escolinha/turmas/${classItem.id}/alunos`)}
                     >
                       Ver Alunos
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="col-span-2 gap-2"
+                      onClick={() => navigate(`/escolinha/turmas/${classItem.id}/chamada`)}
+                    >
+                      <UserCheck className="h-4 w-4" />
+                      Fazer Chamada
                     </Button>
                   </div>
                 </div>
@@ -166,7 +173,6 @@ const Classes = () => {
           />
         </div>
 
-        {/* Schedule Table */}
         <Card>
           <CardHeader>
             <CardTitle>Cronograma Semanal</CardTitle>
