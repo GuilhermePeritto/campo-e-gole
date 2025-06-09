@@ -14,7 +14,7 @@ export const useUniversalPayment = () => {
       type,
       id
     });
-    navigate(`/receber-pagamento?${params.toString()}`);
+    navigate(`/pagamento-universal?${params.toString()}`);
   };
 
   return { navigateToPayment };
