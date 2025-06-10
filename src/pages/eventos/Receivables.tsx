@@ -1,7 +1,8 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, CreditCard, Plus, Edit, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -206,36 +207,14 @@ const Receivables = () => {
     .reduce((sum, r) => sum + r.amount, 0);
 
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/eventos')}
-              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Eventos
-            </Button>
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Contas a Receber</h1>
-            </div>
-            <div className="ml-auto">
-              <Button
-                onClick={() => navigate('/eventos/contas-a-receber/novo')}
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Nova Conta
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Contas a Receber"
+        icon={<CreditCard className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+        backTo="/eventos"
+        backLabel="Eventos"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}

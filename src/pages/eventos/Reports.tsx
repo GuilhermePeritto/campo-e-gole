@@ -1,10 +1,11 @@
-
 import ExportButton from '@/components/ExportButton';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, BarChart3, Calendar as CalendarIcon, MapPin, TrendingUp, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -49,33 +50,13 @@ const EventoRelatorios = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="shadow-sm border-b border">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/eventos')}
-                className="gap-2 text-gray-900 dark:text-gray-300"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div className="flex items-center gap-3">
-                <BarChart3 className="h-6 w-6 text-green-600" />
-                <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Relatórios de Eventos</h1>
-              </div>
-            </div>
-
-            <ExportButton
-              data={monthlyRevenue}
-              filename="relatorio-eventos"
-              title="Relatório de Eventos"
-            />
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Relatórios de Eventos"
+        icon={<BarChart3 className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+        backTo="/eventos"
+        backLabel="Eventos"
+      />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Filtros */}
