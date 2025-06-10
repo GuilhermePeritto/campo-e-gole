@@ -1,6 +1,6 @@
 
 export const MODULE_COLORS = {
-  dashboard: 'hsl(var(--background))', // Using background color for dashboard
+  dashboard: '#6366f1', // Indigo color for dashboard
   events: 'rgb(var(--module-events))', // Amber
   bar: 'rgb(var(--module-bar))', // Emerald
   school: 'rgb(var(--module-school))', // Violet
