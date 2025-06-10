@@ -1,21 +1,26 @@
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, GraduationCap, Plus, Search, Edit, Eye } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, GraduationCap, Plus, Edit, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '@/hooks/usePagination';
-import PaginationControls from '@/components/PaginationControls';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+
+interface Teacher {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  specialization: string;
+  valuePerClass: number;
+  commissionPercentage: number;
+  status: string;
+}
 
 const Teachers = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Mock data for teachers
-  const mockTeachers = [
+  const mockTeachers: Teacher[] = [
     {
       id: 1,
       name: 'Carlos Silva',
@@ -68,16 +73,60 @@ const Teachers = () => {
     }
   ];
 
-  const filteredTeachers = mockTeachers.filter(teacher =>
-    teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    teacher.specialization.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const columns: BaseListColumn<Teacher>[] = [
+    {
+      key: 'name',
+      label: 'Nome',
+      render: (teacher) => (
+        <div>
+          <div className="font-medium">{teacher.name}</div>
+          <div className="text-sm text-muted-foreground">{teacher.email}</div>
+        </div>
+      )
+    },
+    {
+      key: 'specialization',
+      label: 'Especialização',
+      render: (teacher) => teacher.specialization
+    },
+    {
+      key: 'phone',
+      label: 'Contato',
+      render: (teacher) => teacher.phone
+    },
+    {
+      key: 'valuePerClass',
+      label: 'Valor/Aula',
+      render: (teacher) => `R$ ${teacher.valuePerClass.toFixed(2)}`
+    },
+    {
+      key: 'commissionPercentage',
+      label: 'Comissão',
+      render: (teacher) => `${teacher.commissionPercentage}%`
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (teacher) => (
+        <Badge variant={teacher.status === 'ativo' ? 'default' : 'secondary'}>
+          {teacher.status}
+        </Badge>
+      )
+    }
+  ];
 
-  const pagination = usePagination(filteredTeachers, {
-    totalItems: filteredTeachers.length,
-    pageSize: 10
-  });
+  const actions: BaseListAction<Teacher>[] = [
+    {
+      label: 'Ver relatório',
+      icon: <Eye className="h-4 w-4" />,
+      onClick: (teacher) => navigate(`/escolinha/professores/${teacher.id}/relatorio`)
+    },
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (teacher) => navigate(`/escolinha/professores/${teacher.id}/editar`)
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,102 +146,28 @@ const Teachers = () => {
               <GraduationCap className="h-5 w-5 text-blue-600" />
               <h1 className="text-xl font-semibold">Professores</h1>
             </div>
+            <div className="ml-auto">
+              <Button onClick={() => navigate('/escolinha/professores/novo')} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Novo Professor
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Buscar professores por nome, email ou especialização..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button onClick={() => navigate('/escolinha/professores/novo')} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Novo Professor
-          </Button>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Professores</CardTitle>
-            <CardDescription>
-              Gerencie os professores da escolinha
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Especialização</TableHead>
-                  <TableHead>Contato</TableHead>
-                  <TableHead>Valor/Aula</TableHead>
-                  <TableHead>Comissão</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((teacher) => (
-                  <TableRow key={teacher.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{teacher.name}</div>
-                        <div className="text-sm text-muted-foreground">{teacher.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{teacher.specialization}</TableCell>
-                    <TableCell>{teacher.phone}</TableCell>
-                    <TableCell>R$ {teacher.valuePerClass.toFixed(2)}</TableCell>
-                    <TableCell>{teacher.commissionPercentage}%</TableCell>
-                    <TableCell>
-                      <Badge variant={teacher.status === 'ativo' ? 'default' : 'secondary'}>
-                        {teacher.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/escolinha/professores/${teacher.id}/relatorio`)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/escolinha/professores/${teacher.id}/editar`)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={mockTeachers}
+          columns={columns}
+          actions={actions}
+          title="Lista de Professores"
+          description="Gerencie os professores da escolinha"
+          searchPlaceholder="Buscar professores por nome, email ou especialização..."
+          searchFields={['name', 'email', 'specialization']}
+          getItemId={(teacher) => teacher.id}
+          pageSize={10}
+        />
       </main>
     </div>
   );
