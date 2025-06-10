@@ -25,7 +25,10 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   const { user } = useAuth();
 
   return (
-    <header className="shadow-sm border-b" style={{ borderBottomColor: moduleColor }}>
+    <header 
+      className="shadow-sm border-b" 
+      style={{ backgroundColor: moduleColor }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
@@ -33,20 +36,16 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => navigate(backTo)}
-              className="gap-2"
+              className="gap-2 text-white hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4" />
               {backLabel}
             </Button>
             <div className="flex items-center gap-2">
-              <div style={{ color: moduleColor }}>
+              <div className="text-white">
                 {icon}
               </div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-300">{title}</h1>
-              <div 
-                className="w-1 h-6 rounded-full ml-2" 
-                style={{ backgroundColor: moduleColor }}
-              />
+              <h1 className="text-xl font-semibold text-white">{title}</h1>
             </div>
           </div>
           
@@ -54,10 +53,10 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-300">
+                <p className="text-sm font-medium text-white">
                   {user?.name || 'Administrador'}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-white/80">
                   {user?.email || 'admin@exemplo.com'}
                 </p>
               </div>
@@ -68,7 +67,12 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 </AvatarFallback>
               </Avatar>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/login')} 
+              className="gap-2 text-white hover:bg-white/20"
+            >
               <LogOut className="h-4 w-4" />
               Sair
             </Button>

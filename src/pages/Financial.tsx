@@ -1,10 +1,11 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, BarChart3, Calendar, CreditCard, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Financeiro = () => {
+const Financial = () => {
   const navigate = useNavigate();
 
   const quickActions = [
@@ -54,25 +55,11 @@ const Financeiro = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/painel')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold">Controle Financeiro</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Gestão Financeira"
+        icon={<DollarSign className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.financial}
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Ações Rápidas */}
@@ -373,4 +360,4 @@ const Financeiro = () => {
   );
 };
 
-export default Financeiro;
+export default Financial;

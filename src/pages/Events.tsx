@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, CreditCard, MapPin, Plus, Users } from 'lucide-react';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { BarChart3, Calendar, CreditCard, MapPin, Plus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Events = () => {
@@ -9,103 +11,88 @@ const Events = () => {
   const quickActions = [
     {
       title: 'Nova Reserva',
-      description: 'Criar uma nova reserva esportiva',
+      description: 'Agendar uma nova reserva',
       icon: Plus,
-      color: 'bg-green-500',
+      color: 'bg-blue-500',
       action: () => navigate('/eventos/novo')
     },
     {
-      title: 'Visualizar Agenda',
-      description: 'Ver agenda completa dos locais',
+      title: 'Calendário',
+      description: 'Ver reservas do calendário',
       icon: Calendar,
-      color: 'bg-orange-500',
-      action: () => navigate('/eventos/reservas')
+      color: 'bg-green-500',
+      action: () => navigate('/eventos/calendario')
     },
     {
-      title: 'Gerenciar Locais',
-      description: 'Cadastrar e gerenciar locais esportivos',
+      title: 'Locais',
+      description: 'Gerenciar espaços e quadras',
       icon: MapPin,
       color: 'bg-purple-500',
       action: () => navigate('/eventos/locais')
     },
     {
       title: 'Clientes',
-      description: 'Gerenciar clientes e histórico',
+      description: 'Cadastro de clientes',
       icon: Users,
-      color: 'bg-blue-500',
+      color: 'bg-orange-500',
       action: () => navigate('/eventos/clientes')
     },
     {
       title: 'Contas a Receber',
-      description: 'Gerenciar pagamentos e cobranças',
+      description: 'Pagamentos pendentes',
       icon: CreditCard,
-      color: 'bg-green-500',
+      color: 'bg-red-500',
       action: () => navigate('/eventos/contas-a-receber')
     },
     {
       title: 'Relatórios',
-      description: 'Análises financeiras e ocupação',
+      description: 'Análises e estatísticas',
       icon: BarChart3,
-      color: 'bg-yellow-500',
+      color: 'bg-indigo-500',
       action: () => navigate('/eventos/relatorios')
     }
   ];
 
-  const todayReservations = [
-    { id: 1, time: '08:00', venue: 'Quadra A', client: 'João Silva', status: 'confirmado' },
-    { id: 2, time: '14:00', venue: 'Campo 1', client: 'Time Unidos', status: 'pendente' },
-    { id: 3, time: '18:00', venue: 'Quadra B', client: 'Maria Santos', status: 'confirmado' },
-    { id: 4, time: '20:00', venue: 'Campo 2', client: 'Grupo Amigos', status: 'confirmado' }
+  const recentReservations = [
+    { id: 1, client: 'João Silva', date: '15/07/2024', time: '18:00', venue: 'Quadra 1', status: 'Confirmada' },
+    { id: 2, client: 'Maria Souza', date: '16/07/2024', time: '20:00', venue: 'Salão de Festas', status: 'Pendente' },
+    { id: 3, client: 'Carlos Pereira', date: '17/07/2024', time: '19:00', venue: 'Quadra 2', status: 'Confirmada' },
+    { id: 4, client: 'Ana Oliveira', date: '18/07/2024', time: '21:00', venue: 'Espaço Gourmet', status: 'Cancelada' }
   ];
 
-  const receivables = [
-    { id: 1, client: 'João Silva', amount: 150, dueDate: '2024-06-10', status: 'pendente' },
-    { id: 2, client: 'Time Unidos', amount: 300, dueDate: '2024-06-08', status: 'vencido' },
-    { id: 3, client: 'Maria Santos', amount: 200, dueDate: '2024-06-15', status: 'pendente' }
-  ];
+  const revenueStats = {
+    totalRevenue: 52850,
+    monthlyRevenue: 12750,
+    averageRevenuePerEvent: 550
+  };
 
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/painel')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Gestão de Eventos</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Gestão de Eventos"
+        icon={<Calendar className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-6">Ações Rápidas</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-300 mb-6">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
-                <Card 
+                <Card
                   key={index}
                   className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 border"
                   onClick={action.action}
                 >
                   <CardContent className="p-6 text-center">
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
-                      <IconComponent className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                      <IconComponent className="h-6 w-6 text-white" />
                     </div>
                     <h3 className="font-semibold text-gray-900 dark:text-gray-300 mb-1">{action.title}</h3>
-                    <p className="text-sm text-gray-600">{action.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{action.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -114,186 +101,106 @@ const Events = () => {
         </div>
 
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="border">
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Reservas de Hoje</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-300">Reservas Recentes</CardTitle>
               <CardDescription>
-                4 reservas agendadas para hoje
+                Últimas reservas agendadas
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">08:00 - Quadra A</div>
-                    <div className="text-sm text-gray-600">João Silva</div>
+                {recentReservations.map((reservation) => (
+                  <div key={reservation.id} className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
+                    <div>
+                      <div className="font-medium text-gray-900 dark:text-gray-300">{reservation.client}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">{reservation.date} - {reservation.time}</div>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      reservation.status === 'Confirmada'
+                        ? 'bg-green-200 text-green-800'
+                        : reservation.status === 'Pendente'
+                          ? 'bg-yellow-200 text-yellow-800'
+                          : 'bg-red-200 text-red-800'
+                    }`}>
+                      {reservation.status}
+                    </span>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
-                    confirmado
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">14:00 - Campo 1</div>
-                    <div className="text-sm text-gray-600">Time Unidos</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
-                    pendente
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">18:00 - Quadra B</div>
-                    <div className="text-sm text-gray-600">Maria Santos</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
-                    confirmado
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">20:00 - Campo 2</div>
-                    <div className="text-sm text-gray-600">Grupo Amigos</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-green-300 text-green-800">
-                    confirmado
-                  </span>
-                </div>
+                ))}
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-4"
-                onClick={() => navigate('/eventos/reservas')}
+                onClick={() => navigate('/eventos/calendario')}
               >
-                Ver Agenda Completa
+                Ver Todas as Reservas
               </Button>
             </CardContent>
           </Card>
 
           <Card className="border">
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Ocupação Semanal</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-300">Situação Financeira</CardTitle>
               <CardDescription>
-                Taxa de ocupação dos locais esta semana
+                Visão geral das finanças
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
-                    <span>Quadra A</span>
-                    <span>85%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-600 h-2 rounded-full" style={{width: '85%'}}></div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Total de Receita</span>
+                  <span className="font-semibold text-green-600">R$ {revenueStats.totalRevenue.toLocaleString()}</span>
                 </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
-                    <span>Campo 1</span>
-                    <span>72%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{width: '72%'}}></div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Receita Mensal</span>
+                  <span className="font-semibold text-green-600">R$ {revenueStats.monthlyRevenue.toLocaleString()}</span>
                 </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1 text-gray-600 dark:text-gray-300">
-                    <span>Quadra B</span>
-                    <span>58%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-orange-600 h-2 rounded-full" style={{width: '58%'}}></div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Média por Evento</span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-300">R$ {revenueStats.averageRevenuePerEvent.toLocaleString()}</span>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-4"
                 onClick={() => navigate('/eventos/relatorios')}
               >
-                Ver Relatório Completo
+                Ver Relatórios
               </Button>
             </CardContent>
           </Card>
 
           <Card className="border">
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Receita do Mês</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-gray-300">Próximos Eventos</CardTitle>
               <CardDescription>
-                Faturamento com reservas esportivas
+                Agendamentos futuros
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-600 dark:text-gray-300 mb-2">R$ 18.450</div>
-                <div className="text-sm text-green-600 mb-4">+12% vs mês anterior</div>
-                
+                <Calendar className="mx-auto h-12 w-12 text-blue-600 mb-4" />
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-300 mb-2">12</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-4">Eventos Agendados</div>
+
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center">
-                    <div className="font-semibold text-gray-600 dark:text-gray-300">156</div>
-                    <div className="text-gray-600">Reservas</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-300">5</div>
+                    <div className="text-gray-600 dark:text-gray-300">Quadra 1</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-gray-600 dark:text-gray-300">R$ 118</div>
-                    <div className="text-gray-600">Ticket Médio</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-300">7</div>
+                    <div className="text-gray-600 dark:text-gray-300">Salão de Festas</div>
                   </div>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-4"
-                onClick={() => navigate('/eventos/relatorios')}
+                onClick={() => navigate('/eventos/calendario')}
               >
-                Análise Detalhada
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Contas a Receber</CardTitle>
-              <CardDescription>
-                Pagamentos pendentes e vencidos
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">João Silva</div>
-                    <div className="text-sm text-gray-600">R$ 150 - 2024-06-10</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
-                    pendente
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">Time Unidos</div>
-                    <div className="text-sm text-gray-600">R$ 300 - 2024-06-08</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-red-200 text-red-800">
-                    vencido
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
-                  <div>
-                    <div className="font-medium text-gray-600 dark:text-gray-300">Maria Santos</div>
-                    <div className="text-sm text-gray-600">R$ 200 - 2024-06-15</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-lg bg-yellow-200 text-yellow-800">
-                    pendente
-                  </span>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                className="w-full mt-4"
-                onClick={() => navigate('/eventos/contas-a-receber')}
-              >
-                Ver Todas as Contas
+                Gerenciar Eventos
               </Button>
             </CardContent>
           </Card>

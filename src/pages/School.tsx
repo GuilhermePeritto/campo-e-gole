@@ -1,6 +1,7 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, BarChart3, Calendar, CreditCard, Plus, UserCheck, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -68,26 +69,11 @@ const School = () => {
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/painel')}
-              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <div className="flex items-center gap-2">
-              <Users2 className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Escolinha de Futebol</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Escolinha de Futebol"
+        icon={<Users2 className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.school}
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
