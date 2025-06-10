@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Plus, Minus, ShoppingCart, Trash2, Search } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 interface Product {
   id: number;
@@ -103,25 +104,13 @@ const NewSale = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/bar')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Nova Venda</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Nova Venda"
+        icon={<ShoppingCart className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.bar}
+        backTo="/bar"
+        backLabel="Bar"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

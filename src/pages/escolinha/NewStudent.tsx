@@ -5,9 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 const NewStudent = () => {
   const navigate = useNavigate();
@@ -45,25 +47,13 @@ const NewStudent = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/escolinha/alunos')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Alunos
-            </Button>
-            <div className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-blue-600" />
-              <h1 className="text-xl font-semibold">Novo Aluno</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Novo Aluno"
+        icon={<UserPlus className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.school}
+        backTo="/escolinha/alunos"
+        backLabel="Alunos"
+      />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card>

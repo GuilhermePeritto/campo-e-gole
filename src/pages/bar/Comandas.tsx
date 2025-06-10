@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +6,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 interface Comanda {
   id: number;
@@ -153,32 +154,14 @@ const Comandas = () => {
   const closedCount = comandas.filter(comanda => comanda.status === 'fechada').length;
 
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/bar')}
-                className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-              >
-                Voltar
-              </Button>
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Comandas</h1>
-            </div>
-            <Button 
-              onClick={() => navigate('/bar/comandas/novo')}
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Nova Comanda
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Comandas"
+        icon={<CreditCard className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.bar}
+        backTo="/bar"
+        backLabel="Bar"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
@@ -224,6 +207,13 @@ const Comandas = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        <div className="flex justify-end mb-6">
+          <Button onClick={() => navigate('/bar/comandas/novo')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Nova Comanda
+          </Button>
         </div>
 
         <BaseList

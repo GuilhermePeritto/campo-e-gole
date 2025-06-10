@@ -1,11 +1,12 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Package, Plus, Edit, Eye } from 'lucide-react';
+import { Package, Plus, Edit, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 interface Product {
   id: number;
@@ -160,32 +161,13 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/bar')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Produtos</h1>
-              </div>
-            </div>
-
-            <Button onClick={() => navigate('/bar/produtos/novo')} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Novo Produto
-            </Button>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Produtos"
+        icon={<Package className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.bar}
+        backTo="/bar"
+        backLabel="Bar"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
@@ -245,6 +227,13 @@ const Products = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        <div className="flex justify-end mb-6">
+          <Button onClick={() => navigate('/bar/produtos/novo')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Produto
+          </Button>
         </div>
 
         <BaseList
