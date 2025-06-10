@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface User {
@@ -10,6 +9,7 @@ interface User {
   permissions: string[];
   userGroupId?: string;
   useGroupPermissions: boolean;
+  avatar?: string;
 }
 
 interface UserGroup {
@@ -161,7 +161,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         companyId: '1',
         permissions: [],
         userGroupId: '1',
-        useGroupPermissions: true
+        useGroupPermissions: true,
+        avatar: 'https://via.placeholder.com/150'
       };
 
       const mockCompany: Company = {
@@ -277,3 +278,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;
