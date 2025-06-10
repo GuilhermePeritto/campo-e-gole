@@ -52,14 +52,14 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="p-2 bg-primary rounded-lg">
-              <Calendar className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+              <Calendar className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="p-2 bg-secondary rounded-lg">
-              <BarChart3 className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+              <BarChart3 className="h-6 w-6 text-secondary-foreground" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Ludus Gestão</h1>
-          <p className="text-gray-600 mt-2">Sistema de Gestão Esportiva e Bar</p>
+          <h1 className="text-3xl font-bold text-foreground">Ludus Gestão</h1>
+          <p className="text-muted-foreground mt-2">Sistema de Gestão Esportiva e Bar</p>
         </div>
 
         <Card className="shadow-xl">

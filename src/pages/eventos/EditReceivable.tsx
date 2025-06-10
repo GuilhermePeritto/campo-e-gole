@@ -4,7 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, CreditCard, Save } from 'lucide-react';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { CreditCard, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -41,27 +43,14 @@ const EditReceivable = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/eventos/contas-a-receber')}
-              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Contas a Receber
-            </Button>
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Editar Conta a Receber</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Editar Conta a Receber"
+        icon={<CreditCard className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+        backTo="/eventos/contas-a-receber"
+        backLabel="Contas a Receber"
+      />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="border">

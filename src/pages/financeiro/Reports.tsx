@@ -1,7 +1,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Calendar, Download, PieChart, TrendingUp, Users } from 'lucide-react';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { BarChart3, Calendar, Download, PieChart, TrendingUp, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const FinanceiroRelatorios = () => {
@@ -47,25 +49,13 @@ const FinanceiroRelatorios = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/financeiro')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-indigo-600" />
-              <h1 className="text-xl font-semibold">Relatórios Financeiros</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Relatórios Financeiros"
+        icon={<BarChart3 className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.financial}
+        backTo="/financeiro"
+        backLabel="Financeiro"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
