@@ -1,4 +1,3 @@
-
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,7 +68,7 @@ const EscolinhaMensalidades = () => {
                 <SelectValue placeholder="Filtrar por status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todos">Todos</SelectItem>
+                <SelectItem value="">Todos</SelectItem>
                 <SelectItem value="Pago">Pago</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
               </SelectContent>
