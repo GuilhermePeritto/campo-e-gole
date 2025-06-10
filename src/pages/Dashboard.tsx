@@ -2,6 +2,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { BarChart3, Building2, Calendar, LogOut, Settings, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -88,48 +90,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <img
-                  src="/logo.png"
-                  alt="Ludus Gestão Logo"
-                  className="h-8 w-8 rounded-full"
-                />
-              </div>
-              <h1 className="text-xl font-bold text-gray-600 dark:text-gray-300">Ludus Gestão</h1>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <Building2 className="h-4 w-4" />
-                <span>{company?.name}</span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/configuracoes')}
-                className="gap-2 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
-              >
-                <Settings className="h-4 w-4" />
-                Configurações
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="gap-2 border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
-              >
-                <LogOut className="h-4 w-4" />
-                Sair
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Dashboard"
+        icon={<BarChart3 className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.dashboard}
+        backTo="/painel"
+        backLabel="Início"
+      />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
