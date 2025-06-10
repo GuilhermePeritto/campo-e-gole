@@ -180,34 +180,23 @@ const Classes = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header with Add Button */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-2xl font-bold">Turmas da Escolinha</h2>
-            <p className="text-muted-foreground">Gerencie as turmas e horários de treino</p>
-          </div>
-          <Button
-            onClick={() => navigate('/escolinha/turmas/nova')}
-            className="gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Nova Turma
-          </Button>
-        </div>
-
-        {/* Classes List */}
         <BaseList
           data={classes}
           columns={columns}
           actions={actions}
-          title="Lista de Turmas"
-          description="Gerencie todas as turmas da escolinha"
+          title="Turmas da Escolinha"
+          description="Gerencie as turmas e horários de treino"
           searchPlaceholder="Buscar por nome da turma ou faixa etária..."
           searchFields={['name', 'ageRange']}
           getItemId={(classItem) => classItem.id}
           pageSize={6}
           renderCard={renderClassCard}
           className="mb-8"
+          createButton={{
+            label: 'Nova Turma',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/escolinha/turmas/nova')
+          }}
         />
 
         <Card>

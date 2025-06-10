@@ -194,13 +194,6 @@ const Locais = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-end mb-6">
-          <Button onClick={() => navigate('/eventos/locais/novo')} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Novo Local
-          </Button>
-        </div>
-
         {/* Resumo */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           {isLoading ? (
@@ -288,6 +281,11 @@ const Locais = () => {
           getItemId={(venue) => venue.id}
           pageSize={10}
           renderCard={renderVenueCard}
+          createButton={{
+            label: 'Novo Local',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/eventos/locais/novo')
+          }}
         />
       </main>
     </div>

@@ -86,7 +86,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuItem onClick={() => navigate('/configuracoes/editar-usuario/1')}>
+                <DropdownMenuItem onClick={() => navigate(`/configuracoes/usuarios/${user?.id || '1'}/editar`)}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Editar Perfil</span>
                 </DropdownMenuItem>

@@ -22,6 +22,12 @@ export interface BaseListAction<T> {
   variant?: 'ghost' | 'default' | 'destructive' | 'outline' | 'secondary';
 }
 
+export interface BaseListCreateButton {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}
+
 interface BaseListProps<T> {
   data: T[];
   columns: BaseListColumn<T>[];
@@ -34,6 +40,7 @@ interface BaseListProps<T> {
   pageSize?: number;
   className?: string;
   renderCard?: (item: T, actions: BaseListAction<T>[]) => React.ReactNode;
+  createButton?: BaseListCreateButton;
 }
 
 type ViewType = 'list' | 'cards';
@@ -49,7 +56,8 @@ function BaseList<T>({
   getItemId,
   pageSize = 10,
   className = "",
-  renderCard
+  renderCard,
+  createButton
 }: BaseListProps<T>) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [viewType, setViewType] = React.useState<ViewType>('list');
@@ -108,10 +116,20 @@ function BaseList<T>({
 
       <Card>
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          {description && (
-            <CardDescription>{description}</CardDescription>
-          )}
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{title}</CardTitle>
+              {description && (
+                <CardDescription>{description}</CardDescription>
+              )}
+            </div>
+            {createButton && (
+              <Button onClick={createButton.onClick} className="gap-2">
+                {createButton.icon}
+                {createButton.label}
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           {viewType === 'list' ? (

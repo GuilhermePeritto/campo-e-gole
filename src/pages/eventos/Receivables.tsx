@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -273,6 +274,11 @@ const Receivables = () => {
           getItemId={(receivable) => receivable.id}
           pageSize={5}
           renderCard={renderReceivableCard}
+          createButton={{
+            label: 'Nova Conta',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/eventos/contas-a-receber/nova')
+          }}
         />
       </main>
     </div>

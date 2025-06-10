@@ -277,13 +277,6 @@ const ContasAPagar = () => {
           </Card>
         </div>
 
-        <div className="mb-6 flex justify-end">
-          <Button onClick={() => navigate('/financeiro/novo-payable')} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Conta
-          </Button>
-        </div>
-
         <BaseList
           data={mockPayables}
           columns={columns}
@@ -295,6 +288,11 @@ const ContasAPagar = () => {
           getItemId={(payable) => payable.id}
           pageSize={10}
           renderCard={renderPayableCard}
+          createButton={{
+            label: 'Nova Conta',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/financeiro/novo-payable')
+          }}
         />
       </main>
     </div>

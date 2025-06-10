@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePagination } from '@/hooks/usePagination';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
-import { Calendar, DollarSign, CreditCard } from 'lucide-react';
+import { Calendar, DollarSign, CreditCard, Plus } from 'lucide-react';
 
 interface Receivable {
   id: number;
@@ -286,6 +286,11 @@ const ContasAReceber = () => {
           getItemId={(receivable) => receivable.id}
           pageSize={10}
           renderCard={renderReceivableCard}
+          createButton={{
+            label: 'Nova Conta',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/financeiro/nova-receivable')
+          }}
         />
       </main>
     </div>
