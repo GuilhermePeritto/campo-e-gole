@@ -1,10 +1,11 @@
-
 import ExportButton from '@/components/ExportButton';
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, BarChart3, Calendar as CalendarIcon, DollarSign, Package, ShoppingCart, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -52,33 +53,13 @@ const BarRelatorios = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="shadow-sm border-b border">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/bar')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div className="flex items-center gap-3">
-                <BarChart3 className="h-6 w-6 text-green-600" />
-                <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Relatórios do Bar</h1>
-              </div>
-            </div>
-
-            <ExportButton 
-              data={dailySales} 
-              filename="relatorio-bar" 
-              title="Relatório do Bar"
-            />
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Relatórios do Bar"
+        icon={<BarChart3 className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.bar}
+        backTo="/bar"
+        backLabel="Bar"
+      />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Filtros */}
