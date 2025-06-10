@@ -89,24 +89,34 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
+    <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
         title="Dashboard"
         icon={<BarChart3 className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.dashboard}
-        backTo="/painel"
-        backLabel="Início"
       />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-gray-600 dark:text-gray-300">
-            Bem-vindo, {user?.name}!
-          </h1>
-          <p className="text-gray-600">
-            Escolha um módulo para começar a trabalhar
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold mb-2 text-foreground">
+              Bem-vindo, {user?.name}!
+            </h1>
+            <p className="text-muted-foreground">
+              Escolha um módulo para começar a trabalhar
+            </p>
+          </div>
+          
+          {/* Botão de Configurações */}
+          <Button
+            onClick={() => navigate('/configuracoes')}
+            variant="outline"
+            className="gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Configurações
+          </Button>
         </div>
 
         <div className="grid md:grid-cols-4 gap-8">
@@ -123,23 +133,24 @@ const Dashboard = () => {
                   }`}
                 onClick={() => hasAccess && navigate(module.path)}
               >
-                <div className={`absolute top-0 right-0 w-32 h-32 ${module.color} rounded-full opacity-10 transform translate-x-8 -translate-y-8`} />
+                <div className={`absolute top-0 right-0 w-32 h-32 opacity-10 rounded-full transform translate-x-8 -translate-y-8`} 
+                     style={{ backgroundColor: module.color }} />
 
                 <CardHeader className="relative h-40 p-4">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`p-3 ${module.color} rounded-lg`}>
-                      <IconComponent className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                    <div className={`p-3 rounded-lg`} style={{ backgroundColor: module.color }}>
+                      <IconComponent className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-gray-600 dark:text-gray-300">{module.title}</CardTitle>
+                      <CardTitle className="text-xl text-card-foreground">{module.title}</CardTitle>
                       {!hasAccess && (
-                        <Badge className="mt-1 bg-red-500 text-gray-600 dark:text-gray-300">
+                        <Badge className="mt-1 bg-red-500 text-white">
                           Sem Acesso
                         </Badge>
                       )}
                     </div>
                   </div>
-                  <CardDescription className="text-base text-gray-600 pt-1">
+                  <CardDescription className="text-base text-muted-foreground pt-1">
                     {module.description}
                   </CardDescription>
                 </CardHeader>
@@ -147,8 +158,8 @@ const Dashboard = () => {
                 <CardContent className="relative h-48 p-4">
                   <ul className="space-y-2 mb-6">
                     {module.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
+                      <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full" />
                         {feature}
                       </li>
                     ))}
@@ -158,7 +169,8 @@ const Dashboard = () => {
                 <CardFooter className="relative bottom-0 left-0 w-full">
                   {(hasAccess) && (
                     <Button
-                      className={`w-full ${module.color} ${module.hoverColor} ${module.textColor} transition-colors`}
+                      className={`w-full text-white transition-colors`}
+                      style={{ backgroundColor: module.color }}
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(module.path);
@@ -178,12 +190,12 @@ const Dashboard = () => {
           <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-green-600" />
+                <div className="p-2 bg-module-events/20 rounded-lg">
+                  <Calendar className="h-5 w-5 text-module-events" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Reservas Hoje</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">12</p>
+                  <p className="text-sm font-medium text-muted-foreground">Reservas Hoje</p>
+                  <p className="text-2xl font-bold text-card-foreground">12</p>
                 </div>
               </div>
             </CardContent>
@@ -192,12 +204,12 @@ const Dashboard = () => {
           <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-black rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                <div className="p-2 bg-module-bar/20 rounded-lg">
+                  <BarChart3 className="h-5 w-5 text-module-bar" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Vendas do Bar</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ 2.450</p>
+                  <p className="text-sm font-medium text-muted-foreground">Vendas do Bar</p>
+                  <p className="text-2xl font-bold text-card-foreground">R$ 2.450</p>
                 </div>
               </div>
             </CardContent>
@@ -206,12 +218,12 @@ const Dashboard = () => {
           <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-black rounded-lg">
-                  <Users2 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                <div className="p-2 bg-module-school/20 rounded-lg">
+                  <Users2 className="h-5 w-5 text-module-school" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Alunos Matriculados</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">150</p>
+                  <p className="text-sm font-medium text-muted-foreground">Alunos Matriculados</p>
+                  <p className="text-2xl font-bold text-card-foreground">150</p>
                 </div>
               </div>
             </CardContent>
@@ -220,12 +232,12 @@ const Dashboard = () => {
           <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-black rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                <div className="p-2 bg-module-financial/20 rounded-lg">
+                  <BarChart3 className="h-5 w-5 text-module-financial" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Receita Hoje</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ 15.000</p>
+                  <p className="text-sm font-medium text-muted-foreground">Receita Hoje</p>
+                  <p className="text-2xl font-bold text-card-foreground">R$ 15.000</p>
                 </div>
               </div>
             </CardContent>

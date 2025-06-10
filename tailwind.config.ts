@@ -90,6 +90,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Cores dos módulos
+				module: {
+					dashboard: 'rgb(var(--module-dashboard))',
+					events: 'rgb(var(--module-events))',
+					bar: 'rgb(var(--module-bar))',
+					school: 'rgb(var(--module-school))',
+					financial: 'rgb(var(--module-financial))',
+					settings: 'rgb(var(--module-settings))'
 				}
 			},
 			borderRadius: {

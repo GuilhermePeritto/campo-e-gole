@@ -13,35 +13,35 @@ const Bar = () => {
       title: 'Nova Venda',
       description: 'Registrar uma nova venda',
       icon: ShoppingCart,
-      color: 'bg-orange-500',
+      color: 'bg-module-bar',
       action: () => navigate('/bar/nova-venda')
     },
     {
       title: 'Produtos',
       description: 'Gerenciar produtos do cardápio',
       icon: Package,
-      color: 'bg-blue-500',
+      color: 'bg-module-bar',
       action: () => navigate('/bar/produtos')
     },
     {
       title: 'Estoque',
       description: 'Gerenciar níveis de estoque',
       icon: Package,
-      color: 'bg-green-500',
+      color: 'bg-module-bar',
       action: () => navigate('/bar/estoque')
     },
     {
       title: 'Comandas',
       description: 'Controlar mesas e pedidos',
       icon: Utensils,
-      color: 'bg-purple-500',
+      color: 'bg-module-bar',
       action: () => navigate('/bar/comandas')
     },
     {
       title: 'Relatórios',
       description: 'Análises e estatísticas',
       icon: BarChart3,
-      color: 'bg-indigo-500',
+      color: 'bg-module-bar',
       action: () => navigate('/bar/relatorios')
     }
   ];
@@ -71,7 +71,7 @@ const Bar = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-6">Ações Rápidas</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
@@ -83,10 +83,10 @@ const Bar = () => {
                 >
                   <CardContent className="p-6 text-center">
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
-                      <IconComponent className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                      <IconComponent className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-300 mb-1">{action.title}</h3>
-                    <p className="text-sm text-gray-600">{action.description}</p>
+                    <h3 className="font-semibold text-card-foreground mb-1">{action.title}</h3>
+                    <p className="text-sm text-muted-foreground">{action.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -98,7 +98,7 @@ const Bar = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="border">
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Vendas Recentes</CardTitle>
+              <CardTitle className="text-card-foreground">Vendas Recentes</CardTitle>
               <CardDescription>
                 Últimas vendas registradas
               </CardDescription>
@@ -106,12 +106,12 @@ const Bar = () => {
             <CardContent>
               <div className="space-y-3">
                 {recentSales.map((sale) => (
-                  <div key={sale.id} className="flex items-center justify-between p-3 bg-gray-50 border border rounded-lg">
+                  <div key={sale.id} className="flex items-center justify-between p-3 bg-muted/50 border rounded-lg">
                     <div>
-                      <div className="font-medium text-gray-600 dark:text-gray-300">{sale.product}</div>
-                      <div className="text-sm text-gray-600">{sale.quantity} x R$ {sale.price.toFixed(2)}</div>
+                      <div className="font-medium text-card-foreground">{sale.product}</div>
+                      <div className="text-sm text-muted-foreground">{sale.quantity} x R$ {sale.price.toFixed(2)}</div>
                     </div>
-                    <span className="text-xs text-gray-600">{sale.date}</span>
+                    <span className="text-xs text-muted-foreground">{sale.date}</span>
                   </div>
                 ))}
               </div>
@@ -127,7 +127,7 @@ const Bar = () => {
 
           <Card className="border">
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Estatísticas de Vendas</CardTitle>
+              <CardTitle className="text-card-foreground">Estatísticas de Vendas</CardTitle>
               <CardDescription>
                 Visão geral do desempenho
               </CardDescription>
@@ -135,15 +135,15 @@ const Bar = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total de Vendas</span>
+                  <span className="text-sm text-muted-foreground">Total de Vendas</span>
                   <span className="font-semibold text-green-600">R$ {salesStats.totalSales.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Ticket Médio</span>
+                  <span className="text-sm text-muted-foreground">Ticket Médio</span>
                   <span className="font-semibold text-blue-600">R$ {salesStats.averageOrder.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Produto Mais Vendido</span>
+                  <span className="text-sm text-muted-foreground">Produto Mais Vendido</span>
                   <span className="font-semibold text-purple-600">{salesStats.bestSeller}</span>
                 </div>
               </div>
@@ -159,7 +159,7 @@ const Bar = () => {
 
           <Card className="border">
             <CardHeader>
-              <CardTitle className="text-gray-600 dark:text-gray-300">Satisfação do Cliente</CardTitle>
+              <CardTitle className="text-card-foreground">Satisfação do Cliente</CardTitle>
               <CardDescription>
                 Feedback e avaliações
               </CardDescription>
@@ -167,16 +167,16 @@ const Bar = () => {
             <CardContent>
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600 mb-2">{salesStats.customerSatisfaction}</div>
-                <div className="text-sm text-gray-600 mb-4">Nível de satisfação geral</div>
+                <div className="text-sm text-muted-foreground mb-4">Nível de satisfação geral</div>
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center">
-                    <div className="font-semibold text-gray-600 dark:text-gray-300">98%</div>
-                    <div className="text-gray-600">Qualidade dos Produtos</div>
+                    <div className="font-semibold text-card-foreground">98%</div>
+                    <div className="text-muted-foreground">Qualidade dos Produtos</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold text-gray-600 dark:text-gray-300">92%</div>
-                    <div className="text-gray-600">Atendimento ao Cliente</div>
+                    <div className="font-semibold text-card-foreground">92%</div>
+                    <div className="text-muted-foreground">Atendimento ao Cliente</div>
                   </div>
                 </div>
               </div>

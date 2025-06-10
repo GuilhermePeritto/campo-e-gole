@@ -1,11 +1,11 @@
 
 export const MODULE_COLORS = {
-  dashboard: '#6366f1', // Indigo
-  events: '#f59e0b', // Amber
-  bar: '#10b981', // Emerald
-  school: '#8b5cf6', // Violet
-  financial: '#ef4444', // Red
-  settings: '#6b7280', // Gray
+  dashboard: 'rgb(var(--module-dashboard))', // Indigo
+  events: 'rgb(var(--module-events))', // Amber
+  bar: 'rgb(var(--module-bar))', // Emerald
+  school: 'rgb(var(--module-school))', // Violet
+  financial: 'rgb(var(--module-financial))', // Red
+  settings: 'rgb(var(--module-settings))', // Gray
   reports: '#06b6d4', // Cyan
 } as const;
 
