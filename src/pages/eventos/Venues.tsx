@@ -1,4 +1,3 @@
-
 import PaginationControls from '@/components/PaginationControls';
 import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
 import ValueSkeleton from '@/components/ValueSkeleton';
@@ -7,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePagination } from '@/hooks/usePagination';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, MapPin, Plus, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -88,33 +89,22 @@ const Locais = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/eventos')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
-                <h1 className="text-xl font-semibold">Locais</h1>
-              </div>
-            </div>
-            <Button onClick={() => navigate('/eventos/locais/novo')} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Novo Local
-            </Button>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Locais"
+        icon={<MapPin className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+        backTo="/eventos"
+        backLabel="Eventos"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-end mb-6">
+          <Button onClick={() => navigate('/eventos/locais/novo')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Local
+          </Button>
+        </div>
+
         {/* Resumo */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           {isLoading ? (

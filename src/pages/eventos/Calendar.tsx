@@ -1,7 +1,9 @@
 import EventDetailsPopup from '@/components/EventDetailsPopup';
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -184,64 +186,52 @@ const Calendar = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="shadow-sm border-b border">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/eventos')}
-                className="gap-2 text-gray-900 dark:text-gray-300"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div className="flex items-center gap-3">
-                <CalendarIcon className="h-6 w-6 text-green-600" />
-                <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Agenda</h1>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Select value={selectedVenue} onValueChange={setSelectedVenue}>
-                <SelectTrigger className="w-48 border">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {venues.map((venue) => (
-                    <SelectItem key={venue.id} value={venue.id}>{venue.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <div className="flex bg-muted rounded-lg p-1">
-                {['month', 'week', 'day'].map((view) => (
-                  <button
-                    key={view}
-                    onClick={() => setViewType(view)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${viewType === view
-                      ? 'text-gray-900 dark:text-gray-300 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-300'
-                      }`}
-                  >
-                    {view === 'month' ? 'Mês' : view === 'week' ? 'Semana' : 'Dia'}
-                  </button>
-                ))}
-              </div>
-
-              <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/eventos/novo')}>
-                <Plus className="h-4 w-4" />
-                Nova Reserva
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Agenda"
+        icon={<CalendarIcon className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+        backTo="/eventos"
+        backLabel="Eventos"
+      />
 
       <main className="max-w-7xl mx-auto px-6 py-6">
+        {/* Controls */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Select value={selectedVenue} onValueChange={setSelectedVenue}>
+              <SelectTrigger className="w-48 border">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {venues.map((venue) => (
+                  <SelectItem key={venue.id} value={venue.id}>{venue.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex bg-muted rounded-lg p-1">
+              {['month', 'week', 'day'].map((view) => (
+                <button
+                  key={view}
+                  onClick={() => setViewType(view)}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${viewType === view
+                    ? 'text-gray-900 dark:text-gray-300 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-300'
+                    }`}
+                >
+                  {view === 'month' ? 'Mês' : view === 'week' ? 'Semana' : 'Dia'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/eventos/novo')}>
+            <Plus className="h-4 w-4" />
+            Nova Reserva
+          </Button>
+        </div>
+
         {/* Navigation */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
