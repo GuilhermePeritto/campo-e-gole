@@ -1,17 +1,28 @@
+
 import ModuleHeader from '@/components/ModuleHeader';
-import PaginationControls from '@/components/PaginationControls';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Calendar, Plus, UserCheck } from 'lucide-react';
+import { Calendar, Plus, UserCheck, Edit, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+interface ClassItem {
+  id: number;
+  name: string;
+  ageRange: string;
+  schedule: string;
+  studentsCount: number;
+  maxStudents: number;
+  monthlyFee: number;
+}
 
 const Classes = () => {
   const navigate = useNavigate();
 
-  const classes = [
+  const classes: ClassItem[] = [
     { 
       id: 1, 
       name: 'Infantil A', 
@@ -50,10 +61,113 @@ const Classes = () => {
     }
   ];
 
-  const pagination = usePagination(classes, {
-    pageSize: 6,
-    totalItems: classes.length
-  });
+  const columns: BaseListColumn<ClassItem>[] = [
+    {
+      key: 'name',
+      label: 'Turma',
+      render: (classItem) => (
+        <div>
+          <div className="font-medium">{classItem.name}</div>
+          <div className="text-sm text-muted-foreground">{classItem.ageRange}</div>
+        </div>
+      )
+    },
+    {
+      key: 'schedule',
+      label: 'Horário',
+      render: (classItem) => classItem.schedule
+    },
+    {
+      key: 'students',
+      label: 'Alunos',
+      render: (classItem) => (
+        <div className="space-y-2">
+          <span className="font-semibold">
+            {classItem.studentsCount}/{classItem.maxStudents}
+          </span>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-green-600 h-2 rounded-full" 
+              style={{width: `${(classItem.studentsCount / classItem.maxStudents) * 100}%`}}
+            ></div>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'monthlyFee',
+      label: 'Mensalidade',
+      render: (classItem) => (
+        <span className="font-medium">R$ {classItem.monthlyFee}</span>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<ClassItem>[] = [
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (classItem) => navigate(`/escolinha/turmas/${classItem.id}/editar`)
+    },
+    {
+      label: 'Alunos',
+      icon: <Users className="h-4 w-4" />,
+      onClick: (classItem) => navigate(`/escolinha/turmas/${classItem.id}/alunos`)
+    },
+    {
+      label: 'Chamada',
+      icon: <UserCheck className="h-4 w-4" />,
+      onClick: (classItem) => navigate(`/escolinha/turmas/${classItem.id}/chamada`)
+    }
+  ];
+
+  const renderClassCard = (classItem: ClassItem, actions: BaseListAction<ClassItem>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <CardTitle>{classItem.name}</CardTitle>
+        <CardDescription>
+          {classItem.ageRange} • {classItem.schedule}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">Alunos</span>
+            <span className="font-semibold">
+              {classItem.studentsCount}/{classItem.maxStudents}
+            </span>
+          </div>
+          
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-green-600 h-2 rounded-full" 
+              style={{width: `${(classItem.studentsCount / classItem.maxStudents) * 100}%`}}
+            ></div>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">Mensalidade</span>
+            <span className="font-semibold">R$ {classItem.monthlyFee}</span>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-2 pt-2">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                onClick={() => action.onClick(classItem)}
+                className="gap-2"
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,85 +195,20 @@ const Classes = () => {
           </Button>
         </div>
 
-        {/* Classes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {pagination.paginatedData.map((classItem) => (
-            <Card key={classItem.id}>
-              <CardHeader>
-                <CardTitle>{classItem.name}</CardTitle>
-                <CardDescription>
-                  {classItem.ageRange} • {classItem.schedule}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Alunos</span>
-                    <span className="font-semibold">
-                      {classItem.studentsCount}/{classItem.maxStudents}
-                    </span>
-                  </div>
-                  
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-600 h-2 rounded-full" 
-                      style={{width: `${(classItem.studentsCount / classItem.maxStudents) * 100}%`}}
-                    ></div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Mensalidade</span>
-                    <span className="font-semibold">R$ {classItem.monthlyFee}</span>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/escolinha/turmas/${classItem.id}/editar`)}
-                    >
-                      Editar
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/escolinha/turmas/${classItem.id}/alunos`)}
-                    >
-                      Ver Alunos
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="col-span-2 gap-2"
-                      onClick={() => navigate(`/escolinha/turmas/${classItem.id}/chamada`)}
-                    >
-                      <UserCheck className="h-4 w-4" />
-                      Fazer Chamada
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Paginação para turmas */}
-        <div className="mb-8">
-          <PaginationControls
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            totalItems={pagination.totalItems}
-            pageSize={pagination.pageSize}
-            startIndex={pagination.startIndex}
-            endIndex={pagination.endIndex}
-            hasNextPage={pagination.hasNextPage}
-            hasPreviousPage={pagination.hasPreviousPage}
-            onPageChange={pagination.goToPage}
-            onPageSizeChange={pagination.setPageSize}
-            pageSizeOptions={[4, 6, 8]}
-            showInfo={false}
-          />
-        </div>
+        {/* Classes List */}
+        <BaseList
+          data={classes}
+          columns={columns}
+          actions={actions}
+          title="Lista de Turmas"
+          description="Gerencie todas as turmas da escolinha"
+          searchPlaceholder="Buscar por nome da turma ou faixa etária..."
+          searchFields={['name', 'ageRange']}
+          getItemId={(classItem) => classItem.id}
+          pageSize={6}
+          renderCard={renderClassCard}
+          className="mb-8"
+        />
 
         <Card>
           <CardHeader>

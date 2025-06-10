@@ -1,22 +1,29 @@
+
 import ModuleHeader from '@/components/ModuleHeader';
-import PaginationControls from '@/components/PaginationControls';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { usePagination } from '@/hooks/usePagination';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
-import { CreditCard, Search } from 'lucide-react';
-import { useState } from 'react';
+import { CreditCard, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+interface Payment {
+  id: number;
+  studentName: string;
+  month: string;
+  amount: number;
+  dueDate: string;
+  paidDate: string | null;
+  status: string;
+}
 
 const Payments = () => {
   const navigate = useNavigate();
   const { navigateToPayment } = useUniversalPayment();
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const payments = [
+  const payments: Payment[] = [
     { 
       id: 1, 
       studentName: 'Pedro Silva', 
@@ -55,25 +62,16 @@ const Payments = () => {
     }
   ];
 
-  const filteredPayments = payments.filter(payment =>
-    payment.studentName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const pagination = usePagination(filteredPayments, {
-    pageSize: 8,
-    totalItems: filteredPayments.length
-  });
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pago':
-        return 'bg-green-200 text-green-800';
+        return 'default';
       case 'pendente':
-        return 'bg-yellow-200 text-yellow-800';
+        return 'secondary';
       case 'atrasado':
-        return 'bg-red-200 text-red-800';
+        return 'destructive';
       default:
-        return 'bg-gray-200 text-gray-800';
+        return 'secondary';
     }
   };
 
@@ -91,6 +89,104 @@ const Payments = () => {
       id: paymentId.toString()
     });
   };
+
+  const columns: BaseListColumn<Payment>[] = [
+    {
+      key: 'studentName',
+      label: 'Aluno',
+      render: (payment) => (
+        <div className="font-medium">{payment.studentName}</div>
+      )
+    },
+    {
+      key: 'month',
+      label: 'Mês/Ano',
+      render: (payment) => payment.month
+    },
+    {
+      key: 'amount',
+      label: 'Valor',
+      render: (payment) => (
+        <span className="font-medium">R$ {payment.amount.toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'dueDate',
+      label: 'Vencimento',
+      render: (payment) => payment.dueDate
+    },
+    {
+      key: 'paidDate',
+      label: 'Data Pagamento',
+      render: (payment) => payment.paidDate || '-'
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (payment) => (
+        <Badge variant={getStatusColor(payment.status)}>
+          {payment.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Payment>[] = [
+    {
+      label: 'Receber',
+      icon: <DollarSign className="h-4 w-4" />,
+      onClick: (payment) => handleReceivePayment(payment.id)
+    }
+  ];
+
+  const renderPaymentCard = (payment: Payment, actions: BaseListAction<Payment>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="font-medium">{payment.studentName}</div>
+              <div className="text-sm text-muted-foreground">{payment.month}</div>
+            </div>
+            <Badge variant={getStatusColor(payment.status)}>
+              {payment.status}
+            </Badge>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Valor:</span>
+              <span className="font-medium">R$ {payment.amount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Vencimento:</span>
+              <span>{payment.dueDate}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Pagamento:</span>
+              <span>{payment.paidDate || '-'}</span>
+            </div>
+          </div>
+
+          {payment.status !== 'pago' && (
+            <div className="pt-3">
+              {actions.map((action, index) => (
+                <Button
+                  key={index}
+                  size="sm"
+                  className="w-full gap-2"
+                  onClick={() => action.onClick(payment)}
+                >
+                  {action.icon}
+                  {action.label}
+                </Button>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
@@ -148,85 +244,21 @@ const Payments = () => {
           </Card>
         </div>
 
-        {/* Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Buscar por nome do aluno..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border"
-            />
-          </div>
-        </div>
-
-        {/* Payments Table */}
-        <Card className="border">
-          <CardHeader>
-            <CardTitle className="text-gray-600 dark:text-gray-300">Controle de Mensalidades</CardTitle>
-            <CardDescription>
-              Gerencie os pagamentos das mensalidades dos alunos
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Aluno</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Mês/Ano</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Valor</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Vencimento</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Data Pagamento</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((payment) => (
-                  <TableRow key={payment.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">{payment.studentName}</TableCell>
-                    <TableCell className="text-gray-600">{payment.month}</TableCell>
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">R$ {payment.amount.toFixed(2)}</TableCell>
-                    <TableCell className="text-gray-600">{payment.dueDate}</TableCell>
-                    <TableCell className="text-gray-600">{payment.paidDate || '-'}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(payment.status)}`}>
-                        {payment.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {payment.status !== 'pago' && (
-                        <Button
-                          size="sm"
-                          className="bg-green-600 text-gray-600 dark:text-gray-300 hover:bg-green-700"
-                          onClick={() => handleReceivePayment(payment.id)}
-                        >
-                          Receber
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {/* Paginação */}
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[5, 8, 12]}
-            />
-          </CardContent>
-        </Card>
+        {/* Payments List */}
+        <BaseList
+          data={payments}
+          columns={columns}
+          actions={actions.filter((action) => 
+            payments.some(payment => payment.status !== 'pago')
+          )}
+          title="Controle de Mensalidades"
+          description="Gerencie os pagamentos das mensalidades dos alunos"
+          searchPlaceholder="Buscar por nome do aluno..."
+          searchFields={['studentName']}
+          getItemId={(payment) => payment.id}
+          pageSize={8}
+          renderCard={renderPaymentCard}
+        />
       </main>
     </div>
   );
