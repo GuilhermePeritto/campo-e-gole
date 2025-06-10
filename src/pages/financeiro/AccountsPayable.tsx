@@ -1,21 +1,28 @@
 
-import PaginationControls from '@/components/PaginationControls';
+import ModuleHeader from '@/components/ModuleHeader';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Calendar, DollarSign, Filter, Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, DollarSign, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+interface Payable {
+  id: number;
+  description: string;
+  supplier: string;
+  amount: number;
+  dueDate: string;
+  category: string;
+  status: string;
+}
 
 const ContasAPagar = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
 
-  const mockPayables = [
+  const mockPayables: Payable[] = [
     {
       id: 1,
       description: 'Fornecedor de Bebidas - Pedido #123',
@@ -63,70 +70,152 @@ const ContasAPagar = () => {
     }
   ];
 
-  const filteredPayables = mockPayables.filter(payable => {
-    const matchesSearch = payable.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payable.supplier.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || payable.category === filterCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const pagination = usePagination(filteredPayables, {
-    pageSize: 10,
-    totalItems: filteredPayables.length
-  });
-
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Fornecedores': return 'bg-blue-100 text-blue-800';
-      case 'Utilidades': return 'bg-yellow-100 text-yellow-800';
-      case 'Pessoal': return 'bg-green-100 text-green-800';
-      case 'Manutenção': return 'bg-purple-100 text-purple-800';
-      case 'Equipamentos': return 'bg-indigo-100 text-indigo-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Fornecedores': return 'default';
+      case 'Utilidades': return 'secondary';
+      case 'Pessoal': return 'outline';
+      case 'Manutenção': return 'secondary';
+      case 'Equipamentos': return 'outline';
+      default: return 'secondary';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Pendente': return 'bg-orange-100 text-orange-800';
-      case 'Vencido': return 'bg-red-100 text-red-800';
-      case 'Pago': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Pendente': return 'secondary';
+      case 'Vencido': return 'destructive';
+      case 'Pago': return 'default';
+      default: return 'secondary';
     }
   };
 
-  const totalAmount = filteredPayables.reduce((sum, payable) => sum + payable.amount, 0);
-  const overdueAmount = filteredPayables
+  const totalAmount = mockPayables.reduce((sum, payable) => sum + payable.amount, 0);
+  const overdueAmount = mockPayables
     .filter(p => p.status === 'Vencido')
     .reduce((sum, payable) => sum + payable.amount, 0);
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/financeiro')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-purple-600" />
-                <h1 className="text-xl font-semibold">Contas a Pagar</h1>
-              </div>
+  const columns: BaseListColumn<Payable>[] = [
+    {
+      key: 'description',
+      label: 'Descrição',
+      render: (payable) => (
+        <div className="font-medium">{payable.description}</div>
+      )
+    },
+    {
+      key: 'supplier',
+      label: 'Fornecedor',
+      render: (payable) => payable.supplier
+    },
+    {
+      key: 'amount',
+      label: 'Valor',
+      render: (payable) => (
+        <span className="font-bold text-purple-600">
+          R$ {payable.amount.toFixed(2).replace('.', ',')}
+        </span>
+      )
+    },
+    {
+      key: 'dueDate',
+      label: 'Vencimento',
+      render: (payable) => new Date(payable.dueDate).toLocaleDateString('pt-BR')
+    },
+    {
+      key: 'category',
+      label: 'Categoria',
+      render: (payable) => (
+        <Badge variant={getCategoryColor(payable.category)}>
+          {payable.category}
+        </Badge>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (payable) => (
+        <Badge variant={getStatusColor(payable.status)}>
+          {payable.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Payable>[] = [
+    {
+      label: 'Pagar',
+      icon: <DollarSign className="h-4 w-4" />,
+      onClick: (payable) => console.log('Pagar', payable.id),
+      variant: 'outline'
+    },
+    {
+      label: 'Detalhes',
+      icon: <Calendar className="h-4 w-4" />,
+      onClick: (payable) => console.log('Detalhes', payable.id),
+      variant: 'outline'
+    }
+  ];
+
+  const renderPayableCard = (payable: Payable, actions: BaseListAction<Payable>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="font-medium">{payable.description}</div>
+              <div className="text-sm text-muted-foreground">{payable.supplier}</div>
             </div>
-            <Button onClick={() => navigate('/financeiro/novo-payable')} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nova Conta
-            </Button>
+            <Badge variant={getStatusColor(payable.status)}>
+              {payable.status}
+            </Badge>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Valor:</span>
+              <span className="font-bold text-purple-600">R$ {payable.amount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Vencimento:</span>
+              <span>{new Date(payable.dueDate).toLocaleDateString('pt-BR')}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Categoria:</span>
+              <Badge variant={getCategoryColor(payable.category)} className="text-xs">
+                {payable.category}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-3">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant={action.variant}
+                size="sm"
+                className="flex-1 gap-1"
+                onClick={() => action.onClick(payable)}
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
           </div>
         </div>
-      </header>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Contas a Pagar"
+        icon={<Calendar className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.financial}
+        backTo="/financeiro"
+        backLabel="Financeiro"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Resumo */}
@@ -167,7 +256,7 @@ const ContasAPagar = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total de Contas</p>
-                  <p className="text-2xl font-bold text-blue-600">{filteredPayables.length}</p>
+                  <p className="text-2xl font-bold text-blue-600">{mockPayables.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -181,114 +270,32 @@ const ContasAPagar = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Vencidas</p>
-                  <p className="text-2xl font-bold text-yellow-600">{filteredPayables.filter(p => p.status === 'Vencido').length}</p>
+                  <p className="text-2xl font-bold text-yellow-600">{mockPayables.filter(p => p.status === 'Vencido').length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Buscar por descrição ou fornecedor..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-48">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filtrar por categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as categorias</SelectItem>
-                  <SelectItem value="Fornecedores">Fornecedores</SelectItem>
-                  <SelectItem value="Utilidades">Utilidades</SelectItem>
-                  <SelectItem value="Pessoal">Pessoal</SelectItem>
-                  <SelectItem value="Manutenção">Manutenção</SelectItem>
-                  <SelectItem value="Equipamentos">Equipamentos</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="mb-6 flex justify-end">
+          <Button onClick={() => navigate('/financeiro/novo-payable')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Nova Conta
+          </Button>
+        </div>
 
-        {/* Tabela de Contas a Pagar */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contas a Pagar</CardTitle>
-            <CardDescription>
-              Todas as contas pendentes de pagamento
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Fornecedor</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Vencimento</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((payable) => (
-                  <TableRow key={payable.id}>
-                    <TableCell className="font-medium">{payable.description}</TableCell>
-                    <TableCell>{payable.supplier}</TableCell>
-                    <TableCell className="font-bold text-purple-600">
-                      R$ {payable.amount.toFixed(2).replace('.', ',')}
-                    </TableCell>
-                    <TableCell>{new Date(payable.dueDate).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(payable.category)}`}>
-                        {payable.category}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(payable.status)}`}>
-                        {payable.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          Pagar
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Detalhes
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[10, 20, 50]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={mockPayables}
+          columns={columns}
+          actions={actions}
+          title="Contas a Pagar"
+          description="Todas as contas pendentes de pagamento"
+          searchPlaceholder="Buscar por descrição ou fornecedor..."
+          searchFields={['description', 'supplier']}
+          getItemId={(payable) => payable.id}
+          pageSize={10}
+          renderCard={renderPayableCard}
+        />
       </main>
     </div>
   );

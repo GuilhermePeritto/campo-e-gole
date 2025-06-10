@@ -1,22 +1,28 @@
-import PaginationControls from '@/components/PaginationControls';
+
+import ModuleHeader from '@/components/ModuleHeader';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePagination } from '@/hooks/usePagination';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
-import { ArrowLeft, Calendar, DollarSign, Filter, Search, CreditCard } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Calendar, DollarSign, CreditCard } from 'lucide-react';
+
+interface Receivable {
+  id: number;
+  description: string;
+  amount: number;
+  dueDate: string;
+  module: string;
+  client: string;
+  status: string;
+}
 
 const ContasAReceber = () => {
-  const navigate = useNavigate();
   const { navigateToPayment } = useUniversalPayment();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterModule, setFilterModule] = useState('all');
 
-  const mockReceivables = [
+  const mockReceivables: Receivable[] = [
     {
       id: 1,
       description: 'Reserva Quadra A - João Silva',
@@ -64,18 +70,6 @@ const ContasAReceber = () => {
     }
   ];
 
-  const filteredReceivables = mockReceivables.filter(receivable => {
-    const matchesSearch = receivable.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         receivable.client.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesModule = filterModule === 'all' || receivable.module === filterModule;
-    return matchesSearch && matchesModule;
-  });
-
-  const pagination = usePagination(filteredReceivables, {
-    pageSize: 10,
-    totalItems: filteredReceivables.length
-  });
-
   const handleReceivePayment = (receivableId: number) => {
     navigateToPayment({
       type: 'financial_receivable',
@@ -85,47 +79,141 @@ const ContasAReceber = () => {
 
   const getModuleColor = (module: string) => {
     switch (module) {
-      case 'eventos': return 'bg-green-100 text-green-800';
-      case 'bar': return 'bg-blue-100 text-blue-800';
-      case 'escolinha': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'eventos': return 'default';
+      case 'bar': return 'secondary';
+      case 'escolinha': return 'outline';
+      default: return 'secondary';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Pendente': return 'bg-orange-100 text-orange-800';
-      case 'Vencido': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Pendente': return 'secondary';
+      case 'Vencido': return 'destructive';
+      default: return 'secondary';
     }
   };
 
-  const totalAmount = filteredReceivables.reduce((sum, receivable) => sum + receivable.amount, 0);
-  const overdueAmount = filteredReceivables
+  const totalAmount = mockReceivables.reduce((sum, receivable) => sum + receivable.amount, 0);
+  const overdueAmount = mockReceivables
     .filter(r => r.status === 'Vencido')
     .reduce((sum, receivable) => sum + receivable.amount, 0);
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/financeiro')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-orange-600" />
-              <h1 className="text-xl font-semibold">Contas a Receber</h1>
+  const columns: BaseListColumn<Receivable>[] = [
+    {
+      key: 'description',
+      label: 'Descrição',
+      render: (receivable) => (
+        <div className="font-medium">{receivable.description}</div>
+      )
+    },
+    {
+      key: 'client',
+      label: 'Cliente',
+      render: (receivable) => receivable.client
+    },
+    {
+      key: 'amount',
+      label: 'Valor',
+      render: (receivable) => (
+        <span className="font-bold text-orange-600">
+          R$ {receivable.amount.toFixed(2).replace('.', ',')}
+        </span>
+      )
+    },
+    {
+      key: 'dueDate',
+      label: 'Vencimento',
+      render: (receivable) => new Date(receivable.dueDate).toLocaleDateString('pt-BR')
+    },
+    {
+      key: 'module',
+      label: 'Módulo',
+      render: (receivable) => (
+        <Badge variant={getModuleColor(receivable.module)}>
+          {receivable.module === 'eventos' ? 'Eventos' : receivable.module === 'bar' ? 'Bar' : 'Escolinha'}
+        </Badge>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (receivable) => (
+        <Badge variant={getStatusColor(receivable.status)}>
+          {receivable.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Receivable>[] = [
+    {
+      label: 'Receber',
+      icon: <CreditCard className="h-4 w-4" />,
+      onClick: (receivable) => handleReceivePayment(receivable.id),
+      variant: 'outline'
+    }
+  ];
+
+  const renderReceivableCard = (receivable: Receivable, actions: BaseListAction<Receivable>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="font-medium">{receivable.description}</div>
+              <div className="text-sm text-muted-foreground">{receivable.client}</div>
+            </div>
+            <Badge variant={getStatusColor(receivable.status)}>
+              {receivable.status}
+            </Badge>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Valor:</span>
+              <span className="font-bold text-orange-600">R$ {receivable.amount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Vencimento:</span>
+              <span>{new Date(receivable.dueDate).toLocaleDateString('pt-BR')}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Módulo:</span>
+              <Badge variant={getModuleColor(receivable.module)} className="text-xs">
+                {receivable.module === 'eventos' ? 'Eventos' : receivable.module === 'bar' ? 'Bar' : 'Escolinha'}
+              </Badge>
             </div>
           </div>
+
+          <div className="pt-3">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant={action.variant}
+                size="sm"
+                className="w-full gap-2"
+                onClick={() => action.onClick(receivable)}
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
+          </div>
         </div>
-      </header>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Contas a Receber"
+        icon={<Calendar className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.financial}
+        backTo="/financeiro"
+        backLabel="Financeiro"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Resumo */}
@@ -166,7 +254,7 @@ const ContasAReceber = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total de Títulos</p>
-                  <p className="text-2xl font-bold text-blue-600">{filteredReceivables.length}</p>
+                  <p className="text-2xl font-bold text-blue-600">{mockReceivables.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -180,115 +268,25 @@ const ContasAReceber = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Vencidos</p>
-                  <p className="text-2xl font-bold text-yellow-600">{filteredReceivables.filter(r => r.status === 'Vencido').length}</p>
+                  <p className="text-2xl font-bold text-yellow-600">{mockReceivables.filter(r => r.status === 'Vencido').length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Buscar por descrição ou cliente..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={filterModule} onValueChange={setFilterModule}>
-                <SelectTrigger className="w-48">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filtrar por módulo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos os módulos</SelectItem>
-                  <SelectItem value="eventos">Eventos</SelectItem>
-                  <SelectItem value="bar">Bar</SelectItem>
-                  <SelectItem value="escolinha">Escolinha</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tabela de Contas a Receber */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Títulos a Receber</CardTitle>
-            <CardDescription>
-              Todas as contas pendentes de recebimento
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Vencimento</TableHead>
-                  <TableHead>Módulo</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((receivable) => (
-                  <TableRow key={receivable.id}>
-                    <TableCell className="font-medium">{receivable.description}</TableCell>
-                    <TableCell>{receivable.client}</TableCell>
-                    <TableCell className="font-bold text-orange-600">
-                      R$ {receivable.amount.toFixed(2).replace('.', ',')}
-                    </TableCell>
-                    <TableCell>{new Date(receivable.dueDate).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getModuleColor(receivable.module)}`}>
-                        {receivable.module === 'eventos' ? 'Eventos' : receivable.module === 'bar' ? 'Bar' : 'Escolinha'}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(receivable.status)}`}>
-                        {receivable.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleReceivePayment(receivable.id)}
-                          className="gap-2"
-                        >
-                          <CreditCard className="h-4 w-4" />
-                          Receber
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[10, 20, 50]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={mockReceivables}
+          columns={columns}
+          actions={actions}
+          title="Títulos a Receber"
+          description="Todas as contas pendentes de recebimento"
+          searchPlaceholder="Buscar por descrição ou cliente..."
+          searchFields={['description', 'client']}
+          getItemId={(receivable) => receivable.id}
+          pageSize={10}
+          renderCard={renderReceivableCard}
+        />
       </main>
     </div>
   );
