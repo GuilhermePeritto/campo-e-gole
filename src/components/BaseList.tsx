@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Search, Grid3X3, List } from 'lucide-react';
 import { usePagination } from '@/hooks/usePagination';
 import PaginationControls from '@/components/PaginationControls';
 
@@ -32,7 +33,10 @@ interface BaseListProps<T> {
   getItemId: (item: T) => string | number;
   pageSize?: number;
   className?: string;
+  renderCard?: (item: T, actions: BaseListAction<T>[]) => React.ReactNode;
 }
+
+type ViewType = 'list' | 'cards';
 
 function BaseList<T>({
   data,
@@ -44,9 +48,11 @@ function BaseList<T>({
   searchFields,
   getItemId,
   pageSize = 10,
-  className = ""
+  className = "",
+  renderCard
 }: BaseListProps<T>) {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [viewType, setViewType] = React.useState<ViewType>('list');
 
   const filteredData = React.useMemo(() => {
     if (!searchTerm) return data;
@@ -77,6 +83,27 @@ function BaseList<T>({
             className="pl-10"
           />
         </div>
+        <div className="flex gap-2">
+          <Button
+            variant={viewType === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewType('list')}
+            className="gap-2"
+          >
+            <List className="h-4 w-4" />
+            Lista
+          </Button>
+          <Button
+            variant={viewType === 'cards' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewType('cards')}
+            className="gap-2"
+            disabled={!renderCard}
+          >
+            <Grid3X3 className="h-4 w-4" />
+            Cards
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -87,45 +114,83 @@ function BaseList<T>({
           )}
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableHead key={column.key}>{column.label}</TableHead>
-                ))}
-                {actions.length > 0 && (
-                  <TableHead className="text-right">Ações</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedData.map((item) => (
-                <TableRow key={getItemId(item)}>
+          {viewType === 'list' ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {columns.map((column) => (
-                    <TableCell key={column.key}>
-                      {column.render(item)}
-                    </TableCell>
+                    <TableHead key={column.key}>{column.label}</TableHead>
                   ))}
                   {actions.length > 0 && (
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        {actions.map((action, index) => (
-                          <button
-                            key={index}
-                            onClick={() => action.onClick(item)}
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10"
-                            title={action.label}
-                          >
-                            {action.icon}
-                          </button>
-                        ))}
-                      </div>
-                    </TableCell>
+                    <TableHead className="text-right">Ações</TableHead>
                   )}
                 </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pagination.paginatedData.map((item) => (
+                  <TableRow key={getItemId(item)}>
+                    {columns.map((column) => (
+                      <TableCell key={column.key}>
+                        {column.render(item)}
+                      </TableCell>
+                    ))}
+                    {actions.length > 0 && (
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          {actions.map((action, index) => (
+                            <button
+                              key={index}
+                              onClick={() => action.onClick(item)}
+                              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10"
+                              title={action.label}
+                            >
+                              {action.icon}
+                            </button>
+                          ))}
+                        </div>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {pagination.paginatedData.map((item) => (
+                <div key={getItemId(item)}>
+                  {renderCard ? renderCard(item, actions) : (
+                    <Card className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="space-y-2">
+                          {columns.slice(0, 3).map((column) => (
+                            <div key={column.key}>
+                              <strong>{column.label}:</strong> {column.render(item)}
+                            </div>
+                          ))}
+                        </div>
+                        {actions.length > 0 && (
+                          <div className="flex gap-2 mt-4">
+                            {actions.map((action, index) => (
+                              <Button
+                                key={index}
+                                variant="outline"
+                                size="sm"
+                                onClick={() => action.onClick(item)}
+                                className="gap-1"
+                              >
+                                {action.icon}
+                                {action.label}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          )}
 
           <PaginationControls
             currentPage={pagination.currentPage}

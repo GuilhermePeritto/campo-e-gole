@@ -128,6 +128,61 @@ const Teachers = () => {
     }
   ];
 
+  const renderTeacherCard = (teacher: Teacher, actions: BaseListAction<Teacher>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">{teacher.name}</CardTitle>
+            <CardDescription>{teacher.email}</CardDescription>
+          </div>
+          <Badge variant={teacher.status === 'ativo' ? 'default' : 'secondary'}>
+            {teacher.status}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <GraduationCap className="h-4 w-4" />
+              <span>{teacher.specialization}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <span>📞 {teacher.phone}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">R$ {teacher.valuePerClass.toFixed(2)}</div>
+              <div className="text-xs text-muted-foreground">Valor/Aula</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-blue-600">{teacher.commissionPercentage}%</div>
+              <div className="text-xs text-muted-foreground">Comissão</div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-3">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="flex-1 gap-1"
+                onClick={() => action.onClick(teacher)}
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <header className="shadow-sm border-b">
@@ -167,6 +222,7 @@ const Teachers = () => {
           searchFields={['name', 'email', 'specialization']}
           getItemId={(teacher) => teacher.id}
           pageSize={10}
+          renderCard={renderTeacherCard}
         />
       </main>
     </div>
