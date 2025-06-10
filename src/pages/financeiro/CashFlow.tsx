@@ -1,33 +1,123 @@
 
-import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { usePagination } from '@/hooks/usePagination';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+
+interface CashFlowItem {
+  id: number;
+  date: string;
+  description: string;
+  type: string;
+  amount: number;
+}
 
 const FluxoDeCaixa = () => {
   const navigate = useNavigate();
 
-  const mockFluxoDeCaixa = [
-    { date: '2024-06-01', description: 'Saldo Inicial', type: 'inicial', amount: 10000.00 },
-    { date: '2024-06-02', description: 'Reserva Quadra A', type: 'entrada', amount: 120.00 },
-    { date: '2024-06-02', description: 'Conta de Luz', type: 'saida', amount: -450.00 },
-    { date: '2024-06-03', description: 'Venda Bar', type: 'entrada', amount: 85.50 },
-    { date: '2024-06-04', description: 'Mensalidade Aluno', type: 'entrada', amount: 150.00 },
-    { date: '2024-06-05', description: 'Material de Limpeza', type: 'saida', amount: -80.00 },
-    { date: '2024-06-06', description: 'Reserva Quadra B', type: 'entrada', amount: 200.00 },
-    { date: '2024-06-07', description: 'Fornecedor Bebidas', type: 'saida', amount: -300.00 },
-    { date: '2024-06-08', description: 'Aula Particular', type: 'entrada', amount: 100.00 },
-    { date: '2024-06-09', description: 'Internet', type: 'saida', amount: -150.00 }
+  const mockFluxoDeCaixa: CashFlowItem[] = [
+    { id: 1, date: '2024-06-01', description: 'Saldo Inicial', type: 'inicial', amount: 10000.00 },
+    { id: 2, date: '2024-06-02', description: 'Reserva Quadra A', type: 'entrada', amount: 120.00 },
+    { id: 3, date: '2024-06-02', description: 'Conta de Luz', type: 'saida', amount: -450.00 },
+    { id: 4, date: '2024-06-03', description: 'Venda Bar', type: 'entrada', amount: 85.50 },
+    { id: 5, date: '2024-06-04', description: 'Mensalidade Aluno', type: 'entrada', amount: 150.00 },
+    { id: 6, date: '2024-06-05', description: 'Material de Limpeza', type: 'saida', amount: -80.00 },
+    { id: 7, date: '2024-06-06', description: 'Reserva Quadra B', type: 'entrada', amount: 200.00 },
+    { id: 8, date: '2024-06-07', description: 'Fornecedor Bebidas', type: 'saida', amount: -300.00 },
+    { id: 9, date: '2024-06-08', description: 'Aula Particular', type: 'entrada', amount: 100.00 },
+    { id: 10, date: '2024-06-09', description: 'Internet', type: 'saida', amount: -150.00 }
   ];
 
-  const pagination = usePagination(mockFluxoDeCaixa, {
-    pageSize: 6,
-    totalItems: mockFluxoDeCaixa.length
-  });
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'entrada': return 'default';
+      case 'saida': return 'destructive';
+      case 'inicial': return 'secondary';
+      default: return 'outline';
+    }
+  };
 
-  let runningBalance = 0;
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'entrada': return <TrendingUp className="h-4 w-4" />;
+      case 'saida': return <TrendingDown className="h-4 w-4" />;
+      case 'inicial': return <DollarSign className="h-4 w-4" />;
+      default: return <DollarSign className="h-4 w-4" />;
+    }
+  };
+
+  const columns: BaseListColumn<CashFlowItem>[] = [
+    {
+      key: 'date',
+      label: 'Data',
+      render: (item) => new Date(item.date).toLocaleDateString('pt-BR')
+    },
+    {
+      key: 'description',
+      label: 'Descrição',
+      render: (item) => (
+        <div className="flex items-center gap-2">
+          {getTypeIcon(item.type)}
+          <span>{item.description}</span>
+        </div>
+      )
+    },
+    {
+      key: 'type',
+      label: 'Tipo',
+      render: (item) => (
+        <Badge variant={getTypeColor(item.type)}>
+          {item.type}
+        </Badge>
+      )
+    },
+    {
+      key: 'amount',
+      label: 'Valor',
+      render: (item) => (
+        <span className={`font-bold ${
+          item.amount > 0 ? 'text-green-600' : 
+          item.amount < 0 ? 'text-red-600' : 'text-blue-600'
+        }`}>
+          {item.amount > 0 ? '+' : ''}R$ {Math.abs(item.amount).toFixed(2).replace('.', ',')}
+        </span>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<CashFlowItem>[] = []; // Sem ações para fluxo de caixa
+
+  const renderCashFlowCard = (item: CashFlowItem, actions: BaseListAction<CashFlowItem>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg flex items-center gap-2">
+              {getTypeIcon(item.type)}
+              {item.description}
+            </CardTitle>
+            <CardDescription>{new Date(item.date).toLocaleDateString('pt-BR')}</CardDescription>
+          </div>
+          <Badge variant={getTypeColor(item.type)}>
+            {item.type}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center">
+          <div className={`text-2xl font-bold ${
+            item.amount > 0 ? 'text-green-600' : 
+            item.amount < 0 ? 'text-red-600' : 'text-blue-600'
+          }`}>
+            {item.amount > 0 ? '+' : ''}R$ {Math.abs(item.amount).toFixed(2)}
+          </div>
+          <div className="text-xs text-muted-foreground">Valor da Movimentação</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,84 +187,18 @@ const FluxoDeCaixa = () => {
           </Card>
         </div>
 
-        {/* Fluxo de Caixa */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Movimentação Financeira</CardTitle>
-            <CardDescription>
-              Histórico detalhado de entradas e saídas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {pagination.paginatedData.map((item, index) => {
-                // Reset running balance for first item when paginated
-                if (index === 0 && pagination.currentPage === 1) {
-                  runningBalance = 0;
-                }
-                
-                if (item.type === 'inicial') {
-                  runningBalance = item.amount;
-                } else {
-                  runningBalance += item.amount;
-                }
-
-                return (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <div className={`p-2 rounded-lg ${
-                        item.type === 'entrada' ? 'bg-green-100' : 
-                        item.type === 'saida' ? 'bg-red-100' : 'bg-blue-100'
-                      }`}>
-                        {item.type === 'entrada' ? (
-                          <TrendingUp className={`h-4 w-4 ${
-                            item.type === 'entrada' ? 'text-green-600' : 'text-blue-600'
-                          }`} />
-                        ) : item.type === 'saida' ? (
-                          <TrendingDown className="h-4 w-4 text-red-600" />
-                        ) : (
-                          <DollarSign className="h-4 w-4 text-blue-600" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium">{item.description}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(item.date).toLocaleDateString('pt-BR')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className={`font-bold ${
-                        item.amount > 0 ? 'text-green-600' : 
-                        item.amount < 0 ? 'text-red-600' : 'text-blue-600'
-                      }`}>
-                        {item.amount > 0 ? '+' : ''}R$ {Math.abs(item.amount).toFixed(2).replace('.', ',')}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Saldo: R$ {runningBalance.toFixed(2).replace('.', ',')}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Paginação */}
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[6, 10, 15]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={mockFluxoDeCaixa}
+          columns={columns}
+          actions={actions}
+          title="Movimentação Financeira"
+          description="Histórico detalhado de entradas e saídas"
+          searchPlaceholder="Buscar por descrição..."
+          searchFields={['description']}
+          getItemId={(item) => item.id}
+          pageSize={6}
+          renderCard={renderCashFlowCard}
+        />
       </main>
     </div>
   );

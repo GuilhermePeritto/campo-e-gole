@@ -1,20 +1,26 @@
-import PaginationControls from '@/components/PaginationControls';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
-import { CreditCard, Eye, Plus, Search } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { CreditCard, Eye, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+
+interface Comanda {
+  id: number;
+  customer: string;
+  total: number;
+  openTime: string;
+  status: string;
+}
 
 const Comandas = () => {
   const navigate = useNavigate();
   const { navigateToPayment } = useUniversalPayment();
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const comandas = [
+  const comandas: Comanda[] = [
     { id: 1, customer: 'Mesa 1', total: 45.50, openTime: '10:30', status: 'aberta' },
     { id: 2, customer: 'João Silva', total: 22.00, openTime: '11:00', status: 'aberta' },
     { id: 3, customer: 'Mesa 5', total: 120.00, openTime: '12:15', status: 'fechada' },
@@ -27,15 +33,6 @@ const Comandas = () => {
     { id: 10, customer: 'Pedro Santos', total: 41.10, openTime: '19:30', status: 'aberta' },
   ];
 
-  const filteredComandas = comandas.filter(comanda =>
-    comanda.customer.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const pagination = usePagination(filteredComandas, {
-    pageSize: 8,
-    totalItems: filteredComandas.length
-  });
-
   const handleCloseComanda = (comandaId: number) => {
     navigateToPayment({
       type: 'bar_comanda',
@@ -45,14 +42,111 @@ const Comandas = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'aberta':
-        return 'bg-green-200 text-green-800';
-      case 'fechada':
-        return 'bg-red-200 text-red-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
+      case 'aberta': return 'default';
+      case 'fechada': return 'secondary';
+      default: return 'outline';
     }
   };
+
+  const columns: BaseListColumn<Comanda>[] = [
+    {
+      key: 'id',
+      label: 'Comanda',
+      render: (comanda) => `#${comanda.id}`
+    },
+    {
+      key: 'customer',
+      label: 'Mesa/Cliente',
+      render: (comanda) => comanda.customer
+    },
+    {
+      key: 'total',
+      label: 'Valor',
+      render: (comanda) => (
+        <span className="font-medium">R$ {comanda.total.toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'openTime',
+      label: 'Abertura',
+      render: (comanda) => comanda.openTime
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (comanda) => (
+        <Badge variant={getStatusColor(comanda.status)}>
+          {comanda.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Comanda>[] = [
+    {
+      label: 'Visualizar',
+      icon: <Eye className="h-4 w-4" />,
+      onClick: (comanda) => navigate(`/bar/comandas/${comanda.id}`)
+    },
+    {
+      label: 'Fechar',
+      icon: <CreditCard className="h-4 w-4" />,
+      onClick: (comanda) => handleCloseComanda(comanda.id),
+      variant: 'default'
+    }
+  ];
+
+  const renderComandaCard = (comanda: Comanda, actions: BaseListAction<Comanda>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">#{comanda.id}</CardTitle>
+            <CardDescription>{comanda.customer}</CardDescription>
+          </div>
+          <Badge variant={getStatusColor(comanda.status)}>
+            {comanda.status}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">R$ {comanda.total.toFixed(2)}</div>
+              <div className="text-xs text-muted-foreground">Valor Total</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold">{comanda.openTime}</div>
+              <div className="text-xs text-muted-foreground">Abertura</div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 gap-1"
+              onClick={() => navigate(`/bar/comandas/${comanda.id}`)}
+            >
+              <Eye className="h-4 w-4" />
+              Ver
+            </Button>
+            {comanda.status === 'aberta' && (
+              <Button
+                size="sm"
+                className="flex-1 gap-1"
+                onClick={() => handleCloseComanda(comanda.id)}
+              >
+                <CreditCard className="h-4 w-4" />
+                Fechar
+              </Button>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   const totalValue = comandas.reduce((sum, comanda) => sum + comanda.total, 0);
   const openCount = comandas.filter(comanda => comanda.status === 'aberta').length;
@@ -75,6 +169,13 @@ const Comandas = () => {
               </Button>
               <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Comandas</h1>
             </div>
+            <Button 
+              onClick={() => navigate('/bar/comandas/novo')}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Nova Comanda
+            </Button>
           </div>
         </div>
       </header>
@@ -125,104 +226,18 @@ const Comandas = () => {
           </Card>
         </div>
 
-        {/* Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Buscar por mesa ou cliente..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border"
-            />
-          </div>
-        </div>
-
-        {/* Comandas Table */}
-        <Card className="border">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="text-gray-600 dark:text-gray-300">Comandas Ativas</CardTitle>
-                <CardDescription>
-                  Gerencie as comandas em andamento
-                </CardDescription>
-              </div>
-              <Button 
-                onClick={() => navigate('/bar/comandas/novo')}
-                className="bg-blue-600 text-white hover:bg-blue-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Comanda
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Comanda</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Mesa/Cliente</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Valor</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Abertura</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((comanda) => (
-                  <TableRow key={comanda.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">#{comanda.id}</TableCell>
-                    <TableCell className="text-gray-600">{comanda.customer}</TableCell>
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">R$ {comanda.total.toFixed(2)}</TableCell>
-                    <TableCell className="text-gray-600">{comanda.openTime}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(comanda.status)}`}>
-                        {comanda.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => navigate(`/bar/comandas/${comanda.id}`)}
-                          className="text-gray-600 dark:text-gray-300"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {comanda.status === 'aberta' && (
-                          <Button
-                            size="sm"
-                            className="bg-green-600 text-white hover:bg-green-700"
-                            onClick={() => handleCloseComanda(comanda.id)}
-                          >
-                            <CreditCard className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {/* Paginação */}
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[5, 8, 12]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={comandas}
+          columns={columns}
+          actions={actions}
+          title="Comandas Ativas"
+          description="Gerencie as comandas em andamento"
+          searchPlaceholder="Buscar por mesa ou cliente..."
+          searchFields={['customer']}
+          getItemId={(comanda) => comanda.id}
+          pageSize={8}
+          renderCard={renderComandaCard}
+        />
       </main>
     </div>
   );

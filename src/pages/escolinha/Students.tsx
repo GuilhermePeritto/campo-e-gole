@@ -1,19 +1,26 @@
 
-import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Plus, Search, Users2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Plus, Users2, Edit, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+
+interface Student {
+  id: number;
+  name: string;
+  age: number;
+  class: string;
+  phone: string;
+  status: string;
+  monthlyFee: number;
+}
 
 const Students = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const students = [
+  const students: Student[] = [
     { 
       id: 1, 
       name: 'Pedro Silva', 
@@ -52,26 +59,112 @@ const Students = () => {
     }
   ];
 
-  const filteredStudents = students.filter(student =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.class.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const pagination = usePagination(filteredStudents, {
-    pageSize: 5,
-    totalItems: filteredStudents.length
-  });
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'em dia':
-        return 'bg-green-200 text-green-800';
-      case 'atrasado':
-        return 'bg-red-200 text-red-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
+      case 'em dia': return 'default';
+      case 'atrasado': return 'destructive';
+      default: return 'secondary';
     }
   };
+
+  const columns: BaseListColumn<Student>[] = [
+    {
+      key: 'name',
+      label: 'Nome',
+      render: (student) => (
+        <div>
+          <div className="font-medium">{student.name}</div>
+          <div className="text-sm text-muted-foreground">{student.age} anos</div>
+        </div>
+      )
+    },
+    {
+      key: 'class',
+      label: 'Turma',
+      render: (student) => student.class
+    },
+    {
+      key: 'phone',
+      label: 'Telefone',
+      render: (student) => student.phone
+    },
+    {
+      key: 'monthlyFee',
+      label: 'Mensalidade',
+      render: (student) => (
+        <span className="font-medium">R$ {student.monthlyFee}</span>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (student) => (
+        <Badge variant={getStatusColor(student.status)}>
+          {student.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Student>[] = [
+    {
+      label: 'Histórico',
+      icon: <Eye className="h-4 w-4" />,
+      onClick: (student) => navigate(`/escolinha/alunos/${student.id}/historico`)
+    },
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (student) => navigate(`/escolinha/alunos/${student.id}/editar`)
+    }
+  ];
+
+  const renderStudentCard = (student: Student, actions: BaseListAction<Student>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">{student.name}</CardTitle>
+            <CardDescription>{student.age} anos • {student.class}</CardDescription>
+          </div>
+          <Badge variant={getStatusColor(student.status)}>
+            {student.status}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <span>📞 {student.phone}</span>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t">
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">R$ {student.monthlyFee}</div>
+              <div className="text-xs text-muted-foreground">Mensalidade</div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-3">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="flex-1 gap-1"
+                onClick={() => action.onClick(student)}
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
@@ -92,106 +185,32 @@ const Students = () => {
               <Users2 className="h-5 w-5 text-green-600" />
               <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Gerenciar Alunos</h1>
             </div>
+            <div className="ml-auto">
+              <Button
+                onClick={() => navigate('/escolinha/alunos/novo')}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Novo Aluno
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Actions and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Buscar por nome ou turma..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border"
-            />
-          </div>
-          <Button
-            onClick={() => navigate('/escolinha/alunos/novo')}
-            className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800 gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Novo Aluno
-          </Button>
-        </div>
-
-        {/* Students Table */}
-        <Card className="border">
-          <CardHeader>
-            <CardTitle className="text-gray-600 dark:text-gray-300">Lista de Alunos</CardTitle>
-            <CardDescription>
-              Gerencie todos os alunos da escolinha
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Nome</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Idade</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Turma</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Telefone</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Mensalidade</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((student) => (
-                  <TableRow key={student.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">{student.name}</TableCell>
-                    <TableCell className="text-gray-600">{student.age} anos</TableCell>
-                    <TableCell className="text-gray-600">{student.class}</TableCell>
-                    <TableCell className="text-gray-600">{student.phone}</TableCell>
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">R$ {student.monthlyFee}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(student.status)}`}>
-                        {student.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
-                          onClick={() => navigate(`/escolinha/alunos/${student.id}/editar`)}
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
-                          onClick={() => navigate(`/escolinha/alunos/${student.id}/history`)}
-                        >
-                          Histórico
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {/* Paginação */}
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[5, 10, 15]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={students}
+          columns={columns}
+          actions={actions}
+          title="Lista de Alunos"
+          description="Gerencie todos os alunos da escolinha"
+          searchPlaceholder="Buscar por nome ou turma..."
+          searchFields={['name', 'class']}
+          getItemId={(student) => student.id}
+          pageSize={5}
+          renderCard={renderStudentCard}
+        />
       </main>
     </div>
   );

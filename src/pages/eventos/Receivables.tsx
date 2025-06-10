@@ -1,18 +1,26 @@
-import PaginationControls from '@/components/PaginationControls';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, CreditCard, Plus, Search } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, CreditCard, Plus, Edit, DollarSign } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+
+interface Receivable {
+  id: number;
+  client: string;
+  amount: number;
+  dueDate: string;
+  status: string;
+  description: string;
+  createdAt: string;
+}
 
 const Receivables = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const receivables = [
+  const receivables: Receivable[] = [
     { 
       id: 1, 
       client: 'João Silva', 
@@ -87,28 +95,107 @@ const Receivables = () => {
     }
   ];
 
-  const filteredReceivables = receivables.filter(receivable =>
-    receivable.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    receivable.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const pagination = usePagination(filteredReceivables, {
-    pageSize: 5,
-    totalItems: filteredReceivables.length
-  });
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pendente':
-        return 'bg-yellow-200 text-yellow-800';
-      case 'vencido':
-        return 'bg-red-200 text-red-800';
-      case 'pago':
-        return 'bg-green-200 text-green-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
+      case 'pendente': return 'secondary';
+      case 'vencido': return 'destructive';
+      case 'pago': return 'default';
+      default: return 'outline';
     }
   };
+
+  const columns: BaseListColumn<Receivable>[] = [
+    {
+      key: 'client',
+      label: 'Cliente',
+      render: (receivable) => (
+        <div>
+          <div className="font-medium">{receivable.client}</div>
+          <div className="text-sm text-muted-foreground">{receivable.description}</div>
+        </div>
+      )
+    },
+    {
+      key: 'amount',
+      label: 'Valor',
+      render: (receivable) => (
+        <span className="font-medium">R$ {receivable.amount.toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'dueDate',
+      label: 'Vencimento',
+      render: (receivable) => receivable.dueDate
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (receivable) => (
+        <Badge variant={getStatusColor(receivable.status)}>
+          {receivable.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Receivable>[] = [
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (receivable) => navigate(`/eventos/contas-a-receber/${receivable.id}/editar`)
+    },
+    {
+      label: 'Receber',
+      icon: <DollarSign className="h-4 w-4" />,
+      onClick: (receivable) => navigate(`/eventos/contas-a-receber/${receivable.id}/receber`),
+      variant: 'default'
+    }
+  ];
+
+  const renderReceivableCard = (receivable: Receivable, actions: BaseListAction<Receivable>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">{receivable.client}</CardTitle>
+            <CardDescription>{receivable.description}</CardDescription>
+          </div>
+          <Badge variant={getStatusColor(receivable.status)}>
+            {receivable.status}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">R$ {receivable.amount.toFixed(2)}</div>
+              <div className="text-xs text-muted-foreground">Valor</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold">{receivable.dueDate}</div>
+              <div className="text-xs text-muted-foreground">Vencimento</div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-3">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant={action.variant || "outline"}
+                size="sm"
+                className="flex-1 gap-1"
+                onClick={() => action.onClick(receivable)}
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   const totalPendente = receivables
     .filter(r => r.status === 'pendente')
@@ -136,6 +223,15 @@ const Receivables = () => {
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-green-600" />
               <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Contas a Receber</h1>
+            </div>
+            <div className="ml-auto">
+              <Button
+                onClick={() => navigate('/eventos/contas-a-receber/novo')}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Nova Conta
+              </Button>
             </div>
           </div>
         </div>
@@ -187,100 +283,18 @@ const Receivables = () => {
           </Card>
         </div>
 
-        {/* Actions and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Buscar por cliente ou descrição..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border"
-            />
-          </div>
-          <Button
-            onClick={() => navigate('/eventos/contas-a-receber/novo')}
-            className="bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800 gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Nova Conta
-          </Button>
-        </div>
-
-        {/* Receivables Table */}
-        <Card className="border">
-          <CardHeader>
-            <CardTitle className="text-gray-600 dark:text-gray-300">Lista de Contas a Receber</CardTitle>
-            <CardDescription>
-              Gerencie todas as contas pendentes e vencidas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Cliente</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Descrição</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Valor</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Vencimento</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((receivable) => (
-                  <TableRow key={receivable.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">{receivable.client}</TableCell>
-                    <TableCell className="text-gray-600">{receivable.description}</TableCell>
-                    <TableCell className="font-medium text-gray-600 dark:text-gray-300">R$ {receivable.amount.toFixed(2)}</TableCell>
-                    <TableCell className="text-gray-600">{receivable.dueDate}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-lg ${getStatusColor(receivable.status)}`}>
-                        {receivable.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border text-gray-600 dark:text-gray-300 hover:bg-black hover:text-gray-600 dark:text-gray-300"
-                          onClick={() => navigate(`/eventos/contas-a-receber/${receivable.id}/editar`)}
-                        >
-                          Editar
-                        </Button>
-                        {receivable.status !== 'pago' && (
-                          <Button
-                            size="sm"
-                            className="bg-green-600 text-gray-600 dark:text-gray-300 hover:bg-green-700"
-                            onClick={() => navigate(`/eventos/contas-a-receber/${receivable.id}/receber`)}
-                          >
-                            Receber
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {/* Paginação */}
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[5, 10, 20]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={receivables}
+          columns={columns}
+          actions={actions}
+          title="Lista de Contas a Receber"
+          description="Gerencie todas as contas pendentes e vencidas"
+          searchPlaceholder="Buscar por cliente ou descrição..."
+          searchFields={['client', 'description']}
+          getItemId={(receivable) => receivable.id}
+          pageSize={5}
+          renderCard={renderReceivableCard}
+        />
       </main>
     </div>
   );

@@ -1,20 +1,27 @@
-import PaginationControls from '@/components/PaginationControls';
-import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
-import ValueSkeleton from '@/components/ValueSkeleton';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
+import { Badge } from '@/components/ui/badge';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { ArrowLeft, MapPin, Plus, Search } from 'lucide-react';
+import { MapPin, Plus, Edit, Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
+import ValueSkeleton from '@/components/ValueSkeleton';
+
+interface Venue {
+  id: number;
+  name: string;
+  type: string;
+  capacity: string;
+  hourlyRate: number;
+  status: string;
+}
 
 const Locais = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +30,7 @@ const Locais = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const mockVenues = [
+  const mockVenues: Venue[] = [
     {
       id: 1,
       name: 'Quadra Principal',
@@ -66,26 +73,115 @@ const Locais = () => {
     }
   ];
 
-  const filteredVenues = mockVenues.filter(venue =>
-    venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    venue.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const pagination = usePagination(filteredVenues, {
-    pageSize: 10,
-    totalItems: filteredVenues.length
-  });
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Disponível': return 'bg-green-100 text-green-800';
-      case 'Ocupado': return 'bg-red-100 text-red-800';
-      case 'Manutenção': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Disponível': return 'default';
+      case 'Ocupado': return 'destructive';
+      case 'Manutenção': return 'secondary';
+      default: return 'outline';
     }
   };
 
-  const totalRevenue = filteredVenues.reduce((sum, venue) => sum + venue.hourlyRate, 0);
+  const columns: BaseListColumn<Venue>[] = [
+    {
+      key: 'name',
+      label: 'Nome',
+      render: (venue) => (
+        <div>
+          <div className="font-medium">{venue.name}</div>
+          <div className="text-sm text-muted-foreground">{venue.type}</div>
+        </div>
+      )
+    },
+    {
+      key: 'capacity',
+      label: 'Capacidade',
+      render: (venue) => venue.capacity
+    },
+    {
+      key: 'hourlyRate',
+      label: 'Valor/Hora',
+      render: (venue) => (
+        <span className="font-bold text-green-600">
+          {isLoading ? <ValueSkeleton /> : `R$ ${venue.hourlyRate.toFixed(2).replace('.', ',')}`}
+        </span>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (venue) => (
+        <Badge variant={getStatusColor(venue.status)}>
+          {venue.status}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Venue>[] = [
+    {
+      label: 'Ver detalhes',
+      icon: <Eye className="h-4 w-4" />,
+      onClick: (venue) => console.log('Ver detalhes', venue)
+    },
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (venue) => navigate(`/eventos/locais/editar/${venue.id}`)
+    }
+  ];
+
+  const renderVenueCard = (venue: Venue, actions: BaseListAction<Venue>[]) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">{venue.name}</CardTitle>
+            <CardDescription>{venue.type}</CardDescription>
+          </div>
+          <Badge variant={getStatusColor(venue.status)}>
+            {venue.status}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <MapPin className="h-4 w-4" />
+              <span>{venue.capacity}</span>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t">
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">
+                {isLoading ? <ValueSkeleton /> : `R$ ${venue.hourlyRate.toFixed(2)}`}
+              </div>
+              <div className="text-xs text-muted-foreground">Valor/Hora</div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-3">
+            {actions.map((action, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="flex-1 gap-1"
+                onClick={() => action.onClick(venue)}
+              >
+                {action.icon}
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const totalRevenue = mockVenues.reduce((sum, venue) => sum + venue.hourlyRate, 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -124,7 +220,7 @@ const Locais = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Total de Locais</p>
-                      <p className="text-2xl font-bold text-blue-600">{filteredVenues.length}</p>
+                      <p className="text-2xl font-bold text-blue-600">{mockVenues.length}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -139,7 +235,7 @@ const Locais = () => {
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Disponíveis</p>
                       <p className="text-2xl font-bold text-green-600">
-                        {filteredVenues.filter(v => v.status === 'Disponível').length}
+                        {mockVenues.filter(v => v.status === 'Disponível').length}
                       </p>
                     </div>
                   </div>
@@ -155,7 +251,7 @@ const Locais = () => {
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Ocupados</p>
                       <p className="text-2xl font-bold text-red-600">
-                        {filteredVenues.filter(v => v.status === 'Ocupado').length}
+                        {mockVenues.filter(v => v.status === 'Ocupado').length}
                       </p>
                     </div>
                   </div>
@@ -181,89 +277,18 @@ const Locais = () => {
           )}
         </div>
 
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Buscar locais..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tabela de Locais */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Locais</CardTitle>
-            <CardDescription>
-              Gerenciar todos os locais disponíveis para reserva
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Capacidade</TableHead>
-                  <TableHead>Valor/Hora</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pagination.paginatedData.map((venue) => (
-                  <TableRow key={venue.id}>
-                    <TableCell className="font-medium">{venue.name}</TableCell>
-                    <TableCell>{venue.type}</TableCell>
-                    <TableCell>{venue.capacity}</TableCell>
-                    <TableCell className="font-bold text-green-600">
-                      {isLoading ? <ValueSkeleton /> : `R$ ${venue.hourlyRate.toFixed(2).replace('.', ',')}`}
-                    </TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(venue.status)}`}>
-                        {venue.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate(`/eventos/locais/editar/${venue.id}`)}
-                        >
-                          Editar
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Detalhes
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[5, 10, 20]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={mockVenues}
+          columns={columns}
+          actions={actions}
+          title="Lista de Locais"
+          description="Gerenciar todos os locais disponíveis para reserva"
+          searchPlaceholder="Buscar locais por nome ou tipo..."
+          searchFields={['name', 'type']}
+          getItemId={(venue) => venue.id}
+          pageSize={10}
+          renderCard={renderVenueCard}
+        />
       </main>
     </div>
   );

@@ -1,76 +1,166 @@
 
-import PaginationControls from '@/components/PaginationControls';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from '@/hooks/use-toast';
-import { usePagination } from '@/hooks/usePagination';
-import { ArrowLeft, Edit, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Package, Plus, Edit, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 
 interface Product {
   id: number;
   name: string;
   category: string;
   price: number;
-  supplier: string;
-  barcode?: string;
+  cost: number;
+  description: string;
   active: boolean;
 }
 
 const Products = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
 
   const mockProducts: Product[] = [
-    { id: 1, name: 'Cerveja Skol 350ml', category: 'Bebidas', price: 4.50, supplier: 'Distribuidora ABC', barcode: '7891234567890', active: true },
-    { id: 2, name: 'Refrigerante Coca 600ml', category: 'Bebidas', price: 6.00, supplier: 'Coca-Cola', barcode: '7891234567891', active: true },
-    { id: 3, name: 'Água Mineral 500ml', category: 'Bebidas', price: 2.50, supplier: 'Águas do Brasil', barcode: '7891234567892', active: true },
-    { id: 4, name: 'Salgadinho Doritos', category: 'Lanches', price: 8.00, supplier: 'Elma Chips', barcode: '7891234567893', active: true },
-    { id: 5, name: 'Sanduíche Natural', category: 'Lanches', price: 12.00, supplier: 'Padaria Local', active: true },
-    { id: 6, name: 'Cerveja Heineken 350ml', category: 'Bebidas', price: 6.50, supplier: 'Distribuidora ABC', barcode: '7891234567894', active: false }
+    { id: 1, name: 'Cerveja Skol 350ml', category: 'Bebidas', price: 4.50, cost: 2.50, description: 'Cerveja Pilsen', active: true },
+    { id: 2, name: 'Refrigerante Coca 600ml', category: 'Bebidas', price: 6.00, cost: 3.00, description: 'Refrigerante de Cola', active: true },
+    { id: 3, name: 'Água Mineral 500ml', category: 'Bebidas', price: 2.50, cost: 1.00, description: 'Água sem gás', active: true },
+    { id: 4, name: 'Salgadinho Doritos', category: 'Lanches', price: 8.00, cost: 4.00, description: 'Salgadinho de milho', active: true },
+    { id: 5, name: 'Sanduíche Natural', category: 'Lanches', price: 12.00, cost: 6.00, description: 'Sanduíche de frango', active: false },
+    { id: 6, name: 'Cerveja Heineken 350ml', category: 'Bebidas', price: 6.50, cost: 3.50, description: 'Cerveja Premium', active: true }
   ];
 
-  const categories = ['all', ...Array.from(new Set(mockProducts.map(p => p.category)))];
-
-  const filteredProducts = mockProducts.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.supplier.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && product.active) ||
-                         (statusFilter === 'inactive' && !product.active);
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
-
-  const pagination = usePagination(filteredProducts, {
-    pageSize: 8,
-    totalItems: filteredProducts.length
-  });
-
-  const toggleProductStatus = (productId: number) => {
-    toast({
-      title: "Status atualizado",
-      description: "Status do produto foi alterado.",
-    });
+  const getStatusColor = (active: boolean) => {
+    return active ? 'default' : 'secondary';
   };
 
-  const deleteProduct = (productId: number) => {
-    toast({
-      title: "Produto removido",
-      description: "Produto foi removido do sistema.",
-      variant: "destructive"
-    });
+  const columns: BaseListColumn<Product>[] = [
+    {
+      key: 'name',
+      label: 'Produto',
+      render: (product) => (
+        <div>
+          <div className="font-medium">{product.name}</div>
+          <div className="text-sm text-muted-foreground">{product.description}</div>
+        </div>
+      )
+    },
+    {
+      key: 'category',
+      label: 'Categoria',
+      render: (product) => (
+        <Badge variant="outline">{product.category}</Badge>
+      )
+    },
+    {
+      key: 'price',
+      label: 'Preço',
+      render: (product) => (
+        <span className="font-medium text-green-600">R$ {product.price.toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'cost',
+      label: 'Custo',
+      render: (product) => `R$ ${product.cost.toFixed(2)}`
+    },
+    {
+      key: 'margin',
+      label: 'Margem',
+      render: (product) => {
+        const margin = ((product.price - product.cost) / product.price * 100);
+        return `${margin.toFixed(1)}%`;
+      }
+    },
+    {
+      key: 'active',
+      label: 'Status',
+      render: (product) => (
+        <Badge variant={getStatusColor(product.active)}>
+          {product.active ? 'Ativo' : 'Inativo'}
+        </Badge>
+      )
+    }
+  ];
+
+  const actions: BaseListAction<Product>[] = [
+    {
+      label: 'Ver detalhes',
+      icon: <Eye className="h-4 w-4" />,
+      onClick: (product) => console.log('Ver produto', product)
+    },
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (product) => navigate(`/bar/produtos/${product.id}/editar`)
+    }
+  ];
+
+  const renderProductCard = (product: Product, actions: BaseListAction<Product>[]) => {
+    const margin = ((product.price - product.cost) / product.price * 100);
+    return (
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="text-lg">{product.name}</CardTitle>
+              <CardDescription>{product.description}</CardDescription>
+            </div>
+            <Badge variant={getStatusColor(product.active)}>
+              {product.active ? 'Ativo' : 'Inativo'}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">{product.category}</Badge>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 pt-3 border-t">
+              <div className="text-center">
+                <div className="text-lg font-bold text-green-600">R$ {product.price.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Preço</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-red-600">R$ {product.cost.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Custo</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-blue-600">{margin.toFixed(1)}%</div>
+                <div className="text-xs text-muted-foreground">Margem</div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-3">
+              {actions.map((action, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-1"
+                  onClick={() => action.onClick(product)}
+                >
+                  {action.icon}
+                  {action.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
+
+  const activeProducts = mockProducts.filter(p => p.active).length;
+  const totalValue = mockProducts.reduce((sum, product) => sum + product.price, 0);
+  const averageMargin = mockProducts.reduce((sum, product) => {
+    const margin = ((product.price - product.cost) / product.price * 100);
+    return sum + margin;
+  }, 0) / mockProducts.length;
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm border-b">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -84,8 +174,8 @@ const Products = () => {
                 Voltar
               </Button>
               <div className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Gerenciar Produtos</h1>
+                <Package className="h-5 w-5 text-primary" />
+                <h1 className="text-xl font-semibold">Produtos</h1>
               </div>
             </div>
 
@@ -98,158 +188,77 @@ const Products = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar produtos ou fornecedores..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Package className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Produtos</p>
+                  <p className="text-2xl font-bold text-blue-600">{mockProducts.length}</p>
+                </div>
               </div>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full lg:w-48">
-                  <SelectValue placeholder="Categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as categorias</SelectItem>
-                  {categories.filter(cat => cat !== 'all').map((category) => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full lg:w-32">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="active">Ativo</SelectItem>
-                  <SelectItem value="inactive">Inativo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardContent className="p-6">
-              <div className="text-2xl font-bold">{mockProducts.length}</div>
-              <div className="text-sm text-muted-foreground">Total de Produtos</div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Package className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Produtos Ativos</p>
+                  <p className="text-2xl font-bold text-green-600">{activeProducts}</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardContent className="p-6">
-              <div className="text-2xl font-bold text-primary">{mockProducts.filter(p => p.active).length}</div>
-              <div className="text-sm text-muted-foreground">Produtos Ativos</div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Package className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Margem Média</p>
+                  <p className="text-2xl font-bold text-purple-600">{averageMargin.toFixed(1)}%</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardContent className="p-6">
-              <div className="text-2xl font-bold">{categories.length - 1}</div>
-              <div className="text-sm text-muted-foreground">Categorias</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold">R$ {mockProducts.filter(p => p.active).reduce((avg, p, i, arr) => avg + p.price / arr.length, 0).toFixed(2)}</div>
-              <div className="text-sm text-muted-foreground">Preço Médio</div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Package className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
+                  <p className="text-2xl font-bold text-orange-600">R$ {totalValue.toFixed(2)}</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Lista de Produtos */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Produtos</CardTitle>
-            <CardDescription>
-              {filteredProducts.length} produtos encontrados
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {pagination.paginatedData.map((product) => (
-                <div key={product.id} className="border rounded-lg p-4 hover:bg-accent">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-lg">{product.name}</span>
-                        <Badge variant="outline">{product.category}</Badge>
-                        <Badge variant={product.active ? 'default' : 'secondary'}>
-                          {product.active ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-muted-foreground">
-                        <div>
-                          <span className="font-medium">Fornecedor:</span> {product.supplier}
-                        </div>
-                        <div>
-                          <span className="font-medium">Preço:</span> R$ {product.price.toFixed(2)}
-                        </div>
-                        {product.barcode && (
-                          <div>
-                            <span className="font-medium">Código:</span> {product.barcode}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/bar/produtos/${product.id}/editar`)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => toggleProductStatus(product.id)}
-                      >
-                        {product.active ? 'Desativar' : 'Ativar'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteProduct(product.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {filteredProducts.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  Nenhum produto encontrado com os filtros aplicados
-                </div>
-              )}
-            </div>
-
-            {/* Paginação */}
-            <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
-              pageSizeOptions={[5, 8, 12, 20]}
-            />
-          </CardContent>
-        </Card>
+        <BaseList
+          data={mockProducts}
+          columns={columns}
+          actions={actions}
+          title="Lista de Produtos"
+          description="Gerencie todos os produtos do bar"
+          searchPlaceholder="Buscar produtos por nome ou categoria..."
+          searchFields={['name', 'category', 'description']}
+          getItemId={(product) => product.id}
+          pageSize={10}
+          renderCard={renderProductCard}
+        />
       </main>
     </div>
   );
