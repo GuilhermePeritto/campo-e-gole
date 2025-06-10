@@ -1,8 +1,15 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
-import { ArrowLeft, LogOut, User } from 'lucide-react';
+import { ArrowLeft, LogOut, Settings, User } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -59,31 +66,41 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
 
           {/* User Profile */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className={`text-sm font-medium ${textColor}`}>
-                  {user?.name || 'Administrador'}
-                </p>
-                <p className={`text-xs ${isDashboard ? 'text-muted-foreground' : 'text-white/80'}`}>
-                  {user?.email || 'admin@exemplo.com'}
-                </p>
-              </div>
-              <Avatar className="w-8 h-8">
-                <AvatarImage src={user?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"} />
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/login')}
-              className={`gap-2 ${textColor} ${buttonHoverColor}`}
-            >
-              <LogOut className="h-4 w-4" />
-              Sair
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+                  <div className="text-right">
+                    <p className={`text-sm font-medium ${textColor}`}>
+                      {user?.name || 'Administrador'}
+                    </p>
+                    <p className={`text-xs ${isDashboard ? 'text-muted-foreground' : 'text-white/80'}`}>
+                      {user?.email || 'admin@exemplo.com'}
+                    </p>
+                  </div>
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={user?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"} />
+                    <AvatarFallback>
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuItem onClick={() => navigate('/configuracoes/editar-usuario/1')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Editar Perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/configuracoes')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Configurações</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/login')}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
