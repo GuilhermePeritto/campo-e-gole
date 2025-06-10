@@ -29,7 +29,8 @@ import {
   Trash2,
   UserCheck,
   User,
-  ArrowLeft
+  ArrowLeft,
+  LogOut
 } from 'lucide-react';
 
 interface User {
@@ -178,23 +179,51 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="bg-card border-b">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/painel')}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Configurações</h1>
-              <p className="text-muted-foreground">Gerencie as configurações do sistema</p>
+      <header className="shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/painel')}
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Dashboard
+              </Button>
+              <div className="flex items-center gap-2">
+                <SettingsIcon className="h-5 w-5 text-secondary" />
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-300">Configurações</h1>
+              </div>
+            </div>
+            
+            {/* User Profile */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-300">Administrador</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">admin@exemplo.com</p>
+                </div>
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" />
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="gap-2">
+                <LogOut className="h-4 w-4" />
+                Sair
+              </Button>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <main className="container mx-auto p-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="company" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="company" className="gap-2">
