@@ -25,6 +25,13 @@ const School = () => {
       action: () => navigate('/escolinha/alunos')
     },
     {
+      title: 'Professores',
+      description: 'Gerenciar professores',
+      icon: GraduationCap,
+      color: 'bg-module-school',
+      action: () => navigate('/escolinha/professores')
+    },
+    {
       title: 'Turmas',
       description: 'Organizar turmas e horários',
       icon: GraduationCap,
@@ -89,7 +96,7 @@ const School = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (

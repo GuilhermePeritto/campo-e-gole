@@ -1,10 +1,11 @@
-
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, GraduationCap, Plus, Edit, Eye } from 'lucide-react';
+import { GraduationCap, Plus, Edit, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 interface Teacher {
   id: number;
@@ -186,33 +187,22 @@ const Teachers = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/escolinha')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Escolinha
-            </Button>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-blue-600" />
-              <h1 className="text-xl font-semibold">Professores</h1>
-            </div>
-            <div className="ml-auto">
-              <Button onClick={() => navigate('/escolinha/professores/novo')} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Novo Professor
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Professores"
+        icon={<GraduationCap className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.school}
+        backTo="/escolinha"
+        backLabel="Escolinha"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-end mb-6">
+          <Button onClick={() => navigate('/escolinha/professores/novo')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Professor
+          </Button>
+        </div>
+
         <BaseList
           data={mockTeachers}
           columns={columns}
