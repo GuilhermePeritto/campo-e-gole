@@ -1,8 +1,9 @@
-
+import ModuleHeader from '@/components/ModuleHeader';
 import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Calendar, Plus, UserCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -56,26 +57,13 @@ const Classes = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/escolinha')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Escolinha
-            </Button>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold">Gerenciar Turmas</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Gerenciar Turmas"
+        icon={<Calendar className="h-5 w-5" />}
+        moduleColor={MODULE_COLORS.school}
+        backTo="/escolinha"
+        backLabel="Escolinha"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Add Button */}

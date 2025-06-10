@@ -26,6 +26,11 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Verificar se é o dashboard para usar cores diferentes
+  const isDashboard = moduleColor === 'hsl(var(--background))';
+  const textColor = isDashboard ? 'text-foreground' : 'text-white';
+  const buttonHoverColor = isDashboard ? 'hover:bg-foreground/10' : 'hover:bg-white/20';
+
   return (
     <header
       className="shadow-sm border-b"
@@ -38,17 +43,17 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => navigate(backTo)}
-              className="gap-2 text-white hover:bg-white/20"
+              className={`gap-2 ${textColor} ${buttonHoverColor}`}
             >
               <ArrowLeft className="h-4 w-4" />
               {backLabel}
             </Button>
             }
             <div className="flex items-center gap-2">
-              <div className="text-white">
+              <div className={textColor}>
                 {icon}
               </div>
-              <h1 className="text-xl font-semibold text-white">{title}</h1>
+              <h1 className={`text-xl font-semibold ${textColor}`}>{title}</h1>
             </div>
           </div>
 
@@ -56,10 +61,10 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
+                <p className={`text-sm font-medium ${textColor}`}>
                   {user?.name || 'Administrador'}
                 </p>
-                <p className="text-xs text-white/80">
+                <p className={`text-xs ${isDashboard ? 'text-muted-foreground' : 'text-white/80'}`}>
                   {user?.email || 'admin@exemplo.com'}
                 </p>
               </div>
@@ -74,7 +79,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => navigate('/login')}
-              className="gap-2 text-white hover:bg-white/20"
+              className={`gap-2 ${textColor} ${buttonHoverColor}`}
             >
               <LogOut className="h-4 w-4" />
               Sair

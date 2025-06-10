@@ -1,11 +1,13 @@
+import ModuleHeader from '@/components/ModuleHeader';
 import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePagination } from '@/hooks/usePagination';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
-import { ArrowLeft, CreditCard, Search } from 'lucide-react';
+import { CreditCard, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -92,26 +94,13 @@ const Payments = () => {
 
   return (
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/escolinha')}
-              className="gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Escolinha
-            </Button>
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Mensalidades</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Mensalidades"
+        icon={<CreditCard className="h-5 w-5" />}
+        moduleColor={MODULE_COLORS.school}
+        backTo="/escolinha"
+        backLabel="Escolinha"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
