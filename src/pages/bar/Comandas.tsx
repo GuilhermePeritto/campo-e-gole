@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -227,6 +228,11 @@ const Comandas = () => {
           getItemId={(comanda) => comanda.id}
           pageSize={8}
           renderCard={renderComandaCard}
+          createButton={{
+            label: 'Nova Comanda',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/bar/comandas/novo')
+          }}
         />
       </main>
     </div>

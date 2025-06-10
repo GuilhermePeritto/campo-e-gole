@@ -232,6 +232,11 @@ const Clients = () => {
           getItemId={(client) => client.id}
           pageSize={8}
           renderCard={renderClientCard}
+          createButton={{
+            label: 'Novo Cliente',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/eventos/clientes/novo')
+          }}
         />
       </main>
     </div>

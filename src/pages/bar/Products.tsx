@@ -229,13 +229,6 @@ const Products = () => {
           </Card>
         </div>
 
-        <div className="flex justify-end mb-6">
-          <Button onClick={() => navigate('/bar/produtos/novo')} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Novo Produto
-          </Button>
-        </div>
-
         <BaseList
           data={mockProducts}
           columns={columns}
@@ -247,6 +240,11 @@ const Products = () => {
           getItemId={(product) => product.id}
           pageSize={10}
           renderCard={renderProductCard}
+          createButton={{
+            label: 'Novo Produto',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/bar/produtos/novo')
+          }}
         />
       </main>
     </div>

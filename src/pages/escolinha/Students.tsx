@@ -178,16 +178,6 @@ const Students = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-end mb-6">
-          <Button
-            onClick={() => navigate('/escolinha/alunos/novo')}
-            className="gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Novo Aluno
-          </Button>
-        </div>
-
         <BaseList
           data={students}
           columns={columns}
@@ -199,6 +189,11 @@ const Students = () => {
           getItemId={(student) => student.id}
           pageSize={5}
           renderCard={renderStudentCard}
+          createButton={{
+            label: 'Novo Aluno',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/escolinha/alunos/novo')
+          }}
         />
       </main>
     </div>
