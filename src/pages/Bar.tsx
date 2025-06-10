@@ -10,11 +10,18 @@ const Bar = () => {
 
   const quickActions = [
     {
-      title: 'Novo Produto',
-      description: 'Adicionar um novo item ao cardápio',
-      icon: Plus,
+      title: 'Nova Venda',
+      description: 'Registrar uma nova venda',
+      icon: ShoppingCart,
+      color: 'bg-orange-500',
+      action: () => navigate('/bar/nova-venda')
+    },
+    {
+      title: 'Produtos',
+      description: 'Gerenciar produtos do cardápio',
+      icon: Package,
       color: 'bg-blue-500',
-      action: () => navigate('/bar/produtos/novo')
+      action: () => navigate('/bar/produtos')
     },
     {
       title: 'Estoque',
@@ -29,20 +36,6 @@ const Bar = () => {
       icon: Utensils,
       color: 'bg-purple-500',
       action: () => navigate('/bar/comandas')
-    },
-    {
-      title: 'Nova Venda',
-      description: 'Registrar uma nova venda',
-      icon: ShoppingCart,
-      color: 'bg-orange-500',
-      action: () => navigate('/bar/nova-venda')
-    },
-    {
-      title: 'Venda Unificada',
-      description: 'Venda rápida para não clientes',
-      icon: Receipt,
-      color: 'bg-red-500',
-      action: () => navigate('/bar/venda-unificada')
     },
     {
       title: 'Relatórios',
