@@ -1,8 +1,8 @@
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, CreditCard, Package, Plus, Receipt, ShoppingCart, Utensils } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Utensils } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Bar = () => {
@@ -72,7 +72,7 @@ const Bar = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (

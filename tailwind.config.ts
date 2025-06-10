@@ -93,7 +93,7 @@ export default {
 				},
 				// Cores dos módulos
 				module: {
-					dashboard: 'rgb(var(--module-dashboard))',
+					dashboard: 'rgb(var(--background))',
 					events: 'rgb(var(--module-events))',
 					bar: 'rgb(var(--module-bar))',
 					school: 'rgb(var(--module-school))',

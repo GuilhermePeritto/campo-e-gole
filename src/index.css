@@ -36,12 +36,11 @@
     --radius: 0.5rem;
 
     /* Cores dos módulos */
-    --module-dashboard: 99 102 241;    /* Indigo */
-    --module-events: 245 158 11;      /* Amber */
-    --module-bar: 16 185 129;         /* Emerald */
-    --module-school: 139 92 246;      /* Violet */
-    --module-financial: 239 68 68;    /* Red */
-    --module-settings: 107 114 128;   /* Gray */
+    --module-events: 255 196 0;      /* amarelo */
+    --module-bar: 255 159 28;         /* laranja */
+    --module-school: 46 204 113;      /* verde */
+    --module-financial: 0 122 255;    /* azul */
+    --module-settings: 50 50 50;   /* Gray */
   }
 
   .dark {

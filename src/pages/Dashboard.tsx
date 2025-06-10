@@ -1,12 +1,12 @@
 
+import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useTheme } from '@/contexts/ThemeContext';
-import { BarChart3, Building2, Calendar, LogOut, Settings, Users2, Sun, Moon } from 'lucide-react';
+import { BarChart3, Calendar, Moon, Settings, Sun, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -93,6 +93,7 @@ const Dashboard = () => {
         title="Dashboard"
         icon={<BarChart3 className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.dashboard}
+        mustReturn={false}
       />
 
       {/* Main Content */}

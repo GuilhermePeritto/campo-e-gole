@@ -1,15 +1,16 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, LogOut, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { ArrowLeft, LogOut, User } from 'lucide-react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ModuleHeaderProps {
   title: string;
   icon: React.ReactNode;
   moduleColor: string;
+  mustReturn?: boolean;
   backTo?: string;
   backLabel?: string;
 }
@@ -18,6 +19,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   title,
   icon,
   moduleColor,
+  mustReturn = true,
   backTo = '/painel',
   backLabel = 'Dashboard'
 }) => {
@@ -25,14 +27,14 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   const { user } = useAuth();
 
   return (
-    <header 
-      className="shadow-sm border-b" 
+    <header
+      className="shadow-sm border-b"
       style={{ backgroundColor: moduleColor }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
-            <Button
+            {mustReturn && <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate(backTo)}
@@ -41,6 +43,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               <ArrowLeft className="h-4 w-4" />
               {backLabel}
             </Button>
+            }
             <div className="flex items-center gap-2">
               <div className="text-white">
                 {icon}
@@ -48,7 +51,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               <h1 className="text-xl font-semibold text-white">{title}</h1>
             </div>
           </div>
-          
+
           {/* User Profile */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
@@ -67,10 +70,10 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 </AvatarFallback>
               </Avatar>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/login')} 
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/login')}
               className="gap-2 text-white hover:bg-white/20"
             >
               <LogOut className="h-4 w-4" />

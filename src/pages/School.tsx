@@ -1,9 +1,9 @@
 
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, CreditCard, GraduationCap, Plus, Receipt, Users2 } from 'lucide-react';
+import { BarChart3, CreditCard, GraduationCap, Plus, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const School = () => {
@@ -44,13 +44,6 @@ const School = () => {
       icon: CreditCard,
       color: 'bg-module-school',
       action: () => navigate('/escolinha/mensalidades')
-    },
-    {
-      title: 'Receber Pagamento',
-      description: 'Registrar pagamentos',
-      icon: Receipt,
-      color: 'bg-module-school',
-      action: () => navigate('/escolinha/receber')
     },
     {
       title: 'Relatórios',
@@ -96,7 +89,7 @@ const School = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
