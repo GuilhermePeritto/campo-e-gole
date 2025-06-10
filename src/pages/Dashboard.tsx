@@ -2,15 +2,18 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Building2, Calendar, LogOut, Settings, Users2 } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { BarChart3, Building2, Calendar, LogOut, Settings, Users2, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, company, logout, hasModuleAccess } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -23,8 +26,7 @@ const Dashboard = () => {
       title: 'Gestão de Eventos',
       description: 'Gerencie reservas esportivas, locais, agendas e análises financeiras',
       icon: Calendar,
-      color: 'bg-green-600',
-      hoverColor: 'hover:bg-green-500',
+      color: MODULE_COLORS.events,
       textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Agenda com visualização diária, semanal e mensal',
@@ -40,8 +42,7 @@ const Dashboard = () => {
       title: 'Gestão de Bar',
       description: 'Controle completo do bar, estoque, comandas e caixa',
       icon: BarChart3,
-      color: 'bg-orange-600',
-      hoverColor: 'hover:bg-orange-500',
+      color: MODULE_COLORS.bar,
       textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Cadastro de produtos e controle de estoque',
@@ -57,8 +58,7 @@ const Dashboard = () => {
       title: 'Escolinha de Futebol',
       description: 'Gestão completa de alunos, mensalidades e turmas',
       icon: Users2,
-      color: 'bg-purple-600',
-      hoverColor: 'hover:bg-purple-500',
+      color: MODULE_COLORS.school,
       textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Cadastro e gestão de alunos',
@@ -74,8 +74,7 @@ const Dashboard = () => {
       title: 'Financeiro',
       description: 'Controle financeiro completo da empresa',
       icon: BarChart3,
-      color: 'bg-blue-600',
-      hoverColor: 'hover:bg-blue-500',
+      color: MODULE_COLORS.financial,
       textColor: 'text-gray-600 dark:text-gray-300',
       features: [
         'Gestão de contas a pagar e receber',
@@ -108,15 +107,29 @@ const Dashboard = () => {
             </p>
           </div>
           
-          {/* Botão de Configurações */}
-          <Button
-            onClick={() => navigate('/configuracoes')}
-            variant="outline"
-            className="gap-2"
-          >
-            <Settings className="h-4 w-4" />
-            Configurações
-          </Button>
+          {/* Controles superiores */}
+          <div className="flex items-center gap-4">
+            {/* Switch de tema */}
+            <div className="flex items-center gap-3">
+              <Sun className="h-4 w-4 text-muted-foreground" />
+              <Switch
+                checked={theme === 'dark'}
+                onCheckedChange={toggleTheme}
+                className="data-[state=checked]:bg-primary"
+              />
+              <Moon className="h-4 w-4 text-muted-foreground" />
+            </div>
+            
+            {/* Botão de Configurações */}
+            <Button
+              onClick={() => navigate('/configuracoes')}
+              variant="outline"
+              className="gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Configurações
+            </Button>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-4 gap-8">
@@ -169,7 +182,7 @@ const Dashboard = () => {
                 <CardFooter className="relative bottom-0 left-0 w-full">
                   {(hasAccess) && (
                     <Button
-                      className={`w-full text-white transition-colors`}
+                      className={`w-full text-white transition-colors hover:opacity-90`}
                       style={{ backgroundColor: module.color }}
                       onClick={(e) => {
                         e.stopPropagation();

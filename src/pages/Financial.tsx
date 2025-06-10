@@ -1,8 +1,9 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { ArrowLeft, BarChart3, Calendar, CreditCard, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import { BarChart3, CreditCard, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Financial = () => {
@@ -11,47 +12,69 @@ const Financial = () => {
   const quickActions = [
     {
       title: 'Nova Receita',
-      description: 'Registrar nova receita',
+      description: 'Registrar entrada de dinheiro',
       icon: Plus,
-      color: 'bg-green-500',
+      color: 'bg-module-financial',
       action: () => navigate('/financeiro/receitas/novo')
     },
     {
       title: 'Nova Despesa',
-      description: 'Registrar nova despesa',
-      icon: TrendingDown,
-      color: 'bg-red-500',
+      description: 'Registrar saída de dinheiro',
+      icon: Plus,
+      color: 'bg-module-financial',
       action: () => navigate('/financeiro/despesas/novo')
     },
     {
       title: 'Contas a Receber',
-      description: 'Gerenciar contas pendentes',
-      icon: Calendar,
-      color: 'bg-orange-500',
+      description: 'Gerenciar recebimentos',
+      icon: TrendingUp,
+      color: 'bg-module-financial',
       action: () => navigate('/financeiro/contas-a-receber')
     },
     {
       title: 'Contas a Pagar',
       description: 'Gerenciar pagamentos',
-      icon: CreditCard,
-      color: 'bg-purple-500',
+      icon: TrendingDown,
+      color: 'bg-module-financial',
       action: () => navigate('/financeiro/contas-a-pagar')
     },
     {
       title: 'Fluxo de Caixa',
-      description: 'Visualizar movimentação',
+      description: 'Acompanhar movimentações',
       icon: BarChart3,
-      color: 'bg-blue-500',
-      action: () => navigate('/financeiro/fluxo-de-caixa')
+      color: 'bg-module-financial',
+      action: () => navigate('/financeiro/fluxo-caixa')
     },
     {
       title: 'Relatórios',
       description: 'Análises financeiras',
       icon: FileText,
-      color: 'bg-indigo-500',
+      color: 'bg-module-financial',
       action: () => navigate('/financeiro/relatorios')
     }
   ];
+
+  const recentTransactions = [
+    { id: 1, description: 'Aluguel de Quadra - João Silva', type: 'receita', amount: 150.00, date: '05/05/2024', status: 'Pago' },
+    { id: 2, description: 'Conta de Luz', type: 'despesa', amount: 450.00, date: '04/05/2024', status: 'Pago' },
+    { id: 3, description: 'Mensalidade - Ana Costa', type: 'receita', amount: 120.00, date: '03/05/2024', status: 'Pendente' },
+    { id: 4, description: 'Material Esportivo', type: 'despesa', amount: 800.00, date: '02/05/2024', status: 'Pago' }
+  ];
+
+  const financialStats = {
+    totalRevenue: 15480.00,
+    totalExpenses: 8920.00,
+    netProfit: 6560.00,
+    pendingReceivables: 2340.00
+  };
+
+  const getTypeColor = (type: string) => {
+    return type === 'receita' ? 'text-green-600' : 'text-red-600';
+  };
+
+  const getStatusColor = (status: string) => {
+    return status === 'Pago' ? 'text-green-600' : 'text-yellow-600';
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,23 +85,23 @@ const Financial = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Ações Rápidas */}
+        {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-6">Ações Rápidas</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
-                <Card 
+                <Card
                   key={index}
-                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105"
+                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 border"
                   onClick={action.action}
                 >
                   <CardContent className="p-6 text-center">
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
                       <IconComponent className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="font-semibold mb-1">{action.title}</h3>
+                    <h3 className="font-semibold text-card-foreground mb-1">{action.title}</h3>
                     <p className="text-sm text-muted-foreground">{action.description}</p>
                   </CardContent>
                 </Card>
@@ -87,271 +110,110 @@ const Financial = () => {
           </div>
         </div>
 
-        {/* Resumo Financeiro */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Receitas Totais</p>
-                  <p className="text-2xl font-bold text-green-600">R$ 25.420</p>
-                  <p className="text-xs text-muted-foreground">+12% este mês</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <TrendingDown className="h-5 w-5 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Despesas Totais</p>
-                  <p className="text-2xl font-bold text-red-600">R$ 8.750</p>
-                  <p className="text-xs text-muted-foreground">-5% este mês</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Lucro Líquido</p>
-                  <p className="text-2xl font-bold text-blue-600">R$ 16.670</p>
-                  <p className="text-xs text-muted-foreground">+18% este mês</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">A Receber</p>
-                  <p className="text-2xl font-bold text-orange-600">R$ 3.240</p>
-                  <p className="text-xs text-muted-foreground">15 pendências</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Cards Detalhados */}
+        {/* Dashboard Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card className="border">
             <CardHeader>
-              <CardTitle>Receitas do Mês</CardTitle>
+              <CardTitle className="text-card-foreground">Movimentações Recentes</CardTitle>
               <CardDescription>
-                Últimas receitas registradas
+                Últimas transações financeiras
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-                  <div>
-                    <div className="font-medium">Venda Bar</div>
-                    <div className="text-sm text-muted-foreground">Hoje - 14:30</div>
+                {recentTransactions.map((transaction) => (
+                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-muted/50 border rounded-lg">
+                    <div>
+                      <div className="font-medium text-card-foreground">{transaction.description}</div>
+                      <div className="text-sm text-muted-foreground">{transaction.date}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`font-semibold ${getTypeColor(transaction.type)}`}>
+                        {transaction.type === 'receita' ? '+' : '-'} R$ {transaction.amount.toFixed(2)}
+                      </div>
+                      <div className={`text-xs ${getStatusColor(transaction.status)}`}>
+                        {transaction.status}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-green-600">R$ 245,50</div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-                  <div>
-                    <div className="font-medium">Reserva Quadra</div>
-                    <div className="text-sm text-muted-foreground">Ontem - 18:00</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-green-600">R$ 150,00</div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-                  <div>
-                    <div className="font-medium">Mensalidade Escolinha</div>
-                    <div className="text-sm text-muted-foreground">05/06 - 09:00</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-green-600">R$ 120,00</div>
-                  </div>
-                </div>
+                ))}
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-4"
-                onClick={() => navigate('/financeiro/receitas')}
+                onClick={() => navigate('/financeiro/fluxo-caixa')}
               >
-                Ver Todas as Receitas
+                Ver Todas as Movimentações
               </Button>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border">
             <CardHeader>
-              <CardTitle>Despesas Recentes</CardTitle>
+              <CardTitle className="text-card-foreground">Resumo Financeiro</CardTitle>
               <CardDescription>
-                Últimas despesas registradas
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-                  <div>
-                    <div className="font-medium">Fornecedor Bebidas</div>
-                    <div className="text-sm text-muted-foreground">Hoje - 10:00</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-red-600">R$ 850,00</div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-                  <div>
-                    <div className="font-medium">Energia Elétrica</div>
-                    <div className="text-sm text-muted-foreground">04/06 - 15:30</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-red-600">R$ 320,00</div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-                  <div>
-                    <div className="font-medium">Material Limpeza</div>
-                    <div className="text-sm text-muted-foreground">03/06 - 11:15</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-red-600">R$ 145,00</div>
-                  </div>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                className="w-full mt-4"
-                onClick={() => navigate('/financeiro/despesas')}
-              >
-                Ver Todas as Despesas
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Contas Pendentes</CardTitle>
-              <CardDescription>
-                Recebimentos e pagamentos
+                Visão geral do mês atual
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">A Receber</span>
-                    <span className="text-sm font-bold text-orange-600">R$ 3.240</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-1">15 pendências</div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-orange-500 h-2 rounded-full" style={{width: '65%'}}></div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Total de Receitas</span>
+                  <span className="font-semibold text-green-600">R$ {financialStats.totalRevenue.toFixed(2)}</span>
                 </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium">A Pagar</span>
-                    <span className="text-sm font-bold text-purple-600">R$ 1.850</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-1">8 pendências</div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-purple-500 h-2 rounded-full" style={{width: '35%'}}></div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Total de Despesas</span>
+                  <span className="font-semibold text-red-600">R$ {financialStats.totalExpenses.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Lucro Líquido</span>
+                  <span className="font-semibold text-blue-600">R$ {financialStats.netProfit.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">A Receber</span>
+                  <span className="font-semibold text-yellow-600">R$ {financialStats.pendingReceivables.toFixed(2)}</span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => navigate('/financeiro/contas-a-receber')}
-                >
-                  A Receber
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => navigate('/financeiro/contas-a-pagar')}
-                >
-                  A Pagar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FileText className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Transações Hoje</p>
-                  <p className="text-2xl font-bold">47</p>
-                </div>
-              </div>
+              <Button
+                variant="outline"
+                className="w-full mt-4"
+                onClick={() => navigate('/financeiro/relatorios')}
+              >
+                Gerar Relatório Detalhado
+              </Button>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Crescimento</p>
-                  <p className="text-2xl font-bold text-green-600">+15%</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <Card className="border">
+            <CardHeader>
+              <CardTitle className="text-card-foreground">Performance do Mês</CardTitle>
+              <CardDescription>
+                Indicadores de performance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-600 mb-2">42%</div>
+                <div className="text-sm text-muted-foreground mb-4">Margem de lucro</div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Calendar className="h-5 w-5 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Vencimentos Hoje</p>
-                  <p className="text-2xl font-bold text-orange-600">3</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Saldo Atual</p>
-                  <p className="text-2xl font-bold text-purple-600">R$ 16.670</p>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-green-600">+15%</div>
+                    <div className="text-muted-foreground">vs. mês anterior</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-blue-600">85%</div>
+                    <div className="text-muted-foreground">Taxa de recebimento</div>
+                  </div>
                 </div>
               </div>
+              <Button
+                variant="outline"
+                className="w-full mt-4"
+                onClick={() => navigate('/financeiro/contas-a-receber')}
+              >
+                Gerenciar Recebimentos
+              </Button>
             </CardContent>
           </Card>
         </div>
