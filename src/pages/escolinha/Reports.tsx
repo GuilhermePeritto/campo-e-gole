@@ -1,7 +1,8 @@
-
 import ExportButton from '@/components/ExportButton';
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -51,33 +52,13 @@ const EscolinhaRelatorios = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/escolinha')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Escolinha
-              </Button>
-              <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-green-600" />
-                <h1 className="text-xl font-semibold">Relatórios da Escolinha</h1>
-              </div>
-            </div>
-            <ExportButton 
-              data={monthlyData}
-              filename="relatorio-escolinha"
-              title="Relatório da Escolinha"
-            />
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Relatórios da Escolinha"
+        icon={<BarChart3 className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.school}
+        backTo="/escolinha"
+        backLabel="Escolinha"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
@@ -256,6 +237,14 @@ const EscolinhaRelatorios = () => {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mt-8 flex justify-end">
+          <ExportButton 
+            data={monthlyData}
+            filename="relatorio-escolinha"
+            title="Relatório da Escolinha"
+          />
+        </div>
       </main>
     </div>
   );
