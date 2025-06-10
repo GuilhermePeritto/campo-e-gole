@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -161,11 +160,11 @@ function App() {
                 
                 <Route path="/financeiro" element={<Financial />} />
                 <Route path="/financeiro/receitas" element={<Revenues />} />
-                <Route path="/financeiro/receitas/nova" element={<NewRevenue />} />
+                <Route path="/financeiro/receitas/novo" element={<NewRevenue />} />
                 <Route path="/financeiro/despesas" element={<Expenses />} />
-                <Route path="/financeiro/despesas/nova" element={<NewExpense />} />
-                <Route path="/financeiro/contas-receber" element={<AccountsReceivable />} />
-                <Route path="/financeiro/contas-pagar" element={<AccountsPayable />} />
+                <Route path="/financeiro/despesas/novo" element={<NewExpense />} />
+                <Route path="/financeiro/contas-a-receber" element={<AccountsReceivable />} />
+                <Route path="/financeiro/contas-a-pagar" element={<AccountsPayable />} />
                 <Route path="/financeiro/fluxo-caixa" element={<CashFlow />} />
                 <Route path="/financeiro/receber" element={<FinanceiroReceivePayment />} />
                 <Route path="/financeiro/receber/:id" element={<FinanceiroReceivePayment />} />
