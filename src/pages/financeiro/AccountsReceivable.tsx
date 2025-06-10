@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePagination } from '@/hooks/usePagination';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, CreditCard, Plus } from 'lucide-react';
 
 interface Receivable {
@@ -20,6 +21,7 @@ interface Receivable {
 }
 
 const ContasAReceber = () => {
+  const navigate = useNavigate();
   const { navigateToPayment } = useUniversalPayment();
 
   const mockReceivables: Receivable[] = [
