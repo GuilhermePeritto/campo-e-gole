@@ -63,7 +63,7 @@ const Bar = () => {
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Gestão do Bar"
+        title="Bar"
         icon={<Utensils className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.bar}
       />

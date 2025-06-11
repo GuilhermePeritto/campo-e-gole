@@ -1,9 +1,9 @@
 
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Calendar, CreditCard, MapPin, Plus, Receipt, Users } from 'lucide-react';
+import { BarChart3, Calendar, CreditCard, MapPin, Plus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Events = () => {
@@ -89,7 +89,7 @@ const Events = () => {
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Gestão de Eventos"
+        title="Eventos"
         icon={<Calendar className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
       />

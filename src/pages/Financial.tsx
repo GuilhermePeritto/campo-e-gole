@@ -1,9 +1,9 @@
 
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, CreditCard, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import { BarChart3, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Financial = () => {
@@ -79,7 +79,7 @@ const Financial = () => {
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Gestão Financeira"
+        title="Financeiro"
         icon={<DollarSign className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.financial}
       />

@@ -23,7 +23,7 @@ const Dashboard = () => {
   const modules = [
     {
       id: 'events',
-      title: 'Gestão de Eventos',
+      title: 'Eventos',
       description: 'Gerencie reservas esportivas, locais, agendas e análises financeiras',
       icon: Calendar,
       color: MODULE_COLORS.events,
@@ -39,7 +39,7 @@ const Dashboard = () => {
     },
     {
       id: 'bar',
-      title: 'Gestão de Bar',
+      title: 'Bar',
       description: 'Controle completo do bar, estoque, comandas e caixa',
       icon: BarChart3,
       color: MODULE_COLORS.bar,
@@ -55,7 +55,7 @@ const Dashboard = () => {
     },
     {
       id: 'school',
-      title: 'Escolinha de Futebol',
+      title: 'Escola',
       description: 'Gestão completa de alunos, mensalidades e turmas',
       icon: Users2,
       color: MODULE_COLORS.school,

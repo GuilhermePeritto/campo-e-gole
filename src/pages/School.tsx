@@ -80,7 +80,7 @@ const School = () => {
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Escolinha de Futebol"
+        title="Escola"
         icon={<Users2 className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.school}
       />
