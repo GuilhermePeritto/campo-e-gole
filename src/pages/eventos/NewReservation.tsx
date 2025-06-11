@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,13 +8,16 @@ import { Textarea } from '@/components/ui/textarea';
 import ModuleHeader from '@/components/ModuleHeader';
 import EventTimeline from '@/components/EventTimeline';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Calendar, Plus } from 'lucide-react';
+import { Calendar, Plus, Edit, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const NewReservation = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<number | null>(null);
   
   const [formData, setFormData] = useState({
     client: '',
@@ -69,7 +73,14 @@ const NewReservation = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Nova reserva:', formData);
+    console.log(isEditing ? 'Editando reserva:' : 'Nova reserva:', formData);
+    
+    // Reset editing state after save
+    if (isEditing) {
+      setIsEditing(false);
+      setEditingEventId(null);
+    }
+    
     navigate('/eventos');
   };
 
@@ -78,7 +89,56 @@ const NewReservation = () => {
   };
 
   const handleTimeSlotClick = (time: string) => {
-    setFormData(prev => ({ ...prev, startTime: time }));
+    if (!isEditing) {
+      setFormData(prev => ({ ...prev, startTime: time }));
+    }
+  };
+
+  const handleEventEdit = (event: any) => {
+    // If clicking on the same event that's already being edited, cancel editing
+    if (editingEventId === event.id) {
+      handleCancelEdit();
+      return;
+    }
+
+    // Load event data into form
+    setFormData({
+      client: event.client,
+      venue: event.venue,
+      date: formData.date, // Keep current date
+      startTime: event.startTime,
+      endTime: event.endTime,
+      notes: event.notes || '',
+      amount: '160' // Mock amount
+    });
+    
+    setIsEditing(true);
+    setEditingEventId(event.id);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingEventId(null);
+    
+    // Reset form to initial state
+    const dateParam = searchParams.get('date');
+    setFormData({
+      client: '',
+      venue: '',
+      date: dateParam || '',
+      startTime: '',
+      endTime: '',
+      notes: '',
+      amount: ''
+    });
+  };
+
+  const handleCancel = () => {
+    if (isEditing) {
+      handleCancelEdit();
+    } else {
+      navigate('/eventos');
+    }
   };
 
   // Filter events by selected date
@@ -92,8 +152,8 @@ const NewReservation = () => {
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Nova Reserva"
-        icon={<Plus className="h-6 w-6" />}
+        title={isEditing ? "Editar Reserva" : "Nova Reserva"}
+        icon={isEditing ? <Edit className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
         backTo="/eventos"
         backLabel="Eventos"
@@ -102,12 +162,43 @@ const NewReservation = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Formulário */}
-          <Card className="border h-fit">
+          <Card className={`border h-fit ${isEditing ? 'ring-2 ring-blue-500' : ''}`}>
             <CardHeader>
-              <CardTitle className="text-card-foreground">Criar Nova Reserva</CardTitle>
+              <CardTitle className="text-card-foreground flex items-center gap-2">
+                {isEditing ? (
+                  <>
+                    <Edit className="h-5 w-5" />
+                    Editando Reserva
+                  </>
+                ) : (
+                  "Criar Nova Reserva"
+                )}
+              </CardTitle>
               <CardDescription>
-                Preencha os dados para criar uma nova reserva
+                {isEditing 
+                  ? "Atualize os dados da reserva selecionada" 
+                  : "Preencha os dados para criar uma nova reserva"
+                }
               </CardDescription>
+              {isEditing && (
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-blue-700">
+                      Modo de edição ativo para evento selecionado na timeline
+                    </span>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      className="text-blue-700 hover:text-blue-900"
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Cancelar Edição
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -204,10 +295,10 @@ const NewReservation = () => {
                   <div className="flex gap-4 pt-6">
                     <Button type="submit" className="flex-1">
                       <Calendar className="h-4 w-4 mr-2" />
-                      Criar Reserva
+                      {isEditing ? 'Salvar Alterações' : 'Criar Reserva'}
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => navigate('/eventos')}>
-                      Cancelar
+                    <Button type="button" variant="outline" onClick={handleCancel}>
+                      {isEditing ? 'Cancelar Edição' : 'Cancelar'}
                     </Button>
                   </div>
                 </div>
@@ -222,6 +313,8 @@ const NewReservation = () => {
                 selectedDate={formData.date}
                 events={eventsForSelectedDate}
                 onTimeSlotClick={handleTimeSlotClick}
+                onEventEdit={handleEventEdit}
+                editingEventId={editingEventId}
               />
             ) : (
               <Card className="h-[500px] flex items-center justify-center">

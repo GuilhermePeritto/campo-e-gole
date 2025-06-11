@@ -1,7 +1,6 @@
 
-import { Clock, User, MapPin, Edit } from 'lucide-react';
+import { Clock, User, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 interface Event {
@@ -19,22 +18,17 @@ interface EventTimelineProps {
   selectedDate: string;
   events: Event[];
   onTimeSlotClick?: (time: string) => void;
+  onEventEdit?: (event: Event) => void;
+  editingEventId?: number | null;
 }
 
-const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineProps) => {
+const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, editingEventId }: EventTimelineProps) => {
   const navigate = useNavigate();
   
   const timeSlots = Array.from({ length: 15 }, (_, i) => {
     const hour = i + 7;
     return `${hour.toString().padStart(2, '0')}:00`;
   });
-
-  // Calculate duration in hours for event sizing
-  const calculateDuration = (startTime: string, endTime: string) => {
-    const start = new Date(`2000-01-01 ${startTime}`);
-    const end = new Date(`2000-01-01 ${endTime}`);
-    return (end.getTime() - start.getTime()) / (1000 * 60 * 60); // Duration in hours
-  };
 
   // Get events that overlap with specific time slot
   const getEventsForTimeSlot = (time: string) => {
@@ -58,10 +52,14 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
     }
   };
 
-  const handleEventEdit = (eventId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/eventos/${eventId}/editar`);
+  const handleEventClick = (event: Event) => {
+    if (onEventEdit) {
+      onEventEdit(event);
+    }
   };
+
+  const isEditingMode = editingEventId !== null;
+  const isDisabled = (event: Event) => isEditingMode && event.id !== editingEventId;
 
   return (
     <Card className="h-[500px] overflow-hidden">
@@ -75,6 +73,11 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
               month: 'long' 
             })}
           </h3>
+          {isEditingMode && (
+            <div className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
+              Modo de edição ativo. Clique em Cancelar para sair ou selecione outro evento.
+            </div>
+          )}
         </div>
         
         <div className="overflow-y-auto h-[420px] relative">
@@ -82,25 +85,32 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
           <div className="relative">
             {timeSlots.map((time, index) => {
               const isAvailable = isTimeSlotAvailable(time);
+              const canClickTimeSlot = !isEditingMode && isAvailable;
               
               return (
                 <div 
                   key={time} 
                   className={`border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative ${
-                    isAvailable 
+                    canClickTimeSlot 
                       ? 'hover:bg-green-50 cursor-pointer' 
-                      : 'bg-gray-50'
+                      : isEditingMode 
+                        ? 'bg-gray-100 opacity-50'
+                        : 'bg-gray-50'
                   }`}
-                  onClick={() => isAvailable && onTimeSlotClick?.(time)}
+                  onClick={() => canClickTimeSlot && onTimeSlotClick?.(time)}
                 >
                   <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
                     {time}
                   </div>
                   
                   <div className="flex-1 ml-4 relative">
-                    {isAvailable ? (
+                    {canClickTimeSlot ? (
                       <div className="text-sm text-green-600 font-medium">
                         ✓ Disponível - Clique para selecionar
+                      </div>
+                    ) : isEditingMode && isAvailable ? (
+                      <div className="text-sm text-gray-400 font-medium">
+                        Disponível (modo edição ativo)
                       </div>
                     ) : null}
                   </div>
@@ -109,7 +119,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
             })}
           </div>
 
-          {/* Events overlay - positioned absolutely */}
+          {/* Events overlay */}
           <div className="absolute top-0 left-0 right-0">
             {events.map((event) => {
               const startHour = parseInt(event.startTime.split(':')[0]);
@@ -117,30 +127,51 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
               const endHour = parseInt(event.endTime.split(':')[0]);
               const endMinute = parseInt(event.endTime.split(':')[1]);
               
-              // Calculate position (starting from 7:00)
-              const startOffset = ((startHour - 7) * 60 + startMinute) / 60; // Hours from 7:00
-              const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 60; // Duration in hours
+              const startOffset = ((startHour - 7) * 60 + startMinute) / 60;
+              const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 60;
               
-              const topPosition = startOffset * 64; // 64px per hour (h-16)
-              const height = duration * 64; // Height based on duration
+              const topPosition = startOffset * 64;
+              const height = duration * 64;
+
+              const isCurrentlyEditing = editingEventId === event.id;
+              const isDisabledEvent = isDisabled(event);
 
               return (
                 <div
                   key={event.id}
-                  className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 ${getStatusColor(event.status)} z-10 group hover:shadow-md transition-shadow cursor-pointer`}
+                  className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 z-10 transition-all cursor-pointer ${
+                    isCurrentlyEditing 
+                      ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-500' 
+                      : isDisabledEvent
+                        ? 'opacity-40 cursor-not-allowed bg-gray-100'
+                        : getStatusColor(event.status) + ' hover:shadow-md'
+                  }`}
                   style={{
                     top: `${topPosition}px`,
-                    height: `${Math.max(height - 4, 48)}px`, // Minimum height of 48px with 4px margin
-                    backgroundColor: event.color + '20', // Add transparency
-                    borderLeftColor: event.color
+                    height: `${Math.max(height - 4, 48)}px`,
+                    backgroundColor: isCurrentlyEditing 
+                      ? '#dbeafe' 
+                      : isDisabledEvent 
+                        ? '#f3f4f6'
+                        : event.color + '20',
+                    borderLeftColor: isCurrentlyEditing 
+                      ? '#3b82f6' 
+                      : isDisabledEvent 
+                        ? '#9ca3af'
+                        : event.color
                   }}
-                  onClick={() => handleEventEdit(event.id, {} as React.MouseEvent)}
+                  onClick={() => !isDisabledEvent && handleEventClick(event)}
                 >
                   <div className="flex items-start justify-between h-full">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
                         <span className="font-medium text-sm truncate">{event.client}</span>
+                        {isCurrentlyEditing && (
+                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                            Editando
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 mb-1">
                         <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
@@ -164,14 +195,6 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
                       <div className="text-xs mt-1 font-medium">
                         {duration.toFixed(1)}h
                       </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
-                        onClick={(e) => handleEventEdit(event.id, e)}
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
                     </div>
                   </div>
                 </div>
