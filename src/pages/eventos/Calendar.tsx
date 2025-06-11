@@ -1,4 +1,3 @@
-import EventDetailsPopup from '@/components/EventDetailsPopup';
 import EventHoverPopup from '@/components/EventHoverPopup';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,6 @@ const Calendar = () => {
   const [viewType, setViewType] = useState('month');
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   
   // Hover popup states
   const [hoverPopup, setHoverPopup] = useState({
@@ -152,7 +149,6 @@ const Calendar = () => {
     setCurrentDate(newDate);
   };
 
-  // Updated to pass date as URL parameter
   const handleDateClick = (date: Date) => {
     const formattedDate = date.toISOString().split('T')[0];
     navigate(`/eventos/novo?date=${formattedDate}`);
@@ -160,13 +156,7 @@ const Calendar = () => {
 
   const handleEventClick = (event: any, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedEvent(event);
-    setIsPopupOpen(true);
-  };
-
-  const handleEditEvent = () => {
-    setIsPopupOpen(false);
-    navigate(`/eventos/${selectedEvent.id}/editar`);
+    navigate(`/eventos/${event.id}/editar`);
   };
 
   const getDateTitle = () => {
@@ -194,7 +184,6 @@ const Calendar = () => {
     return date.toDateString() === today.toDateString();
   };
 
-  // Hover handlers for popup
   const handleDayMouseEnter = (day: Date, e: React.MouseEvent) => {
     const dayReservations = mockReservations.filter(r =>
       r.day.toDateString() === day.toDateString()
@@ -486,19 +475,6 @@ const Calendar = () => {
           )}
         </div>
       </main>
-
-      {/* Event Details Popup */}
-      {selectedEvent && (
-        <EventDetailsPopup
-          isOpen={isPopupOpen}
-          onClose={() => {
-            setIsPopupOpen(false);
-            setSelectedEvent(null);
-          }}
-          onEdit={handleEditEvent}
-          event={selectedEvent}
-        />
-      )}
 
       {/* Hover Popup */}
       <EventHoverPopup

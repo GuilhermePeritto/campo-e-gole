@@ -32,16 +32,28 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
       
+      // Start with mouse position plus offset
       let x = mousePosition.x + 15;
       let y = mousePosition.y - 10;
       
-      // Adjust position if popup goes off screen
-      if (x + popupRect.width > windowWidth) {
+      // Adjust position if popup goes off screen horizontally
+      if (x + popupRect.width > windowWidth - 20) {
         x = mousePosition.x - popupRect.width - 15;
       }
       
-      if (y + popupRect.height > windowHeight) {
+      // Ensure popup doesn't go off left edge
+      if (x < 20) {
+        x = 20;
+      }
+      
+      // Adjust position if popup goes off screen vertically
+      if (y + popupRect.height > windowHeight - 20) {
         y = mousePosition.y - popupRect.height + 10;
+      }
+      
+      // Ensure popup doesn't go off top edge
+      if (y < 20) {
+        y = 20;
       }
       
       setPosition({ x, y });
@@ -68,13 +80,13 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
     }
   };
 
-  // If there are many events, show a summary instead of a scrollable list
-  const showSummary = events.length > 4;
+  // If there are many events, show a summary instead of a detailed list
+  const showSummary = events.length > 3;
 
   return (
     <div
       id="event-hover-popup"
-      className="fixed z-50 pointer-events-none"
+      className="fixed z-50 pointer-events-none max-w-sm"
       style={{
         left: position.x,
         top: position.y,
@@ -83,7 +95,7 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
         transition: 'all 0.2s ease-out'
       }}
     >
-      <Card className={`${showSummary ? 'w-80' : 'w-96'} shadow-xl border-2 bg-background/95 backdrop-blur-sm`}>
+      <Card className="shadow-xl border-2 bg-background/95 backdrop-blur-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
             <Calendar className="h-4 w-4" />
@@ -102,14 +114,14 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
           {showSummary ? (
             // Summary view for many events
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="p-3 bg-green-50 rounded-lg">
+              <div className="grid grid-cols-2 gap-3 text-center">
+                <div className="p-2 bg-green-50 rounded-lg">
                   <div className="text-lg font-bold text-green-600">
                     {events.filter(e => e.status === 'confirmed').length}
                   </div>
                   <div className="text-xs text-green-700">Confirmados</div>
                 </div>
-                <div className="p-3 bg-yellow-50 rounded-lg">
+                <div className="p-2 bg-yellow-50 rounded-lg">
                   <div className="text-lg font-bold text-yellow-600">
                     {events.filter(e => e.status === 'pending').length}
                   </div>
@@ -128,38 +140,38 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
             </div>
           ) : (
             // Detailed view for fewer events
-            <div className="space-y-3 max-h-64">
+            <div className="space-y-2 max-h-48 overflow-y-auto">
               {events.map((event) => (
                 <div 
                   key={event.id}
-                  className="p-3 rounded-lg border bg-card"
-                  style={{ borderLeftColor: event.color, borderLeftWidth: '4px' }}
+                  className="p-2 rounded-lg border bg-card"
+                  style={{ borderLeftColor: event.color, borderLeftWidth: '3px' }}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1">
                       <User className="h-3 w-3 text-muted-foreground" />
-                      <span className="font-medium text-sm">{event.client}</span>
+                      <span className="font-medium text-xs">{event.client}</span>
                     </div>
                     <Badge 
                       variant="outline" 
-                      className={`text-xs ${getStatusColor(event.status)}`}
+                      className={`text-xs px-1 py-0 ${getStatusColor(event.status)}`}
                     >
                       {getStatusText(event.status)}
                     </Badge>
                   </div>
                   
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
                       <span>{event.startTime} - {event.endTime}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />
-                      <span>{event.venue}</span>
+                      <span className="truncate">{event.venue}</span>
                     </div>
                     {event.sport && (
                       <div className="mt-1">
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs px-1 py-0">
                           {event.sport}
                         </Badge>
                       </div>

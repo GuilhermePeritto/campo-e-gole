@@ -1,6 +1,8 @@
 
-import { Clock, User, MapPin } from 'lucide-react';
+import { Clock, User, MapPin, Edit } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface Event {
   id: number;
@@ -20,6 +22,8 @@ interface EventTimelineProps {
 }
 
 const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineProps) => {
+  const navigate = useNavigate();
+  
   const timeSlots = Array.from({ length: 15 }, (_, i) => {
     const hour = i + 7;
     return `${hour.toString().padStart(2, '0')}:00`;
@@ -52,6 +56,11 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
       case 'cancelled': return 'border-red-500 bg-red-50';
       default: return 'border-gray-300 bg-gray-50';
     }
+  };
+
+  const handleEventEdit = (eventId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/eventos/${eventId}/editar`);
   };
 
   return (
@@ -118,13 +127,14 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
               return (
                 <div
                   key={event.id}
-                  className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 ${getStatusColor(event.status)} z-10`}
+                  className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 ${getStatusColor(event.status)} z-10 group hover:shadow-md transition-shadow cursor-pointer`}
                   style={{
                     top: `${topPosition}px`,
                     height: `${Math.max(height - 4, 48)}px`, // Minimum height of 48px with 4px margin
                     backgroundColor: event.color + '20', // Add transparency
                     borderLeftColor: event.color
                   }}
+                  onClick={() => handleEventEdit(event.id, {} as React.MouseEvent)}
                 >
                   <div className="flex items-start justify-between h-full">
                     <div className="flex-1 min-w-0">
@@ -144,7 +154,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
                         </div>
                       )}
                     </div>
-                    <div className="text-right ml-2 flex-shrink-0">
+                    <div className="flex flex-col items-end ml-2 flex-shrink-0">
                       <div className="text-xs font-medium text-gray-700">
                         {event.startTime}
                       </div>
@@ -154,6 +164,14 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
                       <div className="text-xs mt-1 font-medium">
                         {duration.toFixed(1)}h
                       </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
+                        onClick={(e) => handleEventEdit(event.id, e)}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 </div>
