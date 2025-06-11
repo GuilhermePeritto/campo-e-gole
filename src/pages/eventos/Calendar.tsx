@@ -1,4 +1,5 @@
 import EventDetailsPopup from '@/components/EventDetailsPopup';
+import EventHoverPopup from '@/components/EventHoverPopup';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,6 +15,14 @@ const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  
+  // Hover popup states
+  const [hoverPopup, setHoverPopup] = useState({
+    isVisible: false,
+    events: [] as any[],
+    date: new Date(),
+    mousePosition: { x: 0, y: 0 }
+  });
 
   const venues = [
     { id: 'all', name: 'Todos os Locais' },
@@ -184,6 +193,35 @@ const Calendar = () => {
     return date.toDateString() === today.toDateString();
   };
 
+  // Hover handlers for popup
+  const handleDayMouseEnter = (day: Date, e: React.MouseEvent) => {
+    const dayReservations = mockReservations.filter(r =>
+      r.day.toDateString() === day.toDateString()
+    );
+
+    if (dayReservations.length > 0) {
+      setHoverPopup({
+        isVisible: true,
+        events: dayReservations,
+        date: day,
+        mousePosition: { x: e.clientX, y: e.clientY }
+      });
+    }
+  };
+
+  const handleDayMouseLeave = () => {
+    setHoverPopup(prev => ({ ...prev, isVisible: false }));
+  };
+
+  const handleDayMouseMove = (e: React.MouseEvent) => {
+    if (hoverPopup.isVisible) {
+      setHoverPopup(prev => ({
+        ...prev,
+        mousePosition: { x: e.clientX, y: e.clientY }
+      }));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
@@ -296,6 +334,9 @@ const Calendar = () => {
                         ${!isCurrentMonth ? 'opacity-50' : ''
                         }`}
                       onClick={() => handleDateClick(day)}
+                      onMouseEnter={(e) => handleDayMouseEnter(day, e)}
+                      onMouseLeave={handleDayMouseLeave}
+                      onMouseMove={handleDayMouseMove}
                     >
                       <div className={`text-sm font-medium mb-2 ${isTodayDate
                         ? 'bg-green-600 text-gray-900 dark:text-gray-300 w-6 h-6 rounded-full flex items-center justify-center'
@@ -340,6 +381,9 @@ const Calendar = () => {
                       key={index}
                       className="p-4 text-center border-r border last:border-r-0 cursor-pointer"
                       onClick={() => handleDateClick(day)}
+                      onMouseEnter={(e) => handleDayMouseEnter(day, e)}
+                      onMouseLeave={handleDayMouseLeave}
+                      onMouseMove={handleDayMouseMove}
                     >
                       <div className="text-sm text-gray-600 mb-1">
                         {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
@@ -454,8 +498,18 @@ const Calendar = () => {
           event={selectedEvent}
         />
       )}
+
+      {/* Hover Popup */}
+      <EventHoverPopup
+        events={hoverPopup.events}
+        date={hoverPopup.date}
+        mousePosition={hoverPopup.mousePosition}
+        isVisible={hoverPopup.isVisible}
+      />
     </div>
   );
 };
 
 export default Calendar;
+
+</edits_to_apply>
