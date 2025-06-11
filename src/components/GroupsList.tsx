@@ -8,7 +8,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { BaseList } from '@/components/BaseList';
+import BaseList from '@/components/BaseList';
 import { MoreVertical, Edit, Trash, Users, Shield, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

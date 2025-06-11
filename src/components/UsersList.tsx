@@ -1,7 +1,5 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
@@ -10,8 +8,8 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { BaseList } from '@/components/BaseList';
-import { Search, MoreVertical, Edit, Trash, User, Plus } from 'lucide-react';
+import BaseList from '@/components/BaseList';
+import { MoreVertical, Edit, Trash, User, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
