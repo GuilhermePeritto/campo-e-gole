@@ -102,19 +102,21 @@ const EditGroup = () => {
   }, [id]);
 
   const handleModuleToggle = (moduleId: string) => {
-    const isSelected = formData.permissions.includes(moduleId);
-    
-    if (isSelected) {
-      setFormData(prev => ({
-        ...prev,
-        permissions: prev.permissions.filter(p => p !== moduleId)
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        permissions: [...prev.permissions, moduleId]
-      }));
-    }
+    setFormData(prev => {
+      const isSelected = prev.permissions.includes(moduleId);
+      
+      if (isSelected) {
+        return {
+          ...prev,
+          permissions: prev.permissions.filter(p => p !== moduleId)
+        };
+      } else {
+        return {
+          ...prev,
+          permissions: [...prev.permissions, moduleId]
+        };
+      }
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -265,47 +267,50 @@ const EditGroup = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {permissionModules.map((module) => (
-                  <div
-                    key={module.id}
-                    className={`relative p-6 border-2 rounded-xl transition-all duration-200 cursor-pointer hover:scale-105 ${
-                      formData.permissions.includes(module.id)
-                        ? 'border-primary bg-primary/5 shadow-lg'
-                        : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                    }`}
-                    onClick={() => handleModuleToggle(module.id)}
-                  >
-                    {formData.permissions.includes(module.id) && (
-                      <div className="absolute top-3 right-3">
-                        <CheckCircle className="h-5 w-5 text-primary" />
-                      </div>
-                    )}
-                    
-                    <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${module.color} flex items-center justify-center shadow-lg text-white`}>
-                        {module.icon}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Checkbox
-                            checked={formData.permissions.includes(module.id)}
-                            onChange={() => handleModuleToggle(module.id)}
-                            className="pointer-events-none"
-                          />
-                          <h3 className="font-semibold text-lg">{module.name}</h3>
+                {permissionModules.map((module) => {
+                  const isSelected = formData.permissions.includes(module.id);
+                  
+                  return (
+                    <div
+                      key={module.id}
+                      className={`relative p-6 border-2 rounded-xl transition-all duration-200 cursor-pointer hover:scale-105 ${
+                        isSelected
+                          ? 'border-primary bg-primary/5 shadow-lg'
+                          : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                      }`}
+                      onClick={() => handleModuleToggle(module.id)}
+                    >
+                      {isSelected && (
+                        <div className="absolute top-3 right-3">
+                          <CheckCircle className="h-5 w-5 text-primary" />
                         </div>
-                        <p className="text-sm text-muted-foreground mb-3">{module.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {module.permissions.map((permission) => (
-                            <Badge key={permission} variant="secondary" className="text-xs">
-                              {permission}
-                            </Badge>
-                          ))}
+                      )}
+                      
+                      <div className="flex items-start gap-4">
+                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${module.color} flex items-center justify-center shadow-lg text-white`}>
+                          {module.icon}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => handleModuleToggle(module.id)}
+                            />
+                            <h3 className="font-semibold text-lg">{module.name}</h3>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">{module.description}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {module.permissions.map((permission) => (
+                              <Badge key={permission} variant="secondary" className="text-xs">
+                                {permission}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {formData.permissions.length > 0 && (
