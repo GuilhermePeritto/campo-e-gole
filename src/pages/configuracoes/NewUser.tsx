@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { Upload, User, Shield } from 'lucide-react';
+import { Upload, User, Shield, Camera, Star, CheckCircle } from 'lucide-react';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 
@@ -41,28 +41,28 @@ const NewUser = () => {
       id: '1',
       name: 'Administradores',
       description: 'Acesso total ao sistema',
-      color: 'bg-red-500',
+      color: 'bg-gradient-to-r from-red-500 to-pink-500',
       permissions: ['Todas as permissões']
     },
     {
       id: '2',
       name: 'Gerentes',
       description: 'Acesso de gerenciamento',
-      color: 'bg-blue-500',
+      color: 'bg-gradient-to-r from-blue-500 to-cyan-500',
       permissions: ['Bar', 'Eventos', 'Escolinha', 'Relatórios']
     },
     {
       id: '3',
       name: 'Funcionários Bar',
       description: 'Acesso ao módulo bar',
-      color: 'bg-green-500',
+      color: 'bg-gradient-to-r from-green-500 to-emerald-500',
       permissions: ['Bar', 'Caixa']
     },
     {
       id: '4',
       name: 'Professores',
       description: 'Acesso ao módulo escolinha',
-      color: 'bg-purple-500',
+      color: 'bg-gradient-to-r from-purple-500 to-violet-500',
       permissions: ['Escolinha', 'Chamadas']
     }
   ];
@@ -115,7 +115,7 @@ const NewUser = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       <ModuleHeader
         title="Novo Usuário"
         icon={<User className="h-6 w-6" />}
@@ -125,25 +125,51 @@ const NewUser = () => {
         backLabel="Configurações"
       />
 
-      <main className="container mx-auto p-6 max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações Pessoais</CardTitle>
-              <CardDescription>Dados básicos do usuário</CardDescription>
+      <main className="container mx-auto p-6 max-w-5xl">
+        {/* Hero Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-primary/80 rounded-full mb-4">
+            <User className="h-8 w-8 text-primary-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+            Criar Novo Usuário
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Adicione um novo membro à sua equipe com as permissões adequadas
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Avatar and Basic Info */}
+          <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-r from-card to-card/50">
+            <CardHeader className="pb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Informações Pessoais</CardTitle>
+                  <CardDescription>Configure o perfil básico do usuário</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Avatar Upload */}
-              <div className="flex items-center gap-6">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage src={avatarPreview} />
-                  <AvatarFallback>
-                    <User className="h-8 w-8" />
-                  </AvatarFallback>
-                </Avatar>
-                <div>
+              {/* Avatar Upload Section */}
+              <div className="flex flex-col lg:flex-row lg:items-center gap-8">
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="relative group">
+                    <Avatar className="w-32 h-32 border-4 border-background shadow-xl">
+                      <AvatarImage src={avatarPreview} className="object-cover" />
+                      <AvatarFallback className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-2xl">
+                        <User className="h-12 w-12" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center">
+                      <Camera className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
                   <Label htmlFor="avatar" className="cursor-pointer">
-                    <Button type="button" variant="outline" className="gap-2">
+                    <Button type="button" variant="outline" className="gap-2 hover:bg-primary hover:text-primary-foreground transition-colors">
                       <Upload className="h-4 w-4" />
                       Escolher Foto
                     </Button>
@@ -155,105 +181,151 @@ const NewUser = () => {
                       className="hidden"
                     />
                   </Label>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    PNG, JPG até 2MB
+                  <p className="text-xs text-muted-foreground text-center">
+                    PNG, JPG até 2MB<br />
+                    Recomendado: 400x400px
                   </p>
                 </div>
+
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-semibold">Nome Completo *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      className="h-11"
+                      placeholder="Digite o nome completo"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-semibold">E-mail *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      className="h-11"
+                      placeholder="email@exemplo.com"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-semibold">Senha *</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                      className="h-11"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-sm font-semibold">Confirmar Senha *</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                      className="h-11"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome Completo *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">E-mail *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha *</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
+              <div className="max-w-sm">
+                <Label htmlFor="status" className="text-sm font-semibold">Status do Usuário</Label>
                 <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 mt-2">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ativo">Ativo</SelectItem>
-                    <SelectItem value="inativo">Inativo</SelectItem>
+                    <SelectItem value="ativo">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        Ativo
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="inativo">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        Inativo
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Grupo de Permissões
-              </CardTitle>
-              <CardDescription>Selecione o grupo que define as permissões do usuário</CardDescription>
+          {/* Permissions Section */}
+          <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-r from-card to-card/50">
+            <CardHeader className="pb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Grupo de Permissões</CardTitle>
+                  <CardDescription>Defina o nível de acesso do usuário no sistema</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Selecionar Grupo</Label>
-                <Select value={formData.userGroupId} onValueChange={(value) => setFormData(prev => ({ ...prev, userGroupId: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Escolha um grupo..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {userGroups.map((group) => (
-                      <SelectItem key={group.id} value={group.id}>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${group.color}`} />
-                          <span>{group.name}</span>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {userGroups.map((group) => (
+                  <div
+                    key={group.id}
+                    onClick={() => setFormData(prev => ({ ...prev, userGroupId: group.id }))}
+                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
+                      formData.userGroupId === group.id
+                        ? 'border-primary bg-primary/5 shadow-lg'
+                        : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                    }`}
+                  >
+                    {formData.userGroupId === group.id && (
+                      <div className="absolute top-3 right-3">
+                        <CheckCircle className="h-5 w-5 text-primary" />
+                      </div>
+                    )}
+                    
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-lg ${group.color} flex items-center justify-center shadow-lg`}>
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg mb-1">{group.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-3">{group.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {group.permissions.map((permission) => (
+                            <Badge key={permission} variant="secondary" className="text-xs">
+                              {permission}
+                            </Badge>
+                          ))}
                         </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {selectedGroup && (
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`w-4 h-4 rounded-full ${selectedGroup.color}`} />
-                    <span className="font-semibold text-primary">{selectedGroup.name}</span>
+                <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Star className="h-5 w-5 text-primary" />
+                    <span className="font-semibold text-primary text-lg">Grupo Selecionado</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-3">{selectedGroup.description}</p>
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-4 h-4 rounded-full ${selectedGroup.color}`} />
+                    <span className="font-semibold">{selectedGroup.name}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">{selectedGroup.description}</p>
+                  <div className="flex flex-wrap gap-2">
                     {selectedGroup.permissions.map((permission) => (
                       <Badge key={permission} variant="default" className="text-xs">
                         {permission}
@@ -265,11 +337,20 @@ const NewUser = () => {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/configuracoes')}>
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-4 pt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => navigate('/configuracoes')}
+              className="px-8"
+            >
               Cancelar
             </Button>
-            <Button type="submit">
+            <Button 
+              type="submit"
+              className="px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+            >
               Criar Usuário
             </Button>
           </div>

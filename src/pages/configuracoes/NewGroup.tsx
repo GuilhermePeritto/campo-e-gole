@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Shield, Palette, CheckCircle, Star, Users, Settings, BarChart3 } from 'lucide-react';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 
@@ -18,57 +18,69 @@ const NewGroup = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    color: 'bg-blue-500',
+    color: 'bg-gradient-to-r from-blue-500 to-cyan-500',
     permissions: [] as string[]
   });
 
   const colorOptions = [
-    { value: 'bg-red-500', label: 'Vermelho', class: 'bg-red-500' },
-    { value: 'bg-blue-500', label: 'Azul', class: 'bg-blue-500' },
-    { value: 'bg-green-500', label: 'Verde', class: 'bg-green-500' },
-    { value: 'bg-purple-500', label: 'Roxo', class: 'bg-purple-500' },
-    { value: 'bg-yellow-500', label: 'Amarelo', class: 'bg-yellow-500' },
-    { value: 'bg-orange-500', label: 'Laranja', class: 'bg-orange-500' },
-    { value: 'bg-pink-500', label: 'Rosa', class: 'bg-pink-500' },
-    { value: 'bg-gray-500', label: 'Cinza', class: 'bg-gray-500' }
+    { value: 'bg-gradient-to-r from-red-500 to-pink-500', label: 'Vermelho', preview: 'from-red-500 to-pink-500' },
+    { value: 'bg-gradient-to-r from-blue-500 to-cyan-500', label: 'Azul', preview: 'from-blue-500 to-cyan-500' },
+    { value: 'bg-gradient-to-r from-green-500 to-emerald-500', label: 'Verde', preview: 'from-green-500 to-emerald-500' },
+    { value: 'bg-gradient-to-r from-purple-500 to-violet-500', label: 'Roxo', preview: 'from-purple-500 to-violet-500' },
+    { value: 'bg-gradient-to-r from-yellow-500 to-orange-500', label: 'Amarelo', preview: 'from-yellow-500 to-orange-500' },
+    { value: 'bg-gradient-to-r from-orange-500 to-red-500', label: 'Laranja', preview: 'from-orange-500 to-red-500' },
+    { value: 'bg-gradient-to-r from-pink-500 to-purple-500', label: 'Rosa', preview: 'from-pink-500 to-purple-500' },
+    { value: 'bg-gradient-to-r from-gray-500 to-slate-500', label: 'Cinza', preview: 'from-gray-500 to-slate-500' }
   ];
 
-  // Simplified permissions structure
+  // Simplified permissions structure with icons
   const permissionModules = [
     {
       id: 'dashboard',
       name: 'Dashboard',
-      description: 'Visualizar painel principal',
-      permissions: ['Visualizar Dashboard']
+      description: 'Visualizar painel principal e estatísticas gerais',
+      icon: <BarChart3 className="h-5 w-5" />,
+      color: 'from-blue-500 to-cyan-500',
+      permissions: ['Visualizar Dashboard', 'Estatísticas Gerais']
     },
     {
       id: 'bar',
       name: 'Bar',
-      description: 'Módulo completo do bar',
+      description: 'Módulo completo do bar e operações de venda',
+      icon: <Users className="h-5 w-5" />,
+      color: 'from-green-500 to-emerald-500',
       permissions: ['Visualizar', 'Gerenciar Produtos', 'Operar Caixa', 'Gerenciar Comandas', 'Relatórios']
     },
     {
       id: 'events',
       name: 'Eventos',
-      description: 'Módulo completo de eventos',
+      description: 'Gestão completa de eventos e reservas',
+      icon: <Star className="h-5 w-5" />,
+      color: 'from-purple-500 to-violet-500',
       permissions: ['Visualizar', 'Gerenciar Eventos', 'Gerenciar Locais', 'Gerenciar Clientes', 'Receber Pagamentos', 'Relatórios']
     },
     {
       id: 'school',
       name: 'Escolinha',
-      description: 'Módulo completo da escolinha',
+      description: 'Sistema de gestão escolar e chamadas',
+      icon: <Users className="h-5 w-5" />,
+      color: 'from-yellow-500 to-orange-500',
       permissions: ['Visualizar', 'Gerenciar Alunos', 'Gerenciar Professores', 'Gerenciar Turmas', 'Chamadas', 'Receber Pagamentos', 'Relatórios']
     },
     {
       id: 'financial',
       name: 'Financeiro',
-      description: 'Módulo financeiro',
+      description: 'Controle financeiro e fluxo de caixa',
+      icon: <BarChart3 className="h-5 w-5" />,
+      color: 'from-emerald-500 to-teal-500',
       permissions: ['Visualizar', 'Gerenciar Lançamentos', 'Contas a Pagar/Receber', 'Relatórios']
     },
     {
       id: 'settings',
       name: 'Configurações',
-      description: 'Configurações do sistema',
+      description: 'Administração do sistema e usuários',
+      icon: <Settings className="h-5 w-5" />,
+      color: 'from-red-500 to-pink-500',
       permissions: ['Visualizar Configurações', 'Gerenciar Usuários', 'Editar Configurações']
     }
   ];
@@ -112,7 +124,7 @@ const NewGroup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       <ModuleHeader
         title="Novo Grupo"
         icon={<Shield className="h-6 w-6" />}
@@ -122,103 +134,152 @@ const NewGroup = () => {
         backLabel="Configurações"
       />
 
-      <main className="container mx-auto p-6 max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Informações do Grupo
-              </CardTitle>
-              <CardDescription>Defina o nome, descrição e cor do grupo</CardDescription>
+      <main className="container mx-auto p-6 max-w-5xl">
+        {/* Hero Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-primary/80 rounded-full mb-4">
+            <Shield className="h-8 w-8 text-primary-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+            Criar Novo Grupo
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Configure um novo grupo de permissões para organizar sua equipe
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Group Info */}
+          <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-r from-card to-card/50">
+            <CardHeader className="pb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                  <Palette className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Informações do Grupo</CardTitle>
+                  <CardDescription>Defina nome, descrição e visual do grupo</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome do Grupo *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Ex: Funcionários de Evento"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Cor do Grupo</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {colorOptions.map((color) => (
-                      <button
-                        key={color.value}
-                        type="button"
-                        className={`w-8 h-8 rounded-full border-2 transition-all ${color.class} ${
-                          formData.color === color.value 
-                            ? 'border-primary scale-110' 
-                            : 'border-muted hover:scale-105'
-                        }`}
-                        onClick={() => setFormData(prev => ({ ...prev, color: color.value }))}
-                        title={color.label}
-                      />
-                    ))}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-semibold">Nome do Grupo *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Ex: Funcionários de Evento"
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-sm font-semibold">Descrição *</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Descreva o que este grupo de usuários pode fazer no sistema..."
+                      rows={4}
+                      required
+                    />
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Descrição *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Descreva o que este grupo de usuários pode fazer no sistema..."
-                  rows={3}
-                  required
-                />
-              </div>
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold">Cor do Grupo</Label>
+                    <div className="grid grid-cols-4 gap-3">
+                      {colorOptions.map((color) => (
+                        <button
+                          key={color.value}
+                          type="button"
+                          className={`relative w-12 h-12 rounded-xl border-2 transition-all bg-gradient-to-r ${color.preview} ${
+                            formData.color === color.value 
+                              ? 'border-foreground scale-110 shadow-lg' 
+                              : 'border-border hover:scale-105 hover:border-foreground/50'
+                          }`}
+                          onClick={() => setFormData(prev => ({ ...prev, color: color.value }))}
+                          title={color.label}
+                        >
+                          {formData.color === color.value && (
+                            <div className="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                              <CheckCircle className="h-6 w-6 text-white" />
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              {/* Preview */}
-              <div className="p-4 bg-muted/30 rounded-lg">
-                <Label className="text-sm font-semibold">Pré-visualização:</Label>
-                <div className="flex items-center gap-3 mt-2">
-                  <div className={`w-4 h-4 rounded-full ${formData.color}`} />
-                  <div>
-                    <span className="font-medium">{formData.name || 'Nome do Grupo'}</span>
-                    <p className="text-sm text-muted-foreground">
-                      {formData.description || 'Descrição do grupo...'}
-                    </p>
+                  {/* Preview */}
+                  <div className="p-6 bg-gradient-to-r from-muted/50 to-muted/30 rounded-xl border border-border">
+                    <Label className="text-sm font-semibold mb-3 block">Pré-visualização:</Label>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl ${formData.color} flex items-center justify-center shadow-lg`}>
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{formData.name || 'Nome do Grupo'}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {formData.description || 'Descrição do grupo...'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Módulos e Permissões</CardTitle>
-              <CardDescription>Selecione os módulos que este grupo terá acesso</CardDescription>
+          {/* Permissions */}
+          <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-r from-card to-card/50">
+            <CardHeader className="pb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Módulos e Permissões</CardTitle>
+                  <CardDescription>Escolha quais módulos este grupo poderá acessar</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {permissionModules.map((module) => (
                   <div
                     key={module.id}
-                    className={`p-4 border rounded-lg transition-colors ${
+                    className={`relative p-6 border-2 rounded-xl transition-all duration-200 cursor-pointer hover:scale-105 ${
                       formData.permissions.includes(module.id)
-                        ? 'border-primary bg-primary/5'
-                        : 'hover:bg-muted/50'
+                        ? 'border-primary bg-primary/5 shadow-lg'
+                        : 'border-border hover:border-primary/50 hover:bg-muted/50'
                     }`}
+                    onClick={() => handleModuleToggle(module.id)}
                   >
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id={module.id}
-                        checked={formData.permissions.includes(module.id)}
-                        onCheckedChange={() => handleModuleToggle(module.id)}
-                        className="mt-1"
-                      />
+                    {formData.permissions.includes(module.id) && (
+                      <div className="absolute top-3 right-3">
+                        <CheckCircle className="h-5 w-5 text-primary" />
+                      </div>
+                    )}
+                    
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${module.color} flex items-center justify-center shadow-lg text-white`}>
+                        {module.icon}
+                      </div>
                       <div className="flex-1">
-                        <Label htmlFor={module.id} className="text-base font-semibold cursor-pointer">
-                          {module.name}
-                        </Label>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Checkbox
+                            checked={formData.permissions.includes(module.id)}
+                            onChange={() => handleModuleToggle(module.id)}
+                            className="pointer-events-none"
+                          />
+                          <h3 className="font-semibold text-lg">{module.name}</h3>
+                        </div>
                         <p className="text-sm text-muted-foreground mb-3">{module.description}</p>
                         <div className="flex flex-wrap gap-1">
                           {module.permissions.map((permission) => (
@@ -234,15 +295,18 @@ const NewGroup = () => {
               </div>
 
               {formData.permissions.length > 0 && (
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                  <span className="text-sm font-semibold text-primary">
-                    Módulos selecionados ({formData.permissions.length}):
-                  </span>
-                  <div className="flex flex-wrap gap-1 mt-2">
+                <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Star className="h-5 w-5 text-primary" />
+                    <span className="text-lg font-semibold text-primary">
+                      Módulos Selecionados ({formData.permissions.length})
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     {formData.permissions.map((moduleId) => {
                       const module = permissionModules.find(m => m.id === moduleId);
                       return (
-                        <Badge key={moduleId} variant="default" className="text-xs">
+                        <Badge key={moduleId} variant="default" className="text-sm px-3 py-1">
                           {module?.name}
                         </Badge>
                       );
@@ -253,11 +317,20 @@ const NewGroup = () => {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/configuracoes')}>
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-4 pt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => navigate('/configuracoes')}
+              className="px-8"
+            >
               Cancelar
             </Button>
-            <Button type="submit">
+            <Button 
+              type="submit"
+              className="px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+            >
               Criar Grupo
             </Button>
           </div>
