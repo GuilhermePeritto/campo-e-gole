@@ -25,6 +25,14 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
     return `${hour.toString().padStart(2, '0')}:00`;
   });
 
+  // Calculate duration in hours for event sizing
+  const calculateDuration = (startTime: string, endTime: string) => {
+    const start = new Date(`2000-01-01 ${startTime}`);
+    const end = new Date(`2000-01-01 ${endTime}`);
+    return (end.getTime() - start.getTime()) / (1000 * 60 * 60); // Duration in hours
+  };
+
+  // Get events that overlap with specific time slot
   const getEventsForTimeSlot = (time: string) => {
     return events.filter(event => {
       const eventStart = event.startTime;
@@ -60,63 +68,98 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick }: EventTimelineP
           </h3>
         </div>
         
-        <div className="overflow-y-auto h-[420px]">
-          {timeSlots.map((time) => {
-            const slotEvents = getEventsForTimeSlot(time);
-            const isAvailable = isTimeSlotAvailable(time);
-            
-            return (
-              <div 
-                key={time} 
-                className={`border-b border-gray-100 min-h-[60px] flex items-center p-3 transition-colors ${
-                  isAvailable 
-                    ? 'hover:bg-green-50 cursor-pointer' 
-                    : 'bg-gray-50'
-                }`}
-                onClick={() => isAvailable && onTimeSlotClick?.(time)}
-              >
-                <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
-                  {time}
+        <div className="overflow-y-auto h-[420px] relative">
+          {/* Time slots grid */}
+          <div className="relative">
+            {timeSlots.map((time, index) => {
+              const isAvailable = isTimeSlotAvailable(time);
+              
+              return (
+                <div 
+                  key={time} 
+                  className={`border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative ${
+                    isAvailable 
+                      ? 'hover:bg-green-50 cursor-pointer' 
+                      : 'bg-gray-50'
+                  }`}
+                  onClick={() => isAvailable && onTimeSlotClick?.(time)}
+                >
+                  <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
+                    {time}
+                  </div>
+                  
+                  <div className="flex-1 ml-4 relative">
+                    {isAvailable ? (
+                      <div className="text-sm text-green-600 font-medium">
+                        ✓ Disponível - Clique para selecionar
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
-                
-                <div className="flex-1 ml-4">
-                  {isAvailable ? (
-                    <div className="text-sm text-green-600 font-medium">
-                      ✓ Disponível
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {slotEvents.map((event) => (
-                        <div 
-                          key={event.id}
-                          className={`p-3 rounded-lg border-l-4 ${getStatusColor(event.status)}`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4 text-gray-600" />
-                              <span className="font-medium">{event.client}</span>
-                            </div>
-                            <span className="text-xs text-gray-500">
-                              {event.startTime} - {event.endTime}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <MapPin className="h-3 w-3 text-gray-500" />
-                            <span className="text-sm text-gray-600">{event.venue}</span>
-                            {event.sport && (
-                              <span className="text-xs bg-gray-200 px-2 py-1 rounded">
-                                {event.sport}
-                              </span>
-                            )}
-                          </div>
+              );
+            })}
+          </div>
+
+          {/* Events overlay - positioned absolutely */}
+          <div className="absolute top-0 left-0 right-0">
+            {events.map((event) => {
+              const startHour = parseInt(event.startTime.split(':')[0]);
+              const startMinute = parseInt(event.startTime.split(':')[1]);
+              const endHour = parseInt(event.endTime.split(':')[0]);
+              const endMinute = parseInt(event.endTime.split(':')[1]);
+              
+              // Calculate position (starting from 7:00)
+              const startOffset = ((startHour - 7) * 60 + startMinute) / 60; // Hours from 7:00
+              const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 60; // Duration in hours
+              
+              const topPosition = startOffset * 64; // 64px per hour (h-16)
+              const height = duration * 64; // Height based on duration
+
+              return (
+                <div
+                  key={event.id}
+                  className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 ${getStatusColor(event.status)} z-10`}
+                  style={{
+                    top: `${topPosition}px`,
+                    height: `${Math.max(height - 4, 48)}px`, // Minimum height of 48px with 4px margin
+                    backgroundColor: event.color + '20', // Add transparency
+                    borderLeftColor: event.color
+                  }}
+                >
+                  <div className="flex items-start justify-between h-full">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
+                        <span className="font-medium text-sm truncate">{event.client}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
+                        <span className="text-xs text-gray-600 truncate">{event.venue}</span>
+                      </div>
+                      {event.sport && (
+                        <div className="mt-1">
+                          <span className="text-xs bg-white/60 px-2 py-1 rounded">
+                            {event.sport}
+                          </span>
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
+                    <div className="text-right ml-2 flex-shrink-0">
+                      <div className="text-xs font-medium text-gray-700">
+                        {event.startTime}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {event.endTime}
+                      </div>
+                      <div className="text-xs mt-1 font-medium">
+                        {duration.toFixed(1)}h
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </CardContent>
     </Card>

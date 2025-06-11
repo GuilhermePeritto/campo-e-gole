@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, MapPin } from 'lucide-react';
+import { Clock, User, MapPin, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface Event {
@@ -35,7 +35,7 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
       let x = mousePosition.x + 15;
       let y = mousePosition.y - 10;
       
-      // Ajustar posição se o popup sair da tela
+      // Adjust position if popup goes off screen
       if (x + popupRect.width > windowWidth) {
         x = mousePosition.x - popupRect.width - 15;
       }
@@ -68,6 +68,9 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
     }
   };
 
+  // If there are many events, show a summary instead of a scrollable list
+  const showSummary = events.length > 4;
+
   return (
     <div
       id="event-hover-popup"
@@ -80,10 +83,10 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
         transition: 'all 0.2s ease-out'
       }}
     >
-      <Card className="w-80 shadow-xl border-2 bg-background/95 backdrop-blur-sm">
+      <Card className={`${showSummary ? 'w-80' : 'w-96'} shadow-xl border-2 bg-background/95 backdrop-blur-sm`}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
-            <Clock className="h-4 w-4" />
+            <Calendar className="h-4 w-4" />
             {date.toLocaleDateString('pt-BR', { 
               weekday: 'long', 
               day: '2-digit', 
@@ -94,45 +97,78 @@ const EventHoverPopup = ({ events, date, mousePosition, isVisible }: EventHoverP
             {events.length} evento{events.length !== 1 ? 's' : ''} agendado{events.length !== 1 ? 's' : ''}
           </div>
         </CardHeader>
-        <CardContent className="pt-0 space-y-3 max-h-64 overflow-y-auto">
-          {events.map((event) => (
-            <div 
-              key={event.id}
-              className="p-3 rounded-lg border bg-card"
-              style={{ borderLeftColor: event.color, borderLeftWidth: '4px' }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <User className="h-3 w-3 text-muted-foreground" />
-                  <span className="font-medium text-sm">{event.client}</span>
+        
+        <CardContent className="pt-0">
+          {showSummary ? (
+            // Summary view for many events
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="p-3 bg-green-50 rounded-lg">
+                  <div className="text-lg font-bold text-green-600">
+                    {events.filter(e => e.status === 'confirmed').length}
+                  </div>
+                  <div className="text-xs text-green-700">Confirmados</div>
                 </div>
-                <Badge 
-                  variant="outline" 
-                  className={`text-xs ${getStatusColor(event.status)}`}
-                >
-                  {getStatusText(event.status)}
-                </Badge>
+                <div className="p-3 bg-yellow-50 rounded-lg">
+                  <div className="text-lg font-bold text-yellow-600">
+                    {events.filter(e => e.status === 'pending').length}
+                  </div>
+                  <div className="text-xs text-yellow-700">Pendentes</div>
+                </div>
               </div>
               
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  <span>{event.startTime} - {event.endTime}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <MapPin className="h-3 w-3" />
-                  <span>{event.venue}</span>
-                </div>
-                {event.sport && (
-                  <div className="mt-1">
-                    <Badge variant="secondary" className="text-xs">
-                      {event.sport}
-                    </Badge>
-                  </div>
-                )}
+              <div className="text-center text-sm text-muted-foreground">
+                <Clock className="h-4 w-4 inline mr-2" />
+                {events[0]?.startTime} - {events[events.length - 1]?.endTime}
+              </div>
+              
+              <div className="text-xs text-center text-muted-foreground bg-muted/50 p-2 rounded">
+                Clique no dia para ver todos os eventos
               </div>
             </div>
-          ))}
+          ) : (
+            // Detailed view for fewer events
+            <div className="space-y-3 max-h-64">
+              {events.map((event) => (
+                <div 
+                  key={event.id}
+                  className="p-3 rounded-lg border bg-card"
+                  style={{ borderLeftColor: event.color, borderLeftWidth: '4px' }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <User className="h-3 w-3 text-muted-foreground" />
+                      <span className="font-medium text-sm">{event.client}</span>
+                    </div>
+                    <Badge 
+                      variant="outline" 
+                      className={`text-xs ${getStatusColor(event.status)}`}
+                    >
+                      {getStatusText(event.status)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>{event.startTime} - {event.endTime}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <MapPin className="h-3 w-3" />
+                      <span>{event.venue}</span>
+                    </div>
+                    {event.sport && (
+                      <div className="mt-1">
+                        <Badge variant="secondary" className="text-xs">
+                          {event.sport}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

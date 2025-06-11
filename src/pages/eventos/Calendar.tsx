@@ -152,6 +152,7 @@ const Calendar = () => {
     setCurrentDate(newDate);
   };
 
+  // Updated to pass date as URL parameter
   const handleDateClick = (date: Date) => {
     const formattedDate = date.toISOString().split('T')[0];
     navigate(`/eventos/novo?date=${formattedDate}`);

@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,11 +8,13 @@ import ModuleHeader from '@/components/ModuleHeader';
 import EventTimeline from '@/components/EventTimeline';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Calendar, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const NewReservation = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
   const [formData, setFormData] = useState({
     client: '',
     venue: '',
@@ -23,6 +24,14 @@ const NewReservation = () => {
     notes: '',
     amount: ''
   });
+
+  // Set date from URL parameter when component mounts
+  useEffect(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      setFormData(prev => ({ ...prev, date: dateParam }));
+    }
+  }, [searchParams]);
 
   // Mock events for timeline demonstration
   const mockEvents = [
