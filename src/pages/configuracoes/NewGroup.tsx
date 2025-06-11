@@ -9,7 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Shield, Users } from 'lucide-react';
+import { Shield } from 'lucide-react';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 const NewGroup = () => {
   const navigate = useNavigate();
@@ -19,7 +21,6 @@ const NewGroup = () => {
     color: 'bg-blue-500',
     permissions: [] as string[]
   });
-  const [permissionSearch, setPermissionSearch] = useState('');
 
   const colorOptions = [
     { value: 'bg-red-500', label: 'Vermelho', class: 'bg-red-500' },
@@ -32,101 +33,60 @@ const NewGroup = () => {
     { value: 'bg-gray-500', label: 'Cinza', class: 'bg-gray-500' }
   ];
 
-  // Available permissions organized by category
-  const permissionCategories = {
-    'Geral': [
-      { key: 'general.view_dashboard', label: 'Visualizar Dashboard' },
-    ],
-    'Bar': [
-      { key: 'bar.view', label: 'Visualizar Bar' },
-      { key: 'bar.create', label: 'Criar Produtos' },
-      { key: 'bar.edit', label: 'Editar Produtos' },
-      { key: 'bar.delete', label: 'Excluir Produtos' },
-      { key: 'bar.cashier', label: 'Operar Caixa' },
-      { key: 'bar.manage_stock', label: 'Gerenciar Estoque' },
-      { key: 'bar.manage_comandas', label: 'Gerenciar Comandas' },
-    ],
-    'Eventos': [
-      { key: 'events.view', label: 'Visualizar Eventos' },
-      { key: 'events.create', label: 'Criar Eventos' },
-      { key: 'events.edit', label: 'Editar Eventos' },
-      { key: 'events.delete', label: 'Excluir Eventos' },
-      { key: 'events.manage_venues', label: 'Gerenciar Locais' },
-      { key: 'events.manage_clients', label: 'Gerenciar Clientes' },
-      { key: 'events.receive_payments', label: 'Receber Pagamentos' },
-    ],
-    'Escolinha': [
-      { key: 'school.view', label: 'Visualizar Escolinha' },
-      { key: 'school.create', label: 'Criar Registros' },
-      { key: 'school.edit', label: 'Editar Registros' },
-      { key: 'school.delete', label: 'Excluir Registros' },
-      { key: 'school.attendance', label: 'Gerenciar Chamadas' },
-      { key: 'school.manage_students', label: 'Gerenciar Alunos' },
-      { key: 'school.manage_teachers', label: 'Gerenciar Professores' },
-      { key: 'school.manage_classes', label: 'Gerenciar Turmas' },
-      { key: 'school.receive_payments', label: 'Receber Pagamentos' },
-    ],
-    'Financeiro': [
-      { key: 'financial.view', label: 'Visualizar Financeiro' },
-      { key: 'financial.create', label: 'Criar Lançamentos' },
-      { key: 'financial.edit', label: 'Editar Lançamentos' },
-      { key: 'financial.delete', label: 'Excluir Lançamentos' },
-      { key: 'financial.manage_receivables', label: 'Gerenciar Recebíveis' },
-      { key: 'financial.manage_payables', label: 'Gerenciar Pagáveis' },
-    ],
-    'Relatórios': [
-      { key: 'reports.view', label: 'Visualizar Relatórios' },
-      { key: 'reports.export', label: 'Exportar Relatórios' },
-    ],
-    'Configurações': [
-      { key: 'settings.view', label: 'Visualizar Configurações' },
-      { key: 'settings.edit', label: 'Editar Configurações' },
-      { key: 'users.manage', label: 'Gerenciar Usuários' },
-    ]
-  };
+  // Simplified permissions structure
+  const permissionModules = [
+    {
+      id: 'dashboard',
+      name: 'Dashboard',
+      description: 'Visualizar painel principal',
+      permissions: ['Visualizar Dashboard']
+    },
+    {
+      id: 'bar',
+      name: 'Bar',
+      description: 'Módulo completo do bar',
+      permissions: ['Visualizar', 'Gerenciar Produtos', 'Operar Caixa', 'Gerenciar Comandas', 'Relatórios']
+    },
+    {
+      id: 'events',
+      name: 'Eventos',
+      description: 'Módulo completo de eventos',
+      permissions: ['Visualizar', 'Gerenciar Eventos', 'Gerenciar Locais', 'Gerenciar Clientes', 'Receber Pagamentos', 'Relatórios']
+    },
+    {
+      id: 'school',
+      name: 'Escolinha',
+      description: 'Módulo completo da escolinha',
+      permissions: ['Visualizar', 'Gerenciar Alunos', 'Gerenciar Professores', 'Gerenciar Turmas', 'Chamadas', 'Receber Pagamentos', 'Relatórios']
+    },
+    {
+      id: 'financial',
+      name: 'Financeiro',
+      description: 'Módulo financeiro',
+      permissions: ['Visualizar', 'Gerenciar Lançamentos', 'Contas a Pagar/Receber', 'Relatórios']
+    },
+    {
+      id: 'settings',
+      name: 'Configurações',
+      description: 'Configurações do sistema',
+      permissions: ['Visualizar Configurações', 'Gerenciar Usuários', 'Editar Configurações']
+    }
+  ];
 
-  const handlePermissionToggle = (permission: string) => {
-    setFormData(prev => ({
-      ...prev,
-      permissions: prev.permissions.includes(permission)
-        ? prev.permissions.filter(p => p !== permission)
-        : [...prev.permissions, permission]
-    }));
-  };
-
-  const handleCategoryToggle = (categoryPermissions: Array<{key: string, label: string}>) => {
-    const categoryKeys = categoryPermissions.map(p => p.key);
-    const allSelected = categoryKeys.every(key => formData.permissions.includes(key));
+  const handleModuleToggle = (moduleId: string) => {
+    const isSelected = formData.permissions.includes(moduleId);
     
-    if (allSelected) {
-      // Remove all permissions from this category
+    if (isSelected) {
       setFormData(prev => ({
         ...prev,
-        permissions: prev.permissions.filter(p => !categoryKeys.includes(p))
+        permissions: prev.permissions.filter(p => p !== moduleId)
       }));
     } else {
-      // Add all permissions from this category
       setFormData(prev => ({
         ...prev,
-        permissions: [...new Set([...prev.permissions, ...categoryKeys])]
+        permissions: [...prev.permissions, moduleId]
       }));
     }
-  };
-
-  const getFilteredPermissions = () => {
-    if (!permissionSearch) return permissionCategories;
-    
-    const filtered = {} as typeof permissionCategories;
-    Object.entries(permissionCategories).forEach(([category, permissions]) => {
-      const filteredPerms = permissions.filter(perm => 
-        perm.label.toLowerCase().includes(permissionSearch.toLowerCase()) ||
-        perm.key.toLowerCase().includes(permissionSearch.toLowerCase())
-      );
-      if (filteredPerms.length > 0) {
-        filtered[category as keyof typeof permissionCategories] = filteredPerms;
-      }
-    });
-    return filtered;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -135,7 +95,7 @@ const NewGroup = () => {
     if (formData.permissions.length === 0) {
       toast({
         title: "Erro",
-        description: "Selecione pelo menos uma permissão para o grupo.",
+        description: "Selecione pelo menos um módulo para o grupo.",
         variant: "destructive"
       });
       return;
@@ -153,22 +113,16 @@ const NewGroup = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-card border-b">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/configuracoes')}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Novo Grupo</h1>
-              <p className="text-muted-foreground">Cadastrar um novo grupo de permissões</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ModuleHeader
+        title="Novo Grupo"
+        icon={<Shield className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.dashboard}
+        mustReturn={true}
+        backTo="/configuracoes"
+        backLabel="Configurações"
+      />
 
-      <main className="container mx-auto p-6 max-w-5xl">
+      <main className="container mx-auto p-6 max-w-4xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           <Card>
             <CardHeader>
@@ -240,91 +194,59 @@ const NewGroup = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Permissões do Grupo
-              </CardTitle>
-              <CardDescription>Selecione as permissões que os usuários deste grupo terão</CardDescription>
+              <CardTitle>Módulos e Permissões</CardTitle>
+              <CardDescription>Selecione os módulos que este grupo terá acesso</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>Buscar Permissões</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar permissões..."
-                    value={permissionSearch}
-                    onChange={(e) => setPermissionSearch(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-6 max-h-96 overflow-y-auto border rounded-lg p-4">
-                {Object.entries(getFilteredPermissions()).map(([category, permissions]) => {
-                  const categoryKeys = permissions.map(p => p.key);
-                  const allSelected = categoryKeys.every(key => formData.permissions.includes(key));
-                  const someSelected = categoryKeys.some(key => formData.permissions.includes(key));
-                  
-                  return (
-                    <div key={category} className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-primary">{category}</h4>
-                        <Button
-                          type="button"
-                          variant={allSelected ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handleCategoryToggle(permissions)}
-                          className="text-xs"
-                        >
-                          {allSelected ? 'Desmarcar Todas' : 'Marcar Todas'}
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {permissions.map((permission) => (
-                          <div
-                            key={permission.key}
-                            className="flex items-center space-x-2 p-3 rounded border hover:bg-muted/30 transition-colors"
-                          >
-                            <Checkbox
-                              id={permission.key}
-                              checked={formData.permissions.includes(permission.key)}
-                              onCheckedChange={() => handlePermissionToggle(permission.key)}
-                            />
-                            <Label htmlFor={permission.key} className="text-sm cursor-pointer flex-1">
-                              {permission.label}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      {someSelected && (
-                        <div className="text-xs text-muted-foreground">
-                          {categoryKeys.filter(key => formData.permissions.includes(key)).length} de {categoryKeys.length} selecionadas
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                {permissionModules.map((module) => (
+                  <div
+                    key={module.id}
+                    className={`p-4 border rounded-lg transition-colors ${
+                      formData.permissions.includes(module.id)
+                        ? 'border-primary bg-primary/5'
+                        : 'hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id={module.id}
+                        checked={formData.permissions.includes(module.id)}
+                        onCheckedChange={() => handleModuleToggle(module.id)}
+                        className="mt-1"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor={module.id} className="text-base font-semibold cursor-pointer">
+                          {module.name}
+                        </Label>
+                        <p className="text-sm text-muted-foreground mb-3">{module.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {module.permissions.map((permission) => (
+                            <Badge key={permission} variant="secondary" className="text-xs">
+                              {permission}
+                            </Badge>
+                          ))}
                         </div>
-                      )}
+                      </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
 
               {formData.permissions.length > 0 && (
                 <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
                   <span className="text-sm font-semibold text-primary">
-                    Permissões selecionadas ({formData.permissions.length}):
+                    Módulos selecionados ({formData.permissions.length}):
                   </span>
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {formData.permissions.map((permission) => (
-                      <Badge key={permission} variant="default" className="text-xs">
-                        {permission}
-                        <button
-                          type="button"
-                          onClick={() => handlePermissionToggle(permission)}
-                          className="ml-1 hover:bg-primary-foreground/20 rounded"
-                        >
-                          ×
-                        </button>
-                      </Badge>
-                    ))}
+                    {formData.permissions.map((moduleId) => {
+                      const module = permissionModules.find(m => m.id === moduleId);
+                      return (
+                        <Badge key={moduleId} variant="default" className="text-xs">
+                          {module?.name}
+                        </Badge>
+                      );
+                    })}
                   </div>
                 </div>
               )}
