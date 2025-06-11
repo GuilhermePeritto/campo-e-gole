@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,7 +26,6 @@ interface User {
 
 const UsersList = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Mock data
   const users: User[] = [
@@ -60,14 +60,69 @@ const UsersList = () => {
     }
   ];
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.group.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const columns = [
+    {
+      key: 'name',
+      label: 'Nome',
+      render: (user: User) => (
+        <div className="flex items-center gap-3">
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={user.avatar} />
+            <AvatarFallback>
+              <User className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{user.name}</span>
+        </div>
+      )
+    },
+    {
+      key: 'email',
+      label: 'E-mail',
+      render: (user: User) => <span className="text-muted-foreground">{user.email}</span>
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (user: User) => (
+        <Badge variant={user.status === 'ativo' ? 'default' : 'secondary'}>
+          {user.status}
+        </Badge>
+      )
+    },
+    {
+      key: 'group',
+      label: 'Grupo',
+      render: (user: User) => (
+        <div className="flex items-center gap-2">
+          <div className={`w-3 h-3 rounded-full ${user.groupColor}`} />
+          <span>{user.group}</span>
+        </div>
+      )
+    },
+    {
+      key: 'lastLogin',
+      label: 'Último Acesso',
+      render: (user: User) => <span className="text-sm text-muted-foreground">{user.lastLogin}</span>
+    }
+  ];
 
-  const renderUserCard = (user: User) => (
-    <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+  const actions = [
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (user: User) => navigate(`/configuracoes/usuarios/${user.id}/editar`)
+    },
+    {
+      label: 'Excluir',
+      icon: <Trash className="h-4 w-4" />,
+      onClick: (user: User) => console.log('Excluir usuário:', user.id),
+      variant: 'destructive' as const
+    }
+  ];
+
+  const renderUserCard = (user: User, actions: any[]) => (
+    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
       <div className="flex items-center gap-4">
         <Avatar className="w-12 h-12">
           <AvatarImage src={user.avatar} />
@@ -114,21 +169,20 @@ const UsersList = () => {
 
   return (
     <BaseList
+      data={users}
+      columns={columns}
+      actions={actions}
       title="Usuários do Sistema"
       description="Gerencie usuários e suas permissões"
       searchPlaceholder="Buscar usuários..."
-      searchValue={searchTerm}
-      onSearchChange={setSearchTerm}
-      items={filteredUsers}
-      renderItem={renderUserCard}
-      emptyMessage="Nenhum usuário encontrado"
-      emptyDescription="Não há usuários cadastrados ou que correspondam aos critérios de busca."
-      actionButton={
-        <Button onClick={() => navigate('/configuracoes/usuarios/novo')} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Novo Usuário
-        </Button>
-      }
+      searchFields={['name', 'email', 'group']}
+      getItemId={(user) => user.id}
+      renderCard={renderUserCard}
+      createButton={{
+        label: 'Novo Usuário',
+        icon: <Plus className="h-4 w-4" />,
+        onClick: () => navigate('/configuracoes/usuarios/novo')
+      }}
     />
   );
 };

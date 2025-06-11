@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -24,7 +24,6 @@ interface Group {
 
 const GroupsList = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Mock data
   const groups: Group[] = [
@@ -66,13 +65,70 @@ const GroupsList = () => {
     }
   ];
 
-  const filteredGroups = groups.filter(group =>
-    group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    group.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const columns = [
+    {
+      key: 'name',
+      label: 'Nome',
+      render: (group: Group) => (
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-lg ${group.color} flex items-center justify-center`}>
+            <Shield className="h-4 w-4 text-white" />
+          </div>
+          <span className="font-medium">{group.name}</span>
+        </div>
+      )
+    },
+    {
+      key: 'description',
+      label: 'Descrição',
+      render: (group: Group) => <span className="text-muted-foreground">{group.description}</span>
+    },
+    {
+      key: 'userCount',
+      label: 'Usuários',
+      render: (group: Group) => (
+        <div className="flex items-center gap-1">
+          <Users className="h-3 w-3" />
+          <span>{group.userCount}</span>
+        </div>
+      )
+    },
+    {
+      key: 'permissions',
+      label: 'Permissões',
+      render: (group: Group) => (
+        <div className="flex flex-wrap gap-1">
+          {group.permissions.slice(0, 2).map((permission) => (
+            <Badge key={permission} variant="secondary" className="text-xs">
+              {permission === '*' ? 'Todas' : permission.split('.')[0]}
+            </Badge>
+          ))}
+          {group.permissions.length > 2 && (
+            <Badge variant="outline" className="text-xs">
+              +{group.permissions.length - 2}
+            </Badge>
+          )}
+        </div>
+      )
+    }
+  ];
 
-  const renderGroupCard = (group: Group) => (
-    <div key={group.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+  const actions = [
+    {
+      label: 'Editar',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: (group: Group) => navigate(`/configuracoes/grupos/${group.id}/editar`)
+    },
+    {
+      label: 'Excluir',
+      icon: <Trash className="h-4 w-4" />,
+      onClick: (group: Group) => console.log('Excluir grupo:', group.id),
+      variant: 'destructive' as const
+    }
+  ];
+
+  const renderGroupCard = (group: Group, actions: any[]) => (
+    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
       <div className="flex items-center gap-4">
         <div className={`w-12 h-12 rounded-lg ${group.color} flex items-center justify-center`}>
           <Shield className="h-6 w-6 text-white" />
@@ -124,21 +180,20 @@ const GroupsList = () => {
 
   return (
     <BaseList
+      data={groups}
+      columns={columns}
+      actions={actions}
       title="Grupos de Permissões"
       description="Gerencie grupos e suas permissões de acesso"
       searchPlaceholder="Buscar grupos..."
-      searchValue={searchTerm}
-      onSearchChange={setSearchTerm}
-      items={filteredGroups}
-      renderItem={renderGroupCard}
-      emptyMessage="Nenhum grupo encontrado"
-      emptyDescription="Não há grupos cadastrados ou que correspondam aos critérios de busca."
-      actionButton={
-        <Button onClick={() => navigate('/configuracoes/grupos/novo')} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Novo Grupo
-        </Button>
-      }
+      searchFields={['name', 'description']}
+      getItemId={(group) => group.id}
+      renderCard={renderGroupCard}
+      createButton={{
+        label: 'Novo Grupo',
+        icon: <Plus className="h-4 w-4" />,
+        onClick: () => navigate('/configuracoes/grupos/novo')
+      }}
     />
   );
 };
