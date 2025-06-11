@@ -1,15 +1,15 @@
 
+import EventTimeline from '@/components/EventTimeline';
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import ModuleHeader from '@/components/ModuleHeader';
-import EventTimeline from '@/components/EventTimeline';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Calendar, Plus, Edit, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Calendar, Edit, Plus, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const NewReservation = () => {
@@ -162,7 +162,7 @@ const NewReservation = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Formulário */}
-          <Card className={`border h-fit ${isEditing ? 'ring-2 ring-blue-500' : ''}`}>
+          <Card className={`border h-fit ${isEditing ? 'ring-2 ring-module-events/100' : ''}`}>
             <CardHeader>
               <CardTitle className="text-card-foreground flex items-center gap-2">
                 {isEditing ? (
@@ -181,9 +181,9 @@ const NewReservation = () => {
                 }
               </CardDescription>
               {isEditing && (
-                <div className="bg-blue-50 p-3 rounded-lg">
+                <div className="bg-module-events/20 p-3 rounded-lg border border-module-events/50 mt-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-blue-700">
+                    <span className="text-sm text-module-events/100">
                       Modo de edição ativo para evento selecionado na timeline
                     </span>
                     <Button 
@@ -191,7 +191,7 @@ const NewReservation = () => {
                       variant="ghost" 
                       size="sm"
                       onClick={handleCancelEdit}
-                      className="text-blue-700 hover:text-blue-900"
+                      className="text-module-events/90 hover:bg-module-events/30"
                     >
                       <X className="h-4 w-4 mr-1" />
                       Cancelar Edição

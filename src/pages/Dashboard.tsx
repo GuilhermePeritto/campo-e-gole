@@ -190,7 +190,7 @@ const Dashboard = () => {
                         navigate(module.path);
                       }}
                     >
-                      Acessar Módulo
+                      Acessar
                     </Button>
                   )}
                 </CardFooter>

@@ -1,6 +1,6 @@
 
-import { Clock, User, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Clock, MapPin, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Event {
@@ -74,7 +74,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
             })}
           </h3>
           {isEditingMode && (
-            <div className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
+            <div className="mt-2 text-sm p-2 rounded text-module-events/100  bg-module-events/10">
               Modo de edição ativo. Clique em Cancelar para sair ou selecione outro evento.
             </div>
           )}
@@ -141,7 +141,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
                   key={event.id}
                   className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 z-10 transition-all cursor-pointer ${
                     isCurrentlyEditing 
-                      ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-500' 
+                      ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/10'
                       : isDisabledEvent
                         ? 'opacity-40 cursor-not-allowed bg-gray-100'
                         : getStatusColor(event.status) + ' hover:shadow-md'
@@ -150,12 +150,12 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
                     top: `${topPosition}px`,
                     height: `${Math.max(height - 4, 48)}px`,
                     backgroundColor: isCurrentlyEditing 
-                      ? '#dbeafe' 
+                      ? ''
                       : isDisabledEvent 
                         ? '#f3f4f6'
                         : event.color + '20',
                     borderLeftColor: isCurrentlyEditing 
-                      ? '#3b82f6' 
+                      ? 'rgb(var(--module-events))'
                       : isDisabledEvent 
                         ? '#9ca3af'
                         : event.color
@@ -168,7 +168,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
                         <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
                         <span className="font-medium text-sm truncate">{event.client}</span>
                         {isCurrentlyEditing && (
-                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                          <span className="text-xs bg-module-events/10 text-module-events/70 px-2 py-1 rounded">
                             Editando
                           </span>
                         )}
