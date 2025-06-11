@@ -511,5 +511,3 @@ const Calendar = () => {
 };
 
 export default Calendar;
-
-</edits_to_apply>
