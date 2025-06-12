@@ -170,7 +170,7 @@ const Inventory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <ModuleHeader
         title="Controle de Estoque"
         icon={<Package className="h-6 w-6" />}
@@ -179,10 +179,10 @@ const Inventory = () => {
         backLabel="Bar"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Alertas de Estoque Baixo */}
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+        {/* Alertas de Estoque Baixo - Fixed height */}
         {lowStockProducts.length > 0 && (
-          <Card className="mb-6 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950">
+          <Card className="flex-shrink-0 mb-6 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-orange-800 dark:text-orange-200">
                 <AlertTriangle className="h-5 w-5" />
@@ -213,8 +213,8 @@ const Inventory = () => {
           </Card>
         )}
 
-        {/* Filtro de categoria */}
-        <Card className="mb-6">
+        {/* Filtro de categoria - Fixed height */}
+        <Card className="flex-shrink-0 mb-6">
           <CardContent className="p-6">
             <div className="flex gap-4">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -232,18 +232,21 @@ const Inventory = () => {
           </CardContent>
         </Card>
 
-        <BaseList
-          data={filteredProducts}
-          columns={columns}
-          actions={actions}
-          title="Produtos em Estoque"
-          description={`${filteredProducts.length} produtos encontrados`}
-          searchPlaceholder="Buscar produtos por nome..."
-          searchFields={['name']}
-          getItemId={(product) => product.id}
-          pageSize={5}
-          renderCard={renderProductCard}
-        />
+        {/* BaseList - Flexible height to fill remaining space */}
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={filteredProducts}
+            columns={columns}
+            actions={actions}
+            title="Produtos em Estoque"
+            description={`${filteredProducts.length} produtos encontrados`}
+            searchPlaceholder="Buscar produtos por nome..."
+            searchFields={['name']}
+            getItemId={(product) => product.id}
+            pageSize={5}
+            renderCard={renderProductCard}
+          />
+        </div>
       </main>
     </div>
   );
