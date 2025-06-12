@@ -1,18 +1,20 @@
+
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Eye, AlertTriangle, Database } from 'lucide-react';
+import { BarChart3, Eye, AlertTriangle, Database, Save, Download } from 'lucide-react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import FieldSelector from '@/components/reports/FieldSelector';
 import ReportBuilder from '@/components/reports/ReportBuilder';
 import ReportPreview from '@/components/reports/ReportPreview';
-import ReportAdvancedOptions from '@/components/reports/ReportAdvancedOptions';
 import { ReportField, ReportConfig } from '@/types/reports';
 import { generateRelatedData } from '@/utils/reportDataGenerator';
 import ExportButton from '@/components/ExportButton';
@@ -29,21 +31,8 @@ const CustomReport = () => {
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [queryCost, setQueryCost] = useState<{ cost: number; isHigh: boolean; message: string } | null>(null);
   const [showPreview, setShowPreview] = useState(false);
-  
-  const [advancedOptions, setAdvancedOptions] = useState({
-    reportName: '',
-    limit: 100,
-    showTotals: true,
-    showAverages: false,
-    showPercentages: false,
-    dateRange: {
-      start: '',
-      end: ''
-    },
-    exportFormat: 'excel' as 'excel' | 'pdf' | 'csv',
-    autoRefresh: false,
-    refreshInterval: 5
-  });
+  const [reportName, setReportName] = useState('');
+  const [dataLimit, setDataLimit] = useState(100);
 
   const handleFieldSelect = useCallback((field: ReportField) => {
     setSelectedFields(prev => {
@@ -56,10 +45,10 @@ const CustomReport = () => {
 
   const handleFieldAdd = useCallback((field: ReportField) => {
     setSelectedFields(prev => {
-      if (prev.find(f => f.id === field.id)) {
-        return prev;
+      if (prev.find(f => f.id !== field.id)) {
+        return [...prev, field];
       }
-      return [...prev, field];
+      return prev;
     });
   }, []);
 
@@ -102,31 +91,20 @@ const CustomReport = () => {
       return;
     }
 
-    // Fix: Call generateRelatedData with only one argument
     let filteredData = generateRelatedData(selectedFields);
     
-    // Apply limit from advanced options
-    if (advancedOptions.limit && filteredData.length > advancedOptions.limit) {
-      filteredData = filteredData.slice(0, advancedOptions.limit);
+    if (dataLimit && filteredData.length > dataLimit) {
+      filteredData = filteredData.slice(0, dataLimit);
     }
     
-    // Aplicar filtros de data se especificados
-    if (advancedOptions.dateRange.start || advancedOptions.dateRange.end) {
-      // Simular filtro de data
-      console.log('Aplicando filtro de data:', advancedOptions.dateRange);
-    }
-    
-    // Aplicar filtros do reportConfig
     reportConfig.filters.forEach(filter => {
       console.log('Aplicando filtro:', filter);
     });
 
-    // Aplicar ordenação
     if (reportConfig.orderBy.length > 0) {
       console.log('Aplicando ordenação:', reportConfig.orderBy);
     }
 
-    // Aplicar agrupamento
     if (reportConfig.groupBy.length > 0) {
       console.log('Aplicando agrupamento:', reportConfig.groupBy);
     }
@@ -134,10 +112,10 @@ const CustomReport = () => {
     setPreviewData(filteredData);
     setShowPreview(true);
     toast.success('Preview gerado com sucesso!');
-  }, [selectedFields, reportConfig, advancedOptions, analyzeQueryCost]);
+  }, [selectedFields, reportConfig, dataLimit, analyzeQueryCost]);
 
   const handleSaveReport = useCallback(() => {
-    if (!advancedOptions.reportName.trim()) {
+    if (!reportName.trim()) {
       toast.error('Digite um nome para salvar o relatório');
       return;
     }
@@ -147,18 +125,17 @@ const CustomReport = () => {
       return;
     }
 
-    // Simular salvamento
     const reportData = {
-      name: advancedOptions.reportName,
+      name: reportName,
       fields: selectedFields,
       config: reportConfig,
-      options: advancedOptions,
+      limit: dataLimit,
       createdAt: new Date().toISOString()
     };
     
     console.log('Salvando relatório:', reportData);
-    toast.success(`Relatório "${advancedOptions.reportName}" salvo com sucesso!`);
-  }, [selectedFields, reportConfig, advancedOptions]);
+    toast.success(`Relatório "${reportName}" salvo com sucesso!`);
+  }, [selectedFields, reportConfig, reportName, dataLimit]);
 
   const handleExportReport = useCallback((format: string) => {
     if (previewData.length === 0) {
@@ -169,12 +146,11 @@ const CustomReport = () => {
     console.log(`Exportando relatório em formato ${format}:`, {
       data: previewData,
       fields: selectedFields,
-      config: reportConfig,
-      options: advancedOptions
+      config: reportConfig
     });
     
     toast.success(`Relatório exportado em ${format.toUpperCase()}!`);
-  }, [previewData, selectedFields, reportConfig, advancedOptions]);
+  }, [previewData, selectedFields, reportConfig]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -208,17 +184,42 @@ const CustomReport = () => {
                 onConfigChange={setReportConfig}
               />
 
-              {/* Opções Avançadas */}
-              <ReportAdvancedOptions
-                fields={selectedFields}
-                options={advancedOptions}
-                onOptionsChange={setAdvancedOptions}
-                onSaveReport={handleSaveReport}
-                onExportReport={handleExportReport}
-                onPreviewReport={generatePreview}
-              />
+              {/* Configurações Básicas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Save className="h-5 w-5" />
+                    Configurações do Relatório
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reportName">Nome do Relatório</Label>
+                      <Input
+                        id="reportName"
+                        value={reportName}
+                        onChange={(e) => setReportName(e.target.value)}
+                        placeholder="Digite um nome para salvar..."
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="limit">Limite de Registros</Label>
+                      <Input
+                        id="limit"
+                        type="number"
+                        value={dataLimit}
+                        onChange={(e) => setDataLimit(parseInt(e.target.value) || 100)}
+                        min="1"
+                        max="10000"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              {/* Análise de Custo */}
+              {/* Análise de Performance */}
               {queryCost && (
                 <Card>
                   <CardHeader>
@@ -234,7 +235,7 @@ const CustomReport = () => {
                         {queryCost.message}
                       </AlertDescription>
                     </Alert>
-                    <div className="mt-4 flex items-center gap-2">
+                    <div className="mt-4 flex items-center gap-2 flex-wrap">
                       <Badge variant={queryCost.isHigh ? "destructive" : "default"}>
                         Custo: {queryCost.cost}
                       </Badge>
@@ -247,30 +248,61 @@ const CustomReport = () => {
                       <Badge variant="outline">
                         {reportConfig.filters.length} filtros
                       </Badge>
+                      <Badge variant="outline">
+                        {reportConfig.groupBy.length} agrupamentos
+                      </Badge>
+                      <Badge variant="outline">
+                        {reportConfig.orderBy.length} ordenações
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
-              {/* Ações Rápidas */}
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  onClick={generatePreview}
-                  disabled={selectedFields.length === 0}
-                  className="gap-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  Gerar Preview
-                </Button>
+              {/* Ações */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      onClick={generatePreview}
+                      disabled={selectedFields.length === 0}
+                      className="gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      Gerar Preview
+                    </Button>
 
-                {previewData.length > 0 && (
-                  <ExportButton
-                    data={previewData}
-                    filename={advancedOptions.reportName || "relatorio-personalizado"}
-                    title={advancedOptions.reportName || "Relatório Personalizado"}
-                  />
-                )}
-              </div>
+                    <Button 
+                      onClick={handleSaveReport} 
+                      variant="outline" 
+                      className="gap-2"
+                      disabled={!reportName.trim()}
+                    >
+                      <Save className="h-4 w-4" />
+                      Salvar Relatório
+                    </Button>
+
+                    {previewData.length > 0 && (
+                      <>
+                        <Button 
+                          onClick={() => handleExportReport('excel')} 
+                          variant="outline"
+                          className="gap-2"
+                        >
+                          <Download className="h-4 w-4" />
+                          Exportar Excel
+                        </Button>
+                        
+                        <ExportButton
+                          data={previewData}
+                          filename={reportName || "relatorio-personalizado"}
+                          title={reportName || "Relatório Personalizado"}
+                        />
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 

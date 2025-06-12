@@ -1,8 +1,10 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, Plus, X, ArrowUp, ArrowDown } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { ArrowUpDown, Plus, X, ArrowUp, ArrowDown, SortAsc } from 'lucide-react';
 import { ReportField } from '@/types/reports';
 
 interface SortOrder {
@@ -51,6 +53,13 @@ const ReportSorting = ({ fields, orderBy, onOrderByChange }: ReportSortingProps)
     onOrderByChange(newOrderBy);
   };
 
+  const moveSort = (fromIndex: number, toIndex: number) => {
+    const newOrderBy = [...orderBy];
+    const [movedItem] = newOrderBy.splice(fromIndex, 1);
+    newOrderBy.splice(toIndex, 0, movedItem);
+    onOrderByChange(newOrderBy);
+  };
+
   const getFieldByName = (fieldName: string) => {
     return fields.find(f => f.name === fieldName);
   };
@@ -60,66 +69,124 @@ const ReportSorting = ({ fields, orderBy, onOrderByChange }: ReportSortingProps)
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <ArrowUpDown className="h-5 w-5" />
+    <Card className="border-l-4 border-l-purple-500">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <div className="p-2 bg-purple-100 rounded-lg">
+            <ArrowUpDown className="h-4 w-4 text-purple-600" />
+          </div>
           Ordenação
+          {sortOrders.length > 0 && (
+            <Badge variant="secondary" className="ml-auto">
+              {sortOrders.length} campo{sortOrders.length !== 1 ? 's' : ''}
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Ordenações Existentes */}
         {sortOrders.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium">Campos de Ordenação</h4>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <SortAsc className="h-4 w-4 text-purple-600" />
+              <span className="text-sm font-medium text-purple-600">Campos de Ordenação</span>
+            </div>
             <div className="space-y-2">
               {sortOrders.map((sort, index) => {
                 const field = getFieldByName(sort.field);
                 return (
-                  <div key={index} className="flex items-center gap-2">
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <span className="text-xs">{index + 1}.</span>
-                      {field?.label || sort.field}
-                    </Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleDirection(index)}
-                      className="flex items-center gap-1"
-                    >
-                      {sort.direction === 'asc' ? (
-                        <ArrowUp className="h-3 w-3" />
-                      ) : (
-                        <ArrowDown className="h-3 w-3" />
+                  <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-mono min-w-[24px] justify-center">
+                        {index + 1}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {field?.entity}
+                      </Badge>
+                      <span className="font-medium">{field?.label || sort.field}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1 ml-auto">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleDirection(index)}
+                        className={`flex items-center gap-1 ${
+                          sort.direction === 'asc' 
+                            ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' 
+                            : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                        }`}
+                      >
+                        {sort.direction === 'asc' ? (
+                          <ArrowUp className="h-3 w-3" />
+                        ) : (
+                          <ArrowDown className="h-3 w-3" />
+                        )}
+                        {sort.direction === 'asc' ? 'Crescente' : 'Decrescente'}
+                      </Button>
+                      
+                      {index > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => moveSort(index, index - 1)}
+                          className="h-8 w-8 p-0"
+                          title="Mover para cima"
+                        >
+                          <ArrowUp className="h-3 w-3" />
+                        </Button>
                       )}
-                      {sort.direction === 'asc' ? 'Crescente' : 'Decrescente'}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeSort(index)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+                      
+                      {index < sortOrders.length - 1 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => moveSort(index, index + 1)}
+                          className="h-8 w-8 p-0"
+                          title="Mover para baixo"
+                        >
+                          <ArrowDown className="h-3 w-3" />
+                        </Button>
+                      )}
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSort(index)}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
             </div>
+            <Separator />
           </div>
         )}
 
         {/* Adicionar Nova Ordenação */}
         {availableFields.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Plus className="h-4 w-4 text-purple-600" />
+              <span className="text-sm font-medium">Adicionar Ordenação</span>
+            </div>
+            
             <Select onValueChange={addSort}>
-              <SelectTrigger>
-                <SelectValue placeholder="Adicionar campo para ordenação" />
+              <SelectTrigger className="bg-white">
+                <SelectValue placeholder="Selecionar campo para ordenação" />
               </SelectTrigger>
               <SelectContent>
                 {availableFields.map((field) => (
                   <SelectItem key={field.id} value={field.name}>
-                    {field.label}
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {field.entity}
+                      </Badge>
+                      {field.label}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -128,9 +195,23 @@ const ReportSorting = ({ fields, orderBy, onOrderByChange }: ReportSortingProps)
         )}
 
         {sortOrders.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Nenhum campo selecionado para ordenação. Os dados serão exibidos na ordem padrão.
-          </p>
+          <div className="text-center py-6 text-muted-foreground bg-gray-50 rounded-lg border-2 border-dashed">
+            <ArrowUpDown className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Nenhuma ordenação definida</p>
+            <p className="text-xs">Os dados serão exibidos na ordem padrão</p>
+          </div>
+        )}
+
+        {sortOrders.length > 0 && (
+          <div className="text-xs text-muted-foreground bg-purple-50 p-3 rounded-lg border">
+            <div className="flex items-start gap-2">
+              <span className="text-purple-600">💡</span>
+              <div>
+                <strong>Dica:</strong> A ordem dos campos define a prioridade da ordenação. 
+                Use os botões de seta para reordenar os campos conforme necessário.
+              </div>
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>
