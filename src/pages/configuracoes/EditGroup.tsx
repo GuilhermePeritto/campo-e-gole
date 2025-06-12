@@ -273,12 +273,11 @@ const EditGroup = () => {
                   return (
                     <div
                       key={module.id}
-                      className={`relative p-6 border-2 rounded-xl transition-all duration-200 cursor-pointer hover:scale-105 ${
+                      className={`relative p-6 border-2 rounded-xl transition-all duration-200 ${
                         isSelected
                           ? 'border-primary bg-primary/5 shadow-lg'
                           : 'border-border hover:border-primary/50 hover:bg-muted/50'
                       }`}
-                      onClick={() => handleModuleToggle(module.id)}
                     >
                       {isSelected && (
                         <div className="absolute top-3 right-3">
