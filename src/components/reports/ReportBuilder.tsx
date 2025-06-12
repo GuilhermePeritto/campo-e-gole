@@ -98,7 +98,7 @@ const ReportBuilder = ({
         </CardHeader>
         <CardContent>
           <div
-            ref={drop}
+            ref={drop as any}
             className={`min-h-[200px] 3xl:min-h-[250px] 4xl:min-h-[300px] border-2 border-dashed rounded-lg p-4 transition-colors ${
               isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
             }`}
