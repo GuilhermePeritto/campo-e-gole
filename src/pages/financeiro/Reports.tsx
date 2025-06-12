@@ -50,7 +50,8 @@ const FinanceiroRelatorios = () => {
       description: 'Crie relatórios customizados com drag-and-drop',
       icon: BarChart3,
       color: 'bg-orange-100 text-orange-600',
-      action: () => navigate('/financeiro/relatorios/personalizado')
+      action: () => navigate('/financeiro/relatorios/personalizado'),
+      buttonText: 'Montar seu Relatório'
     }
   ];
 
@@ -87,7 +88,7 @@ const FinanceiroRelatorios = () => {
               <CardContent>
                 <Button className="w-full gap-2" onClick={report.action}>
                   <Download className="h-4 w-4" />
-                  Gerar Relatório
+                  {report.buttonText || 'Gerar Relatório'}
                 </Button>
               </CardContent>
             </Card>
