@@ -44,6 +44,13 @@ const FinanceiroRelatorios = () => {
       icon: Users,
       color: 'bg-indigo-100 text-indigo-600',
       action: () => navigate('/financeiro/relatorios/professores')
+    },
+    {
+      title: 'Relatório Personalizado',
+      description: 'Crie relatórios customizados com drag-and-drop',
+      icon: BarChart3,
+      color: 'bg-orange-100 text-orange-600',
+      action: () => navigate('/financeiro/relatorios/personalizado')
     }
   ];
 
