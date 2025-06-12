@@ -103,7 +103,7 @@ const BaseList = <T extends Record<string, any>>({
   });
 
   return (
-    <div className={cn("w-full h-full flex flex-col min-h-[300px]", className)}>
+    <div className={cn("w-full h-full flex flex-col", className)}>
       <BaseListHeader
         title={title}
         description={description}
@@ -121,8 +121,8 @@ const BaseList = <T extends Record<string, any>>({
         onViewModeChange={setViewMode}
       />
 
-      {/* Main Content Area - completely flexible */}
-      <div className="flex-1 flex flex-col min-h-0">
+      {/* Main Content Area - completely flexible with minimum height */}
+      <div className="flex-1 flex flex-col min-h-[400px]">
         {/* Content Area - adapts to parent height */}
         <div className="flex-1 overflow-hidden">
           {paginatedData.length === 0 ? (

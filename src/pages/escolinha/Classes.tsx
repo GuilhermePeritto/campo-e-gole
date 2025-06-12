@@ -1,4 +1,3 @@
-
 import ModuleHeader from '@/components/ModuleHeader';
 import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
@@ -170,7 +169,7 @@ const Classes = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <ModuleHeader
         title="Gerenciar Turmas"
         icon={<Calendar className="h-5 w-5" />}
@@ -179,27 +178,28 @@ const Classes = () => {
         backLabel="Escolinha"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <BaseList
-          data={classes}
-          columns={columns}
-          actions={actions}
-          title="Turmas da Escolinha"
-          description="Gerencie as turmas e horários de treino"
-          searchPlaceholder="Buscar por nome da turma ou faixa etária..."
-          searchFields={['name', 'ageRange']}
-          getItemId={(classItem) => classItem.id}
-          pageSize={6}
-          renderCard={renderClassCard}
-          className="mb-8"
-          createButton={{
-            label: 'Nova Turma',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/escolinha/turmas/nova')
-          }}
-        />
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+        <div className="flex-1 min-h-0 mb-8">
+          <BaseList
+            data={classes}
+            columns={columns}
+            actions={actions}
+            title="Turmas da Escolinha"
+            description="Gerencie as turmas e horários de treino"
+            searchPlaceholder="Buscar por nome da turma ou faixa etária..."
+            searchFields={['name', 'ageRange']}
+            getItemId={(classItem) => classItem.id}
+            pageSize={6}
+            renderCard={renderClassCard}
+            createButton={{
+              label: 'Nova Turma',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/escolinha/turmas/nova')
+            }}
+          />
+        </div>
 
-        <Card>
+        <Card className="flex-shrink-0">
           <CardHeader>
             <CardTitle>Cronograma Semanal</CardTitle>
             <CardDescription>
