@@ -93,6 +93,204 @@ const Receivables = () => {
       status: 'pendente',
       description: 'Reserva Quadra C - 20/06',
       createdAt: '2024-06-06'
+    },
+    { 
+      id: 9, 
+      client: 'Fernanda Lima', 
+      amount: 320, 
+      dueDate: '2024-06-25', 
+      status: 'pendente',
+      description: 'Reserva Campo 3 - 23/06',
+      createdAt: '2024-06-07'
+    },
+    { 
+      id: 10, 
+      client: 'Roberto Silva', 
+      amount: 180, 
+      dueDate: '2024-06-28', 
+      status: 'pendente',
+      description: 'Reserva Quadra D - 26/06',
+      createdAt: '2024-06-08'
+    },
+    { 
+      id: 11, 
+      client: 'Mariana Costa', 
+      amount: 220, 
+      dueDate: '2024-06-30', 
+      status: 'vencido',
+      description: 'Reserva Campo 2 - 28/06',
+      createdAt: '2024-06-09'
+    },
+    { 
+      id: 12, 
+      client: 'Eduardo Santos', 
+      amount: 150, 
+      dueDate: '2024-07-02', 
+      status: 'pendente',
+      description: 'Reserva Quadra A - 30/06',
+      createdAt: '2024-06-10'
+    },
+    { 
+      id: 13, 
+      client: 'Patrícia Oliveira', 
+      amount: 280, 
+      dueDate: '2024-07-05', 
+      status: 'pendente',
+      description: 'Reserva Campo 1 - 03/07',
+      createdAt: '2024-06-11'
+    },
+    { 
+      id: 14, 
+      client: 'Gustavo Martins', 
+      amount: 190, 
+      dueDate: '2024-07-08', 
+      status: 'pendente',
+      description: 'Reserva Quadra B - 06/07',
+      createdAt: '2024-06-12'
+    },
+    { 
+      id: 15, 
+      client: 'Juliana Ferreira', 
+      amount: 240, 
+      dueDate: '2024-07-10', 
+      status: 'pendente',
+      description: 'Reserva Campo 3 - 08/07',
+      createdAt: '2024-06-13'
+    },
+    { 
+      id: 16, 
+      client: 'Ricardo Lima', 
+      amount: 350, 
+      dueDate: '2024-07-12', 
+      status: 'vencido',
+      description: 'Reserva múltipla - 10/07',
+      createdAt: '2024-06-14'
+    },
+    { 
+      id: 17, 
+      client: 'Camila Santos', 
+      amount: 170, 
+      dueDate: '2024-07-15', 
+      status: 'pendente',
+      description: 'Reserva Quadra C - 13/07',
+      createdAt: '2024-06-15'
+    },
+    { 
+      id: 18, 
+      client: 'Bruno Costa', 
+      amount: 200, 
+      dueDate: '2024-07-18', 
+      status: 'pendente',
+      description: 'Reserva Campo 2 - 16/07',
+      createdAt: '2024-06-16'
+    },
+    { 
+      id: 19, 
+      client: 'Larissa Silva', 
+      amount: 160, 
+      dueDate: '2024-07-20', 
+      status: 'pendente',
+      description: 'Reserva Quadra A - 18/07',
+      createdAt: '2024-06-17'
+    },
+    { 
+      id: 20, 
+      client: 'Thiago Oliveira', 
+      amount: 290, 
+      dueDate: '2024-07-22', 
+      status: 'pendente',
+      description: 'Reserva Campo 1 - 20/07',
+      createdAt: '2024-06-18'
+    },
+    { 
+      id: 21, 
+      client: 'Vanessa Martins', 
+      amount: 210, 
+      dueDate: '2024-07-25', 
+      status: 'vencido',
+      description: 'Reserva Quadra D - 23/07',
+      createdAt: '2024-06-19'
+    },
+    { 
+      id: 22, 
+      client: 'André Ferreira', 
+      amount: 180, 
+      dueDate: '2024-07-28', 
+      status: 'pendente',
+      description: 'Reserva Campo 3 - 26/07',
+      createdAt: '2024-06-20'
+    },
+    { 
+      id: 23, 
+      client: 'Priscila Lima', 
+      amount: 250, 
+      dueDate: '2024-07-30', 
+      status: 'pendente',
+      description: 'Reserva Quadra B - 28/07',
+      createdAt: '2024-06-21'
+    },
+    { 
+      id: 24, 
+      client: 'Felipe Santos', 
+      amount: 320, 
+      dueDate: '2024-08-02', 
+      status: 'pendente',
+      description: 'Reserva múltipla - 31/07',
+      createdAt: '2024-06-22'
+    },
+    { 
+      id: 25, 
+      client: 'Daniela Costa', 
+      amount: 140, 
+      dueDate: '2024-08-05', 
+      status: 'pendente',
+      description: 'Reserva Quadra C - 03/08',
+      createdAt: '2024-06-23'
+    },
+    { 
+      id: 26, 
+      client: 'Marcos Silva', 
+      amount: 190, 
+      dueDate: '2024-08-08', 
+      status: 'vencido',
+      description: 'Reserva Campo 2 - 06/08',
+      createdAt: '2024-06-24'
+    },
+    { 
+      id: 27, 
+      client: 'Tatiana Oliveira', 
+      amount: 230, 
+      dueDate: '2024-08-10', 
+      status: 'pendente',
+      description: 'Reserva Quadra A - 08/08',
+      createdAt: '2024-06-25'
+    },
+    { 
+      id: 28, 
+      client: 'Rodrigo Martins', 
+      amount: 270, 
+      dueDate: '2024-08-12', 
+      status: 'pendente',
+      description: 'Reserva Campo 1 - 10/08',
+      createdAt: '2024-06-26'
+    },
+    { 
+      id: 29, 
+      client: 'Cristina Ferreira', 
+      amount: 200, 
+      dueDate: '2024-08-15', 
+      status: 'pendente',
+      description: 'Reserva Quadra D - 13/08',
+      createdAt: '2024-06-27'
+    },
+    { 
+      id: 30, 
+      client: 'Gabriel Lima', 
+      amount: 300, 
+      dueDate: '2024-08-18', 
+      status: 'pendente',
+      description: 'Reserva Campo 3 - 16/08',
+      createdAt: '2024-06-28'
     }
   ];
 
