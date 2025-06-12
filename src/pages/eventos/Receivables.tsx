@@ -414,46 +414,46 @@ const Receivables = () => {
         backLabel="Eventos"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+      <main className="flex-1 flex flex-col max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl mx-auto w-full px-4 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-8 min-h-0">
         {/* Summary Cards - Fixed height */}
-        <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-3 gap-6 3xl:gap-8 4xl:gap-10 mb-8">
           <Card className="border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <CreditCard className="h-5 w-5 text-yellow-600" />
+            <CardContent className="p-6 3xl:p-8 4xl:p-10">
+              <div className="flex items-center gap-3 3xl:gap-4 4xl:gap-5">
+                <div className="p-2 3xl:p-3 4xl:p-4 bg-yellow-100 rounded-lg">
+                  <CreditCard className="h-5 w-5 3xl:h-6 3xl:w-6 4xl:h-7 4xl:w-7 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pendente</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ {totalPendente.toFixed(2)}</p>
+                  <p className="text-sm 3xl:text-base 4xl:text-lg font-medium text-gray-600">Pendente</p>
+                  <p className="text-2xl 3xl:text-3xl 4xl:text-4xl font-bold text-gray-600 dark:text-gray-300">R$ {totalPendente.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <CreditCard className="h-5 w-5 text-red-600" />
+            <CardContent className="p-6 3xl:p-8 4xl:p-10">
+              <div className="flex items-center gap-3 3xl:gap-4 4xl:gap-5">
+                <div className="p-2 3xl:p-3 4xl:p-4 bg-red-100 rounded-lg">
+                  <CreditCard className="h-5 w-5 3xl:h-6 3xl:w-6 4xl:h-7 4xl:w-7 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Vencido</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ {totalVencido.toFixed(2)}</p>
+                  <p className="text-sm 3xl:text-base 4xl:text-lg font-medium text-gray-600">Vencido</p>
+                  <p className="text-2xl 3xl:text-3xl 4xl:text-4xl font-bold text-gray-600 dark:text-gray-300">R$ {totalVencido.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <CreditCard className="h-5 w-5 text-green-600" />
+            <CardContent className="p-6 3xl:p-8 4xl:p-10">
+              <div className="flex items-center gap-3 3xl:gap-4 4xl:gap-5">
+                <div className="p-2 3xl:p-3 4xl:p-4 bg-green-100 rounded-lg">
+                  <CreditCard className="h-5 w-5 3xl:h-6 3xl:w-6 4xl:h-7 4xl:w-7 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total</p>
-                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">R$ {(totalPendente + totalVencido).toFixed(2)}</p>
+                  <p className="text-sm 3xl:text-base 4xl:text-lg font-medium text-gray-600">Total</p>
+                  <p className="text-2xl 3xl:text-3xl 4xl:text-4xl font-bold text-gray-600 dark:text-gray-300">R$ {(totalPendente + totalVencido).toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
