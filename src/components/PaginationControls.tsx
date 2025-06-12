@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Pagination,
@@ -9,7 +10,9 @@ import {
   PaginationEllipsis,
 } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -38,15 +41,21 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   hasPreviousPage,
   onPageChange,
   onPageSizeChange,
-  pageSizeOptions = [5, 10, 20, 50],
+  pageSizeOptions = [5, 10, 25, 50, 100, 200],
   showPageSizeSelector = true,
   showInfo = true,
 }) => {
-  // Generate page numbers to show (more compact)
+  // Generate page numbers to show
   const getVisiblePages = () => {
-    const delta = 1; // Reduced from 2 to 1 for more compact display
+    if (totalPages <= 5) {
+      // Show all pages if 5 or less
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const delta = 2;
     const range = [];
-    
+    const rangeWithDots = [];
+
     for (
       let i = Math.max(2, currentPage - delta);
       i <= Math.min(totalPages - 1, currentPage + delta);
@@ -56,31 +65,33 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
     }
 
     if (currentPage - delta > 2) {
-      range.unshift('...');
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
     }
+
+    rangeWithDots.push(...range);
+
     if (currentPage + delta < totalPages - 1) {
-      range.push('...');
+      rangeWithDots.push('...', totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
     }
 
-    range.unshift(1);
-    if (totalPages !== 1) {
-      range.push(totalPages);
-    }
-
-    return range;
+    return rangeWithDots;
   };
 
   if (totalPages <= 1 && !showInfo) return null;
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-3 py-2">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-4 py-3">
       {showInfo && (
         <div className="text-xs sm:text-sm text-muted-foreground order-2 lg:order-1">
           {startIndex}-{endIndex} de {totalItems}
         </div>
       )}
       
-      <div className="flex items-center gap-3 order-1 lg:order-2">
+      <div className="flex flex-col sm:flex-row items-center gap-4 order-1 lg:order-2">
         {showPageSizeSelector && (
           <div className="flex items-center gap-2">
             <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Por página:</span>
@@ -88,7 +99,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               value={pageSize.toString()}
               onValueChange={(value) => onPageSizeChange(Number(value))}
             >
-              <SelectTrigger className="w-16 h-8 text-xs">
+              <SelectTrigger className="w-20 h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -103,45 +114,80 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         )}
 
         {totalPages > 1 && (
-          <Pagination>
-            <PaginationContent className="gap-1">
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
-                  className={cn(
-                    "h-8 px-2 text-xs",
-                    !hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-                  )}
-                />
-              </PaginationItem>
-
-              {getVisiblePages().map((page, index) => (
-                <PaginationItem key={index}>
-                  {page === '...' ? (
-                    <PaginationEllipsis className="h-8 w-8" />
-                  ) : (
-                    <PaginationLink
-                      onClick={() => onPageChange(page as number)}
-                      isActive={currentPage === page}
-                      className="cursor-pointer h-8 w-8 text-xs"
+          <div className="flex items-center justify-center">
+            <Pagination>
+              <PaginationContent className="gap-1">
+                {/* First page button - only show if more than 5 pages and not on first page */}
+                {totalPages > 5 && currentPage > 1 && (
+                  <PaginationItem>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onPageChange(1)}
+                      className="h-8 w-8 p-0"
+                      title="Primeira página"
                     >
-                      {page}
-                    </PaginationLink>
-                  )}
-                </PaginationItem>
-              ))}
+                      <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                  </PaginationItem>
+                )}
 
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => hasNextPage && onPageChange(currentPage + 1)}
-                  className={cn(
-                    "h-8 px-2 text-xs",
-                    !hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-                  )}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                {/* Previous button */}
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
+                    className={cn(
+                      "h-8 px-2 text-xs",
+                      !hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                    )}
+                  />
+                </PaginationItem>
+
+                {/* Page numbers */}
+                {getVisiblePages().map((page, index) => (
+                  <PaginationItem key={index}>
+                    {page === '...' ? (
+                      <PaginationEllipsis className="h-8 w-8" />
+                    ) : (
+                      <PaginationLink
+                        onClick={() => onPageChange(page as number)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer h-8 w-8 text-xs"
+                      >
+                        {page}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ))}
+
+                {/* Next button */}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => hasNextPage && onPageChange(currentPage + 1)}
+                    className={cn(
+                      "h-8 px-2 text-xs",
+                      !hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                    )}
+                  />
+                </PaginationItem>
+
+                {/* Last page button - only show if more than 5 pages and not on last page */}
+                {totalPages > 5 && currentPage < totalPages && (
+                  <PaginationItem>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onPageChange(totalPages)}
+                      className="h-8 w-8 p-0"
+                      title="Última página"
+                    >
+                      <ChevronsRight className="h-4 w-4" />
+                    </Button>
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          </div>
         )}
       </div>
     </div>
