@@ -164,26 +164,14 @@ const CustomReport = () => {
 
       <main className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-8">
         <DndProvider backend={HTML5Backend}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 3xl:gap-8 4xl:gap-10">
-            {/* Seletor de Campos */}
-            <div className="lg:col-span-1">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 3xl:gap-8 4xl:gap-10">
+            {/* Coluna Esquerda */}
+            <div className="space-y-6">
               <FieldSelector
                 onFieldSelect={handleFieldSelect}
                 selectedFields={selectedFields}
               />
-            </div>
-
-            {/* Construtor do Relatório */}
-            <div className="lg:col-span-2 space-y-6">
-              <ReportBuilder
-                selectedFields={selectedFields}
-                onFieldRemove={handleFieldRemove}
-                onFieldAdd={handleFieldAdd}
-                onFieldsReorder={handleFieldsReorder}
-                reportConfig={reportConfig}
-                onConfigChange={setReportConfig}
-              />
-
+              
               {/* Configurações Básicas */}
               <Card>
                 <CardHeader>
@@ -193,7 +181,7 @@ const CustomReport = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="reportName">Nome do Relatório</Label>
                       <Input
@@ -218,102 +206,179 @@ const CustomReport = () => {
                   </div>
                 </CardContent>
               </Card>
+            </div>
 
-              {/* Análise de Performance */}
-              {queryCost && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Database className="h-5 w-5" />
-                      Análise de Performance
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Alert variant={queryCost.isHigh ? "destructive" : "default"}>
-                      {queryCost.isHigh && <AlertTriangle className="h-4 w-4" />}
-                      <AlertDescription>
-                        {queryCost.message}
-                      </AlertDescription>
-                    </Alert>
-                    <div className="mt-4 flex items-center gap-2 flex-wrap">
-                      <Badge variant={queryCost.isHigh ? "destructive" : "default"}>
-                        Custo: {queryCost.cost}
-                      </Badge>
-                      <Badge variant="outline">
-                        {selectedFields.length} campos
-                      </Badge>
-                      <Badge variant="outline">
-                        {new Set(selectedFields.map(f => f.entity)).size} tabelas
-                      </Badge>
-                      <Badge variant="outline">
-                        {reportConfig.filters.length} filtros
-                      </Badge>
-                      <Badge variant="outline">
-                        {reportConfig.groupBy.length} agrupamentos
-                      </Badge>
-                      <Badge variant="outline">
-                        {reportConfig.orderBy.length} ordenações
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+            {/* Coluna Direita */}
+            <div className="space-y-6">
+              <ReportBuilder
+                selectedFields={selectedFields}
+                onFieldRemove={handleFieldRemove}
+                onFieldAdd={handleFieldAdd}
+                onFieldsReorder={handleFieldsReorder}
+                reportConfig={reportConfig}
+                onConfigChange={setReportConfig}
+              />
+            </div>
+          </div>
 
-              {/* Ações */}
+          {/* Seção de Configurações Avançadas - Largura Total */}
+          {selectedFields.length > 0 && (
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <ReportFilters
+                fields={selectedFields}
+                filters={reportConfig.filters}
+                onFiltersChange={(filters) => setReportConfig({ ...reportConfig, filters })}
+              />
+
+              <ReportSorting
+                fields={selectedFields}
+                orderBy={reportConfig.orderBy}
+                onOrderByChange={(orderBy) => setReportConfig({ ...reportConfig, orderBy })}
+              />
+
+              <ReportGrouping
+                fields={selectedFields}
+                groupBy={reportConfig.groupBy}
+                onGroupByChange={(groupBy) => setReportConfig({ ...reportConfig, groupBy })}
+              />
+            </div>
+          )}
+
+          {/* Análise de Performance */}
+          {queryCost && (
+            <div className="mt-6">
               <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-wrap gap-3">
-                    <Button
-                      onClick={generatePreview}
-                      disabled={selectedFields.length === 0}
-                      className="gap-2"
-                    >
-                      <Eye className="h-4 w-4" />
-                      Gerar Preview
-                    </Button>
-
-                    <Button 
-                      onClick={handleSaveReport} 
-                      variant="outline" 
-                      className="gap-2"
-                      disabled={!reportName.trim()}
-                    >
-                      <Save className="h-4 w-4" />
-                      Salvar Relatório
-                    </Button>
-
-                    {previewData.length > 0 && (
-                      <>
-                        <Button 
-                          onClick={() => handleExportReport('excel')} 
-                          variant="outline"
-                          className="gap-2"
-                        >
-                          <Download className="h-4 w-4" />
-                          Exportar Excel
-                        </Button>
-                        
-                        <ExportButton
-                          data={previewData}
-                          filename={reportName || "relatorio-personalizado"}
-                          title={reportName || "Relatório Personalizado"}
-                        />
-                      </>
-                    )}
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Database className="h-5 w-5" />
+                    Análise de Performance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Alert variant={queryCost.isHigh ? "destructive" : "default"}>
+                    {queryCost.isHigh && <AlertTriangle className="h-4 w-4" />}
+                    <AlertDescription>
+                      {queryCost.message}
+                    </AlertDescription>
+                  </Alert>
+                  <div className="mt-4 flex items-center gap-2 flex-wrap">
+                    <Badge variant={queryCost.isHigh ? "destructive" : "default"}>
+                      Custo: {queryCost.cost}
+                    </Badge>
+                    <Badge variant="outline">
+                      {selectedFields.length} campos
+                    </Badge>
+                    <Badge variant="outline">
+                      {new Set(selectedFields.map(f => f.entity)).size} tabelas
+                    </Badge>
+                    <Badge variant="outline">
+                      {reportConfig.filters.length} filtros
+                    </Badge>
+                    <Badge variant="outline">
+                      {reportConfig.groupBy.length} agrupamentos
+                    </Badge>
+                    <Badge variant="outline">
+                      {reportConfig.orderBy.length} ordenações
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
             </div>
+          )}
+
+          {/* Ações */}
+          <div className="mt-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={generatePreview}
+                    disabled={selectedFields.length === 0}
+                    className="gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Gerar Preview
+                  </Button>
+
+                  <Button 
+                    onClick={handleSaveReport} 
+                    variant="outline" 
+                    className="gap-2"
+                    disabled={!reportName.trim()}
+                  >
+                    <Save className="h-4 w-4" />
+                    Salvar Relatório
+                  </Button>
+
+                  {previewData.length > 0 && (
+                    <>
+                      <Button 
+                        onClick={() => handleExportReport('excel')} 
+                        variant="outline"
+                        className="gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Exportar Excel
+                      </Button>
+                      
+                      <ExportButton
+                        data={previewData}
+                        filename={reportName || "relatorio-personalizado"}
+                        title={reportName || "Relatório Personalizado"}
+                      />
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Preview dos Dados */}
           {showPreview && previewData.length > 0 && (
             <div className="mt-8">
-              <ReportPreview
-                data={previewData}
-                fields={selectedFields}
-                onClose={() => setShowPreview(false)}
-              />
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Eye className="h-5 w-5" />
+                      Preview do Relatório
+                      <Badge variant="secondary">
+                        {previewData.length} registros
+                      </Badge>
+                    </CardTitle>
+                    <Button variant="ghost" size="sm" onClick={() => setShowPreview(false)}>
+                      ✕
+                    </Button>
+                  </div>
+                  <CardDescription>
+                    Visualização dos dados com os campos e filtros selecionados
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="overflow-x-auto">
+                  <table className="w-full border-collapse border border-border">
+                    <thead>
+                      <tr className="bg-muted">
+                        {selectedFields.map((field) => (
+                          <th key={field.id} className="border border-border p-2 text-left font-medium">
+                            {field.label}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {previewData.map((row, index) => (
+                        <tr key={index} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                          {selectedFields.map((field) => (
+                            <td key={field.id} className="border border-border p-2">
+                              {row[field.name] || '-'}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
             </div>
           )}
         </DndProvider>
