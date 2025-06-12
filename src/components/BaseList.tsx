@@ -46,7 +46,6 @@ interface BaseListProps<T> {
   className?: string;
   showExport?: boolean;
   exportFilename?: string;
-  minHeight?: string;
 }
 
 const BaseList = <T extends Record<string, any>>({
@@ -64,7 +63,6 @@ const BaseList = <T extends Record<string, any>>({
   className,
   showExport = false,
   exportFilename,
-  minHeight = "200px"
 }: BaseListProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
@@ -123,16 +121,10 @@ const BaseList = <T extends Record<string, any>>({
         onViewModeChange={setViewMode}
       />
 
-      {/* Main Content Area - flexible height */}
+      {/* Main Content Area - completely flexible */}
       <div className="flex-1 flex flex-col min-h-0">
-        {/* Content Area */}
-        <div 
-          className="flex-1 overflow-hidden" 
-          style={{ 
-            height: 'calc(100vh - 280px)',
-            minHeight: minHeight 
-          }}
-        >
+        {/* Content Area - adapts to parent height */}
+        <div className="flex-1 overflow-hidden">
           {paginatedData.length === 0 ? (
             <BaseListEmptyState
               searchTerm={searchTerm}
