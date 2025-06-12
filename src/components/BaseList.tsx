@@ -100,13 +100,16 @@ const BaseList = <T extends Record<string, any>>({
     totalPages,
     startIndex,
     endIndex,
-    currentData,
+    paginatedData,
     hasNextPage,
     hasPreviousPage,
     goToPage,
-    changePageSize,
-    currentPageSize
-  } = usePagination(filteredData, pageSize);
+    setPageSize,
+    pageSize: currentPageSize
+  } = usePagination(filteredData, {
+    pageSize,
+    totalItems: filteredData.length
+  });
 
   const renderTableRow = (item: T, index: number) => (
     <tr key={getItemId(item)} className="border-b hover:bg-muted/50">
@@ -244,7 +247,7 @@ const BaseList = <T extends Record<string, any>>({
 
       {/* Content - with scroll */}
       <div className="flex-1 overflow-auto">
-        {currentData.length === 0 ? (
+        {paginatedData.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <div className="text-center">
@@ -278,14 +281,14 @@ const BaseList = <T extends Record<string, any>>({
                   </tr>
                 </thead>
                 <tbody>
-                  {currentData.map(renderTableRow)}
+                  {paginatedData.map(renderTableRow)}
                 </tbody>
               </table>
             </div>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {currentData.map(renderGridCard)}
+            {paginatedData.map(renderGridCard)}
           </div>
         )}
       </div>
@@ -303,7 +306,7 @@ const BaseList = <T extends Record<string, any>>({
             hasNextPage={hasNextPage}
             hasPreviousPage={hasPreviousPage}
             onPageChange={goToPage}
-            onPageSizeChange={changePageSize}
+            onPageSizeChange={setPageSize}
           />
         </div>
       )}
