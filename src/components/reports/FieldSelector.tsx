@@ -1,79 +1,23 @@
 import { useState } from 'react';
-import { useDrag } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Search, Database, Lightbulb } from 'lucide-react';
 import { ReportField, EntityFieldGroup } from '@/types/reports';
-import { getRelatedFields, detectReportContext } from '@/utils/fieldRelationships';
+import { getSmartRelatedFields, detectReportType } from '@/utils/entityRelationships';
+import DraggableField from './DraggableField';
 
 interface FieldSelectorProps {
   onFieldSelect: (field: ReportField) => void;
   selectedFields: ReportField[];
 }
 
-const DraggableField = ({ field, isSelected, onSelect, isRecommended }: { 
-  field: ReportField; 
-  isSelected: boolean; 
-  onSelect: () => void;
-  isRecommended?: boolean;
-}) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'field',
-    item: field,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
-  const getFieldTypeColor = (type: string) => {
-    switch (type) {
-      case 'string': return 'bg-blue-100 text-blue-800';
-      case 'number': return 'bg-green-100 text-green-800';
-      case 'date': return 'bg-purple-100 text-purple-800';
-      case 'boolean': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  return (
-    <div
-      ref={(node) => drag(node)}
-      className={`flex items-center justify-between p-2 rounded-md border hover:bg-muted cursor-pointer transition-all ${
-        isDragging ? 'opacity-50' : 'opacity-100'
-      } ${isRecommended ? 'border-yellow-300 bg-yellow-50' : ''}`}
-      onClick={onSelect}
-    >
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          checked={isSelected}
-          onChange={onSelect}
-        />
-        <div>
-          <div className="font-medium text-sm flex items-center gap-1">
-            {field.label}
-            {isRecommended && <Lightbulb className="h-3 w-3 text-yellow-600" />}
-          </div>
-          <div className="text-xs text-muted-foreground">{field.name}</div>
-        </div>
-      </div>
-      <Badge 
-        variant="outline" 
-        className={`text-xs ${getFieldTypeColor(field.type)}`}
-      >
-        {field.type}
-      </Badge>
-    </div>
-  );
-};
-
 const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedEntities, setExpandedEntities] = useState<Set<string>>(new Set(['eventos', 'financeiro']));
 
-  // Definir todas as entidades e campos do sistema
+  // Todos os campos do sistema
   const allFields: ReportField[] = [
     // Eventos
     { id: 'eventos_cliente', name: 'cliente', label: 'Cliente', type: 'string', entity: 'eventos' },
@@ -120,13 +64,11 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
     { id: 'usuarios_ultimo_acesso', name: 'ultimo_acesso', label: 'Último Acesso', type: 'date', entity: 'usuarios' },
   ];
 
-  // Obter campos relacionados usando o sistema inteligente
-  const relatedFields = getRelatedFields(selectedFields, allFields);
-  const reportContext = detectReportContext(selectedFields);
+  const smartRelatedFields = getSmartRelatedFields(selectedFields, allFields);
+  const reportType = detectReportType(selectedFields);
 
-  // Filtrar campos baseado na busca e relacionamentos
   const getFilteredFields = () => {
-    let fieldsToShow = selectedFields.length > 0 ? relatedFields : allFields;
+    let fieldsToShow = selectedFields.length > 0 ? smartRelatedFields : allFields;
     
     if (searchTerm) {
       fieldsToShow = allFields.filter(field => 
@@ -141,7 +83,6 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
 
   const filteredFields = getFilteredFields();
 
-  // Agrupar campos por entidade
   const entityGroups: EntityFieldGroup[] = [
     { entity: 'eventos', label: 'Eventos e Reservas', fields: [] },
     { entity: 'financeiro', label: 'Financeiro', fields: [] },
@@ -168,7 +109,7 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
   };
 
   const isFieldRecommended = (field: ReportField) => {
-    return reportContext.suggestedFields.includes(field.id);
+    return reportType.suggestedFields.includes(field.id);
   };
 
   return (
@@ -180,12 +121,12 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
         </CardTitle>
         <CardDescription>
           {selectedFields.length > 0 
-            ? `Exibindo campos relacionados para: ${reportContext.reportType}`
+            ? `${reportType.type}: ${reportType.description}`
             : 'Selecione campos para formar seu relatório'
           }
         </CardDescription>
         
-        {reportContext.suggestedFields.length > 0 && (
+        {reportType.suggestedFields.length > 0 && (
           <div className="flex items-center gap-2 p-2 bg-yellow-50 rounded-lg">
             <Lightbulb className="h-4 w-4 text-yellow-600" />
             <span className="text-sm text-yellow-800">
