@@ -38,6 +38,15 @@ const CustomReport = () => {
     });
   }, []);
 
+  const handleFieldAdd = useCallback((field: ReportField) => {
+    setSelectedFields(prev => {
+      if (prev.find(f => f.id === field.id)) {
+        return prev;
+      }
+      return [...prev, field];
+    });
+  }, []);
+
   const handleFieldRemove = useCallback((fieldId: string) => {
     setSelectedFields(prev => prev.filter(f => f.id !== fieldId));
   }, []);
@@ -102,6 +111,7 @@ const CustomReport = () => {
               <ReportBuilder
                 selectedFields={selectedFields}
                 onFieldRemove={handleFieldRemove}
+                onFieldAdd={handleFieldAdd}
                 reportConfig={reportConfig}
                 onConfigChange={setReportConfig}
               />

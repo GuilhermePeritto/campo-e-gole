@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useDrag } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,66 @@ interface FieldSelectorProps {
   onFieldSelect: (field: ReportField) => void;
   selectedFields: ReportField[];
 }
+
+// Definir relacionamentos entre entidades
+const entityRelationships: Record<string, string[]> = {
+  'eventos': ['eventos', 'financeiro', 'usuarios'],
+  'financeiro': ['financeiro', 'eventos', 'escolinha', 'bar', 'usuarios'],
+  'escolinha': ['escolinha', 'financeiro', 'usuarios'],
+  'bar': ['bar', 'financeiro', 'usuarios'],
+  'usuarios': ['usuarios', 'eventos', 'financeiro', 'escolinha', 'bar']
+};
+
+const DraggableField = ({ field, isSelected, onSelect }: { 
+  field: ReportField; 
+  isSelected: boolean; 
+  onSelect: () => void;
+}) => {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'field',
+    item: field,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+
+  const getFieldTypeColor = (type: string) => {
+    switch (type) {
+      case 'string': return 'bg-blue-100 text-blue-800';
+      case 'number': return 'bg-green-100 text-green-800';
+      case 'date': return 'bg-purple-100 text-purple-800';
+      case 'boolean': return 'bg-orange-100 text-orange-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div
+      ref={drag as any}
+      className={`flex items-center justify-between p-2 rounded-md border hover:bg-muted cursor-pointer transition-opacity ${
+        isDragging ? 'opacity-50' : 'opacity-100'
+      }`}
+      onClick={onSelect}
+    >
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          checked={isSelected}
+          onChange={onSelect}
+        />
+        <div>
+          <div className="font-medium text-sm">{field.label}</div>
+          <div className="text-xs text-muted-foreground">{field.name}</div>
+        </div>
+      </div>
+      <Badge 
+        variant="outline" 
+        className={`text-xs ${getFieldTypeColor(field.type)}`}
+      >
+        {field.type}
+      </Badge>
+    </div>
+  );
+};
 
 const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -85,7 +146,26 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
     }
   ];
 
-  const filteredGroups = entityGroups.map(group => ({
+  // Filtrar campos com base nos já selecionados
+  const getCompatibleFields = () => {
+    if (selectedFields.length === 0) {
+      return entityGroups;
+    }
+
+    const selectedEntities = new Set(selectedFields.map(f => f.entity));
+    const compatibleEntities = new Set<string>();
+
+    // Para cada entidade selecionada, adicionar entidades compatíveis
+    selectedEntities.forEach(entity => {
+      entityRelationships[entity]?.forEach(compatible => {
+        compatibleEntities.add(compatible);
+      });
+    });
+
+    return entityGroups.filter(group => compatibleEntities.has(group.entity));
+  };
+
+  const filteredGroups = getCompatibleFields().map(group => ({
     ...group,
     fields: group.fields.filter(field => 
       field.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -108,16 +188,6 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
     return selectedFields.some(f => f.id === field.id);
   };
 
-  const getFieldTypeColor = (type: string) => {
-    switch (type) {
-      case 'string': return 'bg-blue-100 text-blue-800';
-      case 'number': return 'bg-green-100 text-green-800';
-      case 'date': return 'bg-purple-100 text-purple-800';
-      case 'boolean': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
     <Card className="h-[600px] 3xl:h-[700px] 4xl:h-[800px] flex flex-col">
       <CardHeader className="flex-shrink-0">
@@ -126,7 +196,7 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
           Campos Disponíveis
         </CardTitle>
         <CardDescription>
-          Selecione os campos para incluir no relatório
+          Arraste ou clique nos campos para incluir no relatório
         </CardDescription>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -161,28 +231,12 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
               
               <CollapsibleContent className="mt-2 ml-6 space-y-2">
                 {group.fields.map((field) => (
-                  <div
+                  <DraggableField
                     key={field.id}
-                    className="flex items-center justify-between p-2 rounded-md border hover:bg-muted cursor-pointer"
-                    onClick={() => onFieldSelect(field)}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        checked={isFieldSelected(field)}
-                        onChange={() => onFieldSelect(field)}
-                      />
-                      <div>
-                        <div className="font-medium text-sm">{field.label}</div>
-                        <div className="text-xs text-muted-foreground">{field.name}</div>
-                      </div>
-                    </div>
-                    <Badge 
-                      variant="outline" 
-                      className={`text-xs ${getFieldTypeColor(field.type)}`}
-                    >
-                      {field.type}
-                    </Badge>
-                  </div>
+                    field={field}
+                    isSelected={isFieldSelected(field)}
+                    onSelect={() => onFieldSelect(field)}
+                  />
                 ))}
               </CollapsibleContent>
             </Collapsible>

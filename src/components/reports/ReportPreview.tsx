@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { X, Eye } from 'lucide-react';
 import { ReportField } from '@/types/reports';
@@ -25,6 +26,17 @@ const ReportPreview = ({ data, fields, onClose }: ReportPreviewProps) => {
       default:
         return String(value);
     }
+  };
+
+  const getEntityColor = (entity: string) => {
+    const colors = {
+      'eventos': 'bg-red-100 text-red-800',
+      'financeiro': 'bg-yellow-100 text-yellow-800',
+      'escolinha': 'bg-green-100 text-green-800',
+      'bar': 'bg-blue-100 text-blue-800',
+      'usuarios': 'bg-purple-100 text-purple-800',
+    };
+    return colors[entity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -52,9 +64,17 @@ const ReportPreview = ({ data, fields, onClose }: ReportPreviewProps) => {
               <TableRow>
                 {fields.map((field) => (
                   <TableHead key={field.id} className="min-w-[120px]">
-                    <div>
+                    <div className="space-y-1">
                       <div className="font-medium">{field.label}</div>
-                      <div className="text-xs text-muted-foreground">{field.type}</div>
+                      <div className="flex items-center gap-1">
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${getEntityColor(field.entity)}`}
+                        >
+                          {field.entity}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">({field.type})</span>
+                      </div>
                     </div>
                   </TableHead>
                 ))}

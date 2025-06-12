@@ -9,18 +9,20 @@ import { ReportField, ReportConfig } from '@/types/reports';
 interface ReportBuilderProps {
   selectedFields: ReportField[];
   onFieldRemove: (fieldId: string) => void;
+  onFieldAdd: (field: ReportField) => void;
   reportConfig: ReportConfig;
   onConfigChange: (config: ReportConfig) => void;
 }
 
 const ReportBuilder = ({ 
   selectedFields, 
-  onFieldRemove
+  onFieldRemove,
+  onFieldAdd
 }: ReportBuilderProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'field',
     drop: (item: ReportField) => {
-      // Lógica de drop seria implementada aqui se necessário
+      onFieldAdd(item);
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -59,7 +61,7 @@ const ReportBuilder = ({
           </CardTitle>
           <CardDescription>
             {selectedFields.length === 0 
-              ? 'Nenhum campo selecionado. Escolha campos na lista ao lado.'
+              ? 'Nenhum campo selecionado. Arraste campos da lista ao lado ou clique para selecionar.'
               : `${selectedFields.length} campo(s) selecionado(s)`
             }
           </CardDescription>
@@ -74,7 +76,7 @@ const ReportBuilder = ({
             {selectedFields.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
                 <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Arraste campos aqui ou selecione da lista</p>
+                <p>Arraste campos aqui ou clique para selecionar da lista</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -87,7 +89,7 @@ const ReportBuilder = ({
                       <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
                       <div className="flex flex-col">
                         <span className="font-medium">{field.label}</span>
-                        <span className="text-sm text-muted-foreground">{field.name}</span>
+                        <span className="text-sm text-muted-foreground">{field.entity}.{field.name}</span>
                       </div>
                     </div>
                     
