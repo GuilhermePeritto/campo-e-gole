@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -71,7 +70,7 @@ const BaseList = <T extends Record<string, any>>({
   className,
   showExport = false,
   exportFilename,
-  minHeight = "100px"
+  minHeight = "200px"
 }: BaseListProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
@@ -183,9 +182,9 @@ const BaseList = <T extends Record<string, any>>({
   };
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full h-full flex flex-col", className)}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
           {description && (
@@ -213,7 +212,7 @@ const BaseList = <T extends Record<string, any>>({
       </div>
 
       {/* Search and View Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -245,18 +244,12 @@ const BaseList = <T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* Content Container with calculated height */}
-      <div 
-        className="flex flex-col"
-        style={{ 
-          height: 'calc(100vh - 480px)', 
-          minHeight: minHeight 
-        }}
-      >
-        {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-auto">
+      {/* Main Content Area - flexible height */}
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Content Area - takes most space */}
+        <div className="flex-1 overflow-auto" style={{ minHeight: minHeight }}>
           {paginatedData.length === 0 ? (
-            <Card>
+            <Card className="h-full flex items-center justify-center">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <div className="text-center">
                   <h3 className="text-lg font-semibold mb-2">Nenhum item encontrado</h3>
@@ -295,15 +288,17 @@ const BaseList = <T extends Record<string, any>>({
               </div>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full overflow-auto">
-              {paginatedData.map(renderGridCard)}
+            <div className="h-full overflow-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-1">
+                {paginatedData.map(renderGridCard)}
+              </div>
             </div>
           )}
         </div>
 
-        {/* Fixed Pagination at Bottom */}
+        {/* Compact Pagination at Bottom */}
         {filteredData.length > 0 && (
-          <div className="flex-shrink-0 mt-4 pt-4 border-t bg-background">
+          <div className="flex-shrink-0 mt-3 pt-3 border-t bg-background">
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}

@@ -42,9 +42,9 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   showPageSizeSelector = true,
   showInfo = true,
 }) => {
-  // Generate page numbers to show
+  // Generate page numbers to show (more compact)
   const getVisiblePages = () => {
-    const delta = 2;
+    const delta = 1; // Reduced from 2 to 1 for more compact display
     const range = [];
     
     for (
@@ -73,22 +73,22 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   if (totalPages <= 1 && !showInfo) return null;
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-3 py-2">
       {showInfo && (
-        <div className="text-sm text-gray-600">
-          Mostrando {startIndex} a {endIndex} de {totalItems} registros
+        <div className="text-xs sm:text-sm text-muted-foreground order-2 lg:order-1">
+          {startIndex}-{endIndex} de {totalItems}
         </div>
       )}
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 order-1 lg:order-2">
         {showPageSizeSelector && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Registros por página:</span>
+            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Por página:</span>
             <Select
               value={pageSize.toString()}
               onValueChange={(value) => onPageSizeChange(Number(value))}
             >
-              <SelectTrigger className="w-20">
+              <SelectTrigger className="w-16 h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -104,23 +104,26 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
         {totalPages > 1 && (
           <Pagination>
-            <PaginationContent>
+            <PaginationContent className="gap-1">
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
-                  className={!hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  className={cn(
+                    "h-8 px-2 text-xs",
+                    !hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  )}
                 />
               </PaginationItem>
 
               {getVisiblePages().map((page, index) => (
                 <PaginationItem key={index}>
                   {page === '...' ? (
-                    <PaginationEllipsis />
+                    <PaginationEllipsis className="h-8 w-8" />
                   ) : (
                     <PaginationLink
                       onClick={() => onPageChange(page as number)}
                       isActive={currentPage === page}
-                      className="cursor-pointer"
+                      className="cursor-pointer h-8 w-8 text-xs"
                     >
                       {page}
                     </PaginationLink>
@@ -131,7 +134,10 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               <PaginationItem>
                 <PaginationNext
                   onClick={() => hasNextPage && onPageChange(currentPage + 1)}
-                  className={!hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  className={cn(
+                    "h-8 px-2 text-xs",
+                    !hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  )}
                 />
               </PaginationItem>
             </PaginationContent>
