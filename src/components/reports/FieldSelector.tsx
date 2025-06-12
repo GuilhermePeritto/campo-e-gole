@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,7 +40,7 @@ const DraggableField = ({ field, isSelected, onSelect, isRecommended }: {
 
   return (
     <div
-      ref={drag}
+      ref={(node) => drag(node)}
       className={`flex items-center justify-between p-2 rounded-md border hover:bg-muted cursor-pointer transition-all ${
         isDragging ? 'opacity-50' : 'opacity-100'
       } ${isRecommended ? 'border-yellow-300 bg-yellow-50' : ''}`}
