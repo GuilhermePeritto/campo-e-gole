@@ -62,9 +62,15 @@ const DraggableField = ({ field, index, onRemove, onMove }: DraggableFieldProps)
     return colors[entity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
+  // Corrigir o problema do ref usando useCallback
+  const combinedRef = (node: HTMLDivElement | null) => {
+    drag(node);
+    drop(node);
+  };
+
   return (
     <div
-      ref={(node) => drag(drop(node))}
+      ref={combinedRef}
       className={`flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-move ${
         isDragging ? 'opacity-50' : ''
       }`}
@@ -145,7 +151,7 @@ const ReportBuilder = ({
         </CardHeader>
         <CardContent>
           <div
-            ref={drop as any}
+            ref={drop}
             className={`min-h-[200px] max-h-[400px] 3xl:min-h-[250px] 4xl:min-h-[300px] border-2 border-dashed rounded-lg p-4 transition-colors overflow-y-auto ${
               isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
             }`}
