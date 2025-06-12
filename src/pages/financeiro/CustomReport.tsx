@@ -1,8 +1,10 @@
+
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { BarChart3, Eye, AlertTriangle, Database } from 'lucide-react';
@@ -11,6 +13,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import FieldSelector from '@/components/reports/FieldSelector';
 import ReportBuilder from '@/components/reports/ReportBuilder';
 import ReportPreview from '@/components/reports/ReportPreview';
+import ReportAdvancedOptions from '@/components/reports/ReportAdvancedOptions';
 import { ReportField, ReportConfig } from '@/types/reports';
 import { generateRelatedData } from '@/utils/reportDataGenerator';
 import ExportButton from '@/components/ExportButton';
@@ -27,6 +30,21 @@ const CustomReport = () => {
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [queryCost, setQueryCost] = useState<{ cost: number; isHigh: boolean; message: string } | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  
+  const [advancedOptions, setAdvancedOptions] = useState({
+    reportName: '',
+    limit: 100,
+    showTotals: true,
+    showAverages: false,
+    showPercentages: false,
+    dateRange: {
+      start: '',
+      end: ''
+    },
+    exportFormat: 'excel' as 'excel' | 'pdf' | 'csv',
+    autoRefresh: false,
+    refreshInterval: 5
+  });
 
   const handleFieldSelect = useCallback((field: ReportField) => {
     setSelectedFields(prev => {
@@ -57,36 +75,102 @@ const CustomReport = () => {
   const analyzeQueryCost = useCallback(() => {
     const fieldCount = selectedFields.length;
     const joinCount = new Set(selectedFields.map(f => f.entity)).size - 1;
+    const filterCount = reportConfig.filters.length;
+    const groupCount = reportConfig.groupBy.length;
     
-    let cost = fieldCount * 10 + joinCount * 50;
+    let cost = fieldCount * 10 + joinCount * 50 + filterCount * 20 + groupCount * 30;
     if (joinCount > 3) cost += 200;
     if (fieldCount > 15) cost += 300;
+    if (filterCount > 5) cost += 150;
     
     const isHigh = cost > 500;
     const message = isHigh 
-      ? `Consulta muito complexa (${joinCount} joins, ${fieldCount} campos). Considere reduzir campos ou adicionar filtros.`
-      : `Consulta otimizada (${joinCount} joins, ${fieldCount} campos). Performance adequada.`;
+      ? `Consulta muito complexa (${joinCount} joins, ${fieldCount} campos, ${filterCount} filtros). Considere simplificar.`
+      : `Consulta otimizada (${joinCount} joins, ${fieldCount} campos, ${filterCount} filtros). Performance adequada.`;
 
     setQueryCost({ cost, isHigh, message });
     return !isHigh;
-  }, [selectedFields]);
+  }, [selectedFields, reportConfig]);
 
   const generatePreview = useCallback(() => {
     if (selectedFields.length === 0) {
+      toast.error('Selecione pelo menos um campo para gerar o preview');
       return;
     }
 
     if (!analyzeQueryCost()) {
+      toast.warning('Consulta muito complexa. Considere reduzir a complexidade.');
       return;
     }
 
-    // Gerar dados relacionados baseados nos campos selecionados
-    const relatedData = generateRelatedData(selectedFields);
-    console.log('Dados relacionados gerados:', relatedData);
+    // Aplicar filtros avançados aos dados
+    let filteredData = generateRelatedData(selectedFields, advancedOptions.limit);
+    
+    // Aplicar filtros de data se especificados
+    if (advancedOptions.dateRange.start || advancedOptions.dateRange.end) {
+      // Simular filtro de data
+      console.log('Aplicando filtro de data:', advancedOptions.dateRange);
+    }
+    
+    // Aplicar filtros do reportConfig
+    reportConfig.filters.forEach(filter => {
+      console.log('Aplicando filtro:', filter);
+    });
 
-    setPreviewData(relatedData);
+    // Aplicar ordenação
+    if (reportConfig.orderBy.length > 0) {
+      console.log('Aplicando ordenação:', reportConfig.orderBy);
+    }
+
+    // Aplicar agrupamento
+    if (reportConfig.groupBy.length > 0) {
+      console.log('Aplicando agrupamento:', reportConfig.groupBy);
+    }
+
+    setPreviewData(filteredData);
     setShowPreview(true);
-  }, [selectedFields, analyzeQueryCost]);
+    toast.success('Preview gerado com sucesso!');
+  }, [selectedFields, reportConfig, advancedOptions, analyzeQueryCost]);
+
+  const handleSaveReport = useCallback(() => {
+    if (!advancedOptions.reportName.trim()) {
+      toast.error('Digite um nome para salvar o relatório');
+      return;
+    }
+    
+    if (selectedFields.length === 0) {
+      toast.error('Selecione pelo menos um campo antes de salvar');
+      return;
+    }
+
+    // Simular salvamento
+    const reportData = {
+      name: advancedOptions.reportName,
+      fields: selectedFields,
+      config: reportConfig,
+      options: advancedOptions,
+      createdAt: new Date().toISOString()
+    };
+    
+    console.log('Salvando relatório:', reportData);
+    toast.success(`Relatório "${advancedOptions.reportName}" salvo com sucesso!`);
+  }, [selectedFields, reportConfig, advancedOptions]);
+
+  const handleExportReport = useCallback((format: string) => {
+    if (previewData.length === 0) {
+      toast.error('Gere um preview antes de exportar');
+      return;
+    }
+
+    console.log(`Exportando relatório em formato ${format}:`, {
+      data: previewData,
+      fields: selectedFields,
+      config: reportConfig,
+      options: advancedOptions
+    });
+    
+    toast.success(`Relatório exportado em ${format.toUpperCase()}!`);
+  }, [previewData, selectedFields, reportConfig, advancedOptions]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,7 +194,7 @@ const CustomReport = () => {
             </div>
 
             {/* Construtor do Relatório */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-6">
               <ReportBuilder
                 selectedFields={selectedFields}
                 onFieldRemove={handleFieldRemove}
@@ -120,9 +204,19 @@ const CustomReport = () => {
                 onConfigChange={setReportConfig}
               />
 
+              {/* Opções Avançadas */}
+              <ReportAdvancedOptions
+                fields={selectedFields}
+                options={advancedOptions}
+                onOptionsChange={setAdvancedOptions}
+                onSaveReport={handleSaveReport}
+                onExportReport={handleExportReport}
+                onPreviewReport={generatePreview}
+              />
+
               {/* Análise de Custo */}
               {queryCost && (
-                <Card className="mt-6">
+                <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Database className="h-5 w-5" />
@@ -146,13 +240,16 @@ const CustomReport = () => {
                       <Badge variant="outline">
                         {new Set(selectedFields.map(f => f.entity)).size} tabelas
                       </Badge>
+                      <Badge variant="outline">
+                        {reportConfig.filters.length} filtros
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
-              {/* Ações */}
-              <div className="mt-6 flex flex-wrap gap-3">
+              {/* Ações Rápidas */}
+              <div className="flex flex-wrap gap-3">
                 <Button
                   onClick={generatePreview}
                   disabled={selectedFields.length === 0}
@@ -165,8 +262,8 @@ const CustomReport = () => {
                 {previewData.length > 0 && (
                   <ExportButton
                     data={previewData}
-                    filename="relatorio-personalizado"
-                    title="Relatório Personalizado"
+                    filename={advancedOptions.reportName || "relatorio-personalizado"}
+                    title={advancedOptions.reportName || "Relatório Personalizado"}
                   />
                 )}
               </div>

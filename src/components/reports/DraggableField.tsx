@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Lightbulb } from 'lucide-react';
 import { ReportField } from '@/types/reports';
+import { useRef } from 'react';
 
 interface DraggableFieldProps {
   field: ReportField;
@@ -13,6 +14,8 @@ interface DraggableFieldProps {
 }
 
 const DraggableField = ({ field, isSelected, onSelect, isRecommended }: DraggableFieldProps) => {
+  const dragRef = useRef<HTMLDivElement>(null);
+  
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'field',
     item: field,
@@ -20,6 +23,8 @@ const DraggableField = ({ field, isSelected, onSelect, isRecommended }: Draggabl
       isDragging: !!monitor.isDragging(),
     }),
   }));
+
+  drag(dragRef);
 
   const getFieldTypeColor = (type: string) => {
     switch (type) {
@@ -33,7 +38,7 @@ const DraggableField = ({ field, isSelected, onSelect, isRecommended }: Draggabl
 
   return (
     <div
-      ref={drag}
+      ref={dragRef}
       className={`flex items-center justify-between p-2 rounded-md border hover:bg-muted cursor-pointer transition-all ${
         isDragging ? 'opacity-50' : 'opacity-100'
       } ${isRecommended ? 'border-yellow-300 bg-yellow-50' : ''}`}

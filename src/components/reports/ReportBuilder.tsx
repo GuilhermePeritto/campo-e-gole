@@ -5,6 +5,10 @@ import { FileText } from 'lucide-react';
 import { ReportField, ReportConfig } from '@/types/reports';
 import SelectedField from './SelectedField';
 import ReportSummary from './ReportSummary';
+import ReportFilters from './ReportFilters';
+import ReportSorting from './ReportSorting';
+import ReportGrouping from './ReportGrouping';
+import { useRef } from 'react';
 
 interface ReportBuilderProps {
   selectedFields: ReportField[];
@@ -19,8 +23,12 @@ const ReportBuilder = ({
   selectedFields, 
   onFieldRemove,
   onFieldAdd,
-  onFieldsReorder
+  onFieldsReorder,
+  reportConfig,
+  onConfigChange
 }: ReportBuilderProps) => {
+  const dropRef = useRef<HTMLDivElement>(null);
+  
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'field',
     drop: (item: ReportField) => {
@@ -30,6 +38,8 @@ const ReportBuilder = ({
       isOver: !!monitor.isOver(),
     }),
   }));
+
+  drop(dropRef);
 
   const moveField = (dragIndex: number, hoverIndex: number) => {
     const newFields = [...selectedFields];
@@ -56,7 +66,7 @@ const ReportBuilder = ({
         </CardHeader>
         <CardContent>
           <div
-            ref={drop}
+            ref={dropRef}
             className={`min-h-[200px] max-h-[400px] 3xl:min-h-[250px] 4xl:min-h-[300px] border-2 border-dashed rounded-lg p-4 transition-colors overflow-y-auto ${
               isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
             }`}
@@ -82,6 +92,28 @@ const ReportBuilder = ({
           </div>
         </CardContent>
       </Card>
+
+      {selectedFields.length > 0 && (
+        <>
+          <ReportFilters
+            fields={selectedFields}
+            filters={reportConfig.filters}
+            onFiltersChange={(filters) => onConfigChange({ ...reportConfig, filters })}
+          />
+
+          <ReportSorting
+            fields={selectedFields}
+            orderBy={reportConfig.orderBy}
+            onOrderByChange={(orderBy) => onConfigChange({ ...reportConfig, orderBy })}
+          />
+
+          <ReportGrouping
+            fields={selectedFields}
+            groupBy={reportConfig.groupBy}
+            onGroupByChange={(groupBy) => onConfigChange({ ...reportConfig, groupBy })}
+          />
+        </>
+      )}
 
       <ReportSummary selectedFields={selectedFields} />
     </div>
