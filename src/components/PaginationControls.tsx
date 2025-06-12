@@ -84,14 +84,15 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   if (totalPages <= 1 && !showInfo) return null;
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-4 py-3">
-      {showInfo && (
-        <div className="text-xs sm:text-sm text-muted-foreground order-2 lg:order-1">
-          {startIndex}-{endIndex} de {totalItems}
-        </div>
-      )}
-      
-      <div className="flex flex-col sm:flex-row items-center gap-4 order-1 lg:order-2">
+    <div className="flex flex-col items-center justify-center gap-6 py-6">
+      {/* Info and Page Size Selector */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        {showInfo && (
+          <div className="text-xs sm:text-sm text-muted-foreground">
+            {startIndex}-{endIndex} de {totalItems}
+          </div>
+        )}
+        
         {showPageSizeSelector && (
           <div className="flex items-center gap-2">
             <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Por página:</span>
@@ -112,84 +113,85 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
             </Select>
           </div>
         )}
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center">
-            <Pagination>
-              <PaginationContent className="gap-1">
-                {/* First page button - only show if more than 5 pages and not on first page */}
-                {totalPages > 5 && currentPage > 1 && (
-                  <PaginationItem>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onPageChange(1)}
-                      className="h-8 w-8 p-0"
-                      title="Primeira página"
-                    >
-                      <ChevronsLeft className="h-4 w-4" />
-                    </Button>
-                  </PaginationItem>
-                )}
-
-                {/* Previous button */}
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
-                    className={cn(
-                      "h-8 px-2 text-xs",
-                      !hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-                    )}
-                  />
-                </PaginationItem>
-
-                {/* Page numbers */}
-                {getVisiblePages().map((page, index) => (
-                  <PaginationItem key={index}>
-                    {page === '...' ? (
-                      <PaginationEllipsis className="h-8 w-8" />
-                    ) : (
-                      <PaginationLink
-                        onClick={() => onPageChange(page as number)}
-                        isActive={currentPage === page}
-                        className="cursor-pointer h-8 w-8 text-xs"
-                      >
-                        {page}
-                      </PaginationLink>
-                    )}
-                  </PaginationItem>
-                ))}
-
-                {/* Next button */}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => hasNextPage && onPageChange(currentPage + 1)}
-                    className={cn(
-                      "h-8 px-2 text-xs",
-                      !hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-                    )}
-                  />
-                </PaginationItem>
-
-                {/* Last page button - only show if more than 5 pages and not on last page */}
-                {totalPages > 5 && currentPage < totalPages && (
-                  <PaginationItem>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onPageChange(totalPages)}
-                      className="h-8 w-8 p-0"
-                      title="Última página"
-                    >
-                      <ChevronsRight className="h-4 w-4" />
-                    </Button>
-                  </PaginationItem>
-                )}
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
       </div>
+
+      {/* Pagination Navigation - Centralized */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center">
+          <Pagination>
+            <PaginationContent className="gap-1">
+              {/* First page button - only show if more than 5 pages and not on first page */}
+              {totalPages > 5 && currentPage > 1 && (
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(1)}
+                    className="h-8 w-8 p-0"
+                    title="Primeira página"
+                  >
+                    <ChevronsLeft className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+              )}
+
+              {/* Previous button */}
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
+                  className={cn(
+                    "h-8 px-2 text-xs",
+                    !hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  )}
+                />
+              </PaginationItem>
+
+              {/* Page numbers */}
+              {getVisiblePages().map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === '...' ? (
+                    <PaginationEllipsis className="h-8 w-8" />
+                  ) : (
+                    <PaginationLink
+                      onClick={() => onPageChange(page as number)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer h-8 w-8 text-xs"
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              {/* Next button */}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => hasNextPage && onPageChange(currentPage + 1)}
+                  className={cn(
+                    "h-8 px-2 text-xs",
+                    !hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                  )}
+                />
+              </PaginationItem>
+
+              {/* Last page button - only show if more than 5 pages and not on last page */}
+              {totalPages > 5 && currentPage < totalPages && (
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(totalPages)}
+                    className="h-8 w-8 p-0"
+                    title="Última página"
+                  >
+                    <ChevronsRight className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };
