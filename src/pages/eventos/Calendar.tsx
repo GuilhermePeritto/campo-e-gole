@@ -261,7 +261,7 @@ const Calendar = () => {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Button
@@ -281,12 +281,13 @@ const Calendar = () => {
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </div>
-            <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-300">
+            <h2 className="text-xl font-medium text-gray-900 dark:text-gray-300">
               {getDateTitle()}
             </h2>
           </div>
           <Button
             variant="outline"
+            size="sm"
             onClick={() => setCurrentDate(new Date())}
             className="border text-gray-900 dark:text-gray-300"
           >
@@ -302,7 +303,7 @@ const Calendar = () => {
               {/* Days Header */}
               <div className="grid grid-cols-7">
                 {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-                  <div key={day} className="p-4 text-center text-sm font-medium text-gray-900 dark:text-gray-300 border-r border last:border-r-0">
+                  <div key={day} className="p-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300 border-r border last:border-r-0">
                     {day}
                   </div>
                 ))}
@@ -363,23 +364,23 @@ const Calendar = () => {
             <div>
               {/* Time Header */}
               <div className="grid grid-cols-8 border-b border">
-                <div className="p-4 border-r border"></div>
+                <div className="p-3 border-r border"></div>
                 {weekDays.map((day, index) => {
                   const isTodayDate = isToday(day);
                   return (
                     <div
                       key={index}
-                      className="p-4 text-center border-r border last:border-r-0 cursor-pointer"
+                      className="p-3 text-center border-r border last:border-r-0 cursor-pointer"
                       onClick={() => handleDateClick(day)}
                       onMouseEnter={(e) => handleDayMouseEnter(day, e)}
                       onMouseLeave={handleDayMouseLeave}
                       onMouseMove={handleDayMouseMove}
                     >
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs text-gray-600 mb-1">
                         {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
                       </div>
-                      <div className={`text-lg font-medium ${isTodayDate
-                        ? 'bg-green-600 text-gray-900 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center mx-auto'
+                      <div className={`text-sm font-medium ${isTodayDate
+                        ? 'bg-green-600 text-gray-900 dark:text-gray-300 w-6 h-6 rounded-full flex items-center justify-center mx-auto'
                         : 'text-gray-900 dark:text-gray-300'
                         }`}>
                         {day.getDate()}
@@ -429,7 +430,7 @@ const Calendar = () => {
           {/* Day View */}
           {viewType === 'day' && (
             <div>
-              <div className="p-4 border-b border">
+              <div className="p-3 border-b border">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-300">
                   {currentDate.toLocaleDateString('pt-BR', {
                     weekday: 'long',

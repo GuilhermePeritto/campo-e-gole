@@ -189,7 +189,7 @@ const Payments = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
+    <div className="h-screen flex flex-col bg-background text-gray-600 dark:text-gray-300">
       <ModuleHeader
         title="Mensalidades"
         icon={<CreditCard className="h-5 w-5" />}
@@ -198,7 +198,7 @@ const Payments = () => {
         backLabel="Escolinha"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="border">
@@ -245,20 +245,22 @@ const Payments = () => {
         </div>
 
         {/* Payments List */}
-        <BaseList
-          data={payments}
-          columns={columns}
-          actions={actions.filter((action) => 
-            payments.some(payment => payment.status !== 'pago')
-          )}
-          title="Controle de Mensalidades"
-          description="Gerencie os pagamentos das mensalidades dos alunos"
-          searchPlaceholder="Buscar por nome do aluno..."
-          searchFields={['studentName']}
-          getItemId={(payment) => payment.id}
-          pageSize={8}
-          renderCard={renderPaymentCard}
-        />
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={payments}
+            columns={columns}
+            actions={actions.filter((action) => 
+              payments.some(payment => payment.status !== 'pago')
+            )}
+            title="Controle de Mensalidades"
+            description="Gerencie os pagamentos das mensalidades dos alunos"
+            searchPlaceholder="Buscar por nome do aluno..."
+            searchFields={['studentName']}
+            getItemId={(payment) => payment.id}
+            pageSize={8}
+            renderCard={renderPaymentCard}
+          />
+        </div>
       </main>
     </div>
   );

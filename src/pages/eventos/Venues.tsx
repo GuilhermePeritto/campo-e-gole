@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -184,7 +183,7 @@ const Locais = () => {
   const totalRevenue = mockVenues.reduce((sum, venue) => sum + venue.hourlyRate, 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <ModuleHeader
         title="Locais"
         icon={<MapPin className="h-6 w-6" />}
@@ -193,7 +192,7 @@ const Locais = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         {/* Resumo */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           {isLoading ? (
@@ -270,23 +269,25 @@ const Locais = () => {
           )}
         </div>
 
-        <BaseList
-          data={mockVenues}
-          columns={columns}
-          actions={actions}
-          title="Lista de Locais"
-          description="Gerenciar todos os locais disponíveis para reserva"
-          searchPlaceholder="Buscar locais por nome ou tipo..."
-          searchFields={['name', 'type']}
-          getItemId={(venue) => venue.id}
-          pageSize={10}
-          renderCard={renderVenueCard}
-          createButton={{
-            label: 'Novo Local',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/eventos/locais/novo')
-          }}
-        />
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={mockVenues}
+            columns={columns}
+            actions={actions}
+            title="Lista de Locais"
+            description="Gerenciar todos os locais disponíveis para reserva"
+            searchPlaceholder="Buscar locais por nome ou tipo..."
+            searchFields={['name', 'type']}
+            getItemId={(venue) => venue.id}
+            pageSize={10}
+            renderCard={renderVenueCard}
+            createButton={{
+              label: 'Novo Local',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/eventos/locais/novo')
+            }}
+          />
+        </div>
       </main>
     </div>
   );
