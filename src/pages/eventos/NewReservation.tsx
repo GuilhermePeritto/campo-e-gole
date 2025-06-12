@@ -29,11 +29,41 @@ const NewReservation = () => {
     amount: ''
   });
 
-  // Set date from URL parameter when component mounts
+  // Mock events data (in a real app, this would come from a service)
+  const mockEventsData = {
+    1: { client: 'joao-silva', venue: 'quadra-1', startTime: '08:00', endTime: '10:00', notes: 'Cliente preferencial', amount: '160' },
+    2: { client: 'maria-santos', venue: 'campo-futebol', startTime: '14:00', endTime: '15:30', notes: 'Time Unidos', amount: '225' },
+    3: { client: 'pedro-costa', venue: 'quadra-2', startTime: '18:00', endTime: '19:00', notes: '', amount: '60' },
+    4: { client: 'ana-oliveira', venue: 'campo-futebol', startTime: '20:00', endTime: '22:00', notes: 'Grupo que joga toda semana', amount: '200' }
+  };
+
+  // Set date and event from URL parameters when component mounts
   useEffect(() => {
     const dateParam = searchParams.get('date');
+    const eventIdParam = searchParams.get('eventId');
+    
     if (dateParam) {
       setFormData(prev => ({ ...prev, date: dateParam }));
+    }
+    
+    if (eventIdParam) {
+      const eventId = parseInt(eventIdParam);
+      const eventData = mockEventsData[eventId as keyof typeof mockEventsData];
+      
+      if (eventData) {
+        setFormData(prev => ({
+          ...prev,
+          client: eventData.client,
+          venue: eventData.venue,
+          startTime: eventData.startTime,
+          endTime: eventData.endTime,
+          notes: eventData.notes,
+          amount: eventData.amount,
+          date: dateParam || prev.date
+        }));
+        setIsEditing(true);
+        setEditingEventId(eventId);
+      }
     }
   }, [searchParams]);
 
@@ -131,6 +161,13 @@ const NewReservation = () => {
       notes: '',
       amount: ''
     });
+    
+    // Update URL to remove eventId parameter
+    if (dateParam) {
+      navigate(`/eventos/novo?date=${dateParam}`, { replace: true });
+    } else {
+      navigate('/eventos/novo', { replace: true });
+    }
   };
 
   const handleCancel = () => {
@@ -184,7 +221,7 @@ const NewReservation = () => {
                 <div className="bg-module-events/20 p-3 rounded-lg border border-module-events/50 mt-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-module-events/100">
-                      Modo de edição ativo para evento selecionado na timeline
+                      Modo de edição ativo para evento selecionado
                     </span>
                     <Button 
                       type="button" 

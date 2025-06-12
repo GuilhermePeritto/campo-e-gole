@@ -102,7 +102,8 @@ export const useCalendar = () => {
 
   const handleEventClick = (event: any, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/eventos/${event.id}/editar`);
+    const formattedDate = event.day.toISOString().split('T')[0];
+    navigate(`/eventos/novo?date=${formattedDate}&eventId=${event.id}`);
   };
 
   const handleDayMouseEnter = (day: Date, e: React.MouseEvent) => {
