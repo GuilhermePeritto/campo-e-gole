@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Pagination,
@@ -10,6 +9,7 @@ import {
   PaginationEllipsis,
 } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 interface PaginationControlsProps {
   currentPage: number;
