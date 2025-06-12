@@ -84,40 +84,19 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   if (totalPages <= 1 && !showInfo) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-6">
-      {/* Info and Page Size Selector */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+    <div className="flex items-center justify-between py-6 px-4">
+      {/* Left: Info */}
+      <div className="flex-1">
         {showInfo && (
           <div className="text-xs sm:text-sm text-muted-foreground">
             {startIndex}-{endIndex} de {totalItems}
           </div>
         )}
-        
-        {showPageSizeSelector && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Por página:</span>
-            <Select
-              value={pageSize.toString()}
-              onValueChange={(value) => onPageSizeChange(Number(value))}
-            >
-              <SelectTrigger className="w-20 h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {pageSizeOptions.map((size) => (
-                  <SelectItem key={size} value={size.toString()}>
-                    {size}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
       </div>
 
-      {/* Pagination Navigation - Centralized */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center">
+      {/* Center: Pagination Navigation */}
+      <div className="flex-1 flex justify-center">
+        {totalPages > 1 && (
           <Pagination>
             <PaginationContent className="gap-1">
               {/* First page button - only show if more than 5 pages and not on first page */}
@@ -190,8 +169,32 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               )}
             </PaginationContent>
           </Pagination>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Right: Page Size Selector */}
+      <div className="flex-1 flex justify-end">
+        {showPageSizeSelector && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Por página:</span>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={(value) => onPageSizeChange(Number(value))}
+            >
+              <SelectTrigger className="w-20 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {pageSizeOptions.map((size) => (
+                  <SelectItem key={size} value={size.toString()}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
