@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -160,7 +161,7 @@ const Products = () => {
   }, 0) / mockProducts.length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <ModuleHeader
         title="Produtos"
         icon={<Package className="h-6 w-6" />}
@@ -169,9 +170,9 @@ const Products = () => {
         backLabel="Bar"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+        {/* Summary Cards - Fixed height */}
+        <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
@@ -229,23 +230,26 @@ const Products = () => {
           </Card>
         </div>
 
-        <BaseList
-          data={mockProducts}
-          columns={columns}
-          actions={actions}
-          title="Lista de Produtos"
-          description="Gerencie todos os produtos do bar"
-          searchPlaceholder="Buscar produtos por nome ou categoria..."
-          searchFields={['name', 'category', 'description']}
-          getItemId={(product) => product.id}
-          pageSize={10}
-          renderCard={renderProductCard}
-          createButton={{
-            label: 'Novo Produto',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/bar/produtos/novo')
-          }}
-        />
+        {/* BaseList - Flexible height to fill remaining space */}
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={mockProducts}
+            columns={columns}
+            actions={actions}
+            title="Lista de Produtos"
+            description="Gerencie todos os produtos do bar"
+            searchPlaceholder="Buscar produtos por nome ou categoria..."
+            searchFields={['name', 'category', 'description']}
+            getItemId={(product) => product.id}
+            pageSize={10}
+            renderCard={renderProductCard}
+            createButton={{
+              label: 'Novo Produto',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/bar/produtos/novo')
+            }}
+          />
+        </div>
       </main>
     </div>
   );
