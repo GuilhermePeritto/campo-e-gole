@@ -179,27 +179,7 @@ const Classes = () => {
       />
 
       <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
-        <div className="flex-1 min-h-0 mb-8">
-          <BaseList
-            data={classes}
-            columns={columns}
-            actions={actions}
-            title="Turmas da Escolinha"
-            description="Gerencie as turmas e horários de treino"
-            searchPlaceholder="Buscar por nome da turma ou faixa etária..."
-            searchFields={['name', 'ageRange']}
-            getItemId={(classItem) => classItem.id}
-            pageSize={6}
-            renderCard={renderClassCard}
-            createButton={{
-              label: 'Nova Turma',
-              icon: <Plus className="h-4 w-4" />,
-              onClick: () => navigate('/escolinha/turmas/nova')
-            }}
-          />
-        </div>
-
-        <Card className="flex-shrink-0">
+        <Card className="flex-shrink-0 mb-8">
           <CardHeader>
             <CardTitle>Cronograma Semanal</CardTitle>
             <CardDescription>
@@ -239,6 +219,26 @@ const Classes = () => {
             </Table>
           </CardContent>
         </Card>
+
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={classes}
+            columns={columns}
+            actions={actions}
+            title="Turmas da Escolinha"
+            description="Gerencie as turmas e horários de treino"
+            searchPlaceholder="Buscar por nome da turma ou faixa etária..."
+            searchFields={['name', 'ageRange']}
+            getItemId={(classItem) => classItem.id}
+            pageSize={6}
+            renderCard={renderClassCard}
+            createButton={{
+              label: 'Nova Turma',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/escolinha/turmas/nova')
+            }}
+          />
+        </div>
       </main>
     </div>
   );
