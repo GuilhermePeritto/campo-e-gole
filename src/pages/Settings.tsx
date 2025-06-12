@@ -2,6 +2,7 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import UsersList from '@/components/UsersList';
 import GroupsList from '@/components/GroupsList';
+import SystemSettings from '@/components/SystemSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MODULE_COLORS } from '@/constants/moduleColors';
@@ -49,15 +50,7 @@ const Settings = () => {
           </TabsContent>
 
           <TabsContent value="system" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configurações do Sistema</CardTitle>
-                <CardDescription>Configurações gerais da aplicação</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Configurações do sistema em desenvolvimento...</p>
-              </CardContent>
-            </Card>
+            <SystemSettings />
           </TabsContent>
 
           <TabsContent value="integrations" className="space-y-6">
