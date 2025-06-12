@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -182,9 +183,9 @@ const BaseList = <T extends Record<string, any>>({
   };
 
   return (
-    <div className={cn("flex flex-col h-full", className)} style={{ height: `calc(100vh - 200px)`, minHeight }}>
+    <div className={cn("w-full", className)}>
       {/* Header */}
-      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
           {description && (
@@ -212,7 +213,7 @@ const BaseList = <T extends Record<string, any>>({
       </div>
 
       {/* Search and View Controls */}
-      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -244,8 +245,15 @@ const BaseList = <T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* Content - with constrained height and scroll */}
-      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+      {/* Content Container with calculated height */}
+      <div 
+        className="flex flex-col"
+        style={{ 
+          height: 'calc(100vh - 480px)', 
+          minHeight: minHeight 
+        }}
+      >
+        {/* Scrollable Content Area */}
         <div className="flex-1 overflow-auto">
           {paginatedData.length === 0 ? (
             <Card>
@@ -265,18 +273,20 @@ const BaseList = <T extends Record<string, any>>({
               </CardContent>
             </Card>
           ) : viewMode === 'table' ? (
-            <Card className="h-full">
-              <div className="h-full overflow-auto">
+            <Card className="h-full flex flex-col">
+              <div className="flex-1 overflow-auto">
                 <table className="w-full">
-                  <thead className="sticky top-0 bg-background">
-                    {columns.map((column) => (
-                      <th key={String(column.key)} className="px-4 py-3 text-left font-medium">
-                        {column.label}
-                      </th>
-                    ))}
-                    {actions.length > 0 && (
-                      <th className="px-4 py-3 text-left font-medium">Ações</th>
-                    )}
+                  <thead className="sticky top-0 bg-background border-b z-10">
+                    <tr>
+                      {columns.map((column) => (
+                        <th key={String(column.key)} className="px-4 py-3 text-left font-medium bg-background">
+                          {column.label}
+                        </th>
+                      ))}
+                      {actions.length > 0 && (
+                        <th className="px-4 py-3 text-left font-medium bg-background">Ações</th>
+                      )}
+                    </tr>
                   </thead>
                   <tbody>
                     {paginatedData.map(renderTableRow)}
@@ -285,13 +295,13 @@ const BaseList = <T extends Record<string, any>>({
               </div>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full overflow-auto">
               {paginatedData.map(renderGridCard)}
             </div>
           )}
         </div>
 
-        {/* Pagination - fixed at bottom */}
+        {/* Fixed Pagination at Bottom */}
         {filteredData.length > 0 && (
           <div className="flex-shrink-0 mt-4 pt-4 border-t bg-background">
             <PaginationControls
