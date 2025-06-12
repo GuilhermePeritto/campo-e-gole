@@ -1,9 +1,9 @@
+
 import ModuleHeader from '@/components/ModuleHeader';
 import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Calendar, Plus, UserCheck, Edit, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -179,47 +179,6 @@ const Classes = () => {
       />
 
       <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
-        <Card className="flex-shrink-0 mb-8">
-          <CardHeader>
-            <CardTitle>Cronograma Semanal</CardTitle>
-            <CardDescription>
-              Visualização dos horários de todas as turmas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Horário</TableHead>
-                  <TableHead>Segunda</TableHead>
-                  <TableHead>Terça</TableHead>
-                  <TableHead>Quarta</TableHead>
-                  <TableHead>Quinta</TableHead>
-                  <TableHead>Sexta</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">16:00-17:00</TableCell>
-                  <TableCell>Infantil A</TableCell>
-                  <TableCell>Infantil B</TableCell>
-                  <TableCell>Infantil A</TableCell>
-                  <TableCell>Infantil B</TableCell>
-                  <TableCell>-</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">17:00-18:00</TableCell>
-                  <TableCell>Juvenil A</TableCell>
-                  <TableCell>Juvenil B</TableCell>
-                  <TableCell>Juvenil A</TableCell>
-                  <TableCell>Juvenil B</TableCell>
-                  <TableCell>-</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
         <div className="flex-1 min-h-0">
           <BaseList
             data={classes}

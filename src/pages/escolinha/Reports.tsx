@@ -1,6 +1,8 @@
+
 import ExportButton from '@/components/ExportButton';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { ArrowLeft, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -68,6 +70,48 @@ const EscolinhaRelatorios = () => {
             title="Relatório da Escolinha"
           />
         </div>
+
+        {/* Cronograma Semanal */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Cronograma Semanal</CardTitle>
+            <CardDescription>
+              Visualização dos horários de todas as turmas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Horário</TableHead>
+                  <TableHead>Segunda</TableHead>
+                  <TableHead>Terça</TableHead>
+                  <TableHead>Quarta</TableHead>
+                  <TableHead>Quinta</TableHead>
+                  <TableHead>Sexta</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">16:00-17:00</TableCell>
+                  <TableCell>Infantil A</TableCell>
+                  <TableCell>Infantil B</TableCell>
+                  <TableCell>Infantil A</TableCell>
+                  <TableCell>Infantil B</TableCell>
+                  <TableCell>-</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">17:00-18:00</TableCell>
+                  <TableCell>Juvenil A</TableCell>
+                  <TableCell>Juvenil B</TableCell>
+                  <TableCell>Juvenil A</TableCell>
+                  <TableCell>Juvenil B</TableCell>
+                  <TableCell>-</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
