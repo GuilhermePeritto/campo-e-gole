@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -20,7 +19,10 @@ interface ReportSortingProps {
 const ReportSorting = ({ fields, orderBy, onOrderByChange }: ReportSortingProps) => {
   const parseSortOrder = (orderString: string): SortOrder => {
     const [field, direction] = orderString.split(':');
-    return { field, direction: (direction as 'asc' | 'desc') || 'asc' };
+    return { 
+      field, 
+      direction: (direction === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc'
+    };
   };
 
   const formatSortOrder = (sort: SortOrder): string => {
@@ -42,8 +44,8 @@ const ReportSorting = ({ fields, orderBy, onOrderByChange }: ReportSortingProps)
 
   const toggleDirection = (index: number) => {
     const currentSort = sortOrders[index];
-    const newDirection = currentSort.direction === 'asc' ? 'desc' : 'asc';
-    const newSort = { ...currentSort, direction: newDirection };
+    const newDirection: 'asc' | 'desc' = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    const newSort: SortOrder = { ...currentSort, direction: newDirection };
     const newOrderBy = [...orderBy];
     newOrderBy[index] = formatSortOrder(newSort);
     onOrderByChange(newOrderBy);

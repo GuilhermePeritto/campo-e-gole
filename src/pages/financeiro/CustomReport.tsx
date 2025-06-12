@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -103,8 +102,13 @@ const CustomReport = () => {
       return;
     }
 
-    // Aplicar filtros avançados aos dados
-    let filteredData = generateRelatedData(selectedFields, advancedOptions.limit);
+    // Fix: Call generateRelatedData with only one argument
+    let filteredData = generateRelatedData(selectedFields);
+    
+    // Apply limit from advanced options
+    if (advancedOptions.limit && filteredData.length > advancedOptions.limit) {
+      filteredData = filteredData.slice(0, advancedOptions.limit);
+    }
     
     // Aplicar filtros de data se especificados
     if (advancedOptions.dateRange.start || advancedOptions.dateRange.end) {
