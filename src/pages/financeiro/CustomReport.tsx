@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,6 +48,10 @@ const CustomReport = () => {
 
   const handleFieldRemove = useCallback((fieldId: string) => {
     setSelectedFields(prev => prev.filter(f => f.id !== fieldId));
+  }, []);
+
+  const handleFieldsReorder = useCallback((fields: ReportField[]) => {
+    setSelectedFields(fields);
   }, []);
 
   const analyzeQueryCost = useCallback(() => {
@@ -112,6 +115,7 @@ const CustomReport = () => {
                 selectedFields={selectedFields}
                 onFieldRemove={handleFieldRemove}
                 onFieldAdd={handleFieldAdd}
+                onFieldsReorder={handleFieldsReorder}
                 reportConfig={reportConfig}
                 onConfigChange={setReportConfig}
               />

@@ -1,5 +1,5 @@
 
-import { useDrop } from 'react-dnd';
+import { useDrop, useDrag } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,24 +10,36 @@ interface ReportBuilderProps {
   selectedFields: ReportField[];
   onFieldRemove: (fieldId: string) => void;
   onFieldAdd: (field: ReportField) => void;
+  onFieldsReorder: (fields: ReportField[]) => void;
   reportConfig: ReportConfig;
   onConfigChange: (config: ReportConfig) => void;
 }
 
-const ReportBuilder = ({ 
-  selectedFields, 
-  onFieldRemove,
-  onFieldAdd
-}: ReportBuilderProps) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'field',
-    drop: (item: ReportField) => {
-      onFieldAdd(item);
-    },
+interface DraggableFieldProps {
+  field: ReportField;
+  index: number;
+  onRemove: (fieldId: string) => void;
+  onMove: (dragIndex: number, hoverIndex: number) => void;
+}
+
+const DraggableField = ({ field, index, onRemove, onMove }: DraggableFieldProps) => {
+  const [{ isDragging }, drag] = useDrag({
+    type: 'selected-field',
+    item: { index },
     collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
+      isDragging: monitor.isDragging(),
     }),
-  }));
+  });
+
+  const [, drop] = useDrop({
+    accept: 'selected-field',
+    hover: (item: { index: number }) => {
+      if (item.index !== index) {
+        onMove(item.index, index);
+        item.index = index;
+      }
+    },
+  });
 
   const getFieldTypeColor = (type: string) => {
     switch (type) {
@@ -51,6 +63,71 @@ const ReportBuilder = ({
   };
 
   return (
+    <div
+      ref={(node) => drag(drop(node))}
+      className={`flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-move ${
+        isDragging ? 'opacity-50' : ''
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+        <div className="flex flex-col">
+          <span className="font-medium">{field.label}</span>
+          <span className="text-sm text-muted-foreground">{field.entity}.{field.name}</span>
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-2">
+        <Badge 
+          variant="outline" 
+          className={`text-xs ${getEntityColor(field.entity)}`}
+        >
+          {field.entity}
+        </Badge>
+        <Badge 
+          variant="outline" 
+          className={`text-xs ${getFieldTypeColor(field.type)}`}
+        >
+          {field.type}
+        </Badge>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onRemove(field.id)}
+          className="h-8 w-8 p-0 hover:bg-red-100"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const ReportBuilder = ({ 
+  selectedFields, 
+  onFieldRemove,
+  onFieldAdd,
+  onFieldsReorder
+}: ReportBuilderProps) => {
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'field',
+    drop: (item: ReportField) => {
+      onFieldAdd(item);
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+
+  const moveField = (dragIndex: number, hoverIndex: number) => {
+    const newFields = [...selectedFields];
+    const draggedField = newFields[dragIndex];
+    newFields.splice(dragIndex, 1);
+    newFields.splice(hoverIndex, 0, draggedField);
+    onFieldsReorder(newFields);
+  };
+
+  return (
     <div className="space-y-6">
       {/* Campos Selecionados */}
       <Card>
@@ -62,7 +139,7 @@ const ReportBuilder = ({
           <CardDescription>
             {selectedFields.length === 0 
               ? 'Nenhum campo selecionado. Arraste campos da lista ao lado ou clique para selecionar.'
-              : `${selectedFields.length} campo(s) selecionado(s)`
+              : `${selectedFields.length} campo(s) selecionado(s). Arraste para reordenar.`
             }
           </CardDescription>
         </CardHeader>
@@ -81,41 +158,13 @@ const ReportBuilder = ({
             ) : (
               <div className="space-y-3">
                 {selectedFields.map((field, index) => (
-                  <div
+                  <DraggableField
                     key={field.id}
-                    className="flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-center gap-3">
-                      <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
-                      <div className="flex flex-col">
-                        <span className="font-medium">{field.label}</span>
-                        <span className="text-sm text-muted-foreground">{field.entity}.{field.name}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs ${getEntityColor(field.entity)}`}
-                      >
-                        {field.entity}
-                      </Badge>
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs ${getFieldTypeColor(field.type)}`}
-                      >
-                        {field.type}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onFieldRemove(field.id)}
-                        className="h-8 w-8 p-0 hover:bg-red-100"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+                    field={field}
+                    index={index}
+                    onRemove={onFieldRemove}
+                    onMove={moveField}
+                  />
                 ))}
               </div>
             )}
