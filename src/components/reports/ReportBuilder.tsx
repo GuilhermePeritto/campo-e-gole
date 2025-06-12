@@ -1,4 +1,5 @@
 
+import React, { useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText } from 'lucide-react';
@@ -8,7 +9,6 @@ import ReportSummary from './ReportSummary';
 import ReportFilters from './ReportFilters';
 import ReportSorting from './ReportSorting';
 import ReportGrouping from './ReportGrouping';
-import { useRef } from 'react';
 
 interface ReportBuilderProps {
   selectedFields: ReportField[];
