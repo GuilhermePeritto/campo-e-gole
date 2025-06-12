@@ -1,7 +1,7 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { AlertTriangle, Minus, Package, Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -22,7 +22,6 @@ interface Product {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const mockProducts: Product[] = [
     { id: 1, name: 'Cerveja Skol 350ml', category: 'Bebidas', stock: 8, minStock: 20, price: 4.50, supplier: 'Distribuidora ABC' },
@@ -32,13 +31,6 @@ const Inventory = () => {
     { id: 5, name: 'Sanduíche Natural', category: 'Lanches', stock: 20, minStock: 10, price: 12.00, supplier: 'Padaria Local' },
     { id: 6, name: 'Cerveja Heineken 350ml', category: 'Bebidas', stock: 35, minStock: 15, price: 6.50, supplier: 'Distribuidora ABC' }
   ];
-
-  const categories = ['all', ...Array.from(new Set(mockProducts.map(p => p.category)))];
-
-  const filteredProducts = mockProducts.filter(product => {
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    return matchesCategory;
-  });
 
   const lowStockProducts = mockProducts.filter(product => product.stock <= product.minStock);
 
@@ -213,33 +205,14 @@ const Inventory = () => {
           </Card>
         )}
 
-        {/* Filtro de categoria - Fixed height */}
-        <Card className="flex-shrink-0 mb-6">
-          <CardContent className="p-6">
-            <div className="flex gap-4">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as categorias</SelectItem>
-                  {categories.filter(cat => cat !== 'all').map((category) => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* BaseList - Flexible height to fill remaining space */}
         <div className="flex-1 min-h-0">
           <BaseList
-            data={filteredProducts}
+            data={mockProducts}
             columns={columns}
             actions={actions}
             title="Produtos em Estoque"
-            description={`${filteredProducts.length} produtos encontrados`}
+            description={`${mockProducts.length} produtos encontrados`}
             searchPlaceholder="Buscar produtos por nome..."
             searchFields={['name']}
             getItemId={(product) => product.id}

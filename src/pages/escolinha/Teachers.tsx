@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -186,7 +187,7 @@ const Teachers = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <ModuleHeader
         title="Professores"
         icon={<GraduationCap className="h-6 w-6" />}
@@ -195,24 +196,26 @@ const Teachers = () => {
         backLabel="Escolinha"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <BaseList
-          data={mockTeachers}
-          columns={columns}
-          actions={actions}
-          title="Lista de Professores"
-          description="Gerencie os professores da escolinha"
-          searchPlaceholder="Buscar professores por nome, email ou especialização..."
-          searchFields={['name', 'email', 'specialization']}
-          getItemId={(teacher) => teacher.id}
-          pageSize={10}
-          renderCard={renderTeacherCard}
-          createButton={{
-            label: 'Novo Professor',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/escolinha/professores/novo')
-          }}
-        />
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={mockTeachers}
+            columns={columns}
+            actions={actions}
+            title="Lista de Professores"
+            description="Gerencie os professores da escolinha"
+            searchPlaceholder="Buscar professores por nome, email ou especialização..."
+            searchFields={['name', 'email', 'specialization']}
+            getItemId={(teacher) => teacher.id}
+            pageSize={10}
+            renderCard={renderTeacherCard}
+            createButton={{
+              label: 'Novo Professor',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/escolinha/professores/novo')
+            }}
+          />
+        </div>
       </main>
     </div>
   );

@@ -103,7 +103,7 @@ const BaseList = <T extends Record<string, any>>({
   });
 
   return (
-    <div className={cn("w-full h-full flex flex-col", className)}>
+    <div className={cn("w-full h-full flex flex-col min-h-[300px]", className)}>
       <BaseListHeader
         title={title}
         description={description}

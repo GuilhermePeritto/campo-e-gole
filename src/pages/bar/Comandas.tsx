@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -154,7 +155,7 @@ const Comandas = () => {
   const closedCount = comandas.filter(comanda => comanda.status === 'fechada').length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background">
       <ModuleHeader
         title="Comandas"
         icon={<CreditCard className="h-6 w-6" />}
@@ -163,9 +164,9 @@ const Comandas = () => {
         backLabel="Bar"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+        {/* Summary Cards - Fixed height */}
+        <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
@@ -209,23 +210,26 @@ const Comandas = () => {
           </Card>
         </div>
 
-        <BaseList
-          data={comandas}
-          columns={columns}
-          actions={actions}
-          title="Comandas Ativas"
-          description="Gerencie as comandas em andamento"
-          searchPlaceholder="Buscar por mesa ou cliente..."
-          searchFields={['customer']}
-          getItemId={(comanda) => comanda.id}
-          pageSize={8}
-          renderCard={renderComandaCard}
-          createButton={{
-            label: 'Nova Comanda',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/bar/comandas/novo')
-          }}
-        />
+        {/* BaseList - Flexible height to fill remaining space */}
+        <div className="flex-1 min-h-0">
+          <BaseList
+            data={comandas}
+            columns={columns}
+            actions={actions}
+            title="Comandas Ativas"
+            description="Gerencie as comandas em andamento"
+            searchPlaceholder="Buscar por mesa ou cliente..."
+            searchFields={['customer']}
+            getItemId={(comanda) => comanda.id}
+            pageSize={8}
+            renderCard={renderComandaCard}
+            createButton={{
+              label: 'Nova Comanda',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/bar/comandas/novo')
+            }}
+          />
+        </div>
       </main>
     </div>
   );
