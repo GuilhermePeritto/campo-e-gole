@@ -1,18 +1,12 @@
+
 import React, { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, Grid, List, ChevronDown } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import PaginationControls from '@/components/PaginationControls';
-import ExportButton from '@/components/ExportButton';
+import BaseListHeader from '@/components/BaseListHeader';
+import BaseListSearchControls from '@/components/BaseListSearchControls';
+import BaseListTable from '@/components/BaseListTable';
+import BaseListGrid from '@/components/BaseListGrid';
+import BaseListEmptyState from '@/components/BaseListEmptyState';
 import { usePagination } from '@/hooks/usePagination';
 
 export interface BaseListColumn<T> {
@@ -110,195 +104,61 @@ const BaseList = <T extends Record<string, any>>({
     totalItems: filteredData.length
   });
 
-  const renderTableRow = (item: T, index: number) => (
-    <tr key={getItemId(item)} className="border-b hover:bg-muted/50">
-      {columns.map((column) => (
-        <td key={String(column.key)} className={cn("px-4 py-3", column.className)}>
-          {column.render ? column.render(item) : String(item[column.key as keyof T] || '')}
-        </td>
-      ))}
-      {actions.length > 0 && (
-        <td className="px-4 py-3">
-          <div className="flex items-center gap-2">
-            {actions.map((action, actionIndex) => (
-              <Button
-                key={actionIndex}
-                variant={action.variant || 'outline'}
-                size="sm"
-                onClick={() => action.onClick(item)}
-                className={cn("gap-1", action.className)}
-              >
-                {action.icon}
-                {action.label}
-              </Button>
-            ))}
-          </div>
-        </td>
-      )}
-    </tr>
-  );
-
-  const renderGridCard = (item: T, index: number) => {
-    if (renderCard) {
-      return (
-        <div key={getItemId(item)}>
-          {renderCard(item, actions)}
-        </div>
-      );
-    }
-
-    return (
-      <Card key={getItemId(item)} className="hover:shadow-md transition-shadow">
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            {columns.slice(0, 3).map((column) => (
-              <div key={String(column.key)} className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">{column.label}:</span>
-                <div className="text-sm font-medium">
-                  {column.render ? column.render(item) : String(item[column.key as keyof T] || '')}
-                </div>
-              </div>
-            ))}
-            {actions.length > 0 && (
-              <div className="flex gap-2 mt-3 pt-3 border-t">
-                {actions.map((action, actionIndex) => (
-                  <Button
-                    key={actionIndex}
-                    variant={action.variant || 'outline'}
-                    size="sm"
-                    onClick={() => action.onClick(item)}
-                    className={cn("flex-1 gap-1", action.className)}
-                  >
-                    {action.icon}
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
   return (
     <div className={cn("w-full h-full flex flex-col", className)}>
-      {/* Header */}
-      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
-          {description && (
-            <p className="text-muted-foreground mt-1">{description}</p>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          {showExport && (
-            <ExportButton 
-              data={filteredData} 
-              filename={exportFilename || title.toLowerCase().replace(/\s+/g, '-')}
-              title={title}
-            />
-          )}
-          {createButton && (
-            <Button 
-              onClick={createButton.onClick}
-              className="gap-2"
-            >
-              {createButton.icon}
-              {createButton.label}
-            </Button>
-          )}
-        </div>
-      </div>
+      <BaseListHeader
+        title={title}
+        description={description}
+        showExport={showExport}
+        exportData={filteredData}
+        exportFilename={exportFilename}
+        createButton={createButton}
+      />
 
-      {/* Search and View Controls */}
-      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={viewMode === 'table' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('table')}
-            className="gap-2"
-          >
-            <List className="h-4 w-4" />
-            Tabela
-          </Button>
-          <Button
-            variant={viewMode === 'grid' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('grid')}
-            className="gap-2"
-          >
-            <Grid className="h-4 w-4" />
-            Cards
-          </Button>
-        </div>
-      </div>
+      <BaseListSearchControls
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder={searchPlaceholder}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
 
       {/* Main Content Area - flexible height */}
       <div className="flex-1 flex flex-col min-h-0">
-        {/* Content Area - takes most space */}
-        <div className="flex-1 overflow-auto" style={{ minHeight: minHeight }}>
+        {/* Content Area */}
+        <div 
+          className="flex-1 overflow-hidden" 
+          style={{ 
+            height: 'calc(100vh - 280px)',
+            minHeight: minHeight 
+          }}
+        >
           {paginatedData.length === 0 ? (
-            <Card className="h-full flex items-center justify-center">
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold mb-2">Nenhum item encontrado</h3>
-                  <p className="text-muted-foreground mb-4">
-                    {searchTerm ? 'Tente ajustar sua pesquisa.' : 'Não há dados para exibir.'}
-                  </p>
-                  {createButton && !searchTerm && (
-                    <Button onClick={createButton.onClick} className="gap-2">
-                      {createButton.icon}
-                      {createButton.label}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <BaseListEmptyState
+              searchTerm={searchTerm}
+              createButton={createButton}
+            />
           ) : viewMode === 'table' ? (
-            <Card className="h-full flex flex-col">
-              <div className="flex-1 overflow-auto">
-                <table className="w-full">
-                  <thead className="sticky top-0 bg-background border-b z-10">
-                    <tr>
-                      {columns.map((column) => (
-                        <th key={String(column.key)} className="px-4 py-3 text-left font-medium bg-background">
-                          {column.label}
-                        </th>
-                      ))}
-                      {actions.length > 0 && (
-                        <th className="px-4 py-3 text-left font-medium bg-background">Ações</th>
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedData.map(renderTableRow)}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+            <BaseListTable
+              data={paginatedData}
+              columns={columns}
+              actions={actions}
+              getItemId={getItemId}
+            />
           ) : (
-            <div className="h-full overflow-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-1">
-                {paginatedData.map(renderGridCard)}
-              </div>
-            </div>
+            <BaseListGrid
+              data={paginatedData}
+              columns={columns}
+              actions={actions}
+              getItemId={getItemId}
+              renderCard={renderCard}
+            />
           )}
         </div>
 
         {/* Compact Pagination at Bottom */}
         {filteredData.length > 0 && (
-          <div className="flex-shrink-0 mt-3 pt-3 border-t bg-background">
+          <div className="flex-shrink-0 mt-4 pt-3 border-t bg-background">
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
