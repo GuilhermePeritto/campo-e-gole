@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
@@ -97,6 +96,7 @@ function App() {
               <Routes>
                 {/* Main routes */}
                 <Route path="/" element={<Index />} />
+                <Route path="/painel" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/eventos" element={<Events />} />

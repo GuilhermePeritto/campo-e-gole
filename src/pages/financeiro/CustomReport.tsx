@@ -6,18 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Download, Eye, Save, AlertTriangle, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { BarChart3, Eye, AlertTriangle, Database } from 'lucide-react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import FieldSelector from '@/components/reports/FieldSelector';
 import ReportBuilder from '@/components/reports/ReportBuilder';
 import ReportPreview from '@/components/reports/ReportPreview';
 import { ReportField, ReportConfig } from '@/types/reports';
+import { generateRelatedData } from '@/utils/reportDataGenerator';
 import ExportButton from '@/components/ExportButton';
 
 const CustomReport = () => {
-  const navigate = useNavigate();
   const [selectedFields, setSelectedFields] = useState<ReportField[]>([]);
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
     name: '',
@@ -46,7 +45,6 @@ const CustomReport = () => {
   const analyzeQueryCost = useCallback(() => {
     const fieldCount = selectedFields.length;
     const joinCount = new Set(selectedFields.map(f => f.entity)).size - 1;
-    const estimatedRows = 10000; // Estimativa base
     
     let cost = fieldCount * 10 + joinCount * 50;
     if (joinCount > 3) cost += 200;
@@ -70,53 +68,13 @@ const CustomReport = () => {
       return;
     }
 
-    // Simular dados de preview baseados nos campos selecionados
-    const mockData = Array.from({ length: 10 }, (_, index) => {
-      const row: any = { id: index + 1 };
-      selectedFields.forEach(field => {
-        switch (field.type) {
-          case 'string':
-            row[field.name] = `Exemplo ${field.name} ${index + 1}`;
-            break;
-          case 'number':
-            row[field.name] = Math.floor(Math.random() * 1000) + 100;
-            break;
-          case 'date':
-            row[field.name] = new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toLocaleDateString();
-            break;
-          case 'boolean':
-            row[field.name] = Math.random() > 0.5;
-            break;
-          default:
-            row[field.name] = `Valor ${index + 1}`;
-        }
-      });
-      return row;
-    });
+    // Gerar dados relacionados baseados nos campos selecionados
+    const relatedData = generateRelatedData(selectedFields);
+    console.log('Dados relacionados gerados:', relatedData);
 
-    setPreviewData(mockData);
+    setPreviewData(relatedData);
     setShowPreview(true);
   }, [selectedFields, analyzeQueryCost]);
-
-  const handleSaveReport = useCallback(() => {
-    if (selectedFields.length === 0) {
-      return;
-    }
-
-    const config: ReportConfig = {
-      name: reportConfig.name || 'Relatório Personalizado',
-      fields: selectedFields,
-      filters: reportConfig.filters,
-      groupBy: reportConfig.groupBy,
-      orderBy: reportConfig.orderBy
-    };
-
-    // Aqui você salvaria o relatório no backend
-    console.log('Salvando relatório:', config);
-    
-    // Simular salvamento
-    alert('Relatório salvo com sucesso!');
-  }, [selectedFields, reportConfig]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -190,20 +148,10 @@ const CustomReport = () => {
                   Gerar Preview
                 </Button>
 
-                <Button
-                  onClick={handleSaveReport}
-                  disabled={selectedFields.length === 0}
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  Salvar Relatório
-                </Button>
-
                 {previewData.length > 0 && (
                   <ExportButton
                     data={previewData}
-                    filename={reportConfig.name || 'relatorio-personalizado'}
+                    filename="relatorio-personalizado"
                     title="Relatório Personalizado"
                   />
                 )}

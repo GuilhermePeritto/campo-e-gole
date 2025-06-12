@@ -1,9 +1,6 @@
 
-import { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileText, X, GripVertical } from 'lucide-react';
@@ -18,9 +15,7 @@ interface ReportBuilderProps {
 
 const ReportBuilder = ({ 
   selectedFields, 
-  onFieldRemove, 
-  reportConfig, 
-  onConfigChange 
+  onFieldRemove
 }: ReportBuilderProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'field',
@@ -31,10 +26,6 @@ const ReportBuilder = ({
       isOver: !!monitor.isOver(),
     }),
   }));
-
-  const handleNameChange = (name: string) => {
-    onConfigChange({ ...reportConfig, name });
-  };
 
   const getFieldTypeColor = (type: string) => {
     switch (type) {
@@ -59,36 +50,13 @@ const ReportBuilder = ({
 
   return (
     <div className="space-y-6">
-      {/* Configuração do Relatório */}
+      {/* Campos Selecionados */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Configuração do Relatório
+            Campos Selecionados
           </CardTitle>
-          <CardDescription>
-            Configure o nome e estrutura do seu relatório
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="report-name">Nome do Relatório</Label>
-              <Input
-                id="report-name"
-                placeholder="Digite o nome do relatório..."
-                value={reportConfig.name}
-                onChange={(e) => handleNameChange(e.target.value)}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Campos Selecionados */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Campos Selecionados</CardTitle>
           <CardDescription>
             {selectedFields.length === 0 
               ? 'Nenhum campo selecionado. Escolha campos na lista ao lado.'
@@ -99,7 +67,7 @@ const ReportBuilder = ({
         <CardContent>
           <div
             ref={drop as any}
-            className={`min-h-[200px] 3xl:min-h-[250px] 4xl:min-h-[300px] border-2 border-dashed rounded-lg p-4 transition-colors ${
+            className={`min-h-[200px] max-h-[400px] 3xl:min-h-[250px] 4xl:min-h-[300px] border-2 border-dashed rounded-lg p-4 transition-colors overflow-y-auto ${
               isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
             }`}
           >
