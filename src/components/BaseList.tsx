@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -183,9 +182,9 @@ const BaseList = <T extends Record<string, any>>({
   };
 
   return (
-    <div className={cn("flex flex-col", className)} style={{ height: `calc(100vh - 200px)`, minHeight }}>
+    <div className={cn("flex flex-col h-full", className)} style={{ height: `calc(100vh - 200px)`, minHeight }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
           {description && (
@@ -213,7 +212,7 @@ const BaseList = <T extends Record<string, any>>({
       </div>
 
       {/* Search and View Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex-shrink-0 flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -245,31 +244,31 @@ const BaseList = <T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* Content - with scroll */}
-      <div className="flex-1 overflow-auto">
-        {paginatedData.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Nenhum item encontrado</h3>
-                <p className="text-muted-foreground mb-4">
-                  {searchTerm ? 'Tente ajustar sua pesquisa.' : 'Não há dados para exibir.'}
-                </p>
-                {createButton && !searchTerm && (
-                  <Button onClick={createButton.onClick} className="gap-2">
-                    {createButton.icon}
-                    {createButton.label}
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ) : viewMode === 'table' ? (
-          <Card className="flex-1">
-            <div className="overflow-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b bg-muted/50">
+      {/* Content - with constrained height and scroll */}
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-auto">
+          {paginatedData.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold mb-2">Nenhum item encontrado</h3>
+                  <p className="text-muted-foreground mb-4">
+                    {searchTerm ? 'Tente ajustar sua pesquisa.' : 'Não há dados para exibir.'}
+                  </p>
+                  {createButton && !searchTerm && (
+                    <Button onClick={createButton.onClick} className="gap-2">
+                      {createButton.icon}
+                      {createButton.label}
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : viewMode === 'table' ? (
+            <Card className="h-full">
+              <div className="h-full overflow-auto">
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-background">
                     {columns.map((column) => (
                       <th key={String(column.key)} className="px-4 py-3 text-left font-medium">
                         {column.label}
@@ -278,38 +277,38 @@ const BaseList = <T extends Record<string, any>>({
                     {actions.length > 0 && (
                       <th className="px-4 py-3 text-left font-medium">Ações</th>
                     )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedData.map(renderTableRow)}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {paginatedData.map(renderTableRow)}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paginatedData.map(renderGridCard)}
             </div>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {paginatedData.map(renderGridCard)}
+          )}
+        </div>
+
+        {/* Pagination - fixed at bottom */}
+        {filteredData.length > 0 && (
+          <div className="flex-shrink-0 mt-4 pt-4 border-t bg-background">
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredData.length}
+              pageSize={currentPageSize}
+              startIndex={startIndex}
+              endIndex={endIndex}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
+              onPageChange={goToPage}
+              onPageSizeChange={setPageSize}
+            />
           </div>
         )}
       </div>
-
-      {/* Pagination - fixed at bottom */}
-      {filteredData.length > 0 && (
-        <div className="mt-6 border-t pt-4">
-          <PaginationControls
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={filteredData.length}
-            pageSize={currentPageSize}
-            startIndex={startIndex}
-            endIndex={endIndex}
-            hasNextPage={hasNextPage}
-            hasPreviousPage={hasPreviousPage}
-            onPageChange={goToPage}
-            onPageSizeChange={setPageSize}
-          />
-        </div>
-      )}
     </div>
   );
 };
