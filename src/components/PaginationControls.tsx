@@ -84,11 +84,11 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   if (totalPages <= 1 && !showInfo) return null;
 
   return (
-    <div className="flex items-center justify-between py-6 px-4">
+    <div className="flex items-center justify-between py-3 px-2">
       {/* Left: Info */}
-      <div className="flex-1">
+      <div className="flex-shrink-0 min-w-0">
         {showInfo && (
-          <div className="text-xs sm:text-sm text-muted-foreground">
+          <div className="text-xs text-muted-foreground">
             {startIndex}-{endIndex} de {totalItems}
           </div>
         )}
@@ -116,13 +116,16 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
               {/* Previous button */}
               <PaginationItem>
-                <PaginationPrevious
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
-                  className={cn(
-                    "h-8 px-2 text-xs",
-                    !hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-                  )}
-                />
+                  disabled={!hasPreviousPage}
+                  className="h-8 px-3 text-xs gap-1"
+                  title="Página anterior"
+                >
+                  <span>Anterior</span>
+                </Button>
               </PaginationItem>
 
               {/* Page numbers */}
@@ -144,13 +147,16 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
               {/* Next button */}
               <PaginationItem>
-                <PaginationNext
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => hasNextPage && onPageChange(currentPage + 1)}
-                  className={cn(
-                    "h-8 px-2 text-xs",
-                    !hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-                  )}
-                />
+                  disabled={!hasNextPage}
+                  className="h-8 px-3 text-xs gap-1"
+                  title="Próxima página"
+                >
+                  <span>Próximo</span>
+                </Button>
               </PaginationItem>
 
               {/* Last page button - only show if more than 5 pages and not on last page */}
@@ -173,10 +179,10 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       </div>
 
       {/* Right: Page Size Selector */}
-      <div className="flex-1 flex justify-end">
+      <div className="flex-shrink-0 min-w-0">
         {showPageSizeSelector && (
           <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Por página:</span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap">Por página:</span>
             <Select
               value={pageSize.toString()}
               onValueChange={(value) => onPageSizeChange(Number(value))}
