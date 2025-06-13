@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +10,7 @@ import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2, Sea
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageTour, { TourStep } from '@/components/PageTour';
+import SearchableSelect from '@/components/SearchableSelect';
 
 interface Product {
   id: number;
@@ -34,11 +34,10 @@ const ViewComanda = () => {
   const { id } = useParams();
   const [paymentMethod, setPaymentMethod] = useState('');
   const [discount, setDiscount] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const [showAddItems, setShowAddItems] = useState(false);
   
   // Determinar se é uma nova comanda
-  const isNewComanda = id === 'new';
+  const isNewComanda = id === 'new' || id === 'novo';
   
   const tourSteps: TourStep[] = [
     {
@@ -86,6 +85,13 @@ const ViewComanda = () => {
     { id: 5, name: 'Sanduíche Natural', price: 12.00, category: 'Lanches', stock: 8 }
   ];
 
+  // Converter produtos para o formato do SearchableSelect
+  const productItems = mockProducts.map(product => ({
+    value: product.id.toString(),
+    label: `${product.name} - R$ ${product.price.toFixed(2)} (${product.stock} disponível)`,
+    data: product
+  }));
+
   const filteredProducts = mockProducts.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -104,6 +110,11 @@ const ViewComanda = () => {
     if (stock <= 5) return 'destructive';
     if (stock <= 15) return 'secondary';
     return 'outline';
+  };
+
+  const handleProductSelect = (item: any) => {
+    const product = item.data as Product;
+    addProductToComanda(product);
   };
 
   const addProductToComanda = (product: Product) => {
@@ -315,80 +326,32 @@ const ViewComanda = () => {
               </CardContent>
             </Card>
 
-            {/* Seção Adicionar Itens */}
+            {/* Seção Adicionar Itens - Melhorada */}
             <div className="add-items-section">
-              <Button 
-                onClick={() => setShowAddItems(!showAddItems)}
-                className="mb-4 gap-2"
-                variant="outline"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                {showAddItems ? 'Ocultar' : 'Adicionar'} Produtos
-              </Button>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Adicionar Produtos</CardTitle>
+                  <CardDescription>
+                    Use o campo abaixo para buscar e adicionar produtos à comanda
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Buscar Produto</label>
+                    <SearchableSelect
+                      items={productItems}
+                      placeholder="Digite para buscar produtos..."
+                      emptyText="Nenhum produto encontrado."
+                      onSelect={handleProductSelect}
+                      className="w-full"
+                    />
+                  </div>
 
-              {showAddItems && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Adicionar Produtos</CardTitle>
-                    <CardDescription>
-                      Clique nos produtos para adicionar à comanda
-                    </CardDescription>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Buscar produtos..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {filteredProducts.map((product) => {
-                        const isOutOfStock = product.stock === 0;
-                        
-                        return (
-                          <div
-                            key={product.id}
-                            className={`border rounded-lg p-4 transition-colors ${
-                              isOutOfStock 
-                                ? 'opacity-50 cursor-not-allowed' 
-                                : 'hover:bg-accent cursor-pointer'
-                            }`}
-                            onClick={() => !isOutOfStock && addProductToComanda(product)}
-                          >
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex-1">
-                                <span className="font-medium">{product.name}</span>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <Badge variant="outline">{product.category}</Badge>
-                                  <Badge variant={getStockBadgeVariant(product.stock)}>
-                                    <Package className="h-3 w-3 mr-1" />
-                                    {product.stock}
-                                  </Badge>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <div className="text-lg font-semibold text-primary">
-                                R$ {product.price.toFixed(2)}
-                              </div>
-                              
-                              <div className="text-right">
-                                <div className={`text-xs ${getStockColor(product.stock)}`}>
-                                  {product.stock === 0 ? 'Sem estoque' : `${product.stock} disponível`}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                  <div className="text-xs text-muted-foreground">
+                    💡 Dica: Digite o nome do produto para encontrá-lo rapidamente
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Itens da Comanda */}
