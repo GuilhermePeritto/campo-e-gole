@@ -7,6 +7,7 @@ import { ArrowLeft, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 interface ReceivableFormData {
   client: string;
@@ -18,6 +19,29 @@ interface ReceivableFormData {
 const NewReceivable = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '[name="client"]',
+      title: 'Cliente',
+      content: 'Digite o nome do cliente que será responsável por esta conta a receber.'
+    },
+    {
+      target: '[name="amount"]',
+      title: 'Valor',
+      content: 'Insira o valor total da conta a receber em reais.'
+    },
+    {
+      target: '[name="description"]',
+      title: 'Descrição',
+      content: 'Descreva detalhadamente o motivo desta conta a receber (ex: Reserva Quadra A).'
+    },
+    {
+      target: '[name="dueDate"]',
+      title: 'Data de Vencimento',
+      content: 'Selecione a data limite para pagamento desta conta.'
+    }
+  ];
 
   const form = useForm<ReceivableFormData>({
     defaultValues: {
@@ -63,7 +87,9 @@ const NewReceivable = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="border">
+        <Card className="border relative">
+          <PageTour steps={tourSteps} title="Criação de Nova Conta a Receber" />
+          
           <CardHeader>
             <CardTitle className="text-gray-600 dark:text-gray-300">Criar Nova Conta a Receber</CardTitle>
             <CardDescription>

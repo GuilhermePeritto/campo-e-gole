@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Minus, Search, Receipt, Package } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Search, Receipt, Package, ShoppingCart } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import PageTour, { TourStep } from '@/components/PageTour';
 
@@ -55,6 +54,11 @@ const NewComanda = () => {
       target: '.comanda-summary',
       title: 'Resumo da Comanda',
       content: 'Aqui você vê os itens adicionados, pode ajustar quantidades e ver o total.'
+    },
+    {
+      target: '.add-items-btn',
+      title: 'Adicionar Itens',
+      content: 'Use este botão para adicionar rapidamente vários itens à comanda.'
     }
   ];
 
@@ -121,6 +125,13 @@ const NewComanda = () => {
     if (stock <= 5) return 'destructive';
     if (stock <= 15) return 'secondary';
     return 'outline';
+  };
+
+  const handleAddItems = () => {
+    toast({
+      title: "Adicionar Itens",
+      description: "Funcionalidade para adicionar múltiplos itens em desenvolvimento.",
+    });
   };
 
   const handleSave = () => {
@@ -206,6 +217,15 @@ const NewComanda = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                
+                <Button 
+                  onClick={handleAddItems} 
+                  className="w-full gap-2 add-items-btn"
+                  variant="outline"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Adicionar Itens
+                </Button>
               </CardContent>
             </Card>
 
