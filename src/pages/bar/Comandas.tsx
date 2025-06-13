@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -125,13 +124,19 @@ const Comandas = () => {
           </div>
 
           <div className="flex gap-2 pt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 gap-1"
-              onClick={() => navigate(`/bar/comandas/${comanda.id}`)}
+            <Button 
+              onClick={() => navigate('/bar/comandas/new')} 
+              className="gap-2"
             >
-              <Eye className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
+              Nova Comanda
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => navigate(`/bar/comandas/${comanda.id}`)}
+              className="gap-1"
+            >
+              <Eye className="h-3 w-3" />
               Ver
             </Button>
             {comanda.status === 'aberta' && (

@@ -7,9 +7,18 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2, Search, ShoppingCart } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import PageTour, { TourStep } from '@/components/PageTour';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  stock: number;
+}
 
 interface ComandaItem {
   id: number;
@@ -25,21 +34,61 @@ const ViewComanda = () => {
   const { id } = useParams();
   const [paymentMethod, setPaymentMethod] = useState('');
   const [discount, setDiscount] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showAddItems, setShowAddItems] = useState(false);
+  
+  // Determinar se é uma nova comanda
+  const isNewComanda = id === 'new';
+  
+  const tourSteps: TourStep[] = [
+    {
+      target: '.comanda-info',
+      title: 'Informações da Comanda',
+      content: isNewComanda ? 'Para uma nova comanda, você pode editar o cliente e mesa aqui.' : 'Aqui você vê as informações básicas da comanda como cliente, mesa e horário de abertura.'
+    },
+    {
+      target: '.add-items-section',
+      title: 'Adicionar Itens',
+      content: 'Use este botão para adicionar novos produtos à comanda.'
+    },
+    {
+      target: '.items-table',
+      title: 'Itens da Comanda',
+      content: 'Aqui você vê todos os itens da comanda, pode ajustar quantidades e remover itens.'
+    },
+    {
+      target: '.summary-section',
+      title: 'Resumo e Pagamento',
+      content: 'Aqui você vê o total da comanda e pode aplicar desconto e definir forma de pagamento.'
+    }
+  ];
 
   // Mock data - normalmente viria de uma API
   const [comanda, setComanda] = useState({
-    id: 1,
-    number: 'CMD001',
-    client: 'João Silva',
-    table: 'Mesa 03',
+    id: isNewComanda ? null : 1,
+    number: isNewComanda ? 'Nova Comanda' : 'CMD001',
+    client: isNewComanda ? '' : 'João Silva',
+    table: isNewComanda ? '' : 'Mesa 03',
     status: 'Aberta',
-    openTime: '2024-06-05 19:30',
-    items: [
+    openTime: isNewComanda ? new Date().toLocaleString('pt-BR') : '2024-06-05 19:30',
+    items: isNewComanda ? [] : [
       { id: 1, productName: 'Cerveja Skol 350ml', quantity: 2, unitPrice: 4.50, total: 9.00, stock: 43 },
       { id: 2, productName: 'Sanduíche Natural', quantity: 1, unitPrice: 12.00, total: 12.00, stock: 7 },
       { id: 3, productName: 'Refrigerante Coca 600ml', quantity: 1, unitPrice: 6.00, total: 6.00, stock: 22 }
     ] as ComandaItem[]
   });
+
+  const mockProducts: Product[] = [
+    { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, category: 'Bebidas', stock: 45 },
+    { id: 2, name: 'Refrigerante Coca 600ml', price: 6.00, category: 'Bebidas', stock: 23 },
+    { id: 3, name: 'Água Mineral 500ml', price: 2.50, category: 'Bebidas', stock: 67 },
+    { id: 4, name: 'Salgadinho Doritos', price: 8.00, category: 'Lanches', stock: 12 },
+    { id: 5, name: 'Sanduíche Natural', price: 12.00, category: 'Lanches', stock: 8 }
+  ];
+
+  const filteredProducts = mockProducts.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const subtotal = comanda.items.reduce((sum, item) => sum + item.total, 0);
   const discountAmount = discount ? parseFloat(discount) : 0;
@@ -55,6 +104,28 @@ const ViewComanda = () => {
     if (stock <= 5) return 'destructive';
     if (stock <= 15) return 'secondary';
     return 'outline';
+  };
+
+  const addProductToComanda = (product: Product) => {
+    const existingItem = comanda.items.find(item => item.productName === product.name);
+    
+    if (existingItem) {
+      updateQuantity(existingItem.id, existingItem.quantity + 1);
+    } else {
+      const newItem: ComandaItem = {
+        id: Date.now(),
+        productName: product.name,
+        quantity: 1,
+        unitPrice: product.price,
+        total: product.price,
+        stock: product.stock - 1
+      };
+      
+      setComanda(prev => ({
+        ...prev,
+        items: [...prev.items, newItem]
+      }));
+    }
   };
 
   const updateQuantity = (itemId: number, newQuantity: number) => {
@@ -102,6 +173,39 @@ const ViewComanda = () => {
     }
   };
 
+  const handleSaveComanda = () => {
+    if (isNewComanda) {
+      if (!comanda.client.trim()) {
+        toast({
+          title: "Cliente obrigatório",
+          description: "Informe o nome do cliente ou mesa.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (comanda.items.length === 0) {
+        toast({
+          title: "Adicione produtos",
+          description: "A comanda deve ter pelo menos um produto.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Comanda criada!",
+        description: `Comanda para ${comanda.client} foi criada com sucesso.`,
+      });
+    } else {
+      toast({
+        title: "Comanda atualizada!",
+        description: `Comanda ${comanda.number} foi atualizada com sucesso.`,
+      });
+    }
+    navigate('/bar/comandas');
+  };
+
   const handleCloseComanda = () => {
     if (!paymentMethod) {
       toast({
@@ -145,12 +249,16 @@ const ViewComanda = () => {
               </Button>
               <div className="flex items-center gap-2">
                 <Receipt className="h-5 w-5 text-blue-600" />
-                <h1 className="text-xl font-semibold">Comanda {comanda.number}</h1>
+                <h1 className="text-xl font-semibold">
+                  {isNewComanda ? 'Nova Comanda' : `Comanda ${comanda.number}`}
+                </h1>
               </div>
             </div>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(comanda.status)}`}>
-              {comanda.status}
-            </span>
+            {!isNewComanda && (
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(comanda.status)}`}>
+                {comanda.status}
+              </span>
+            )}
           </div>
         </div>
       </header>
@@ -159,7 +267,9 @@ const ViewComanda = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Informações da Comanda */}
           <div className="lg:col-span-2 space-y-6">
-            <Card>
+            <Card className="comanda-info relative">
+              <PageTour steps={tourSteps} title={isNewComanda ? "Criação de Nova Comanda" : "Visualização de Comanda"} />
+              
               <CardHeader>
                 <CardTitle>Informações da Comanda</CardTitle>
               </CardHeader>
@@ -167,11 +277,29 @@ const ViewComanda = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <Label className="font-medium text-muted-foreground">Cliente</Label>
-                    <div className="font-medium">{comanda.client}</div>
+                    {isNewComanda ? (
+                      <Input
+                        value={comanda.client}
+                        onChange={(e) => setComanda(prev => ({...prev, client: e.target.value}))}
+                        placeholder="Nome do cliente"
+                        className="mt-1"
+                      />
+                    ) : (
+                      <div className="font-medium">{comanda.client}</div>
+                    )}
                   </div>
                   <div>
                     <Label className="font-medium text-muted-foreground">Mesa</Label>
-                    <div className="font-medium">{comanda.table}</div>
+                    {isNewComanda ? (
+                      <Input
+                        value={comanda.table}
+                        onChange={(e) => setComanda(prev => ({...prev, table: e.target.value}))}
+                        placeholder="Mesa"
+                        className="mt-1"
+                      />
+                    ) : (
+                      <div className="font-medium">{comanda.table}</div>
+                    )}
                   </div>
                   <div>
                     <Label className="font-medium text-muted-foreground">Abertura</Label>
@@ -187,8 +315,84 @@ const ViewComanda = () => {
               </CardContent>
             </Card>
 
+            {/* Seção Adicionar Itens */}
+            <div className="add-items-section">
+              <Button 
+                onClick={() => setShowAddItems(!showAddItems)}
+                className="mb-4 gap-2"
+                variant="outline"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                {showAddItems ? 'Ocultar' : 'Adicionar'} Produtos
+              </Button>
+
+              {showAddItems && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Adicionar Produtos</CardTitle>
+                    <CardDescription>
+                      Clique nos produtos para adicionar à comanda
+                    </CardDescription>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Buscar produtos..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredProducts.map((product) => {
+                        const isOutOfStock = product.stock === 0;
+                        
+                        return (
+                          <div
+                            key={product.id}
+                            className={`border rounded-lg p-4 transition-colors ${
+                              isOutOfStock 
+                                ? 'opacity-50 cursor-not-allowed' 
+                                : 'hover:bg-accent cursor-pointer'
+                            }`}
+                            onClick={() => !isOutOfStock && addProductToComanda(product)}
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <span className="font-medium">{product.name}</span>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <Badge variant="outline">{product.category}</Badge>
+                                  <Badge variant={getStockBadgeVariant(product.stock)}>
+                                    <Package className="h-3 w-3 mr-1" />
+                                    {product.stock}
+                                  </Badge>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="text-lg font-semibold text-primary">
+                                R$ {product.price.toFixed(2)}
+                              </div>
+                              
+                              <div className="text-right">
+                                <div className={`text-xs ${getStockColor(product.stock)}`}>
+                                  {product.stock === 0 ? 'Sem estoque' : `${product.stock} disponível`}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
             {/* Itens da Comanda */}
-            <Card>
+            <Card className="items-table">
               <CardHeader>
                 <CardTitle>Itens da Comanda</CardTitle>
                 <CardDescription>
@@ -270,7 +474,7 @@ const ViewComanda = () => {
           </div>
 
           {/* Resumo e Pagamento */}
-          <div className="space-y-6">
+          <div className="space-y-6 summary-section">
             <Card>
               <CardHeader>
                 <CardTitle>Resumo</CardTitle>
@@ -298,43 +502,54 @@ const ViewComanda = () => {
             {comanda.status === 'Aberta' && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Fechar Comanda</CardTitle>
+                  <CardTitle>{isNewComanda ? 'Salvar Comanda' : 'Fechar Comanda'}</CardTitle>
                   <CardDescription>
-                    Defina os dados para fechamento
+                    {isNewComanda ? 'Salve a comanda para continuar' : 'Defina os dados para fechamento'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
-                    <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecionar pagamento" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                        <SelectItem value="cartao_debito">Cartão de Débito</SelectItem>
-                        <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
-                        <SelectItem value="pix">PIX</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {!isNewComanda && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
+                        <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecionar pagamento" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="dinheiro">Dinheiro</SelectItem>
+                            <SelectItem value="cartao_debito">Cartão de Débito</SelectItem>
+                            <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
+                            <SelectItem value="pix">PIX</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="discount">Desconto (R$)</Label>
-                    <Input
-                      id="discount"
-                      type="number"
-                      step="0.01"
-                      placeholder="0,00"
-                      value={discount}
-                      onChange={(e) => setDiscount(e.target.value)}
-                    />
-                  </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="discount">Desconto (R$)</Label>
+                        <Input
+                          id="discount"
+                          type="number"
+                          step="0.01"
+                          placeholder="0,00"
+                          value={discount}
+                          onChange={(e) => setDiscount(e.target.value)}
+                        />
+                      </div>
+                    </>
+                  )}
 
-                  <Button onClick={handleCloseComanda} className="w-full" size="lg">
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Fechar Comanda - R$ {total.toFixed(2)}
-                  </Button>
+                  {isNewComanda ? (
+                    <Button onClick={handleSaveComanda} className="w-full" size="lg">
+                      <Receipt className="h-4 w-4 mr-2" />
+                      Salvar Comanda
+                    </Button>
+                  ) : (
+                    <Button onClick={handleCloseComanda} className="w-full" size="lg">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Fechar Comanda - R$ {total.toFixed(2)}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -344,10 +559,12 @@ const ViewComanda = () => {
                 <Edit className="h-4 w-4 mr-2" />
                 Voltar para Comandas
               </Button>
-              <Button variant="outline" onClick={() => navigate('/bar/novo-venda')}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Venda
-              </Button>
+              {!isNewComanda && (
+                <Button variant="outline" onClick={() => navigate('/bar/comandas/new')}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Comanda
+                </Button>
+              )}
             </div>
           </div>
         </div>
