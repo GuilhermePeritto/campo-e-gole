@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -63,39 +62,58 @@ const QuickSearch: React.FC<QuickSearchProps> = ({ isOpen, onClose }) => {
     { id: 'calendar', title: 'Calendário', path: '/eventos/calendario', icon: <Calendar className="h-4 w-4" />, module: 'Eventos', keywords: ['calendario', 'agenda', 'eventos'] },
     { id: 'venues', title: 'Locais', path: '/eventos/locais', icon: <MapPin className="h-4 w-4" />, module: 'Eventos', keywords: ['locais', 'quadras', 'espacos'] },
     { id: 'clients', title: 'Clientes', path: '/eventos/clientes', icon: <Users2 className="h-4 w-4" />, module: 'Eventos', keywords: ['clientes', 'usuarios'] },
+    { id: 'new-client', title: 'Novo Cliente', path: '/eventos/clientes/novo', icon: <UserPlus className="h-4 w-4" />, module: 'Eventos', keywords: ['cliente', 'novo', 'adicionar'] },
     { id: 'reservations', title: 'Nova Reserva', path: '/eventos/reservas/nova', icon: <Calendar className="h-4 w-4" />, module: 'Eventos', keywords: ['reserva', 'nova', 'agendar'] },
-    { id: 'receivables', title: 'Recebíveis', path: '/eventos/recebiveis', icon: <CreditCard className="h-4 w-4" />, module: 'Eventos', keywords: ['recebiveis', 'contas', 'receber'] },
+    { id: 'receivables', title: 'Contas a Receber', path: '/eventos/contas-a-receber', icon: <CreditCard className="h-4 w-4" />, module: 'Eventos', keywords: ['recebiveis', 'contas', 'receber'] },
     { id: 'events-reports', title: 'Relatórios Eventos', path: '/eventos/relatorios', icon: <FileText className="h-4 w-4" />, module: 'Eventos', keywords: ['relatorios', 'eventos'] },
 
     // Bar
     { id: 'bar', title: 'Bar', path: '/bar', icon: <BarChart3 className="h-4 w-4" />, module: 'Bar', keywords: ['bar', 'vendas', 'estoque'] },
     { id: 'products', title: 'Produtos', path: '/bar/produtos', icon: <Package className="h-4 w-4" />, module: 'Bar', keywords: ['produtos', 'estoque', 'itens'] },
+    { id: 'new-product', title: 'Novo Produto', path: '/bar/produtos/novo', icon: <Package className="h-4 w-4" />, module: 'Bar', keywords: ['produto', 'novo', 'adicionar'] },
     { id: 'inventory', title: 'Estoque', path: '/bar/estoque', icon: <Package className="h-4 w-4" />, module: 'Bar', keywords: ['estoque', 'inventario'] },
     { id: 'comandas', title: 'Comandas', path: '/bar/comandas', icon: <ClipboardList className="h-4 w-4" />, module: 'Bar', keywords: ['comandas', 'pedidos'] },
+    { id: 'new-comanda', title: 'Nova Comanda', path: '/bar/comandas/nova', icon: <ClipboardList className="h-4 w-4" />, module: 'Bar', keywords: ['comanda', 'nova', 'pedido'] },
     { id: 'new-sale', title: 'Nova Venda', path: '/bar/vendas/nova', icon: <ShoppingCart className="h-4 w-4" />, module: 'Bar', keywords: ['venda', 'nova', 'caixa'] },
+    { id: 'unified-sale', title: 'Venda Unificada', path: '/bar/vendas/unificada', icon: <ShoppingCart className="h-4 w-4" />, module: 'Bar', keywords: ['venda', 'unificada'] },
+    { id: 'checkout', title: 'Checkout', path: '/bar/checkout', icon: <Receipt className="h-4 w-4" />, module: 'Bar', keywords: ['checkout', 'finalizar'] },
     { id: 'bar-reports', title: 'Relatórios Bar', path: '/bar/relatorios', icon: <TrendingUp className="h-4 w-4" />, module: 'Bar', keywords: ['relatorios', 'bar'] },
 
     // Escolinha
     { id: 'school', title: 'Escolinha', path: '/escolinha', icon: <Users2 className="h-4 w-4" />, module: 'Escolinha', keywords: ['escolinha', 'escola', 'alunos'] },
-    { id: 'students', title: 'Alunos', path: '/escolinha/alunos', icon: <GraduationCap className="h-4 w-4" />, module: 'Escolinha', keywords: ['alunos', 'estudantes'] },
-    { id: 'teachers', title: 'Professores', path: '/escolinha/professores', icon: <UserCheck className="h-4 w-4" />, module: 'Escolinha', keywords: ['professores', 'instrutores'] },
     { id: 'classes', title: 'Turmas', path: '/escolinha/turmas', icon: <Users2 className="h-4 w-4" />, module: 'Escolinha', keywords: ['turmas', 'classes'] },
+    { id: 'new-class', title: 'Nova Turma', path: '/escolinha/turmas/nova', icon: <Users2 className="h-4 w-4" />, module: 'Escolinha', keywords: ['turma', 'nova', 'classe'] },
+    { id: 'students', title: 'Alunos', path: '/escolinha/alunos', icon: <GraduationCap className="h-4 w-4" />, module: 'Escolinha', keywords: ['alunos', 'estudantes'] },
+    { id: 'new-student', title: 'Novo Aluno', path: '/escolinha/alunos/novo', icon: <GraduationCap className="h-4 w-4" />, module: 'Escolinha', keywords: ['aluno', 'novo', 'estudante'] },
+    { id: 'teachers', title: 'Professores', path: '/escolinha/professores', icon: <UserCheck className="h-4 w-4" />, module: 'Escolinha', keywords: ['professores', 'instrutores'] },
+    { id: 'new-teacher', title: 'Novo Professor', path: '/escolinha/professores/novo', icon: <UserCheck className="h-4 w-4" />, module: 'Escolinha', keywords: ['professor', 'novo', 'instrutor'] },
     { id: 'attendance', title: 'Chamada', path: '/escolinha/chamada', icon: <Clock className="h-4 w-4" />, module: 'Escolinha', keywords: ['chamada', 'presenca'] },
+    { id: 'public-attendance', title: 'Chamada Pública', path: '/escolinha/chamada-publica', icon: <Clock className="h-4 w-4" />, module: 'Escolinha', keywords: ['chamada', 'publica', 'presenca'] },
     { id: 'payments', title: 'Pagamentos', path: '/escolinha/pagamentos', icon: <Receipt className="h-4 w-4" />, module: 'Escolinha', keywords: ['pagamentos', 'mensalidades'] },
+    { id: 'school-receive-payment', title: 'Receber Pagamento', path: '/escolinha/receber-pagamento', icon: <Receipt className="h-4 w-4" />, module: 'Escolinha', keywords: ['receber', 'pagamento', 'escola'] },
     { id: 'school-reports', title: 'Relatórios Escola', path: '/escolinha/relatorios', icon: <FileText className="h-4 w-4" />, module: 'Escolinha', keywords: ['relatorios', 'escola'] },
 
     // Financeiro
     { id: 'financial', title: 'Financeiro', path: '/financeiro', icon: <DollarSign className="h-4 w-4" />, module: 'Financeiro', keywords: ['financeiro', 'contas', 'dinheiro'] },
-    { id: 'accounts-receivable', title: 'Contas a Receber', path: '/financeiro/contas-receber', icon: <CreditCard className="h-4 w-4" />, module: 'Financeiro', keywords: ['contas', 'receber', 'receitas'] },
-    { id: 'accounts-payable', title: 'Contas a Pagar', path: '/financeiro/contas-pagar', icon: <Receipt className="h-4 w-4" />, module: 'Financeiro', keywords: ['contas', 'pagar', 'despesas'] },
+    { id: 'revenues', title: 'Receitas', path: '/financeiro/receitas', icon: <TrendingUp className="h-4 w-4" />, module: 'Financeiro', keywords: ['receitas', 'entradas'] },
+    { id: 'new-revenue', title: 'Nova Receita', path: '/financeiro/receitas/novo', icon: <TrendingUp className="h-4 w-4" />, module: 'Financeiro', keywords: ['receita', 'nova', 'entrada'] },
+    { id: 'expenses', title: 'Despesas', path: '/financeiro/despesas', icon: <Receipt className="h-4 w-4" />, module: 'Financeiro', keywords: ['despesas', 'gastos'] },
+    { id: 'new-expense', title: 'Nova Despesa', path: '/financeiro/despesas/novo', icon: <Receipt className="h-4 w-4" />, module: 'Financeiro', keywords: ['despesa', 'nova', 'gasto'] },
+    { id: 'accounts-receivable', title: 'Contas a Receber', path: '/financeiro/contas-a-receber', icon: <CreditCard className="h-4 w-4" />, module: 'Financeiro', keywords: ['contas', 'receber', 'receitas'] },
+    { id: 'accounts-payable', title: 'Contas a Pagar', path: '/financeiro/contas-a-pagar', icon: <Receipt className="h-4 w-4" />, module: 'Financeiro', keywords: ['contas', 'pagar', 'despesas'] },
     { id: 'cash-flow', title: 'Fluxo de Caixa', path: '/financeiro/fluxo-caixa', icon: <TrendingUp className="h-4 w-4" />, module: 'Financeiro', keywords: ['fluxo', 'caixa', 'movimento'] },
     { id: 'financial-reports', title: 'Relatórios Financeiros', path: '/financeiro/relatorios', icon: <PieChart className="h-4 w-4" />, module: 'Financeiro', keywords: ['relatorios', 'financeiro'] },
+    { id: 'custom-report', title: 'Relatório Personalizado', path: '/financeiro/relatorios/personalizado', icon: <PieChart className="h-4 w-4" />, module: 'Financeiro', keywords: ['relatorio', 'personalizado', 'custom'] },
+    { id: 'teacher-payment-report', title: 'Relatório Professores', path: '/financeiro/relatorios/professores', icon: <FileText className="h-4 w-4" />, module: 'Financeiro', keywords: ['relatorio', 'professores', 'pagamento'] },
+    { id: 'financial-receive-payment', title: 'Receber Pagamento', path: '/financeiro/receber-pagamento', icon: <CreditCard className="h-4 w-4" />, module: 'Financeiro', keywords: ['receber', 'pagamento', 'financeiro'] },
 
     // Configurações
     { id: 'settings', title: 'Configurações', path: '/configuracoes', icon: <Settings className="h-4 w-4" />, module: 'Configurações', keywords: ['configuracoes', 'ajustes', 'opcoes'] },
-    { id: 'users', title: 'Usuários', path: '/configuracoes/usuarios', icon: <User className="h-4 w-4" />, module: 'Configurações', keywords: ['usuarios', 'pessoas'] },
-    { id: 'groups', title: 'Grupos', path: '/configuracoes/grupos', icon: <Shield className="h-4 w-4" />, module: 'Configurações', keywords: ['grupos', 'permissoes'] },
-    { id: 'branches', title: 'Filiais', path: '/configuracoes/filiais', icon: <Building className="h-4 w-4" />, module: 'Configurações', keywords: ['filiais', 'unidades'] }
+    { id: 'new-user', title: 'Novo Usuário', path: '/configuracoes/usuarios/novo', icon: <User className="h-4 w-4" />, module: 'Configurações', keywords: ['usuario', 'novo', 'pessoa'] },
+    { id: 'new-group', title: 'Novo Grupo', path: '/configuracoes/grupos/novo', icon: <Shield className="h-4 w-4" />, module: 'Configurações', keywords: ['grupo', 'novo', 'permissao'] },
+
+    // Universal
+    { id: 'universal-payment', title: 'Receber Pagamento Universal', path: '/receber-pagamento', icon: <CreditCard className="h-4 w-4" />, module: 'Universal', keywords: ['receber', 'pagamento', 'universal'] }
   ];
 
   useEffect(() => {
