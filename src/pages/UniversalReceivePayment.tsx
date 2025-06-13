@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -309,12 +310,11 @@ const UniversalReceivePayment = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-        <PageTour steps={tourSteps} title="Recebimento de Pagamento" />
-        
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Informações do Pagamento */}
-          <Card className="payment-info-card">
+          <Card className="payment-info-card relative">
+            <PageTour steps={tourSteps} title="Recebimento de Pagamento" />
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Receipt className="h-5 w-5 text-blue-600" />
