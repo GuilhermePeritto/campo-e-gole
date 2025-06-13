@@ -1,14 +1,10 @@
 
-import React, { useRef } from 'react';
-import { useDrop } from 'react-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ReportConfig, ReportField } from '@/types/reports';
 import { FileText } from 'lucide-react';
-import { ReportField, ReportConfig } from '@/types/reports';
+import { useRef } from 'react';
+import { useDrop } from 'react-dnd';
 import SelectedField from './SelectedField';
-import ReportSummary from './ReportSummary';
-import ReportFilters from './ReportFilters';
-import ReportSorting from './ReportSorting';
-import ReportGrouping from './ReportGrouping';
 
 interface ReportBuilderProps {
   selectedFields: ReportField[];
@@ -19,8 +15,8 @@ interface ReportBuilderProps {
   onConfigChange: (config: ReportConfig) => void;
 }
 
-const ReportBuilder = ({ 
-  selectedFields, 
+const ReportBuilder = ({
+  selectedFields,
   onFieldRemove,
   onFieldAdd,
   onFieldsReorder,
@@ -28,7 +24,7 @@ const ReportBuilder = ({
   onConfigChange
 }: ReportBuilderProps) => {
   const dropRef = useRef<HTMLDivElement>(null);
-  
+
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'field',
     drop: (item: ReportField) => {
@@ -51,33 +47,32 @@ const ReportBuilder = ({
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="h-[600px] 3xl:h-[700px] 4xl:h-[800px] flex flex-col">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
             Campos Selecionados
           </CardTitle>
           <CardDescription>
-            {selectedFields.length === 0 
+            {selectedFields.length === 0
               ? 'Nenhum campo selecionado. Arraste campos da lista ao lado ou clique para selecionar.'
               : `${selectedFields.length} campo(s) selecionado(s). Arraste para reordenar.`
             }
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='flex-1 overflow-hidden relative w-full'>
           <div
             ref={dropRef}
-            className={`min-h-[200px] max-h-[400px] 3xl:min-h-[250px] 4xl:min-h-[300px] border-2 border-dashed rounded-lg p-4 transition-colors overflow-y-auto ${
-              isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-            }`}
+            className={`flex h-full w-full border-2 border-dashed rounded-lg p-4 transition-colors overflow-y-auto ${isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+              }`}
           >
             {selectedFields.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
-                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <div className="text-center text-muted-foreground py-8 w-full">
+                <FileText className="h-12 w-full mx-auto mb-4 opacity-50" />
                 <p>Arraste campos aqui ou clique para selecionar da lista</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 w-full">
                 {selectedFields.map((field, index) => (
                   <SelectedField
                     key={field.id}
@@ -92,30 +87,6 @@ const ReportBuilder = ({
           </div>
         </CardContent>
       </Card>
-
-      {selectedFields.length > 0 && (
-        <>
-          <ReportFilters
-            fields={selectedFields}
-            filters={reportConfig.filters}
-            onFiltersChange={(filters) => onConfigChange({ ...reportConfig, filters })}
-          />
-
-          <ReportSorting
-            fields={selectedFields}
-            orderBy={reportConfig.orderBy}
-            onOrderByChange={(orderBy) => onConfigChange({ ...reportConfig, orderBy })}
-          />
-
-          <ReportGrouping
-            fields={selectedFields}
-            groupBy={reportConfig.groupBy}
-            onGroupByChange={(groupBy) => onConfigChange({ ...reportConfig, groupBy })}
-          />
-        </>
-      )}
-
-      <ReportSummary selectedFields={selectedFields} />
     </div>
   );
 };

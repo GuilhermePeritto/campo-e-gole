@@ -1,25 +1,26 @@
 
-import { useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import ExportButton from '@/components/ExportButton';
 import ModuleHeader from '@/components/ModuleHeader';
-import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Eye, AlertTriangle, Database, Save, Download } from 'lucide-react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import FieldSelector from '@/components/reports/FieldSelector';
 import ReportBuilder from '@/components/reports/ReportBuilder';
 import ReportFilters from '@/components/reports/ReportFilters';
-import ReportSorting from '@/components/reports/ReportSorting';
 import ReportGrouping from '@/components/reports/ReportGrouping';
-import { ReportField, ReportConfig } from '@/types/reports';
+import ReportSorting from '@/components/reports/ReportSorting';
+import ReportSummary from '@/components/reports/ReportSummary';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { ReportConfig, ReportField } from '@/types/reports';
 import { generateRelatedData } from '@/utils/reportDataGenerator';
-import ExportButton from '@/components/ExportButton';
+import { AlertTriangle, BarChart3, Database, Download, Eye, Save } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { toast } from 'sonner';
 
 const CustomReport = () => {
   const [selectedFields, setSelectedFields] = useState<ReportField[]>([]);
@@ -179,7 +180,9 @@ const CustomReport = () => {
 
           {/* Filtros e Configurações Avançadas */}
           {selectedFields.length > 0 && (
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ReportSummary selectedFields={selectedFields} />
+
               <ReportFilters
                 fields={selectedFields}
                 filters={reportConfig.filters}
@@ -199,43 +202,6 @@ const CustomReport = () => {
               />
             </div>
           )}
-
-          {/* Configurações do Relatório */}
-          <div className="mt-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Save className="h-5 w-5" />
-                  Configurações do Relatório
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="reportName">Nome do Relatório</Label>
-                    <Input
-                      id="reportName"
-                      value={reportName}
-                      onChange={(e) => setReportName(e.target.value)}
-                      placeholder="Digite um nome para salvar..."
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="limit">Limite de Registros</Label>
-                    <Input
-                      id="limit"
-                      type="number"
-                      value={dataLimit}
-                      onChange={(e) => setDataLimit(parseInt(e.target.value) || 100)}
-                      min="1"
-                      max="10000"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
 
           {/* Análise de Performance */}
           {queryCost && (
@@ -278,6 +244,43 @@ const CustomReport = () => {
               </Card>
             </div>
           )}
+
+          {/* Configurações do Relatório */}
+          <div className="mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Save className="h-5 w-5" />
+                  Configurações do Relatório
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reportName">Nome do Relatório</Label>
+                    <Input
+                      id="reportName"
+                      value={reportName}
+                      onChange={(e) => setReportName(e.target.value)}
+                      placeholder="Digite um nome para salvar..."
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="limit">Limite de Registros</Label>
+                    <Input
+                      id="limit"
+                      type="number"
+                      value={dataLimit}
+                      onChange={(e) => setDataLimit(parseInt(e.target.value) || 100)}
+                      min="1"
+                      max="10000"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Ações */}
           <div className="mt-6">
