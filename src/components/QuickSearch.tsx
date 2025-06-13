@@ -30,7 +30,8 @@ import {
   PieChart,
   Building,
   User,
-  Shield
+  Shield,
+  Search
 } from 'lucide-react';
 
 interface QuickSearchProps {
