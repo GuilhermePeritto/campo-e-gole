@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { BarChart3, Calendar } from 'lucide-react';
+import { BarChart3, Calendar, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState('admin@exemplo.com');
   const [password, setPassword] = useState('123456');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -47,72 +48,161 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="p-2 bg-primary rounded-lg">
-              <Calendar className="h-6 w-6 text-primary-foreground" />
+    <div className="min-h-screen flex">
+      {/* Left Side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/90 to-primary/80 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgb3BhY2l0eT0iMC4xIj4KPGZ0bGwgZD0iTTAgMEw0MCA0MEgwVjBaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+Cjwvc3ZnPgo=')] opacity-10"></div>
+        
+        <div className="relative z-10 flex flex-col justify-center items-start p-12 text-white">
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                <Calendar className="h-8 w-8" />
+              </div>
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                <BarChart3 className="h-8 w-8" />
+              </div>
             </div>
-            <div className="p-2 bg-secondary rounded-lg">
-              <BarChart3 className="h-6 w-6 text-secondary-foreground" />
+            <h1 className="text-5xl font-bold mb-4 leading-tight">
+              Ludus<br />
+              <span className="text-white/80">Gestão</span>
+            </h1>
+            <p className="text-xl text-white/80 mb-8 max-w-md">
+              Sistema completo de gestão esportiva e administrativa
+            </p>
+          </div>
+
+          <div className="space-y-4 text-white/70">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+              <span>Gestão de eventos e reservas</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+              <span>Controle financeiro completo</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+              <span>Sistema de bar integrado</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+              <span>Escola esportiva</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Ludus Gestão</h1>
-          <p className="text-muted-foreground mt-2">Sistema de Gestão Esportiva e Bar</p>
         </div>
+      </div>
 
-        <Card className="shadow-xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Fazer Login</CardTitle>
-            <CardDescription className="text-center">
-              Entre com suas credenciais para acessar o sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-11"
-                />
+      {/* Right Side - Login Form */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-background via-background to-muted/20">
+        <div className="w-full max-w-md">
+          {/* Mobile Logo */}
+          <div className="lg:hidden text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="p-2 bg-primary rounded-lg">
+                <Calendar className="h-6 w-6 text-primary-foreground" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="h-11"
-                />
+              <div className="p-2 bg-primary/80 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-primary-foreground" />
               </div>
-              <Button 
-                type="submit" 
-                className="w-full h-11 bg-primary hover:bg-primary/90"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Entrando...' : 'Entrar'}
-              </Button>
-            </form>
-            
-            <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm font-medium text-center mb-2">Credenciais de Teste:</p>
-              <p className="text-xs text-center text-muted-foreground">
-                <strong>Email:</strong> admin@exemplo.com<br />
-                <strong>Senha:</strong> 123456
-              </p>
             </div>
-          </CardContent>
-        </Card>
+            <h1 className="text-3xl font-bold">Ludus Gestão</h1>
+            <p className="text-muted-foreground mt-2">Sistema de Gestão Esportiva</p>
+          </div>
+
+          <Card className="shadow-2xl border-0 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="space-y-2 text-center pb-8">
+              <div className="mx-auto w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-4">
+                <Lock className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-2xl font-semibold">Bem-vindo de volta</CardTitle>
+              <CardDescription className="text-base">
+                Entre com suas credenciais para acessar o sistema
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="pl-10 h-12 border-muted-foreground/20 focus:border-primary"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium">Senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="pl-10 pr-10 h-12 border-muted-foreground/20 focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Entrando...
+                    </div>
+                  ) : (
+                    'Entrar no Sistema'
+                  )}
+                </Button>
+              </form>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-muted-foreground/20" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Credenciais de teste</span>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-4 border border-muted-foreground/10">
+                <div className="text-center space-y-2">
+                  <p className="text-sm font-medium text-muted-foreground">Use as credenciais abaixo para testar:</p>
+                  <div className="space-y-1">
+                    <p className="text-xs font-mono bg-background px-2 py-1 rounded border">
+                      <strong>Email:</strong> admin@exemplo.com
+                    </p>
+                    <p className="text-xs font-mono bg-background px-2 py-1 rounded border">
+                      <strong>Senha:</strong> 123456
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
