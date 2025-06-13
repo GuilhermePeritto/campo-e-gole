@@ -14,10 +14,6 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import FieldSelector from '@/components/reports/FieldSelector';
 import ReportBuilder from '@/components/reports/ReportBuilder';
-import ReportPreview from '@/components/reports/ReportPreview';
-import ReportFilters from '@/components/reports/ReportFilters';
-import ReportSorting from '@/components/reports/ReportSorting';
-import ReportGrouping from '@/components/reports/ReportGrouping';
 import { ReportField, ReportConfig } from '@/types/reports';
 import { generateRelatedData } from '@/utils/reportDataGenerator';
 import ExportButton from '@/components/ExportButton';
@@ -167,8 +163,9 @@ const CustomReport = () => {
 
       <main className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-8">
         <DndProvider backend={HTML5Backend}>
+          {/* Layout Principal - Duas Colunas */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 3xl:gap-8 4xl:gap-10">
-            {/* Coluna Esquerda */}
+            {/* Coluna Esquerda - Campos Disponíveis */}
             <div className="space-y-6">
               <FieldSelector
                 onFieldSelect={handleFieldSelect}
@@ -211,7 +208,7 @@ const CustomReport = () => {
               </Card>
             </div>
 
-            {/* Coluna Direita */}
+            {/* Coluna Direita - Campos Selecionados e Configurações */}
             <div className="space-y-6">
               <ReportBuilder
                 selectedFields={selectedFields}
@@ -224,32 +221,9 @@ const CustomReport = () => {
             </div>
           </div>
 
-          {/* Seção de Configurações Avançadas - Largura Total */}
-          {selectedFields.length > 0 && (
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <ReportFilters
-                fields={selectedFields}
-                filters={reportConfig.filters}
-                onFiltersChange={(filters) => setReportConfig({ ...reportConfig, filters })}
-              />
-
-              <ReportSorting
-                fields={selectedFields}
-                orderBy={reportConfig.orderBy}
-                onOrderByChange={(orderBy) => setReportConfig({ ...reportConfig, orderBy })}
-              />
-
-              <ReportGrouping
-                fields={selectedFields}
-                groupBy={reportConfig.groupBy}
-                onGroupByChange={(groupBy) => setReportConfig({ ...reportConfig, groupBy })}
-              />
-            </div>
-          )}
-
           {/* Análise de Performance */}
           {queryCost && (
-            <div className="mt-6">
+            <div className="mt-8">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">

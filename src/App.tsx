@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
@@ -115,7 +116,7 @@ function App() {
                 <Route path="/eventos/espacos" element={<EventsVenues />} />
                 <Route path="/eventos/espacos/novo" element={<EventsNewVenue />} />
                 <Route path="/eventos/espacos/:id/editar" element={<EventsEditVenue />} />
-                <Route path="/eventos/reservas/nova" element={<EventsNewReservation />} />
+                <Route path="/eventos/novo" element={<EventsNewReservation />} />
                 <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
@@ -151,7 +152,7 @@ function App() {
                 <Route path="/escolinha/professores/:id/relatorio" element={<EscolinhaTeacherReport />} />
                 <Route path="/escolinha/chamada" element={<EscolinhaAttendanceCall />} />
                 <Route path="/escolinha/chamada-publica" element={<EscolinhaPublicAttendanceCall />} />
-                <Route path="/escolinha/pagamentos" element={<EscolinhaPayments />} />
+                <Route path="/escolinha/mensalidades" element={<EscolinhaPayments />} />
                 <Route path="/escolinha/receber-pagamento" element={<EscolinhaReceivePayment />} />
                 <Route path="/escolinha/relatorios" element={<EscolinhaReports />} />
 
@@ -163,7 +164,7 @@ function App() {
                 <Route path="/bar/comandas" element={<BarComandas />} />
                 <Route path="/bar/comandas/nova" element={<BarNewComanda />} />
                 <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
-                <Route path="/bar/vendas/nova" element={<BarNewSale />} />
+                <Route path="/bar/venda/nova" element={<BarNewSale />} />
                 <Route path="/bar/vendas/unificada" element={<BarUnifiedSale />} />
                 <Route path="/bar/checkout" element={<BarCheckout />} />
                 <Route path="/bar/relatorios" element={<BarReports />} />
