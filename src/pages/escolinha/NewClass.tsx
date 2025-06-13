@@ -1,47 +1,151 @@
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ArrowLeft, Calendar, Check, ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { ArrowLeft, GraduationCap, Clock, Users, DollarSign } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import PageTour, { TourStep } from '@/components/PageTour';
+
+interface ClassFormData {
+  name: string;
+  teacher: string;
+  category: string;
+  ageGroup: string;
+  maxStudents: string;
+  schedule: string;
+  duration: string;
+  monthlyFee: string;
+  description: string;
+  active: boolean;
+}
 
 const NewClass = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    ageRange: '',
-    schedule: '',
-    maxStudents: '',
-    monthlyFee: '',
-    teacherId: ''
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Mock data for teachers
-  const teachers = [
-    { id: '1', name: 'Carlos Silva', specialization: 'Futebol' },
-    { id: '2', name: 'Ana Santos', specialization: 'Educação Física' },
-    { id: '3', name: 'João Pereira', specialization: 'Natação' },
-    { id: '4', name: 'Maria Oliveira', specialization: 'Vôlei' },
-    { id: '5', name: 'Pedro Costa', specialization: 'Basquete' }
+  const tourSteps: TourStep[] = [
+    {
+      target: '#name',
+      title: 'Nome da Turma',
+      content: 'Digite um nome identificador para a turma (ex: Infantil A - Manhã).'
+    },
+    {
+      target: '[data-teacher-select]',
+      title: 'Professor',
+      content: 'Selecione o professor responsável por esta turma.'
+    },
+    {
+      target: '[data-category-select]',
+      title: 'Categoria',
+      content: 'Escolha a categoria esportiva da turma.'
+    },
+    {
+      target: '#ageGroup',
+      title: 'Faixa Etária',
+      content: 'Defina a faixa etária dos alunos (ex: 6-8 anos).'
+    },
+    {
+      target: '.schedule-inputs',
+      title: 'Horários',
+      content: 'Configure os horários e duração das aulas.'
+    },
+    {
+      target: '#monthlyFee',
+      title: 'Mensalidade',
+      content: 'Defina o valor da mensalidade para esta turma.'
+    }
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Nova turma:', formData);
-    navigate('/escolinha/turmas');
-  };
+  const [formData, setFormData] = useState<ClassFormData>({
+    name: '',
+    teacher: '',
+    category: '',
+    ageGroup: '',
+    maxStudents: '',
+    schedule: '',
+    duration: '',
+    monthlyFee: '',
+    description: '',
+    active: true
+  });
 
-  const handleChange = (field: string, value: string) => {
+  const teachers = [
+    'Prof. Carlos Silva',
+    'Prof. Maria Oliveira',
+    'Prof. João Santos',
+    'Prof. Ana Costa'
+  ];
+
+  const categories = [
+    'Futebol',
+    'Basquete',
+    'Vôlei',
+    'Tênis',
+    'Natação',
+    'Ginástica'
+  ];
+
+  const ageGroups = [
+    '4-6 anos',
+    '7-9 anos',
+    '10-12 anos',
+    '13-15 anos',
+    '16+ anos'
+  ];
+
+  const schedules = [
+    'Segunda e Quarta - 08:00',
+    'Terça e Quinta - 08:00',
+    'Segunda e Quarta - 14:00',
+    'Terça e Quinta - 14:00',
+    'Segunda e Quarta - 16:00',
+    'Terça e Quinta - 16:00'
+  ];
+
+  const handleInputChange = (field: keyof ClassFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const selectedTeacher = teachers.find(teacher => teacher.id === formData.teacherId);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    if (!formData.name.trim() || !formData.teacher || !formData.category || !formData.ageGroup) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Preencha nome, professor, categoria e faixa etária.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Turma criada com sucesso!",
+        description: `Turma "${formData.name}" foi adicionada ao sistema.`,
+      });
+      
+      navigate('/escolinha/turmas');
+    } catch (error) {
+      toast({
+        title: "Erro ao criar turma",
+        description: "Tente novamente em alguns minutos.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,10 +159,10 @@ const NewClass = () => {
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Turmas
+              Voltar
             </Button>
             <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-green-600" />
+              <GraduationCap className="h-5 w-5 text-primary" />
               <h1 className="text-xl font-semibold">Nova Turma</h1>
             </div>
           </div>
@@ -66,11 +170,13 @@ const NewClass = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+        <Card className="relative">
+          <PageTour steps={tourSteps} title="Criação de Nova Turma" />
+          
           <CardHeader>
-            <CardTitle>Cadastrar Nova Turma</CardTitle>
+            <CardTitle>Criar Nova Turma</CardTitle>
             <CardDescription>
-              Preencha os dados para criar uma nova turma
+              Preencha as informações da nova turma
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -80,119 +186,150 @@ const NewClass = () => {
                   <Label htmlFor="name">Nome da Turma *</Label>
                   <Input
                     id="name"
+                    placeholder="Ex: Infantil A - Manhã"
                     value={formData.name}
-                    onChange={(e) => handleChange('name', e.target.value)}
-                    placeholder="Ex: Infantil A"
+                    onChange={(e) => handleInputChange('name', e.target.value)}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="ageRange">Faixa Etária *</Label>
-                  <Input
-                    id="ageRange"
-                    value={formData.ageRange}
-                    onChange={(e) => handleChange('ageRange', e.target.value)}
-                    placeholder="Ex: 4-6 anos"
-                    required
-                  />
+                  <Label htmlFor="teacher">Professor *</Label>
+                  <Select value={formData.teacher} onValueChange={(value) => handleInputChange('teacher', value)}>
+                    <SelectTrigger data-teacher-select>
+                      <SelectValue placeholder="Selecionar professor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {teachers.map((teacher) => (
+                        <SelectItem key={teacher} value={teacher}>{teacher}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="schedule">Horário *</Label>
-                  <Input
-                    id="schedule"
-                    value={formData.schedule}
-                    onChange={(e) => handleChange('schedule', e.target.value)}
-                    placeholder="Ex: Segunda/Quarta 16:00-17:00"
-                    required
-                  />
+                  <Label htmlFor="category">Categoria *</Label>
+                  <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                    <SelectTrigger data-category-select>
+                      <SelectValue placeholder="Selecionar categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>{category}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="maxStudents">Máximo de Alunos *</Label>
-                  <Input
-                    id="maxStudents"
-                    type="number"
-                    value={formData.maxStudents}
-                    onChange={(e) => handleChange('maxStudents', e.target.value)}
-                    placeholder="Ex: 15"
-                    required
-                  />
+                  <Label htmlFor="ageGroup">Faixa Etária *</Label>
+                  <Select value={formData.ageGroup} onValueChange={(value) => handleInputChange('ageGroup', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecionar faixa etária" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ageGroups.map((age) => (
+                        <SelectItem key={age} value={age}>{age}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 schedule-inputs">
+                <div className="space-y-2">
+                  <Label htmlFor="schedule">Horário das Aulas</Label>
+                  <Select value={formData.schedule} onValueChange={(value) => handleInputChange('schedule', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecionar horário" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schedules.map((schedule) => (
+                        <SelectItem key={schedule} value={schedule}>{schedule}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="monthlyFee">Mensalidade (R$) *</Label>
+                  <Label htmlFor="duration">Duração (minutos)</Label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="duration"
+                      type="number"
+                      placeholder="Ex: 60"
+                      value={formData.duration}
+                      onChange={(e) => handleInputChange('duration', e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="maxStudents">Máx. Alunos</Label>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="maxStudents"
+                      type="number"
+                      placeholder="Ex: 15"
+                      value={formData.maxStudents}
+                      onChange={(e) => handleInputChange('maxStudents', e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="monthlyFee">Mensalidade (R$)</Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="monthlyFee"
                     type="number"
                     step="0.01"
-                    value={formData.monthlyFee}
-                    onChange={(e) => handleChange('monthlyFee', e.target.value)}
                     placeholder="Ex: 150.00"
-                    required
+                    value={formData.monthlyFee}
+                    onChange={(e) => handleInputChange('monthlyFee', e.target.value)}
+                    className="pl-10"
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Professor *</Label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-full justify-between"
-                      >
-                        {selectedTeacher
-                          ? `${selectedTeacher.name} - ${selectedTeacher.specialization}`
-                          : "Selecione um professor..."}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput placeholder="Buscar professor..." />
-                        <CommandList>
-                          <CommandEmpty>Nenhum professor encontrado.</CommandEmpty>
-                          <CommandGroup>
-                            {teachers.map((teacher) => (
-                              <CommandItem
-                                key={teacher.id}
-                                value={`${teacher.name} ${teacher.specialization}`}
-                                onSelect={() => {
-                                  handleChange('teacherId', teacher.id);
-                                  setOpen(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    formData.teacherId === teacher.id ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                <div>
-                                  <div className="font-medium">{teacher.name}</div>
-                                  <div className="text-sm text-muted-foreground">{teacher.specialization}</div>
-                                </div>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Descrição adicional da turma..."
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={formData.active}
+                  onCheckedChange={(checked) => handleInputChange('active', checked)}
+                />
+                <Label>Turma ativa</Label>
+              </div>
+
               <div className="flex gap-4 pt-6">
-                <Button type="submit">
-                  Cadastrar Turma
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1"
+                >
+                  {isLoading ? 'Criando...' : 'Criar Turma'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/escolinha/turmas')}
+                  className="flex-1"
                 >
                   Cancelar
                 </Button>

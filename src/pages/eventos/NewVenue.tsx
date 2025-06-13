@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,10 +10,45 @@ import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, MapPin, Palette, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 const NewVenue = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#name',
+      title: 'Nome do Local',
+      content: 'Digite um nome descritivo para identificar o local (ex: Quadra A - Futebol Society).'
+    },
+    {
+      target: '[role="combobox"]',
+      title: 'Tipo de Esporte',
+      content: 'Selecione o tipo de esporte praticado neste local.'
+    },
+    {
+      target: '#capacity',
+      title: 'Capacidade',
+      content: 'Informe quantas pessoas o local comporta.'
+    },
+    {
+      target: '#hourlyRate',
+      title: 'Valor por Hora',
+      content: 'Defina o preço padrão para locação por hora.'
+    },
+    {
+      target: '.color-selector',
+      title: 'Cor de Identificação',
+      content: 'Escolha uma cor para identificar visualmente este local na agenda.'
+    },
+    {
+      target: '.characteristics-grid',
+      title: 'Características',
+      content: 'Marque as características disponíveis no local (cobertura, iluminação, etc.).'
+    }
+  ];
+
   const [formData, setFormData] = useState({
     name: '',
     type: '',
@@ -174,7 +208,9 @@ const NewVenue = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+        <Card className="relative">
+          <PageTour steps={tourSteps} title="Cadastro de Novo Local" />
+          
           <CardHeader>
             <CardTitle>Cadastrar Novo Local</CardTitle>
             <CardDescription>
@@ -263,7 +299,7 @@ const NewVenue = () => {
                 </div>
 
                 {/* Cor do Local */}
-                <div className="space-y-3">
+                <div className="space-y-3 color-selector">
                   <div className="flex items-center gap-2">
                     <Palette className="h-4 w-4" />
                     <Label>Cor de Identificação</Label>
@@ -298,7 +334,7 @@ const NewVenue = () => {
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Características do Local</h3>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 characteristics-grid">
                   {Object.entries(characteristicLabels).map(([key, label]) => (
                     <div key={key} className="flex items-center space-x-2">
                       <Checkbox
