@@ -50,44 +50,44 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/90 to-primary/80 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/90 to-primary/80 dark:from-primary/90 dark:via-primary/80 dark:to-primary/70 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgb3BhY2l0eT0iMC4xIj4KPGZ0bGwgZD0iTTAgMEw0MCA0MEgwVjBaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+Cjwvc3ZnPgo=')] opacity-10"></div>
         
         <div className="relative z-10 flex flex-col justify-center items-start p-12 text-white">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                <Calendar className="h-8 w-8" />
+              <div className="p-3 bg-white/20 dark:bg-white/30 backdrop-blur-sm rounded-xl border border-white/20">
+                <Calendar className="h-8 w-8 text-white" />
               </div>
-              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                <BarChart3 className="h-8 w-8" />
+              <div className="p-3 bg-white/20 dark:bg-white/30 backdrop-blur-sm rounded-xl border border-white/20">
+                <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-5xl font-bold mb-4 leading-tight">
+            <h1 className="text-5xl font-bold mb-4 leading-tight text-white drop-shadow-lg">
               Ludus<br />
-              <span className="text-white/80">Gestão</span>
+              <span className="text-white/90 dark:text-white/95">Gestão</span>
             </h1>
-            <p className="text-xl text-white/80 mb-8 max-w-md">
+            <p className="text-xl text-white/90 dark:text-white/95 mb-8 max-w-md drop-shadow-md">
               Sistema completo de gestão esportiva e administrativa
             </p>
           </div>
 
-          <div className="space-y-4 text-white/70">
+          <div className="space-y-4 text-white/80 dark:text-white/90">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
-              <span>Gestão de eventos e reservas</span>
+              <div className="w-2 h-2 bg-white/80 dark:bg-white/90 rounded-full shadow-sm"></div>
+              <span className="drop-shadow-sm">Gestão de eventos e reservas</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
-              <span>Controle financeiro completo</span>
+              <div className="w-2 h-2 bg-white/80 dark:bg-white/90 rounded-full shadow-sm"></div>
+              <span className="drop-shadow-sm">Controle financeiro completo</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
-              <span>Sistema de bar integrado</span>
+              <div className="w-2 h-2 bg-white/80 dark:bg-white/90 rounded-full shadow-sm"></div>
+              <span className="drop-shadow-sm">Sistema de bar integrado</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white/60 rounded-full"></div>
-              <span>Escola esportiva</span>
+              <div className="w-2 h-2 bg-white/80 dark:bg-white/90 rounded-full shadow-sm"></div>
+              <span className="drop-shadow-sm">Escola esportiva</span>
             </div>
           </div>
         </div>
