@@ -22,44 +22,8 @@ interface Student {
 const Students = () => {
   const navigate = useNavigate();
 
-  const students: Student[] = [
-    { 
-      id: 1, 
-      name: 'Pedro Silva', 
-      age: 8, 
-      class: 'Infantil A', 
-      phone: '(11) 99999-1111',
-      status: 'em dia',
-      monthlyFee: 150
-    },
-    { 
-      id: 2, 
-      name: 'Ana Costa', 
-      age: 10, 
-      class: 'Infantil B', 
-      phone: '(11) 99999-2222',
-      status: 'atrasado',
-      monthlyFee: 150
-    },
-    { 
-      id: 3, 
-      name: 'João Santos', 
-      age: 12, 
-      class: 'Juvenil A', 
-      phone: '(11) 99999-3333',
-      status: 'em dia',
-      monthlyFee: 180
-    },
-    { 
-      id: 4, 
-      name: 'Maria Oliveira', 
-      age: 9, 
-      class: 'Infantil A', 
-      phone: '(11) 99999-4444',
-      status: 'em dia',
-      monthlyFee: 150
-    }
-  ];
+  // Lista vazia para testar o estado sem registros
+  const students: Student[] = [];
 
   const getStatusColor = (status: string) => {
     switch (status) {
