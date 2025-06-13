@@ -290,7 +290,7 @@ const ContasAReceber = () => {
           createButton={{
             label: 'Nova Conta',
             icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/financeiro/novo-receivable')
+            onClick: () => navigate('/financeiro/contas-a-receber/novo')
           }}
         />
       </main>

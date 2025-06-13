@@ -41,6 +41,8 @@ import FinanceiroFluxoCaixa from './pages/financeiro/CashFlow';
 import CustomReport from './pages/financeiro/CustomReport';
 import FinanceiroDespesas from './pages/financeiro/Expenses';
 import FinanceiroNovaDespesa from './pages/financeiro/NewExpense';
+import FinanceiroNewPayable from './pages/financeiro/NewPayable';
+import FinanceiroNewReceivable from './pages/financeiro/NewReceivable';
 import FinanceiroNovaReceita from './pages/financeiro/NewRevenue';
 import FinanceiroReceberPagamento from './pages/financeiro/ReceivePayment';
 import FinanceiroRelatorios from './pages/financeiro/Reports';
@@ -136,7 +138,9 @@ function App() {
                 <Route path="/financeiro/despesas" element={<FinanceiroDespesas />} />
                 <Route path="/financeiro/despesas/novo" element={<FinanceiroNovaDespesa />} />
                 <Route path="/financeiro/contas-a-receber" element={<FinanceiroContasReceber />} />
+                <Route path="/financeiro/contas-a-receber/novo" element={<FinanceiroNewReceivable />} />
                 <Route path="/financeiro/contas-a-pagar" element={<FinanceiroContasPagar />} />
+                <Route path="/financeiro/contas-a-pagar/novo" element={<FinanceiroNewPayable />} />
                 <Route path="/financeiro/fluxo-caixa" element={<FinanceiroFluxoCaixa />} />
                 <Route path="/financeiro/relatorios" element={<FinanceiroRelatorios />} />
                 <Route path="/financeiro/relatorios/personalizado" element={<CustomReport />} />
