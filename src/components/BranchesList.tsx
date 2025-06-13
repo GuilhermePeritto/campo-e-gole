@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,7 +76,15 @@ const BranchesList = () => {
   };
 
   const handleEdit = (branch: Branch) => {
-    setBranchData(branch);
+    setBranchData({
+      name: branch.name,
+      address: branch.address,
+      city: branch.city,
+      state: branch.state,
+      phone: branch.phone || '',
+      manager: branch.manager || '',
+      status: branch.status
+    });
     setEditingBranch(branch);
     setIsDialogOpen(true);
   };
