@@ -41,6 +41,11 @@ const NewComanda = () => {
       content: 'Campo opcional para selecionar uma mesa específica se estiver trabalhando com numeração.'
     },
     {
+      target: '.add-items-btn',
+      title: 'Adicionar Itens',
+      content: 'Use este botão para adicionar rapidamente vários itens à comanda.'
+    },
+    {
       target: '#search',
       title: 'Buscar Produtos',
       content: 'Use este campo para buscar produtos rapidamente pelo nome.'
@@ -54,11 +59,6 @@ const NewComanda = () => {
       target: '.comanda-summary',
       title: 'Resumo da Comanda',
       content: 'Aqui você vê os itens adicionados, pode ajustar quantidades e ver o total.'
-    },
-    {
-      target: '.add-items-btn',
-      title: 'Adicionar Itens',
-      content: 'Use este botão para adicionar rapidamente vários itens à comanda.'
     }
   ];
 
