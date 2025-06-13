@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -80,7 +79,7 @@ const NewReceivable = () => {
             </Button>
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Nova Conta a Receber</h1>
+              <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">Novo Recebível</h1>
             </div>
           </div>
         </div>
@@ -88,12 +87,12 @@ const NewReceivable = () => {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="border relative">
-          <PageTour steps={tourSteps} title="Criação de Nova Conta a Receber" />
+          <PageTour steps={tourSteps} title="Criação de Novo Recebível" />
           
           <CardHeader>
-            <CardTitle className="text-gray-600 dark:text-gray-300">Criar Nova Conta a Receber</CardTitle>
+            <CardTitle className="text-gray-600 dark:text-gray-300">Criar Novo Recebível</CardTitle>
             <CardDescription>
-              Adicione uma nova conta a receber manualmente
+              Adicione um novo recebível manualmente
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -197,7 +196,7 @@ const NewReceivable = () => {
                     disabled={isSubmitting}
                     className="flex-1 bg-black text-gray-600 dark:text-gray-300 hover:bg-gray-800"
                   >
-                    {isSubmitting ? 'Salvando...' : 'Salvar Conta'}
+                    {isSubmitting ? 'Salvando...' : 'Salvar Recebível'}
                   </Button>
                 </div>
               </form>

@@ -9,6 +9,7 @@ import { PaymentConfig, PaymentData, PaymentFormData } from '@/types/payment';
 import { ArrowLeft, CheckCircle, CreditCard, DollarSign, Receipt } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 const UniversalReceivePayment = () => {
   const navigate = useNavigate();
@@ -26,6 +27,44 @@ const UniversalReceivePayment = () => {
     installments: '1',
     interestRate: '0'
   });
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '.payment-info-card',
+      title: 'Informações do Recebimento',
+      content: 'Aqui estão os detalhes do que você está recebendo: cliente, valor e data de vencimento.'
+    },
+    {
+      target: '#paymentDate',
+      title: 'Data do Pagamento',
+      content: 'Selecione a data em que o pagamento foi ou será recebido.'
+    },
+    {
+      target: '#paymentMethod',
+      title: 'Forma de Pagamento',
+      content: 'Escolha como o pagamento foi recebido: dinheiro, PIX, cartão, etc.'
+    },
+    {
+      target: '#amountReceived',
+      title: 'Valor Recebido',
+      content: 'Insira o valor que foi efetivamente recebido. Pode ser diferente do valor original se houver desconto.'
+    },
+    {
+      target: '#discount',
+      title: 'Desconto',
+      content: 'Se aplicável, insira o valor do desconto concedido ao cliente.'
+    },
+    {
+      target: '.payment-summary',
+      title: 'Resumo do Pagamento',
+      content: 'Confira aqui o resumo final com o valor total a ser recebido após descontos.'
+    },
+    {
+      target: '.confirm-payment-btn',
+      title: 'Confirmar Recebimento',
+      content: 'Clique aqui para finalizar e registrar o recebimento do pagamento.'
+    }
+  ];
 
   useEffect(() => {
     loadPaymentData();
@@ -270,10 +309,12 @@ const UniversalReceivePayment = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+        <PageTour steps={tourSteps} title="Recebimento de Pagamento" />
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Informações do Pagamento */}
-          <Card>
+          <Card className="payment-info-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Receipt className="h-5 w-5 text-blue-600" />
@@ -473,7 +514,7 @@ const UniversalReceivePayment = () => {
                 </div>
 
                 {/* Resumo do Pagamento */}
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg payment-summary">
                   <div className="font-medium text-green-800 mb-3 flex items-center gap-2">
                     <CheckCircle className="h-4 w-4" />
                     Resumo do Pagamento
@@ -502,7 +543,7 @@ const UniversalReceivePayment = () => {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full" size="lg">
+                <Button type="submit" className="w-full confirm-payment-btn" size="lg">
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Confirmar Recebimento - R$ {finalAmount.toFixed(2)}
                 </Button>
