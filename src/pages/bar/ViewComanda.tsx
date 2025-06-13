@@ -92,10 +92,6 @@ const ViewComanda = () => {
     data: product
   }));
 
-  const filteredProducts = mockProducts.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const subtotal = comanda.items.reduce((sum, item) => sum + item.total, 0);
   const discountAmount = discount ? parseFloat(discount) : 0;
   const total = subtotal - discountAmount;
