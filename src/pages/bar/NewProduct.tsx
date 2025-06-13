@@ -9,6 +9,7 @@ import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, Package, Save, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 const NewProduct = () => {
   const navigate = useNavigate();
@@ -23,6 +24,44 @@ const NewProduct = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#name',
+      title: 'Nome do Produto',
+      content: 'Digite o nome completo do produto que será cadastrado no bar.'
+    },
+    {
+      target: '#category',
+      title: 'Categoria do Produto',
+      content: 'Selecione a categoria do produto (Bebidas, Lanches, Refeições, etc.)'
+    },
+    {
+      target: '#price',
+      title: 'Preço de Venda',
+      content: 'Digite o preço pelo qual o produto será vendido aos clientes.'
+    },
+    {
+      target: '#supplier',
+      title: 'Fornecedor',
+      content: 'Nome do fornecedor do produto para controle de estoque e compras.'
+    },
+    {
+      target: '#barcode',
+      title: 'Código de Barras',
+      content: 'Campo opcional para o código de barras do produto.'
+    },
+    {
+      target: '#minStock',
+      title: 'Estoque Mínimo',
+      content: 'Quantidade mínima em estoque antes de disparar alertas de reposição.'
+    },
+    {
+      target: '#active',
+      title: 'Status do Produto',
+      content: 'Defina se o produto estará ativo e disponível para venda.'
+    }
+  ];
 
   const categories = ['Bebidas', 'Lanches', 'Refeições', 'Sobremesas', 'Outros'];
 
@@ -130,7 +169,9 @@ const NewProduct = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Informações Básicas */}
-          <Card>
+          <Card className="relative">
+            <PageTour steps={tourSteps} title="Cadastro de Novo Produto" />
+            
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
@@ -163,7 +204,7 @@ const NewProduct = () => {
                     Categoria *
                   </Label>
                   <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                    <SelectTrigger className={errors.category ? 'border-destructive' : ''}>
+                    <SelectTrigger id="category" className={errors.category ? 'border-destructive' : ''}>
                       <SelectValue placeholder="Selecionar categoria" />
                     </SelectTrigger>
                     <SelectContent>

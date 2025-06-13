@@ -106,8 +106,6 @@ const NewStudent = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <PageTour steps={tourSteps} title="Cadastro de Novo Aluno" />
-      
       <ModuleHeader
         title="Novo Aluno"
         icon={<UserPlus className="h-6 w-6" />}
@@ -117,7 +115,9 @@ const NewStudent = () => {
       />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+        <Card className="relative">
+          <PageTour steps={tourSteps} title="Cadastro de Novo Aluno" />
+          
           <CardHeader>
             <CardTitle>Cadastrar Novo Aluno</CardTitle>
             <CardDescription>

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Plus, Minus, Search, Receipt, Package } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 interface Product {
   id: number;
@@ -28,6 +29,34 @@ const NewComanda = () => {
   const [table, setTable] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [items, setItems] = useState<ComandaItem[]>([]);
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#client',
+      title: 'Cliente/Mesa',
+      content: 'Digite o nome do cliente ou o número da mesa para identificar a comanda.'
+    },
+    {
+      target: '#table',
+      title: 'Seleção de Mesa',
+      content: 'Campo opcional para selecionar uma mesa específica se estiver trabalhando com numeração.'
+    },
+    {
+      target: '#search',
+      title: 'Buscar Produtos',
+      content: 'Use este campo para buscar produtos rapidamente pelo nome.'
+    },
+    {
+      target: '.products-grid',
+      title: 'Lista de Produtos',
+      content: 'Clique nos produtos para adicioná-los à comanda. Produtos sem estoque ficam desabilitados.'
+    },
+    {
+      target: '.comanda-summary',
+      title: 'Resumo da Comanda',
+      content: 'Aqui você vê os itens adicionados, pode ajustar quantidades e ver o total.'
+    }
+  ];
 
   const mockProducts: Product[] = [
     { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, category: 'Bebidas', stock: 45 },
@@ -148,7 +177,9 @@ const NewComanda = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Informações da Comanda */}
           <div className="lg:col-span-1">
-            <Card className="mb-6">
+            <Card className="mb-6 relative">
+              <PageTour steps={tourSteps} title="Criação de Nova Comanda" />
+              
               <CardHeader>
                 <CardTitle>Informações da Comanda</CardTitle>
               </CardHeader>
@@ -156,6 +187,7 @@ const NewComanda = () => {
                 <div>
                   <label className="text-sm font-medium mb-2 block">Cliente / Mesa *</label>
                   <Input
+                    id="client"
                     placeholder="Ex: João Silva ou Mesa 5"
                     value={client}
                     onChange={(e) => setClient(e.target.value)}
@@ -164,7 +196,7 @@ const NewComanda = () => {
                 <div>
                   <label className="text-sm font-medium mb-2 block">Mesa (opcional)</label>
                   <Select value={table} onValueChange={setTable}>
-                    <SelectTrigger>
+                    <SelectTrigger id="table">
                       <SelectValue placeholder="Selecionar mesa" />
                     </SelectTrigger>
                     <SelectContent>
@@ -178,7 +210,7 @@ const NewComanda = () => {
             </Card>
 
             {/* Resumo da Comanda */}
-            <Card>
+            <Card className="comanda-summary">
               <CardHeader>
                 <CardTitle>Resumo da Comanda</CardTitle>
               </CardHeader>
@@ -251,6 +283,7 @@ const NewComanda = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
+                    id="search"
                     placeholder="Buscar produtos..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -259,7 +292,7 @@ const NewComanda = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 products-grid">
                   {filteredProducts.map((product) => {
                     const itemInComanda = items.find(item => item.product.id === product.id);
                     const isOutOfStock = product.stock === 0;

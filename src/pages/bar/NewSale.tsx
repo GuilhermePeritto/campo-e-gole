@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 interface Product {
   id: number;
@@ -29,6 +31,29 @@ const NewSale = () => {
   const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#search',
+      title: 'Buscar Produtos',
+      content: 'Use este campo para buscar produtos rapidamente pelo nome ou categoria.'
+    },
+    {
+      target: '.products-list',
+      title: 'Lista de Produtos',
+      content: 'Clique no botão "+" para adicionar produtos ao carrinho. Veja preço, categoria e estoque disponível.'
+    },
+    {
+      target: '.cart-area',
+      title: 'Carrinho de Compras',
+      content: 'Aqui você vê os produtos selecionados, pode ajustar quantidades, remover itens e ver o total.'
+    },
+    {
+      target: '.finalize-sale',
+      title: 'Finalizar Venda',
+      content: 'Após adicionar os produtos desejados, clique em "Finalizar Venda" para prosseguir ao pagamento.'
+    }
+  ];
 
   const mockProducts: Product[] = [
     { id: 1, name: 'Cerveja Skol 350ml', price: 4.50, stock: 120, category: 'Bebidas' },
@@ -116,7 +141,9 @@ const NewSale = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Produtos */}
           <div className="space-y-6">
-            <Card>
+            <Card className="relative">
+              <PageTour steps={tourSteps} title="Nova Venda no Bar" />
+              
               <CardHeader>
                 <CardTitle>Adicionar Produtos</CardTitle>
                 <CardDescription>
@@ -127,6 +154,7 @@ const NewSale = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
+                    id="search"
                     placeholder="Buscar produtos..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -134,7 +162,7 @@ const NewSale = () => {
                   />
                 </div>
 
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-2 max-h-96 overflow-y-auto products-list">
                   {filteredProducts.map((product) => (
                     <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors">
                       <div className="flex-1">
@@ -159,7 +187,7 @@ const NewSale = () => {
 
           {/* Carrinho */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Card>
+            <Card className="cart-area">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Carrinho</span>
@@ -222,7 +250,7 @@ const NewSale = () => {
                         <span>Total:</span>
                         <span>R$ {getTotal().toFixed(2)}</span>
                       </div>
-                      <Button onClick={handleFinalizeSale} className="w-full" size="lg">
+                      <Button onClick={handleFinalizeSale} className="w-full finalize-sale" size="lg">
                         Finalizar Venda
                       </Button>
                     </div>
