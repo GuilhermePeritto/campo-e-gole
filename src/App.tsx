@@ -121,10 +121,12 @@ function App() {
                 <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
                 <Route path="/eventos/reservas/nova" element={<EventsNewReservation />} />
                 <Route path="/eventos/nova" element={<EventsNewReservation />} />
+                <Route path="/eventos/novo" element={<EventsNewReservation />} />
                 <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
+                <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
                 <Route path="/eventos/receber-pagamento" element={<EventsReceivePayment />} />
                 <Route path="/eventos/relatorios" element={<EventsReports />} />
 
