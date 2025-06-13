@@ -80,15 +80,15 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title }) => {
 
   return (
     <>
-      {/* Help Icon Button */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* Help Icon Button - Now positioned absolutely within parent */}
+      <div className="absolute top-4 right-4 z-10">
         <Button
           onClick={startTour}
           size="icon"
-          className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg"
+          className="w-8 h-8 rounded-full bg-primary hover:bg-primary/90 shadow-md"
           title={`Iniciar tour: ${title}`}
         >
-          <HelpCircle className="h-6 w-6 text-primary-foreground" />
+          <HelpCircle className="h-4 w-4 text-primary-foreground" />
         </Button>
       </div>
 

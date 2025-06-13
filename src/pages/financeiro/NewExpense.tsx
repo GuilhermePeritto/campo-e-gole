@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -69,8 +68,6 @@ const NovaDespesa = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <PageTour steps={tourSteps} title="Cadastro de Nova Despesa" />
-      
       <ModuleHeader
         title="Nova Despesa"
         icon={<TrendingDown className="h-6 w-6" />}
@@ -80,7 +77,9 @@ const NovaDespesa = () => {
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+        <Card className="relative">
+          <PageTour steps={tourSteps} title="Cadastro de Nova Despesa" />
+          
           <CardHeader>
             <CardTitle>Cadastrar Nova Despesa</CardTitle>
             <CardDescription>
