@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,8 +11,9 @@ import { CalendarDays, Clock, MapPin, Users, ArrowLeft, Calendar } from 'lucide-
 import { toast } from '@/hooks/use-toast';
 import PageTour, { TourStep } from '@/components/PageTour';
 
-const NewEvent = () => {
+const EditEvent = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -30,39 +31,58 @@ const NewEvent = () => {
     {
       target: '#title',
       title: 'Nome do Evento',
-      content: 'Digite o nome do evento que será realizado.'
+      content: 'Edite o nome do evento conforme necessário.'
     },
     {
       target: '#description',
       title: 'Descrição',
-      content: 'Adicione uma descrição detalhada do evento.'
+      content: 'Modifique a descrição do evento.'
     },
     {
       target: '#venue',
       title: 'Local',
-      content: 'Selecione onde o evento será realizado.'
+      content: 'Altere o local onde o evento será realizado.'
     },
     {
       target: '#date',
       title: 'Data do Evento',
-      content: 'Escolha a data em que o evento acontecerá.'
+      content: 'Ajuste a data do evento se necessário.'
     },
     {
       target: '#startTime',
       title: 'Horário de Início',
-      content: 'Defina o horário de início do evento.'
+      content: 'Modifique o horário de início do evento.'
     },
     {
       target: '#capacity',
       title: 'Capacidade',
-      content: 'Informe quantas pessoas podem participar do evento.'
+      content: 'Ajuste a capacidade de participantes do evento.'
     },
     {
       target: '#price',
       title: 'Valor',
-      content: 'Defina o preço do evento ou deixe zero para eventos gratuitos.'
+      content: 'Altere o preço do evento se necessário.'
     }
   ];
+
+  useEffect(() => {
+    // Simular carregamento dos dados do evento
+    if (id) {
+      // Aqui você carregaria os dados reais do evento
+      setFormData({
+        title: 'Workshop de React Avançado',
+        description: 'Um workshop completo sobre React com foco em hooks e performance.',
+        venue: 'auditorio_principal',
+        date: '2024-07-15',
+        startTime: '14:00',
+        endTime: '17:00',
+        capacity: '40',
+        price: '150.00',
+        type: 'workshop',
+        status: 'planejado'
+      });
+    }
+  }, [id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,8 +97,8 @@ const NewEvent = () => {
     }
 
     toast({
-      title: "Evento criado!",
-      description: `O evento "${formData.title}" foi criado com sucesso.`,
+      title: "Evento atualizado!",
+      description: `O evento "${formData.title}" foi atualizado com sucesso.`,
     });
     navigate('/eventos');
   };
@@ -104,7 +124,7 @@ const NewEvent = () => {
               </Button>
               <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Novo Evento</h1>
+                <h1 className="text-xl font-semibold">Editar Evento</h1>
               </div>
             </div>
           </div>
@@ -113,12 +133,12 @@ const NewEvent = () => {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="relative">
-          <PageTour steps={tourSteps} title="Criação de Novo Evento" />
+          <PageTour steps={tourSteps} title="Edição de Evento" />
           
           <CardHeader>
-            <CardTitle>Criar Novo Evento</CardTitle>
+            <CardTitle>Editar Evento</CardTitle>
             <CardDescription>
-              Preencha as informações para criar um novo evento
+              Modifique as informações do evento
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -236,7 +256,7 @@ const NewEvent = () => {
 
               <div className="flex gap-4 pt-6">
                 <Button type="submit" className="flex-1">
-                  Criar Evento
+                  Salvar Alterações
                 </Button>
                 <Button 
                   type="button" 
@@ -255,4 +275,4 @@ const NewEvent = () => {
   );
 };
 
-export default NewEvent;
+export default EditEvent;
