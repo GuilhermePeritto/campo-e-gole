@@ -14,6 +14,9 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import FieldSelector from '@/components/reports/FieldSelector';
 import ReportBuilder from '@/components/reports/ReportBuilder';
+import ReportFilters from '@/components/reports/ReportFilters';
+import ReportSorting from '@/components/reports/ReportSorting';
+import ReportGrouping from '@/components/reports/ReportGrouping';
 import { ReportField, ReportConfig } from '@/types/reports';
 import { generateRelatedData } from '@/utils/reportDataGenerator';
 import ExportButton from '@/components/ExportButton';
@@ -96,18 +99,6 @@ const CustomReport = () => {
       filteredData = filteredData.slice(0, dataLimit);
     }
     
-    reportConfig.filters.forEach(filter => {
-      console.log('Aplicando filtro:', filter);
-    });
-
-    if (reportConfig.orderBy.length > 0) {
-      console.log('Aplicando ordenação:', reportConfig.orderBy);
-    }
-
-    if (reportConfig.groupBy.length > 0) {
-      console.log('Aplicando agrupamento:', reportConfig.groupBy);
-    }
-
     setPreviewData(filteredData);
     setShowPreview(true);
     toast.success('Preview gerado com sucesso!');
@@ -164,51 +155,16 @@ const CustomReport = () => {
       <main className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-8">
         <DndProvider backend={HTML5Backend}>
           {/* Layout Principal - Duas Colunas */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 3xl:gap-8 4xl:gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Coluna Esquerda - Campos Disponíveis */}
             <div className="space-y-6">
               <FieldSelector
                 onFieldSelect={handleFieldSelect}
                 selectedFields={selectedFields}
               />
-              
-              {/* Configurações Básicas */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Save className="h-5 w-5" />
-                    Configurações do Relatório
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="reportName">Nome do Relatório</Label>
-                      <Input
-                        id="reportName"
-                        value={reportName}
-                        onChange={(e) => setReportName(e.target.value)}
-                        placeholder="Digite um nome para salvar..."
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="limit">Limite de Registros</Label>
-                      <Input
-                        id="limit"
-                        type="number"
-                        value={dataLimit}
-                        onChange={(e) => setDataLimit(parseInt(e.target.value) || 100)}
-                        min="1"
-                        max="10000"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
-            {/* Coluna Direita - Campos Selecionados e Configurações */}
+            {/* Coluna Direita - Campos Selecionados */}
             <div className="space-y-6">
               <ReportBuilder
                 selectedFields={selectedFields}
@@ -221,9 +177,69 @@ const CustomReport = () => {
             </div>
           </div>
 
+          {/* Filtros e Configurações Avançadas */}
+          {selectedFields.length > 0 && (
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <ReportFilters
+                fields={selectedFields}
+                filters={reportConfig.filters}
+                onFiltersChange={(filters) => setReportConfig({ ...reportConfig, filters })}
+              />
+
+              <ReportSorting
+                fields={selectedFields}
+                orderBy={reportConfig.orderBy}
+                onOrderByChange={(orderBy) => setReportConfig({ ...reportConfig, orderBy })}
+              />
+
+              <ReportGrouping
+                fields={selectedFields}
+                groupBy={reportConfig.groupBy}
+                onGroupByChange={(groupBy) => setReportConfig({ ...reportConfig, groupBy })}
+              />
+            </div>
+          )}
+
+          {/* Configurações do Relatório */}
+          <div className="mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Save className="h-5 w-5" />
+                  Configurações do Relatório
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reportName">Nome do Relatório</Label>
+                    <Input
+                      id="reportName"
+                      value={reportName}
+                      onChange={(e) => setReportName(e.target.value)}
+                      placeholder="Digite um nome para salvar..."
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="limit">Limite de Registros</Label>
+                    <Input
+                      id="limit"
+                      type="number"
+                      value={dataLimit}
+                      onChange={(e) => setDataLimit(parseInt(e.target.value) || 100)}
+                      min="1"
+                      max="10000"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Análise de Performance */}
           {queryCost && (
-            <div className="mt-8">
+            <div className="mt-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -311,7 +327,7 @@ const CustomReport = () => {
           </div>
 
           {/* Preview dos Dados */}
-          {showPreview && previewData.length > 0 && (
+          {showPreview && (
             <div className="mt-8">
               <Card>
                 <CardHeader>
@@ -331,29 +347,44 @@ const CustomReport = () => {
                     Visualização dos dados com os campos e filtros selecionados
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-border">
-                    <thead>
-                      <tr className="bg-muted">
-                        {selectedFields.map((field) => (
-                          <th key={field.id} className="border border-border p-2 text-left font-medium">
-                            {field.label}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {previewData.map((row, index) => (
-                        <tr key={index} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
-                          {selectedFields.map((field) => (
-                            <td key={field.id} className="border border-border p-2">
-                              {row[field.name] || '-'}
-                            </td>
+                <CardContent>
+                  {previewData.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse border border-border">
+                        <thead>
+                          <tr className="bg-muted">
+                            {selectedFields.map((field) => (
+                              <th key={field.id} className="border border-border p-2 text-left font-medium">
+                                {field.label}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {previewData.map((row, index) => (
+                            <tr key={index} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                              {selectedFields.map((field) => (
+                                <td key={field.id} className="border border-border p-2">
+                                  {row[field.name] || '-'}
+                                </td>
+                              ))}
+                            </tr>
                           ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="mx-auto w-24 h-24 mb-4 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                        <BarChart3 className="h-12 w-12 text-blue-500" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum dado encontrado</h3>
+                      <p className="text-gray-500 mb-4">Não há registros para exibir com os filtros aplicados.</p>
+                      <Button variant="outline" onClick={generatePreview}>
+                        Gerar novos dados
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

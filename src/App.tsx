@@ -114,9 +114,13 @@ function App() {
                 <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
                 <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
                 <Route path="/eventos/espacos" element={<EventsVenues />} />
+                <Route path="/eventos/locais" element={<EventsVenues />} />
                 <Route path="/eventos/espacos/novo" element={<EventsNewVenue />} />
+                <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
                 <Route path="/eventos/espacos/:id/editar" element={<EventsEditVenue />} />
-                <Route path="/eventos/novo" element={<EventsNewReservation />} />
+                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
+                <Route path="/eventos/reservas/nova" element={<EventsNewReservation />} />
+                <Route path="/eventos/nova" element={<EventsNewReservation />} />
                 <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
@@ -153,6 +157,7 @@ function App() {
                 <Route path="/escolinha/chamada" element={<EscolinhaAttendanceCall />} />
                 <Route path="/escolinha/chamada-publica" element={<EscolinhaPublicAttendanceCall />} />
                 <Route path="/escolinha/mensalidades" element={<EscolinhaPayments />} />
+                <Route path="/escolinha/pagamentos" element={<EscolinhaPayments />} />
                 <Route path="/escolinha/receber-pagamento" element={<EscolinhaReceivePayment />} />
                 <Route path="/escolinha/relatorios" element={<EscolinhaReports />} />
 
@@ -165,6 +170,8 @@ function App() {
                 <Route path="/bar/comandas/nova" element={<BarNewComanda />} />
                 <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
                 <Route path="/bar/venda/nova" element={<BarNewSale />} />
+                <Route path="/bar/vendas/nova" element={<BarNewSale />} />
+                <Route path="/bar/nova-venda" element={<BarNewSale />} />
                 <Route path="/bar/vendas/unificada" element={<BarUnifiedSale />} />
                 <Route path="/bar/checkout" element={<BarCheckout />} />
                 <Route path="/bar/relatorios" element={<BarReports />} />
