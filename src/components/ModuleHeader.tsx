@@ -31,7 +31,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   backLabel = 'Dashboard'
 }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, company, currentBranch } = useAuth();
 
   // Verificar se é o dashboard para usar cores diferentes
   const isDashboard = moduleColor === 'hsl(var(--background))';
@@ -61,6 +61,21 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 {icon}
               </div>
               <h1 className={`text-xl font-semibold ${textColor}`}>{title}</h1>
+            </div>
+          </div>
+
+          {/* Company - Branch Info (Centered) */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
+            <div className="text-center">
+              <p className={`text-sm font-medium ${textColor}`}>
+                {company?.name || 'Arena Sports Club'}
+                {currentBranch && (
+                  <>
+                    <span className={`mx-2 ${isDashboard ? 'text-muted-foreground' : 'text-white/60'}`}>-</span>
+                    {currentBranch.name}
+                  </>
+                )}
+              </p>
             </div>
           </div>
 

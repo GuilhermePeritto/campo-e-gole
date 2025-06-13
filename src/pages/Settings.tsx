@@ -3,10 +3,12 @@ import ModuleHeader from '@/components/ModuleHeader';
 import UsersList from '@/components/UsersList';
 import GroupsList from '@/components/GroupsList';
 import SystemSettings from '@/components/SystemSettings';
+import CompanySettings from '@/components/CompanySettings';
+import BranchesList from '@/components/BranchesList';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Settings as SettingsIcon, Users, Shield, Database, Globe } from 'lucide-react';
+import { Settings as SettingsIcon, Users, Shield, Database, Globe, Building, MapPin } from 'lucide-react';
 
 const Settings = () => {
   return (
@@ -22,7 +24,7 @@ const Settings = () => {
 
       <main className="container mx-auto p-6">
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
               Usuários
@@ -30,6 +32,14 @@ const Settings = () => {
             <TabsTrigger value="groups" className="gap-2">
               <Shield className="h-4 w-4" />
               Grupos
+            </TabsTrigger>
+            <TabsTrigger value="company" className="gap-2">
+              <Building className="h-4 w-4" />
+              Empresa
+            </TabsTrigger>
+            <TabsTrigger value="branches" className="gap-2">
+              <MapPin className="h-4 w-4" />
+              Filiais
             </TabsTrigger>
             <TabsTrigger value="system" className="gap-2">
               <Database className="h-4 w-4" />
@@ -47,6 +57,14 @@ const Settings = () => {
 
           <TabsContent value="groups">
             <GroupsList />
+          </TabsContent>
+
+          <TabsContent value="company">
+            <CompanySettings />
+          </TabsContent>
+
+          <TabsContent value="branches">
+            <BranchesList />
           </TabsContent>
 
           <TabsContent value="system" className="space-y-6">
