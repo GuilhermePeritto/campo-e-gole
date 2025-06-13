@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -231,12 +230,11 @@ const NewReservation = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-        <PageTour steps={tourSteps} title="Nova Reserva" />
-        
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Formulário */}
-          <Card className={`border h-fit ${isEditing ? 'ring-2 ring-module-events/100' : ''}`} data-tour="form-card">
+          <Card className={`border h-fit relative ${isEditing ? 'ring-2 ring-module-events/100' : ''}`} data-tour="form-card">
+            <PageTour steps={tourSteps} title="Nova Reserva" />
             <CardHeader>
               <CardTitle className="text-card-foreground flex items-center gap-2">
                 {isEditing ? (
