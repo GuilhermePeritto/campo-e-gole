@@ -1,4 +1,5 @@
 
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,6 @@ import { PaymentConfig, PaymentData, PaymentFormData } from '@/types/payment';
 import { ArrowLeft, CheckCircle, CreditCard, DollarSign, Receipt } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import PageTour, { TourStep } from '@/components/PageTour';
 
 const UniversalReceivePayment = () => {
   const navigate = useNavigate();
@@ -189,7 +189,7 @@ const UniversalReceivePayment = () => {
         config: {
           type: 'bar_sale',
           title: 'Finalizar Venda',
-          backUrl: '/bar/nova-venda',
+          backUrl: '/bar/novo-venda',
           backLabel: 'Nova Venda',
           showDiscount: true,
           onSubmit: async (formData, paymentData) => {

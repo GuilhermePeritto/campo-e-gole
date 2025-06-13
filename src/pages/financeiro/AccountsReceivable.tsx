@@ -1,14 +1,13 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { usePagination } from '@/hooks/usePagination';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
+import { Calendar, CreditCard, DollarSign, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, DollarSign, CreditCard, Plus } from 'lucide-react';
 
 interface Receivable {
   id: number;
@@ -291,7 +290,7 @@ const ContasAReceber = () => {
           createButton={{
             label: 'Nova Conta',
             icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/financeiro/nova-receivable')
+            onClick: () => navigate('/financeiro/novo-receivable')
           }}
         />
       </main>

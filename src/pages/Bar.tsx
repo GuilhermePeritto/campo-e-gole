@@ -14,7 +14,7 @@ const Bar = () => {
       description: 'Registrar uma nova venda',
       icon: ShoppingCart,
       color: 'bg-module-bar',
-      action: () => navigate('/bar/nova-venda')
+      action: () => navigate('/bar/novo-venda')
     },
     {
       title: 'Produtos',

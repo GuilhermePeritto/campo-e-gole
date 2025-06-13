@@ -1,12 +1,11 @@
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { ArrowLeft, CreditCard, Plus, Edit, DollarSign } from 'lucide-react';
-import { useState } from 'react';
+import { CreditCard, DollarSign, Edit, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 
 interface Receivable {
   id: number;
@@ -475,7 +474,7 @@ const Receivables = () => {
             createButton={{
               label: 'Nova Conta',
               icon: <Plus className="h-4 w-4" />,
-              onClick: () => navigate('/eventos/contas-a-receber/nova')
+              onClick: () => navigate('/eventos/contas-a-receber/novo')
             }}
           />
         </div>

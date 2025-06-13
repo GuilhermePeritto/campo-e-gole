@@ -1,13 +1,13 @@
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Edit, Minus, Plus, Receipt, Trash2, Package } from 'lucide-react';
+import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -344,7 +344,7 @@ const ViewComanda = () => {
                 <Edit className="h-4 w-4 mr-2" />
                 Voltar para Comandas
               </Button>
-              <Button variant="outline" onClick={() => navigate('/bar/nova-venda')}>
+              <Button variant="outline" onClick={() => navigate('/bar/novo-venda')}>
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Venda
               </Button>

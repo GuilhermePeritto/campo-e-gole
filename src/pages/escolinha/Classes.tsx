@@ -1,11 +1,10 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Calendar, Plus, UserCheck, Edit, Users } from 'lucide-react';
+import { Calendar, Edit, Plus, UserCheck, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ClassItem {
@@ -194,7 +193,7 @@ const Classes = () => {
             createButton={{
               label: 'Nova Turma',
               icon: <Plus className="h-4 w-4" />,
-              onClick: () => navigate('/escolinha/turmas/nova')
+              onClick: () => navigate('/escolinha/turmas/novo')
             }}
           />
         </div>
