@@ -1,6 +1,7 @@
 
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,6 +29,40 @@ const NewReservation = () => {
     notes: '',
     amount: ''
   });
+
+  // Tour steps
+  const tourSteps: TourStep[] = [
+    {
+      target: '[data-tour="form-card"]',
+      title: 'Formulário de Reserva',
+      content: 'Preencha os dados da reserva aqui. Selecione o cliente, local, data e horários.'
+    },
+    {
+      target: '[data-tour="client-select"]',
+      title: 'Seleção de Cliente',
+      content: 'Escolha o cliente para esta reserva. Você pode cadastrar novos clientes se necessário.'
+    },
+    {
+      target: '[data-tour="venue-select"]',
+      title: 'Local da Reserva',
+      content: 'Selecione qual espaço esportivo será reservado para o evento.'
+    },
+    {
+      target: '[data-tour="datetime-inputs"]',
+      title: 'Data e Horário',
+      content: 'Defina quando a reserva acontecerá. A timeline ao lado mostrará conflitos de horário.'
+    },
+    {
+      target: '[data-tour="timeline"]',
+      title: 'Timeline de Eventos',
+      content: 'Visualize outros eventos do dia selecionado. Clique nos horários vazios para facilitar o preenchimento.'
+    },
+    {
+      target: '[data-tour="submit-buttons"]',
+      title: 'Finalizar Reserva',
+      content: 'Após preencher todos os dados, clique em "Criar Reserva" para confirmar.'
+    }
+  ];
 
   // Mock events data (in a real app, this would come from a service)
   const mockEventsData = {
@@ -196,10 +231,12 @@ const NewReservation = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+        <PageTour steps={tourSteps} title="Nova Reserva" />
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Formulário */}
-          <Card className={`border h-fit ${isEditing ? 'ring-2 ring-module-events/100' : ''}`}>
+          <Card className={`border h-fit ${isEditing ? 'ring-2 ring-module-events/100' : ''}`} data-tour="form-card">
             <CardHeader>
               <CardTitle className="text-card-foreground flex items-center gap-2">
                 {isEditing ? (
@@ -240,7 +277,7 @@ const NewReservation = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
-                  <div className="space-y-2">
+                  <div className="space-y-2" data-tour="client-select">
                     <Label htmlFor="client">Cliente</Label>
                     <Select value={formData.client} onValueChange={(value) => handleChange('client', value)}>
                       <SelectTrigger>
@@ -255,7 +292,7 @@ const NewReservation = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2" data-tour="venue-select">
                     <Label htmlFor="venue">Local</Label>
                     <Select value={formData.venue} onValueChange={(value) => handleChange('venue', value)}>
                       <SelectTrigger>
@@ -270,51 +307,53 @@ const NewReservation = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Data</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => handleChange('date', e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="amount">Valor (R$)</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      step="0.01"
-                      value={formData.amount}
-                      onChange={(e) => handleChange('amount', e.target.value)}
-                      placeholder="0,00"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4" data-tour="datetime-inputs">
                     <div className="space-y-2">
-                      <Label htmlFor="startTime">Horário de Início</Label>
+                      <Label htmlFor="date">Data</Label>
                       <Input
-                        id="startTime"
-                        type="time"
-                        value={formData.startTime}
-                        onChange={(e) => handleChange('startTime', e.target.value)}
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => handleChange('date', e.target.value)}
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="endTime">Horário de Término</Label>
+                      <Label htmlFor="amount">Valor (R$)</Label>
                       <Input
-                        id="endTime"
-                        type="time"
-                        value={formData.endTime}
-                        onChange={(e) => handleChange('endTime', e.target.value)}
+                        id="amount"
+                        type="number"
+                        step="0.01"
+                        value={formData.amount}
+                        onChange={(e) => handleChange('amount', e.target.value)}
+                        placeholder="0,00"
                         required
                       />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="startTime">Horário de Início</Label>
+                        <Input
+                          id="startTime"
+                          type="time"
+                          value={formData.startTime}
+                          onChange={(e) => handleChange('startTime', e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="endTime">Horário de Término</Label>
+                        <Input
+                          id="endTime"
+                          type="time"
+                          value={formData.endTime}
+                          onChange={(e) => handleChange('endTime', e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -329,7 +368,7 @@ const NewReservation = () => {
                     />
                   </div>
 
-                  <div className="flex gap-4 pt-6">
+                  <div className="flex gap-4 pt-6" data-tour="submit-buttons">
                     <Button type="submit" className="flex-1">
                       <Calendar className="h-4 w-4 mr-2" />
                       {isEditing ? 'Salvar Alterações' : 'Criar Reserva'}
@@ -344,7 +383,7 @@ const NewReservation = () => {
           </Card>
 
           {/* Timeline */}
-          <div className="space-y-4">
+          <div className="space-y-4" data-tour="timeline">
             {formData.date ? (
               <EventTimeline
                 selectedDate={formData.date}
