@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 
 const NewStudent = () => {
@@ -25,6 +27,64 @@ const NewStudent = () => {
     medicalInfo: '',
     classId: ''
   });
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#name',
+      title: 'Nome do Aluno',
+      content: 'Digite o nome completo do aluno que será cadastrado na escolinha.'
+    },
+    {
+      target: '#birthDate',
+      title: 'Data de Nascimento',
+      content: 'Selecione a data de nascimento do aluno. Esta informação é importante para classificar a turma adequada.'
+    },
+    {
+      target: '#cpf',
+      title: 'CPF do Aluno',
+      content: 'Campo opcional para o CPF do aluno. Útil para controle de documentação.'
+    },
+    {
+      target: '#parentName',
+      title: 'Nome do Responsável',
+      content: 'Digite o nome completo do responsável legal pelo aluno.'
+    },
+    {
+      target: '#parentPhone',
+      title: 'Telefone do Responsável',
+      content: 'Número de telefone principal para contato com o responsável. Campo obrigatório.'
+    },
+    {
+      target: '#parentEmail',
+      title: 'E-mail do Responsável',
+      content: 'E-mail do responsável para comunicações e envio de relatórios.'
+    },
+    {
+      target: '#address',
+      title: 'Endereço Completo',
+      content: 'Endereço residencial completo do aluno incluindo rua, número, bairro, cidade e CEP.'
+    },
+    {
+      target: '#emergencyContact',
+      title: 'Contato de Emergência',
+      content: 'Nome de uma pessoa para contato em caso de emergência (diferente do responsável).'
+    },
+    {
+      target: '#medicalInfo',
+      title: 'Informações Médicas',
+      content: 'Campo para registrar alergias, medicamentos em uso ou outras informações médicas importantes.'
+    },
+    {
+      target: '#classId',
+      title: 'Seleção da Turma',
+      content: 'Escolha a turma adequada baseada na idade e nível do aluno.'
+    },
+    {
+      target: '.form-actions',
+      title: 'Finalizar Cadastro',
+      content: 'Após preencher as informações necessárias, clique em "Cadastrar Aluno" para salvar no sistema.'
+    }
+  ];
 
   // Mock data for classes
   const classes = [
@@ -46,6 +106,8 @@ const NewStudent = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <PageTour steps={tourSteps} title="Cadastro de Novo Aluno" />
+      
       <ModuleHeader
         title="Novo Aluno"
         icon={<UserPlus className="h-6 w-6" />}
@@ -198,7 +260,7 @@ const NewStudent = () => {
                   <div className="space-y-2">
                     <Label htmlFor="classId">Turma *</Label>
                     <Select value={formData.classId} onValueChange={(value) => handleChange('classId', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger id="classId">
                         <SelectValue placeholder="Selecione uma turma" />
                       </SelectTrigger>
                       <SelectContent>
@@ -213,7 +275,7 @@ const NewStudent = () => {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-6">
+              <div className="flex gap-4 pt-6 form-actions">
                 <Button type="submit">
                   Cadastrar Aluno
                 </Button>

@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Save, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
@@ -22,6 +23,44 @@ const NovaReceita = () => {
     observations: ''
   });
 
+  const tourSteps: TourStep[] = [
+    {
+      target: '#description',
+      title: 'Descrição da Receita',
+      content: 'Digite uma descrição clara e detalhada da receita que está sendo cadastrada. Ex: "Reserva Quadra A - João Silva".'
+    },
+    {
+      target: '#amount',
+      title: 'Valor da Receita',
+      content: 'Informe o valor total da receita em reais. Use apenas números e vírgula para decimais.'
+    },
+    {
+      target: '#date',
+      title: 'Data da Receita',
+      content: 'Selecione a data em que a receita foi recebida ou está programada para ser recebida.'
+    },
+    {
+      target: '#module',
+      title: 'Módulo de Origem',
+      content: 'Escolha de qual módulo do sistema esta receita está sendo gerada (Eventos, Bar, Escolinha, etc.).'
+    },
+    {
+      target: '#category',
+      title: 'Categoria da Receita',
+      content: 'Selecione a categoria que melhor classifica esta receita para facilitar relatórios futuros.'
+    },
+    {
+      target: '#observations',
+      title: 'Observações Adicionais',
+      content: 'Campo opcional para incluir informações extras sobre a receita, como forma de pagamento ou detalhes específicos.'
+    },
+    {
+      target: '.form-actions',
+      title: 'Salvar Receita',
+      content: 'Após preencher todos os campos obrigatórios, clique em "Salvar Receita" para registrar no sistema.'
+    }
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Lógica para salvar a receita
@@ -31,6 +70,8 @@ const NovaReceita = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <PageTour steps={tourSteps} title="Cadastro de Nova Receita" />
+      
       <ModuleHeader
         title="Nova Receita"
         icon={<TrendingUp className="h-6 w-6" />}
@@ -88,7 +129,7 @@ const NovaReceita = () => {
                 <div className="space-y-2">
                   <Label htmlFor="module">Módulo *</Label>
                   <Select value={formData.module} onValueChange={(value) => setFormData({...formData, module: value})}>
-                    <SelectTrigger>
+                    <SelectTrigger id="module">
                       <SelectValue placeholder="Selecione o módulo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -103,7 +144,7 @@ const NovaReceita = () => {
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria *</Label>
                   <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                    <SelectTrigger>
+                    <SelectTrigger id="category">
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
@@ -127,7 +168,7 @@ const NovaReceita = () => {
                 />
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-4 pt-4 form-actions">
                 <Button type="submit" className="gap-2">
                   <Save className="h-4 w-4" />
                   Salvar Receita

@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Save, TrendingDown } from 'lucide-react';
 import { useState } from 'react';
@@ -22,6 +23,44 @@ const NovaDespesa = () => {
     observations: ''
   });
 
+  const tourSteps: TourStep[] = [
+    {
+      target: '#description',
+      title: 'Descrição da Despesa',
+      content: 'Digite uma descrição clara da despesa que está sendo registrada. Ex: "Conta de energia elétrica - Janeiro/2024".'
+    },
+    {
+      target: '#amount',
+      title: 'Valor da Despesa',
+      content: 'Informe o valor total da despesa em reais. Use apenas números e vírgula para decimais.'
+    },
+    {
+      target: '#date',
+      title: 'Data da Despesa',
+      content: 'Selecione a data em que a despesa foi paga ou venceu.'
+    },
+    {
+      target: '#category',
+      title: 'Categoria da Despesa',
+      content: 'Escolha a categoria que melhor classifica esta despesa para organização e relatórios.'
+    },
+    {
+      target: '#supplier',
+      title: 'Fornecedor',
+      content: 'Campo opcional para informar o nome da empresa ou pessoa que forneceu o produto/serviço.'
+    },
+    {
+      target: '#observations',
+      title: 'Observações',
+      content: 'Campo opcional para incluir informações extras sobre a despesa, como número da nota fiscal ou detalhes do pagamento.'
+    },
+    {
+      target: '.form-actions',
+      title: 'Salvar Despesa',
+      content: 'Após preencher os campos obrigatórios, clique em "Salvar Despesa" para registrar no sistema.'
+    }
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Nova despesa:', formData);
@@ -30,6 +69,8 @@ const NovaDespesa = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <PageTour steps={tourSteps} title="Cadastro de Nova Despesa" />
+      
       <ModuleHeader
         title="Nova Despesa"
         icon={<TrendingDown className="h-6 w-6" />}
@@ -87,7 +128,7 @@ const NovaDespesa = () => {
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria *</Label>
                   <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                    <SelectTrigger>
+                    <SelectTrigger id="category">
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
@@ -123,7 +164,7 @@ const NovaDespesa = () => {
                 />
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-4 pt-4 form-actions">
                 <Button type="submit" className="gap-2">
                   <Save className="h-4 w-4" />
                   Salvar Despesa
