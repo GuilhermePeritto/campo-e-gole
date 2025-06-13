@@ -99,19 +99,33 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
 
             {/* User Profile */}
             <div className="flex items-center gap-4">
-              {/* Quick Search Button - Redesigned */}
+              {/* Quick Search Button - Estilo conforme anexo */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsQuickSearchOpen(true)}
-                className={`relative group ${textColor} ${buttonHoverColor} h-9 w-9 p-0 rounded-full transition-all duration-200`}
+                className={`
+                  flex items-center gap-2 px-3 py-2 rounded-md
+                  ${isDashboard 
+                    ? 'bg-muted/50 text-foreground hover:bg-muted/70 border border-border/30' 
+                    : 'bg-black/10 text-white hover:bg-black/20 border border-white/20'
+                  }
+                  transition-all duration-200 min-w-[100px] h-8
+                `}
                 title="Busca Rápida (F2)"
               >
-                <div className="relative">
-                  <Search className="h-4 w-4 transition-transform group-hover:scale-110" />
-                  <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${isDashboard ? 'bg-primary' : 'bg-white/80'} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
-                </div>
-                <div className={`absolute inset-0 rounded-full border-2 border-transparent group-hover:border-current/20 transition-colors duration-200`} />
+                <Search className="h-4 w-4 flex-shrink-0" />
+                <span className="text-sm font-medium">Buscar</span>
+                <kbd className={`
+                  ml-auto text-xs px-1.5 py-0.5 rounded border
+                  ${isDashboard 
+                    ? 'bg-background border-border/50 text-muted-foreground' 
+                    : 'bg-white/10 border-white/20 text-white/70'
+                  }
+                  font-mono
+                `}>
+                  F2
+                </kbd>
               </Button>
 
               <DropdownMenu>
