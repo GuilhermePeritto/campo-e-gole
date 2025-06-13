@@ -12,6 +12,10 @@ interface ModuleHeaderProps {
   showBackButton?: boolean;
   backTo?: string;
   actions?: React.ReactNode;
+  icon?: React.ReactNode;
+  moduleColor?: string;
+  mustReturn?: boolean;
+  backLabel?: string;
 }
 
 const ModuleHeader: React.FC<ModuleHeaderProps> = ({
@@ -19,7 +23,11 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   subtitle,
   showBackButton = false,
   backTo = '/',
-  actions
+  actions,
+  icon,
+  moduleColor,
+  mustReturn,
+  backLabel = 'Voltar'
 }) => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
@@ -29,7 +37,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
       <div className="mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {showBackButton && (
+            {(showBackButton || mustReturn) && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -37,14 +45,24 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Voltar
+                {backLabel}
               </Button>
             )}
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-              {subtitle && (
-                <p className="text-muted-foreground">{subtitle}</p>
+            <div className="flex items-center gap-3">
+              {icon && (
+                <div 
+                  className="p-2 rounded-lg"
+                  style={moduleColor ? { backgroundColor: moduleColor } : {}}
+                >
+                  {icon}
+                </div>
               )}
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+                {subtitle && (
+                  <p className="text-muted-foreground">{subtitle}</p>
+                )}
+              </div>
             </div>
           </div>
           

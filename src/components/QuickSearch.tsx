@@ -76,7 +76,7 @@ const menuItems: MenuItem[] = [
   { title: 'Novo Grupo', path: '/configuracoes/grupos/novo', module: 'Configurações', keywords: ['novo grupo', 'cadastrar grupo'] },
 ];
 
-const QuickSearch = () => {
+const QuickSearch: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredItems, setFilteredItems] = useState(menuItems);
