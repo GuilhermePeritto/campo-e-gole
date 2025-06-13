@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import Bar from './pages/bar/Bar';
+import Bar from './pages/Bar';
 import Products from './pages/bar/Products';
 import NewProduct from './pages/bar/NewProduct';
 import EditProduct from './pages/bar/EditProduct';
@@ -11,10 +12,10 @@ import NewSale from './pages/bar/NewSale';
 import UnifiedSale from './pages/bar/UnifiedSale';
 import Checkout from './pages/bar/Checkout';
 import BarReports from './pages/bar/Reports';
-import Financeiro from './pages/financeiro/Financeiro';
-import ContasPagar from './pages/financeiro/ContasPagar';
-import ContasReceber from './pages/financeiro/ContasReceber';
-import RelatoriosFinanceiros from './pages/financeiro/RelatoriosFinanceiros';
+import Financial from './pages/Financial';
+import ContasPagar from './pages/financeiro/AccountsPayable';
+import ContasReceber from './pages/financeiro/AccountsReceivable';
+import RelatoriosFinanceiros from './pages/financeiro/Reports';
 import NewPayable from './pages/financeiro/NewPayable';
 import NewReceivable from './pages/financeiro/NewReceivable';
 import Dashboard from './pages/Dashboard';
@@ -33,7 +34,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
 
           {/* Financeiro Module Routes */}
-          <Route path="/financeiro" element={<Financeiro />} />
+          <Route path="/financeiro" element={<Financial />} />
           <Route path="/financeiro/contas-a-pagar" element={<ContasPagar />} />
           <Route path="/financeiro/contas-a-receber" element={<ContasReceber />} />
           <Route path="/financeiro/relatorios" element={<RelatoriosFinanceiros />} />
