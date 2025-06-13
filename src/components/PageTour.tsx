@@ -76,6 +76,41 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title }) => {
     setIsOpen(true);
   };
 
+  const getOptimalPosition = (element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    
+    // Se há espaço suficiente abaixo do elemento
+    if (rect.bottom + 200 < windowHeight) {
+      return {
+        top: rect.bottom + window.scrollY + 10,
+        left: Math.min(rect.left + window.scrollX, windowWidth - 400),
+      };
+    }
+    // Se há espaço acima
+    else if (rect.top - 200 > 0) {
+      return {
+        top: rect.top + window.scrollY - 210,
+        left: Math.min(rect.left + window.scrollX, windowWidth - 400),
+      };
+    }
+    // Posição à direita se possível
+    else if (rect.right + 400 < windowWidth) {
+      return {
+        top: rect.top + window.scrollY,
+        left: rect.right + window.scrollX + 10,
+      };
+    }
+    // Posição à esquerda
+    else {
+      return {
+        top: rect.top + window.scrollY,
+        left: Math.max(rect.left + window.scrollX - 410, 10),
+      };
+    }
+  };
+
   if (!steps || steps.length === 0) return null;
 
   return (
@@ -97,13 +132,7 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title }) => {
         <div className="fixed inset-0 z-40 pointer-events-none">
           <div 
             className="absolute bg-background border rounded-lg shadow-lg p-4 max-w-sm pointer-events-auto"
-            style={{
-              top: targetElement.offsetTop + targetElement.offsetHeight + 10,
-              left: Math.min(
-                targetElement.offsetLeft,
-                window.innerWidth - 400
-              ),
-            }}
+            style={getOptimalPosition(targetElement)}
           >
             <div className="flex items-start justify-between mb-3">
               <div>

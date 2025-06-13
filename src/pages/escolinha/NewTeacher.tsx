@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,6 +8,7 @@ import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PageTour, { TourStep } from '@/components/PageTour';
 
 const NewTeacher = () => {
   const navigate = useNavigate();
@@ -25,6 +25,59 @@ const NewTeacher = () => {
     commissionPercentage: '',
     notes: ''
   });
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#name',
+      title: 'Nome do Professor',
+      content: 'Digite o nome completo do professor que será cadastrado no sistema.'
+    },
+    {
+      target: '#cpf',
+      title: 'CPF do Professor',
+      content: 'Campo opcional para o CPF do professor. Útil para controle de documentação e folha de pagamento.'
+    },
+    {
+      target: '#email',
+      title: 'E-mail de Contato',
+      content: 'E-mail do professor para comunicações e envio de relatórios de aulas.'
+    },
+    {
+      target: '#phone',
+      title: 'Telefone do Professor',
+      content: 'Número de telefone principal para contato com o professor. Campo obrigatório.'
+    },
+    {
+      target: '#address',
+      title: 'Endereço',
+      content: 'Endereço residencial completo do professor para controle interno.'
+    },
+    {
+      target: '#specialization',
+      title: 'Especialização',
+      content: 'Área de especialização do professor (Futebol, Educação Física, etc.). Campo obrigatório.'
+    },
+    {
+      target: '#chargeType',
+      title: 'Tipo de Cobrança',
+      content: 'Defina se o professor será pago por aula ministrada ou por hora trabalhada.'
+    },
+    {
+      target: '#valuePerClass',
+      title: 'Valor por Aula/Hora',
+      content: 'Valor que será pago ao professor por cada aula ou hora trabalhada.'
+    },
+    {
+      target: '#commissionPercentage',
+      title: 'Percentual de Comissão',
+      content: 'Percentual de comissão sobre as mensalidades dos alunos que o professor ensina.'
+    },
+    {
+      target: '#notes',
+      title: 'Observações',
+      content: 'Campo opcional para informações adicionais sobre o professor.'
+    }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +131,9 @@ const NewTeacher = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+        <Card className="relative">
+          <PageTour steps={tourSteps} title="Cadastro de Novo Professor" />
+          
           <CardHeader>
             <CardTitle>Cadastrar Novo Professor</CardTitle>
           </CardHeader>
