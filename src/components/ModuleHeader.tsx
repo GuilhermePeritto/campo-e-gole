@@ -99,15 +99,19 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
 
             {/* User Profile */}
             <div className="flex items-center gap-4">
-              {/* Quick Search Button */}
+              {/* Quick Search Button - Redesigned */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsQuickSearchOpen(true)}
-                className={`gap-2 ${textColor} ${buttonHoverColor}`}
+                className={`relative group ${textColor} ${buttonHoverColor} h-9 w-9 p-0 rounded-full transition-all duration-200`}
                 title="Busca Rápida (F2)"
               >
-                <Search className="h-4 w-4" />
+                <div className="relative">
+                  <Search className="h-4 w-4 transition-transform group-hover:scale-110" />
+                  <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${isDashboard ? 'bg-primary' : 'bg-white/80'} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
+                </div>
+                <div className={`absolute inset-0 rounded-full border-2 border-transparent group-hover:border-current/20 transition-colors duration-200`} />
               </Button>
 
               <DropdownMenu>

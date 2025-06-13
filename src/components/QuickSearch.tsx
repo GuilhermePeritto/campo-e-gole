@@ -2,11 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Drawer, 
-  DrawerContent, 
-  DrawerHeader, 
-  DrawerTitle 
-} from '@/components/ui/drawer';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle 
+} from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { 
@@ -136,40 +136,48 @@ const QuickSearch: React.FC<QuickSearchProps> = ({ isOpen, onClose }) => {
   }, {} as Record<string, MenuItem[]>);
 
   return (
-    <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="max-h-[80vh] bg-background/95 backdrop-blur-sm border-border/50">
-        <DrawerHeader className="pb-4">
-          <DrawerTitle className="text-lg font-semibold text-foreground">
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent 
+        side="top" 
+        className="max-h-[80vh] bg-background/95 backdrop-blur-sm border-b border-border/50 rounded-none"
+      >
+        <SheetHeader className="pb-4 pt-2">
+          <SheetTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <Search className="h-4 w-4 text-primary" />
+            </div>
             Busca Rápida
-          </DrawerTitle>
-        </DrawerHeader>
+          </SheetTitle>
+        </SheetHeader>
         
-        <div className="px-4 pb-6">
+        <div className="space-y-4">
           <Input
             ref={inputRef}
             placeholder="Digite para buscar módulos, páginas..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-4"
+            className="text-base h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
           />
           
-          <div className="max-h-[50vh] overflow-y-auto space-y-4">
+          <div className="max-h-[50vh] overflow-y-auto space-y-4 pr-2">
             {Object.entries(groupedItems).map(([module, items]) => (
               <div key={module} className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground px-2">
+                <h3 className="text-sm font-medium text-muted-foreground px-2 uppercase tracking-wide">
                   {module}
                 </h3>
-                <div className="space-y-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                   {items.map((item) => (
                     <Button
                       key={item.id}
                       variant="ghost"
-                      className="w-full justify-start h-auto p-3 text-left hover:bg-accent/50"
+                      className="h-auto p-4 text-left hover:bg-accent/70 hover:scale-[1.02] transition-all duration-200 border border-transparent hover:border-border/50 rounded-lg"
                       onClick={() => handleItemClick(item.path)}
                     >
-                      <div className="flex items-center gap-3">
-                        {item.icon}
-                        <span className="text-sm">{item.title}</span>
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                          {item.icon}
+                        </div>
+                        <span className="text-sm font-medium truncate">{item.title}</span>
                       </div>
                     </Button>
                   ))}
@@ -178,21 +186,26 @@ const QuickSearch: React.FC<QuickSearchProps> = ({ isOpen, onClose }) => {
             ))}
             
             {filteredItems.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>Nenhum resultado encontrado</p>
-                <p className="text-xs mt-1">Tente buscar por outro termo</p>
+              <div className="text-center py-12 text-muted-foreground">
+                <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                  <Search className="h-6 w-6" />
+                </div>
+                <p className="text-lg font-medium">Nenhum resultado encontrado</p>
+                <p className="text-sm mt-1">Tente buscar por outro termo</p>
               </div>
             )}
           </div>
           
-          <div className="mt-4 pt-4 border-t border-border/50">
-            <p className="text-xs text-muted-foreground text-center">
-              Pressione <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">F2</kbd> para abrir a busca rápida
+          <div className="pt-4 border-t border-border/50">
+            <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-2">
+              Pressione 
+              <kbd className="px-2 py-1 text-xs bg-muted rounded border border-border/50 font-mono">F2</kbd> 
+              para abrir a busca rápida
             </p>
           </div>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 };
 
