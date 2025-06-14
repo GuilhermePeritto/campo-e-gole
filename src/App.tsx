@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -84,6 +83,11 @@ import ConfiguracoesEditUser from './pages/configuracoes/EditUser';
 import ConfiguracoesNewGroup from './pages/configuracoes/NewGroup';
 import ConfiguracoesNewUser from './pages/configuracoes/NewUser';
 
+// Adicionar novas importações
+import InternalSystem from './pages/InternalSystem';
+import InternalClients from './pages/sistema-interno/Clients';
+import Comandas from './pages/bar/Comandas';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -100,6 +104,10 @@ function App() {
                 <Route path="/painel" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
+
+                {/* Sistema Interno routes */}
+                <Route path="/sistema-interno" element={<InternalSystem />} />
+                <Route path="/sistema-interno/clientes" element={<InternalClients />} />
 
                 {/* Module routes */}
                 <Route path="/eventos" element={<Events />} />
@@ -161,6 +169,7 @@ function App() {
                 <Route path="/escolinha/relatorios" element={<EscolinhaReports />} />
 
                 {/* Bar routes */}
+                <Route path="/bar/comandas" element={<Comandas />} />
                 <Route path="/bar/produtos" element={<BarProducts />} />
                 <Route path="/bar/produtos/novo" element={<BarNewProduct />} />
                 <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />

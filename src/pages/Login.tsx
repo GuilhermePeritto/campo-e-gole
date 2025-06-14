@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { BarChart3, Calendar, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { BarChart3, Calendar, Lock, Mail, Eye, EyeOff, Building2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -45,6 +45,10 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleInternalSystemAccess = () => {
+    navigate('/sistema-interno');
   };
 
   return (
@@ -177,6 +181,26 @@ const Login = () => {
                   )}
                 </Button>
               </form>
+
+              {/* Novo botão para Sistema Interno */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-muted-foreground/20" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">ou</span>
+                </div>
+              </div>
+
+              <Button 
+                type="button"
+                variant="outline"
+                onClick={handleInternalSystemAccess}
+                className="w-full h-12 border-2 border-slate-200 hover:border-slate-300 font-medium text-base shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <Building2 className="h-4 w-4 mr-2" />
+                Acessar Sistema Interno
+              </Button>
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
