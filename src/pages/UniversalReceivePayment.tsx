@@ -189,7 +189,7 @@ const UniversalReceivePayment = () => {
         config: {
           type: 'bar_sale',
           title: 'Finalizar Venda',
-          backUrl: '/bar/novo-venda',
+          backUrl: '/bar/nova-venda',
           backLabel: 'Nova Venda',
           showDiscount: true,
           onSubmit: async (formData, paymentData) => {
