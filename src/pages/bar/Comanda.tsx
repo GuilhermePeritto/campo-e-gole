@@ -1,3 +1,4 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2 } from 'lucide-react';
+import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2, User, MapPin, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -106,8 +107,8 @@ const ComandaForm = () => {
   const total = subtotal - discountAmount;
 
   const getStockColor = (stock: number) => {
-    if (stock <= 5) return 'text-destructive';
-    if (stock <= 15) return 'text-orange-600';
+    if (stock <= 5) return 'text-red-600';
+    if (stock <= 15) return 'text-orange-500';
     return 'text-green-600';
   };
 
@@ -239,280 +240,340 @@ const ComandaForm = () => {
     navigate('/bar/comandas');
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Aberta': return 'bg-green-100 text-green-800';
-      case 'Fechada': return 'bg-orange-100 text-orange-800';
-      case 'Paga': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="shadow-sm border-b bg-card/80 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Header com design moderno */}
+      <header className="sticky top-0 z-20 backdrop-blur-lg bg-white/80 border-b border-white/20 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/bar/comandas')}
-                className="gap-2"
+                className="gap-2 text-gray-600 hover:text-gray-900 hover:bg-white/50"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Comandas
+                Voltar
               </Button>
-              <div className="flex items-center gap-2 rounded bg-module-bar/10 px-3 py-1">
-                <Receipt className="h-5 w-5 text-blue-600" />
-                <h1 className="text-xl font-bold tracking-wide">
-                  {isNewComanda ? 'Nova Comanda' : `Editar Comanda ${comanda.number}`}
-                </h1>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                  <Receipt className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">
+                    {isNewComanda ? 'Nova Comanda' : `Comanda ${comanda.number}`}
+                  </h1>
+                  <p className="text-sm text-gray-500">
+                    {isNewComanda ? 'Criar novo pedido' : 'Editar pedido existente'}
+                  </p>
+                </div>
               </div>
             </div>
             {!isNewComanda && (
-              <Badge variant="secondary" className="font-semibold text-md px-3 py-1">{comanda.status}</Badge>
+              <Badge 
+                variant="secondary" 
+                className="bg-green-100 text-green-800 border-green-200 font-medium px-3 py-1"
+              >
+                {comanda.status}
+              </Badge>
             )}
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col gap-8 md:flex-row md:gap-8">
-          {/* Left: Informações e Itens */}
-          <div className="flex-1 space-y-8">
-            {/* Informações da Comanda */}
-            <Card className="relative overflow-visible shadow-lg">
-              <PageTour steps={tourSteps} title={isNewComanda ? "Criação de Nova Comanda" : "Edição de Comanda"} />
-              <CardHeader>
-                <CardTitle className="font-bold text-lg md:text-2xl text-blue-900 tracking-wider">Dados do Pedido</CardTitle>
+      {/* Main content com grid responsivo */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <PageTour steps={tourSteps} title={isNewComanda ? "Criação de Nova Comanda" : "Edição de Comanda"} />
+        
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Coluna principal - Informações e Itens */}
+          <div className="xl:col-span-2 space-y-6">
+            {/* Card de informações do cliente com design moderno */}
+            <Card className="comanda-info border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <User className="h-5 w-5" />
+                  Informações do Pedido
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-base">
-                  <div>
-                    <Label className="block mb-1 font-semibold">Cliente</Label>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <User className="h-4 w-4" />
+                      Cliente
+                    </Label>
                     <Input
                       value={comanda.client}
                       onChange={(e) => setComanda(prev => ({...prev, client: e.target.value}))}
                       placeholder="Nome do cliente"
-                      className="mb-2"
-                      disabled={!isNewComanda ? true : false}
+                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+                      disabled={!isNewComanda}
                     />
                   </div>
-                  <div>
-                    <Label className="block mb-1 font-semibold">Mesa</Label>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <MapPin className="h-4 w-4" />
+                      Mesa
+                    </Label>
                     <Input
                       value={comanda.table}
                       onChange={(e) => setComanda(prev => ({...prev, table: e.target.value}))}
-                      placeholder="Mesa"
-                      className="mb-2"
-                      disabled={!isNewComanda ? true : false}
+                      placeholder="Número da mesa"
+                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+                      disabled={!isNewComanda}
                     />
                   </div>
                 </div>
-                <div className="flex gap-4 text-xs mt-2 text-muted-foreground">
-                  <span>Aberto em: {comanda.openTime}</span>
-                  <span>Status: <Badge variant="outline" className="ml-1">{comanda.status}</Badge></span>
+                <div className="mt-4 flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>Aberto em: {comanda.openTime}</span>
+                  </div>
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                    {comanda.status}
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Buscar/Adicionar Produtos */}
-            <Card className="add-items-section shadow">
-              <CardHeader>
-                <CardTitle className="font-semibold">Adicionar Produtos</CardTitle>
-                <CardDescription>
-                  Busque e adicione produtos à comanda
+            {/* Card de adicionar produtos */}
+            <Card className="add-items-section border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <Plus className="h-5 w-5" />
+                  Adicionar Produtos
+                </CardTitle>
+                <CardDescription className="text-green-100">
+                  Busque e adicione produtos ao pedido
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="p-6">
                 <SearchableSelect
                   items={productItems}
-                  placeholder="Digite o nome do produto..."
+                  placeholder="Digite o nome do produto para buscar..."
                   emptyText="Nenhum produto encontrado."
                   onSelect={handleProductSelect}
                   className="w-full"
                 />
-                <div className="text-xs text-muted-foreground">
-                  💡 Dica: Busque pelo nome para adicionar rápido.
+                <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 flex items-center gap-2">
+                    💡 <span>Dica: Use a busca para encontrar produtos rapidamente</span>
+                  </p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Itens da Comanda */}
-            <Card className="items-table">
-              <CardHeader>
-                <CardTitle>Itens Adicionados ({comanda.items.length})</CardTitle>
+            {/* Tabela de itens com design moderno */}
+            <Card className="items-table border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <Package className="h-5 w-5" />
+                  Itens do Pedido ({comanda.items.length})
+                </CardTitle>
               </CardHeader>
-              <CardContent className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Estoque</TableHead>
-                      <TableHead>Preço</TableHead>
-                      <TableHead>Qtd.</TableHead>
-                      <TableHead>Total</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {comanda.items.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell><span className="font-semibold">{item.productName}</span></TableCell>
-                        <TableCell>
-                          <Badge variant={getStockBadgeVariant(item.stock)} className="gap-1">
-                            <Package className="h-3 w-3" />
-                            <span className={getStockColor(item.stock)}>
-                              {item.stock}
-                            </span>
-                          </Badge>
-                        </TableCell>
-                        <TableCell>R$ {item.unitPrice.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              disabled={comanda.status !== 'Aberta'}
-                              className="rounded-full w-8 h-8"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </Button>
-                            <span className="w-6 text-center">{item.quantity}</span>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              disabled={comanda.status !== 'Aberta' || item.stock === 0}
-                              className="rounded-full w-8 h-8"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-bold">R$ {item.total.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Button
-                            size="icon"
-                            variant="destructive"
-                            onClick={() => removeItem(item.id)}
-                            disabled={comanda.status !== 'Aberta'}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                {comanda.items.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    Nenhum item adicionado.
+              <CardContent className="p-0">
+                {comanda.items.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-50/80">
+                          <TableHead className="font-semibold">Produto</TableHead>
+                          <TableHead className="font-semibold">Estoque</TableHead>
+                          <TableHead className="font-semibold">Preço Unit.</TableHead>
+                          <TableHead className="font-semibold">Quantidade</TableHead>
+                          <TableHead className="font-semibold">Total</TableHead>
+                          <TableHead className="font-semibold">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {comanda.items.map((item) => (
+                          <TableRow key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                            <TableCell>
+                              <span className="font-medium text-gray-900">{item.productName}</span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={getStockBadgeVariant(item.stock)} className="gap-1">
+                                <Package className="h-3 w-3" />
+                                <span className={getStockColor(item.stock)}>
+                                  {item.stock}
+                                </span>
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium">R$ {item.unitPrice.toFixed(2)}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                  disabled={comanda.status !== 'Aberta'}
+                                  className="h-8 w-8 rounded-full border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-600"
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                                <span className="w-8 text-center font-medium">{item.quantity}</span>
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                  disabled={comanda.status !== 'Aberta' || item.stock === 0}
+                                  className="h-8 w-8 rounded-full border-gray-300 hover:bg-green-50 hover:border-green-300 hover:text-green-600"
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-bold text-green-600">R$ {item.total.toFixed(2)}</TableCell>
+                            <TableCell>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => removeItem(item.id)}
+                                disabled={comanda.status !== 'Aberta'}
+                                className="h-8 w-8 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">Nenhum item adicionado ao pedido</p>
+                    <p className="text-gray-400 text-sm">Use a busca acima para adicionar produtos</p>
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
-          {/* End left */}
-          {/* Right: Resumo & Ações */}
-          <div className="w-full md:w-[340px] flex-shrink-0 flex flex-col gap-6">
-            {/* Resumo */}
-            <Card className="summary-section shadow">
-              <CardHeader>
-                <CardTitle className="font-semibold">Resumo</CardTitle>
+
+          {/* Sidebar direita - Resumo e ações */}
+          <div className="space-y-6">
+            {/* Card de resumo financeiro */}
+            <Card className="summary-section border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <Receipt className="h-5 w-5" />
+                  Resumo Financeiro
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between text-md">
-                  <span>Subtotal</span>
-                  <span>R$ {subtotal.toFixed(2)}</span>
-                </div>
-                {discountAmount > 0 && (
-                  <div className="flex justify-between text-orange-600">
-                    <span>Desconto</span>
-                    <span>- R$ {discountAmount.toFixed(2)}</span>
+              <CardContent className="p-6 space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Subtotal</span>
+                    <span className="font-semibold text-lg">R$ {subtotal.toFixed(2)}</span>
                   </div>
-                )}
-                <div className="flex justify-between text-xl font-bold border-t pt-2">
-                  <span>Total</span>
-                  <span>R$ {total.toFixed(2)}</span>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between items-center text-orange-600">
+                      <span>Desconto</span>
+                      <span className="font-semibold">- R$ {discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xl font-bold text-gray-900">Total</span>
+                      <span className="text-2xl font-bold text-green-600">R$ {total.toFixed(2)}</span>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
+            {/* Card de ações */}
             {comanda.status === 'Aberta' && (
-              <Card className="shadow">
-                <CardHeader>
-                  <CardTitle>
-                    {isNewComanda ? 'Salvar Comanda' : 'Fechar Comanda'}
+              <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
+                  <CardTitle className="text-lg">
+                    {isNewComanda ? 'Salvar Comanda' : 'Finalizar Pedido'}
                   </CardTitle>
-                  <CardDescription>
-                    {isNewComanda ? 'Após salvar, adicione produtos e feche a comanda.' : 'Defina o pagamento para fechar.'}
+                  <CardDescription className="text-orange-100">
+                    {isNewComanda ? 'Criar nova comanda' : 'Definir pagamento e fechar'}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="p-6 space-y-4">
                   {!isNewComanda && (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="paymentMethod">Forma de pag.</Label>
+                        <Label className="text-sm font-medium text-gray-700">Forma de Pagamento</Label>
                         <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecionar" />
+                          <SelectTrigger className="border-gray-200 focus:border-orange-400 focus:ring-orange-400">
+                            <SelectValue placeholder="Selecionar forma de pagamento" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                            <SelectItem value="cartao_debito">Débito</SelectItem>
-                            <SelectItem value="cartao_credito">Crédito</SelectItem>
-                            <SelectItem value="pix">PIX</SelectItem>
+                            <SelectItem value="dinheiro">💵 Dinheiro</SelectItem>
+                            <SelectItem value="cartao_debito">💳 Cartão de Débito</SelectItem>
+                            <SelectItem value="cartao_credito">💳 Cartão de Crédito</SelectItem>
+                            <SelectItem value="pix">📱 PIX</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="discount">Desconto (R$)</Label>
+                        <Label className="text-sm font-medium text-gray-700">Desconto (R$)</Label>
                         <Input
-                          id="discount"
                           type="number"
                           step="0.01"
                           placeholder="0,00"
                           value={discount}
                           onChange={(e) => setDiscount(e.target.value)}
+                          className="border-gray-200 focus:border-orange-400 focus:ring-orange-400"
                         />
                       </div>
                     </>
                   )}
 
                   {isNewComanda ? (
-                    <Button onClick={handleSaveComanda} className="w-full" size="lg">
+                    <Button 
+                      onClick={handleSaveComanda} 
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg" 
+                      size="lg"
+                    >
                       <Receipt className="h-4 w-4 mr-2" />
-                      Salvar
+                      Criar Comanda
                     </Button>
                   ) : (
-                    <Button onClick={handleCloseComanda} className="w-full" size="lg">
+                    <Button 
+                      onClick={handleCloseComanda} 
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg" 
+                      size="lg"
+                    >
                       <CreditCard className="h-4 w-4 mr-2" />
-                      Fechar - R$ {total.toFixed(2)}
+                      Finalizar - R$ {total.toFixed(2)}
                     </Button>
                   )}
                 </CardContent>
               </Card>
             )}
 
-            <div className="flex flex-col gap-3">
-              <Button variant="outline" onClick={() => navigate('/bar/comandas')}>
-                <Edit className="h-4 w-4 mr-2" />
-                Voltar para Comandas
-              </Button>
-              {!isNewComanda && (
-                <Button variant="outline" onClick={() => navigate('/bar/comandas/new')}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Comanda
+            {/* Card de navegação */}
+            <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+              <CardContent className="p-4 space-y-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/bar/comandas')}
+                  className="w-full border-gray-300 hover:bg-gray-50"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Ver Todas as Comandas
                 </Button>
-              )}
-            </div>
+                {!isNewComanda && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/bar/comandas/novo')}
+                    className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nova Comanda
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
           </div>
-          {/* End right */}
         </div>
       </main>
     </div>
