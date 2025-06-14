@@ -1,8 +1,9 @@
+
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { DollarSign, TrendingUp, TrendingDown, CreditCard, BarChart3 } from 'lucide-react';
+import { BarChart3, DollarSign, FileText, Plus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Financial = () => {
@@ -11,36 +12,43 @@ const Financial = () => {
   const quickActions = [
     {
       title: 'Nova Receita',
-      description: 'Registrar uma nova receita',
-      icon: TrendingUp,
+      description: 'Registrar entrada de dinheiro',
+      icon: Plus,
       color: 'bg-module-financial',
       action: () => navigate('/financeiro/receitas/novo')
     },
     {
       title: 'Nova Despesa',
-      description: 'Registrar uma nova despesa',
-      icon: TrendingDown,
+      description: 'Registrar saída de dinheiro',
+      icon: Plus,
       color: 'bg-module-financial',
       action: () => navigate('/financeiro/despesas/novo')
     },
     {
       title: 'Contas a Receber',
-      description: 'Gerenciar contas a receber',
-      icon: DollarSign,
+      description: 'Gerenciar recebimentos',
+      icon: TrendingUp,
       color: 'bg-module-financial',
       action: () => navigate('/financeiro/contas-a-receber')
     },
     {
+      title: 'Contas a Pagar',
+      description: 'Gerenciar pagamentos',
+      icon: TrendingDown,
+      color: 'bg-module-financial',
+      action: () => navigate('/financeiro/contas-a-pagar')
+    },
+    {
       title: 'Fluxo de Caixa',
-      description: 'Visualizar fluxo de caixa',
-      icon: CreditCard,
+      description: 'Acompanhar movimentações',
+      icon: BarChart3,
       color: 'bg-module-financial',
       action: () => navigate('/financeiro/fluxo-caixa')
     },
     {
       title: 'Relatórios',
       description: 'Análises financeiras',
-      icon: BarChart3,
+      icon: FileText,
       color: 'bg-module-financial',
       action: () => navigate('/financeiro/relatorios')
     }
@@ -80,7 +88,7 @@ const Financial = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
