@@ -1,3 +1,4 @@
+
 import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -76,7 +77,7 @@ import BarNewProduct from './pages/bar/NewProduct';
 import BarProducts from './pages/bar/Products';
 import BarReports from './pages/bar/Reports';
 import BarUnifiedSale from './pages/bar/UnifiedSale';
-import ComandaForm from './pages/bar/ViewComanda';
+import BarViewComanda from './pages/bar/ViewComanda';
 
 // Settings pages
 import ConfiguracoesEditGroup from './pages/configuracoes/EditGroup';
@@ -170,14 +171,14 @@ function App() {
                 <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />
                 <Route path="/bar/estoque" element={<BarInventory />} />
                 <Route path="/bar/comandas" element={<BarComandas />} />
-                {/* Usar ComandaForm para visualização e criação */}
-                <Route path="/bar/comandas/novo" element={<ComandaForm />} />
-                <Route path="/bar/comandas/new" element={<ComandaForm />} />
-                <Route path="/bar/comandas/:id" element={<ComandaForm />} />
-                {/* Os próximos três apontam para ComandaForm (nova comanda) */}
-                <Route path="/bar/venda/novo" element={<ComandaForm />} />
-                <Route path="/bar/vendas/novo" element={<ComandaForm />} />
-                <Route path="/bar/nova-venda" element={<ComandaForm />} />
+                {/* Usar ViewComanda para visualização e criação */}
+                <Route path="/bar/comandas/novo" element={<BarViewComanda />} />
+                <Route path="/bar/comandas/new" element={<BarViewComanda />} />
+                <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
+                {/* As próximas três rotas direcionam o usuário para ViewComanda, para manter o botão Nova Comanda funcionando */}
+                <Route path="/bar/venda/novo" element={<BarViewComanda />} />
+                <Route path="/bar/vendas/novo" element={<BarViewComanda />} />
+                <Route path="/bar/nova-venda" element={<BarViewComanda />} />
                 <Route path="/bar/vendas/unificada" element={<BarUnifiedSale />} />
                 <Route path="/bar/checkout" element={<BarCheckout />} />
                 <Route path="/bar/relatorios" element={<BarReports />} />
@@ -201,3 +202,4 @@ function App() {
 }
 
 export default App;
+
