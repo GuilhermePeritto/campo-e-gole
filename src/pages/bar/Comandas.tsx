@@ -92,8 +92,11 @@ const Comandas = () => {
     {
       label: 'Editar',
       icon: <Edit className="h-4 w-4" />,
-      onClick: (comanda) => navigate(`/bar/comandas/${comanda.id}`),
-      show: (comanda) => comanda.status === 'Aberta'
+      onClick: (comanda) => {
+        if (comanda.status === 'Aberta') {
+          navigate(`/bar/comandas/${comanda.id}`)
+        }
+      }
     }
   ];
 
@@ -133,7 +136,12 @@ const Comandas = () => {
           </div>
 
           <div className="flex gap-2 pt-3">
-            {actions.filter(action => !action.show || action.show(comanda)).map((action, index) => (
+            {actions.filter(action => {
+              if (action.label === 'Editar') {
+                return comanda.status === 'Aberta';
+              }
+              return true;
+            }).map((action, index) => (
               <Button
                 key={index}
                 variant="outline"

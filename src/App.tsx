@@ -71,7 +71,7 @@ import EscolinhaTeachers from './pages/escolinha/Teachers';
 // Bar pages
 import BarCheckout from './pages/bar/Checkout';
 import Comanda from './pages/bar/Comanda';
-import BarComandas from './pages/bar/Comandas';
+import Comandas from './pages/bar/Comandas';
 import BarEditProduct from './pages/bar/EditProduct';
 import BarInventory from './pages/bar/Inventory';
 import BarNewProduct from './pages/bar/NewProduct';
@@ -124,7 +124,6 @@ function App() {
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
-                <Route path="/eventos/receber-pagamento" element={<EventsReceivePayment />} />
                 <Route path="/eventos/relatorios" element={<EventsReports />} />
 
                 {/* Financial routes */}
@@ -166,7 +165,7 @@ function App() {
                 <Route path="/bar/produtos/novo" element={<BarNewProduct />} />
                 <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />
                 <Route path="/bar/estoque" element={<BarInventory />} />
-                <Route path="/bar/comandas" element={<BarComandas />} />
+                <Route path="/bar/comandas" element={<Comandas />} />
                 <Route path="/bar/comandas/novo" element={<Comanda />} />
                 <Route path="/bar/comandas/:id" element={<Comanda />} />
                 <Route path="/bar/checkout" element={<BarCheckout />} />
