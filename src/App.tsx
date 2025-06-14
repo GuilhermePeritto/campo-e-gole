@@ -173,11 +173,14 @@ function App() {
                 <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />
                 <Route path="/bar/estoque" element={<BarInventory />} />
                 <Route path="/bar/comandas" element={<BarComandas />} />
-                <Route path="/bar/comandas/novo" element={<BarNewComanda />} />
+                {/* Usar ViewComanda para visualização e criação */}
+                <Route path="/bar/comandas/novo" element={<BarViewComanda />} />
+                <Route path="/bar/comandas/new" element={<BarViewComanda />} />
                 <Route path="/bar/comandas/:id" element={<BarViewComanda />} />
-                <Route path="/bar/venda/novo" element={<BarNewSale />} />
-                <Route path="/bar/vendas/novo" element={<BarNewSale />} />
-                <Route path="/bar/nova-venda" element={<BarNewSale />} />
+                {/* As próximas três rotas direcionam o usuário para ViewComanda, para manter o botão Nova Comanda funcionando */}
+                <Route path="/bar/venda/novo" element={<BarViewComanda />} />
+                <Route path="/bar/vendas/novo" element={<BarViewComanda />} />
+                <Route path="/bar/nova-venda" element={<BarViewComanda />} />
                 <Route path="/bar/vendas/unificada" element={<BarUnifiedSale />} />
                 <Route path="/bar/checkout" element={<BarCheckout />} />
                 <Route path="/bar/relatorios" element={<BarReports />} />
@@ -201,3 +204,4 @@ function App() {
 }
 
 export default App;
+

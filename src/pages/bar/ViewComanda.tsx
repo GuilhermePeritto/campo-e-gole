@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2, Search, ShoppingCart } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import PageTour, { TourStep } from '@/components/PageTour';
 import SearchableSelect from '@/components/SearchableSelect';
 
@@ -32,13 +32,18 @@ interface ComandaItem {
 const ViewComanda = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [discount, setDiscount] = useState('');
-  const [showAddItems, setShowAddItems] = useState(false);
-  
-  // Determinar se é uma nova comanda
-  const isNewComanda = id === 'new' || id === 'novo';
-  
+  const location = useLocation();
+
+  // Detectar criação de nova comanda em diferentes rotas possíveis
+  const isNewComanda =
+    id === 'new' ||
+    id === 'novo' ||
+    location.pathname === '/bar/comandas/novo' ||
+    location.pathname === '/bar/comandas/new' ||
+    location.pathname === '/bar/venda/novo' ||
+    location.pathname === '/bar/vendas/novo' ||
+    location.pathname === '/bar/nova-venda';
+
   const tourSteps: TourStep[] = [
     {
       target: '.comanda-info',
