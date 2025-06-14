@@ -21,7 +21,7 @@ const Events = () => {
       description: 'Gerenciar locais esportivos',
       icon: MapPin,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/espacos')
+      action: () => navigate('/eventos/locais')
     },
     {
       title: 'Clientes',

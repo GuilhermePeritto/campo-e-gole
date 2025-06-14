@@ -2,7 +2,7 @@ import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Package, ShoppingCart, Utensils, Receipt } from 'lucide-react';
+import { BarChart3, Package, Receipt, ShoppingCart, Utensils } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Bar = () => {
@@ -21,7 +21,7 @@ const Bar = () => {
       description: 'Controlar mesas e pedidos',
       icon: Receipt,
       color: 'bg-module-bar',
-      action: () => navigate('/bar/comandas/novo')
+      action: () => navigate('/bar/comandas')
     },
     {
       title: 'Produtos',

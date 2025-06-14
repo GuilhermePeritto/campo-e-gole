@@ -1,14 +1,14 @@
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import ModuleHeader from '@/components/ModuleHeader';
-import { MODULE_COLORS } from '@/constants/moduleColors';
-import { MapPin, Plus, Edit, Eye } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
-import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
 import ValueSkeleton from '@/components/ValueSkeleton';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { Edit, Eye, MapPin, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Venue {
   id: number;
@@ -126,7 +126,7 @@ const Locais = () => {
     {
       label: 'Editar',
       icon: <Edit className="h-4 w-4" />,
-      onClick: (venue) => navigate(`/eventos/locais/editar/${venue.id}`)
+      onClick: (venue) => navigate(`/eventos/locais/${venue.id}/editar`)
     }
   ];
 

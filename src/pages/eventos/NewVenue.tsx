@@ -1,13 +1,13 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, MapPin } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const NewVenue = () => {
@@ -38,7 +38,7 @@ const NewVenue = () => {
       description: `O espaço ${formData.name} foi criado com sucesso.`,
     });
     
-    navigate('/eventos/espacos');
+    navigate('/eventos/locais');
   };
 
   return (
@@ -50,7 +50,7 @@ const NewVenue = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/eventos/espacos')}
+                onClick={() => navigate('/eventos/locais')}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -153,7 +153,7 @@ const NewVenue = () => {
                 <Button type="submit" className="flex-1">
                   Criar Espaço
                 </Button>
-                <Button type="button" variant="outline" onClick={() => navigate('/eventos/espacos')}>
+                <Button type="button" variant="outline" onClick={() => navigate('/eventos/locais')}>
                   Cancelar
                 </Button>
               </div>

@@ -84,9 +84,9 @@ import ConfiguracoesNewGroup from './pages/configuracoes/NewGroup';
 import ConfiguracoesNewUser from './pages/configuracoes/NewUser';
 
 // Adicionar novas importações
+import Comandas from './pages/bar/Comandas';
 import InternalSystem from './pages/InternalSystem';
 import InternalClients from './pages/sistema-interno/Clients';
-import Comandas from './pages/bar/Comandas';
 
 const queryClient = new QueryClient();
 
@@ -122,9 +122,9 @@ function App() {
                 <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
                 <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
                 <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
-                <Route path="/eventos/espacos" element={<EventsVenues />} />
-                <Route path="/eventos/espacos/novo" element={<EventsNewVenue />} />
-                <Route path="/eventos/espacos/:id/editar" element={<EventsEditVenue />} />
+                <Route path="/eventos/locais" element={<EventsVenues />} />
+                <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
+                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
                 <Route path="/eventos/novo" element={<EventsNewReservation />} />
                 <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
