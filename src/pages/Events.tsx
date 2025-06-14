@@ -1,9 +1,8 @@
-
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Calendar, CreditCard, MapPin, Plus, Users } from 'lucide-react';
+import { Calendar, Users, MapPin, DollarSign, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Events = () => {
@@ -12,17 +11,10 @@ const Events = () => {
   const quickActions = [
     {
       title: 'Nova Reserva',
-      description: 'Criar uma nova reserva',
-      icon: Plus,
+      description: 'Criar uma nova reserva de evento',
+      icon: Calendar,
       color: 'bg-module-events',
       action: () => navigate('/eventos/novo')
-    },
-    {
-      title: 'Locais',
-      description: 'Gerenciar locais esportivos',
-      icon: MapPin,
-      color: 'bg-module-events',
-      action: () => navigate('/eventos/locais')
     },
     {
       title: 'Clientes',
@@ -32,16 +24,16 @@ const Events = () => {
       action: () => navigate('/eventos/clientes')
     },
     {
-      title: 'Agenda',
-      description: 'Visualizar agenda',
-      icon: Calendar,
+      title: 'Espaços',
+      description: 'Gerenciar espaços para eventos',
+      icon: MapPin,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/calendario')
+      action: () => navigate('/eventos/espacos')
     },
     {
-      title: 'Financeiro',
-      description: 'Contas a receber',
-      icon: CreditCard,
+      title: 'Contas a Receber',
+      description: 'Gerenciar recebimentos',
+      icon: DollarSign,
       color: 'bg-module-events',
       action: () => navigate('/eventos/contas-a-receber')
     },
@@ -54,14 +46,14 @@ const Events = () => {
     }
   ];
 
-  const recentReservations = [
+  const recentEvents = [
     { id: 1, client: 'João Silva', venue: 'Quadra 1', date: '05/05/2024', time: '14:00-16:00', status: 'confirmed' },
     { id: 2, client: 'Maria Santos', venue: 'Campo de Futebol', date: '06/05/2024', time: '09:00-11:00', status: 'pending' },
     { id: 3, client: 'Pedro Costa', venue: 'Quadra 2', date: '07/05/2024', time: '18:00-20:00', status: 'confirmed' },
     { id: 4, client: 'Ana Oliveira', venue: 'Quadra 1', date: '08/05/2024', time: '16:00-18:00', status: 'cancelled' }
   ];
 
-  const stats = {
+  const eventsStats = {
     totalReservations: 156,
     todayRevenue: 2850.00,
     occupancyRate: 75,
@@ -98,7 +90,7 @@ const Events = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (
@@ -131,7 +123,7 @@ const Events = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {recentReservations.map((reservation) => (
+                {recentEvents.map((reservation) => (
                   <div key={reservation.id} className="flex items-center justify-between p-3 bg-muted/50 border rounded-lg">
                     <div>
                       <div className="font-medium text-card-foreground">{reservation.client}</div>
@@ -167,19 +159,19 @@ const Events = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Total de Reservas</span>
-                  <span className="font-semibold text-green-600">{stats.totalReservations}</span>
+                  <span className="font-semibold text-green-600">{eventsStats.totalReservations}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Receita Hoje</span>
-                  <span className="font-semibold text-blue-600">R$ {stats.todayRevenue.toFixed(2)}</span>
+                  <span className="font-semibold text-blue-600">R$ {eventsStats.todayRevenue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Taxa de Ocupação</span>
-                  <span className="font-semibold text-purple-600">{stats.occupancyRate}%</span>
+                  <span className="font-semibold text-purple-600">{eventsStats.occupancyRate}%</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Clientes Ativos</span>
-                  <span className="font-semibold text-orange-600">{stats.activeClients}</span>
+                  <span className="font-semibold text-orange-600">{eventsStats.activeClients}</span>
                 </div>
               </div>
               <Button

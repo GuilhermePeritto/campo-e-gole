@@ -1,9 +1,8 @@
-
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, CreditCard, GraduationCap, Plus, Users2 } from 'lucide-react';
+import { GraduationCap, Users, UserCheck, DollarSign, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const School = () => {
@@ -11,37 +10,30 @@ const School = () => {
 
   const quickActions = [
     {
-      title: 'Novo Aluno',
-      description: 'Cadastrar novo aluno',
-      icon: Plus,
+      title: 'Nova Turma',
+      description: 'Criar uma nova turma',
+      icon: GraduationCap,
       color: 'bg-module-school',
-      action: () => navigate('/escolinha/alunos/novo')
+      action: () => navigate('/escolinha/turmas/novo')
     },
     {
       title: 'Alunos',
-      description: 'Gerenciar alunos matriculados',
-      icon: Users2,
+      description: 'Gerenciar alunos',
+      icon: Users,
       color: 'bg-module-school',
       action: () => navigate('/escolinha/alunos')
     },
     {
       title: 'Professores',
       description: 'Gerenciar professores',
-      icon: GraduationCap,
+      icon: UserCheck,
       color: 'bg-module-school',
       action: () => navigate('/escolinha/professores')
     },
     {
-      title: 'Turmas',
-      description: 'Organizar turmas e horários',
-      icon: GraduationCap,
-      color: 'bg-module-school',
-      action: () => navigate('/escolinha/turmas')
-    },
-    {
       title: 'Mensalidades',
-      description: 'Controlar pagamentos',
-      icon: CreditCard,
+      description: 'Controlar mensalidades',
+      icon: DollarSign,
       color: 'bg-module-school',
       action: () => navigate('/escolinha/mensalidades')
     },
@@ -80,8 +72,8 @@ const School = () => {
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Escola"
-        icon={<Users2 className="h-6 w-6" />}
+        title="Escolinha"
+        icon={<GraduationCap className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.school}
       />
 
@@ -89,7 +81,7 @@ const School = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground mb-6">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickActions.map((action, index) => {
               const IconComponent = action.icon;
               return (

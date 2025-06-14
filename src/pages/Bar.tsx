@@ -1,3 +1,4 @@
+
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,11 +11,11 @@ const Bar = () => {
 
   const quickActions = [
     {
-      title: 'Nova Venda',
-      description: 'Registrar uma nova venda',
+      title: 'Nova Comanda',
+      description: 'Criar uma nova comanda',
       icon: ShoppingCart,
       color: 'bg-module-bar',
-      action: () => navigate('/bar/nova-venda')
+      action: () => navigate('/bar/comandas/novo')
     },
     {
       title: 'Produtos',
@@ -31,11 +32,11 @@ const Bar = () => {
       action: () => navigate('/bar/estoque')
     },
     {
-      title: 'Comandas',
-      description: 'Controlar mesas e pedidos',
+      title: 'Checkout',
+      description: 'Finalizar vendas',
       icon: Utensils,
       color: 'bg-module-bar',
-      action: () => navigate('/bar/comandas')
+      action: () => navigate('/bar/checkout')
     },
     {
       title: 'Relatórios',
