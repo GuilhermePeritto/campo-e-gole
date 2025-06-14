@@ -219,7 +219,7 @@ const Comanda = () => {
         description: `Comanda ${comanda.number} foi atualizada com sucesso.`,
       });
     }
-    navigate('/bar/comandas');
+    navigate('/bar');
   };
 
   const handleCloseComanda = () => {
@@ -236,7 +236,7 @@ const Comanda = () => {
       title: "Comanda fechada!",
       description: `Comanda ${comanda.number} fechada com sucesso. Total: R$ ${total.toFixed(2)}`,
     });
-    navigate('/bar/comandas');
+    navigate('/bar');
   };
 
   const getStatusColor = (status: string) => {
@@ -257,11 +257,11 @@ const Comanda = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/bar/comandas')}
+                onClick={() => navigate('/bar')}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Comandas
+                Bar
               </Button>
               <div className="flex items-center gap-2">
                 <Receipt className="h-5 w-5 text-blue-600" />
@@ -523,12 +523,12 @@ const Comanda = () => {
             )}
 
             <div className="grid grid-cols-1 gap-3">
-              <Button variant="outline" onClick={() => navigate('/bar/comandas')}>
+              <Button variant="outline" onClick={() => navigate('/bar')}>
                 <Edit className="h-4 w-4 mr-2" />
-                Voltar para Comandas
+                Voltar para Bar
               </Button>
               {!isNewComanda && (
-                <Button variant="outline" onClick={() => navigate('/bar/comandas/new')}>
+                <Button variant="outline" onClick={() => navigate('/bar/comandas/novo')}>
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Comanda
                 </Button>

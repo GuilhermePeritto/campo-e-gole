@@ -1,4 +1,3 @@
-
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +21,7 @@ const Events = () => {
       description: 'Gerenciar locais esportivos',
       icon: MapPin,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/locais')
+      action: () => navigate('/eventos/espacos')
     },
     {
       title: 'Clientes',

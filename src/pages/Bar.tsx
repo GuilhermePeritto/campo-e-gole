@@ -2,7 +2,7 @@ import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { BarChart3, Package, ShoppingCart, Utensils } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Utensils, Receipt } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Bar = () => {
@@ -14,7 +14,14 @@ const Bar = () => {
       description: 'Registrar uma nova venda',
       icon: ShoppingCart,
       color: 'bg-module-bar',
-      action: () => navigate('/bar/nova-venda')
+      action: () => navigate('/bar/vendas/unificada')
+    },
+    {
+      title: 'Comandas',
+      description: 'Controlar mesas e pedidos',
+      icon: Receipt,
+      color: 'bg-module-bar',
+      action: () => navigate('/bar/comandas/novo')
     },
     {
       title: 'Produtos',
@@ -29,13 +36,6 @@ const Bar = () => {
       icon: Package,
       color: 'bg-module-bar',
       action: () => navigate('/bar/estoque')
-    },
-    {
-      title: 'Comandas',
-      description: 'Controlar mesas e pedidos',
-      icon: Utensils,
-      color: 'bg-module-bar',
-      action: () => navigate('/bar/comandas')
     },
     {
       title: 'Relatórios',
