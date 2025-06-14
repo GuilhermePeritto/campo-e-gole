@@ -34,6 +34,10 @@ const ViewComanda = () => {
   const { id } = useParams();
   const location = useLocation();
 
+  // Declarar os estados para desconto e método de pagamento
+  const [discount, setDiscount] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+
   // Detectar criação de nova comanda em diferentes rotas possíveis
   const isNewComanda =
     id === 'new' ||
