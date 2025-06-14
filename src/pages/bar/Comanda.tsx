@@ -1,3 +1,5 @@
+import PageTour, { TourStep } from '@/components/PageTour';
+import SearchableSelect from '@/components/SearchableSelect';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,11 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2, Search, ShoppingCart } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import PageTour, { TourStep } from '@/components/PageTour';
-import SearchableSelect from '@/components/SearchableSelect';
+import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -29,7 +29,7 @@ interface ComandaItem {
   stock: number;
 }
 
-const ViewComanda = () => {
+const Comanda = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
@@ -541,4 +541,4 @@ const ViewComanda = () => {
   );
 };
 
-export default ViewComanda;
+export default Comanda;
