@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2, Search, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, CreditCard, Edit, Minus, Package, Plus, Receipt, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -29,7 +29,7 @@ interface ComandaItem {
   stock: number;
 }
 
-const ViewComanda = () => {
+const ComandaForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
@@ -250,8 +250,9 @@ const ViewComanda = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="shadow-sm border-b bg-card/80 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
@@ -263,118 +264,96 @@ const ViewComanda = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Comandas
               </Button>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 rounded bg-module-bar/10 px-3 py-1">
                 <Receipt className="h-5 w-5 text-blue-600" />
-                <h1 className="text-xl font-semibold">
-                  {isNewComanda ? 'Nova Comanda' : `Comanda ${comanda.number}`}
+                <h1 className="text-xl font-bold tracking-wide">
+                  {isNewComanda ? 'Nova Comanda' : `Editar Comanda ${comanda.number}`}
                 </h1>
               </div>
             </div>
             {!isNewComanda && (
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(comanda.status)}`}>
-                {comanda.status}
-              </span>
+              <Badge variant="secondary" className="font-semibold text-md px-3 py-1">{comanda.status}</Badge>
             )}
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Informações da Comanda */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="comanda-info relative">
-              <PageTour steps={tourSteps} title={isNewComanda ? "Criação de Nova Comanda" : "Visualização de Comanda"} />
-              
+      {/* Main content */}
+      <main className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col gap-8 md:flex-row md:gap-8">
+          {/* Left: Informações e Itens */}
+          <div className="flex-1 space-y-8">
+            {/* Informações da Comanda */}
+            <Card className="relative overflow-visible shadow-lg">
+              <PageTour steps={tourSteps} title={isNewComanda ? "Criação de Nova Comanda" : "Edição de Comanda"} />
               <CardHeader>
-                <CardTitle>Informações da Comanda</CardTitle>
+                <CardTitle className="font-bold text-lg md:text-2xl text-blue-900 tracking-wider">Dados do Pedido</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-base">
                   <div>
-                    <Label className="font-medium text-muted-foreground">Cliente</Label>
-                    {isNewComanda ? (
-                      <Input
-                        value={comanda.client}
-                        onChange={(e) => setComanda(prev => ({...prev, client: e.target.value}))}
-                        placeholder="Nome do cliente"
-                        className="mt-1"
-                      />
-                    ) : (
-                      <div className="font-medium">{comanda.client}</div>
-                    )}
+                    <Label className="block mb-1 font-semibold">Cliente</Label>
+                    <Input
+                      value={comanda.client}
+                      onChange={(e) => setComanda(prev => ({...prev, client: e.target.value}))}
+                      placeholder="Nome do cliente"
+                      className="mb-2"
+                      disabled={!isNewComanda ? true : false}
+                    />
                   </div>
                   <div>
-                    <Label className="font-medium text-muted-foreground">Mesa</Label>
-                    {isNewComanda ? (
-                      <Input
-                        value={comanda.table}
-                        onChange={(e) => setComanda(prev => ({...prev, table: e.target.value}))}
-                        placeholder="Mesa"
-                        className="mt-1"
-                      />
-                    ) : (
-                      <div className="font-medium">{comanda.table}</div>
-                    )}
+                    <Label className="block mb-1 font-semibold">Mesa</Label>
+                    <Input
+                      value={comanda.table}
+                      onChange={(e) => setComanda(prev => ({...prev, table: e.target.value}))}
+                      placeholder="Mesa"
+                      className="mb-2"
+                      disabled={!isNewComanda ? true : false}
+                    />
                   </div>
-                  <div>
-                    <Label className="font-medium text-muted-foreground">Abertura</Label>
-                    <div className="font-medium">{comanda.openTime}</div>
-                  </div>
-                  <div>
-                    <Label className="font-medium text-muted-foreground">Status</Label>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(comanda.status)}`}>
-                      {comanda.status}
-                    </span>
-                  </div>
+                </div>
+                <div className="flex gap-4 text-xs mt-2 text-muted-foreground">
+                  <span>Aberto em: {comanda.openTime}</span>
+                  <span>Status: <Badge variant="outline" className="ml-1">{comanda.status}</Badge></span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Seção Adicionar Itens - Melhorada */}
-            <div className="add-items-section">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Adicionar Produtos</CardTitle>
-                  <CardDescription>
-                    Use o campo abaixo para buscar e adicionar produtos à comanda
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Buscar Produto</label>
-                    <SearchableSelect
-                      items={productItems}
-                      placeholder="Digite para buscar produtos..."
-                      emptyText="Nenhum produto encontrado."
-                      onSelect={handleProductSelect}
-                      className="w-full"
-                    />
-                  </div>
-
-                  <div className="text-xs text-muted-foreground">
-                    💡 Dica: Digite o nome do produto para encontrá-lo rapidamente
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Buscar/Adicionar Produtos */}
+            <Card className="add-items-section shadow">
+              <CardHeader>
+                <CardTitle className="font-semibold">Adicionar Produtos</CardTitle>
+                <CardDescription>
+                  Busque e adicione produtos à comanda
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <SearchableSelect
+                  items={productItems}
+                  placeholder="Digite o nome do produto..."
+                  emptyText="Nenhum produto encontrado."
+                  onSelect={handleProductSelect}
+                  className="w-full"
+                />
+                <div className="text-xs text-muted-foreground">
+                  💡 Dica: Busque pelo nome para adicionar rápido.
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Itens da Comanda */}
             <Card className="items-table">
               <CardHeader>
-                <CardTitle>Itens da Comanda</CardTitle>
-                <CardDescription>
-                  {comanda.items.length} itens na comanda
-                </CardDescription>
+                <CardTitle>Itens Adicionados ({comanda.items.length})</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Produto</TableHead>
                       <TableHead>Estoque</TableHead>
-                      <TableHead>Preço Unit.</TableHead>
-                      <TableHead>Quantidade</TableHead>
+                      <TableHead>Preço</TableHead>
+                      <TableHead>Qtd.</TableHead>
                       <TableHead>Total</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
@@ -382,9 +361,7 @@ const ViewComanda = () => {
                   <TableBody>
                     {comanda.items.map((item) => (
                       <TableRow key={item.id}>
-                        <TableCell>
-                          <div className="font-medium">{item.productName}</div>
-                        </TableCell>
+                        <TableCell><span className="font-semibold">{item.productName}</span></TableCell>
                         <TableCell>
                           <Badge variant={getStockBadgeVariant(item.stock)} className="gap-1">
                             <Package className="h-3 w-3" />
@@ -397,19 +374,21 @@ const ViewComanda = () => {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Button
-                              size="sm"
+                              size="icon"
                               variant="outline"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               disabled={comanda.status !== 'Aberta'}
+                              className="rounded-full w-8 h-8"
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-8 text-center">{item.quantity}</span>
+                            <span className="w-6 text-center">{item.quantity}</span>
                             <Button
-                              size="sm"
+                              size="icon"
                               variant="outline"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               disabled={comanda.status !== 'Aberta' || item.stock === 0}
+                              className="rounded-full w-8 h-8"
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
@@ -418,11 +397,10 @@ const ViewComanda = () => {
                         <TableCell className="font-bold">R$ {item.total.toFixed(2)}</TableCell>
                         <TableCell>
                           <Button
-                            size="sm"
-                            variant="outline"
+                            size="icon"
+                            variant="destructive"
                             onClick={() => removeItem(item.id)}
                             disabled={comanda.status !== 'Aberta'}
-                            className="text-red-600"
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
@@ -431,68 +409,67 @@ const ViewComanda = () => {
                     ))}
                   </TableBody>
                 </Table>
-
                 {comanda.items.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    Nenhum item na comanda
+                    Nenhum item adicionado.
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
-
-          {/* Resumo e Pagamento */}
-          <div className="space-y-6 summary-section">
-            <Card>
+          {/* End left */}
+          {/* Right: Resumo & Ações */}
+          <div className="w-full md:w-[340px] flex-shrink-0 flex flex-col gap-6">
+            {/* Resumo */}
+            <Card className="summary-section shadow">
               <CardHeader>
-                <CardTitle>Resumo</CardTitle>
+                <CardTitle className="font-semibold">Resumo</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Subtotal:</span>
-                    <span>R$ {subtotal.toFixed(2)}</span>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between text-md">
+                  <span>Subtotal</span>
+                  <span>R$ {subtotal.toFixed(2)}</span>
+                </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-orange-600">
+                    <span>Desconto</span>
+                    <span>- R$ {discountAmount.toFixed(2)}</span>
                   </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-orange-600">
-                      <span>Desconto:</span>
-                      <span>- R$ {discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-lg font-bold border-t pt-2">
-                    <span>Total:</span>
-                    <span>R$ {total.toFixed(2)}</span>
-                  </div>
+                )}
+                <div className="flex justify-between text-xl font-bold border-t pt-2">
+                  <span>Total</span>
+                  <span>R$ {total.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
 
             {comanda.status === 'Aberta' && (
-              <Card>
+              <Card className="shadow">
                 <CardHeader>
-                  <CardTitle>{isNewComanda ? 'Salvar Comanda' : 'Fechar Comanda'}</CardTitle>
+                  <CardTitle>
+                    {isNewComanda ? 'Salvar Comanda' : 'Fechar Comanda'}
+                  </CardTitle>
                   <CardDescription>
-                    {isNewComanda ? 'Salve a comanda para continuar' : 'Defina os dados para fechamento'}
+                    {isNewComanda ? 'Após salvar, adicione produtos e feche a comanda.' : 'Defina o pagamento para fechar.'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {!isNewComanda && (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
+                        <Label htmlFor="paymentMethod">Forma de pag.</Label>
                         <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Selecionar pagamento" />
+                            <SelectValue placeholder="Selecionar" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                            <SelectItem value="cartao_debito">Cartão de Débito</SelectItem>
-                            <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
+                            <SelectItem value="cartao_debito">Débito</SelectItem>
+                            <SelectItem value="cartao_credito">Crédito</SelectItem>
                             <SelectItem value="pix">PIX</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-
                       <div className="space-y-2">
                         <Label htmlFor="discount">Desconto (R$)</Label>
                         <Input
@@ -510,19 +487,19 @@ const ViewComanda = () => {
                   {isNewComanda ? (
                     <Button onClick={handleSaveComanda} className="w-full" size="lg">
                       <Receipt className="h-4 w-4 mr-2" />
-                      Salvar Comanda
+                      Salvar
                     </Button>
                   ) : (
                     <Button onClick={handleCloseComanda} className="w-full" size="lg">
                       <CreditCard className="h-4 w-4 mr-2" />
-                      Fechar Comanda - R$ {total.toFixed(2)}
+                      Fechar - R$ {total.toFixed(2)}
                     </Button>
                   )}
                 </CardContent>
               </Card>
             )}
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="flex flex-col gap-3">
               <Button variant="outline" onClick={() => navigate('/bar/comandas')}>
                 <Edit className="h-4 w-4 mr-2" />
                 Voltar para Comandas
@@ -535,10 +512,11 @@ const ViewComanda = () => {
               )}
             </div>
           </div>
+          {/* End right */}
         </div>
       </main>
     </div>
   );
 };
 
-export default ViewComanda;
+export default ComandaForm;
