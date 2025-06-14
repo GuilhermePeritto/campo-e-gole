@@ -241,9 +241,9 @@ const ComandaForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Header com design moderno */}
-      <header className="sticky top-0 z-20 backdrop-blur-lg bg-white/80 border-b border-white/20 shadow-lg">
+      <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -251,20 +251,20 @@ const ComandaForm = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/bar/comandas')}
-                className="gap-2 text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                className="gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-500 rounded-xl shadow-lg">
                   <Receipt className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-white">
                     {isNewComanda ? 'Nova Comanda' : `Comanda ${comanda.number}`}
                   </h1>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {isNewComanda ? 'Criar novo pedido' : 'Editar pedido existente'}
                   </p>
                 </div>
@@ -288,10 +288,10 @@ const ComandaForm = () => {
         
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Coluna principal - Informações e Itens */}
-          <div className="xl:col-span-2 space-y-6">
+          <div className="xl:col-span-2 space-y-8">
             {/* Card de informações do cliente com design moderno */}
-            <Card className="comanda-info border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
+            <Card className="comanda-info bg-white dark:bg-slate-800 shadow-lg rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-t-2xl p-5">
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <User className="h-5 w-5" />
                   Informações do Pedido
@@ -300,7 +300,7 @@ const ComandaForm = () => {
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                       <User className="h-4 w-4" />
                       Cliente
                     </Label>
@@ -308,12 +308,12 @@ const ComandaForm = () => {
                       value={comanda.client}
                       onChange={(e) => setComanda(prev => ({...prev, client: e.target.value}))}
                       placeholder="Nome do cliente"
-                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+                      className="border-slate-200 dark:border-slate-600 bg-transparent focus:border-orange-400 focus:ring-orange-400"
                       disabled={!isNewComanda}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                       <MapPin className="h-4 w-4" />
                       Mesa
                     </Label>
@@ -321,12 +321,12 @@ const ComandaForm = () => {
                       value={comanda.table}
                       onChange={(e) => setComanda(prev => ({...prev, table: e.target.value}))}
                       placeholder="Número da mesa"
-                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+                      className="border-slate-200 dark:border-slate-600 bg-transparent focus:border-orange-400 focus:ring-orange-400"
                       disabled={!isNewComanda}
                     />
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-4 text-sm text-gray-500">
+                <div className="mt-4 flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     <span>Aberto em: {comanda.openTime}</span>
@@ -339,13 +339,13 @@ const ComandaForm = () => {
             </Card>
 
             {/* Card de adicionar produtos */}
-            <Card className="add-items-section border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg">
+            <Card className="add-items-section bg-white dark:bg-slate-800 shadow-lg rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-t-2xl p-5">
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <Plus className="h-5 w-5" />
                   Adicionar Produtos
                 </CardTitle>
-                <CardDescription className="text-green-100">
+                <CardDescription className="text-orange-100">
                   Busque e adicione produtos ao pedido
                 </CardDescription>
               </CardHeader>
@@ -357,8 +357,8 @@ const ComandaForm = () => {
                   onSelect={handleProductSelect}
                   className="w-full"
                 />
-                <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-700 flex items-center gap-2">
+                <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-500/30">
+                  <p className="text-sm text-orange-700 dark:text-orange-300 flex items-center gap-2">
                     💡 <span>Dica: Use a busca para encontrar produtos rapidamente</span>
                   </p>
                 </div>
@@ -366,8 +366,8 @@ const ComandaForm = () => {
             </Card>
 
             {/* Tabela de itens com design moderno */}
-            <Card className="items-table border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-t-lg">
+            <Card className="items-table bg-white dark:bg-slate-800 shadow-lg rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-t-2xl p-5">
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <Package className="h-5 w-5" />
                   Itens do Pedido ({comanda.items.length})
@@ -378,20 +378,20 @@ const ComandaForm = () => {
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-gray-50/80">
-                          <TableHead className="font-semibold">Produto</TableHead>
-                          <TableHead className="font-semibold">Estoque</TableHead>
-                          <TableHead className="font-semibold">Preço Unit.</TableHead>
-                          <TableHead className="font-semibold">Quantidade</TableHead>
-                          <TableHead className="font-semibold">Total</TableHead>
-                          <TableHead className="font-semibold">Ações</TableHead>
+                        <TableRow className="bg-slate-50 dark:bg-slate-700/50">
+                          <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Produto</TableHead>
+                          <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Estoque</TableHead>
+                          <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Preço Unit.</TableHead>
+                          <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Quantidade</TableHead>
+                          <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Total</TableHead>
+                          <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Ações</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {comanda.items.map((item) => (
-                          <TableRow key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                          <TableRow key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0">
                             <TableCell>
-                              <span className="font-medium text-gray-900">{item.productName}</span>
+                              <span className="font-medium text-slate-900 dark:text-slate-100">{item.productName}</span>
                             </TableCell>
                             <TableCell>
                               <Badge variant={getStockBadgeVariant(item.stock)} className="gap-1">
@@ -401,7 +401,7 @@ const ComandaForm = () => {
                                 </span>
                               </Badge>
                             </TableCell>
-                            <TableCell className="font-medium">R$ {item.unitPrice.toFixed(2)}</TableCell>
+                            <TableCell className="font-medium text-slate-700 dark:text-slate-300">R$ {item.unitPrice.toFixed(2)}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <Button
@@ -409,30 +409,30 @@ const ComandaForm = () => {
                                   variant="outline"
                                   onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                   disabled={comanda.status !== 'Aberta'}
-                                  className="h-8 w-8 rounded-full border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-600"
+                                  className="h-8 w-8 rounded-full border-slate-300 dark:border-slate-600 hover:bg-red-50 dark:hover:bg-red-900/30 hover:border-red-300 dark:hover:border-red-600 hover:text-red-600"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </Button>
-                                <span className="w-8 text-center font-medium">{item.quantity}</span>
+                                <span className="w-8 text-center font-medium text-slate-800 dark:text-slate-200">{item.quantity}</span>
                                 <Button
                                   size="icon"
                                   variant="outline"
                                   onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                   disabled={comanda.status !== 'Aberta' || item.stock === 0}
-                                  className="h-8 w-8 rounded-full border-gray-300 hover:bg-green-50 hover:border-green-300 hover:text-green-600"
+                                  className="h-8 w-8 rounded-full border-slate-300 dark:border-slate-600 hover:bg-green-50 dark:hover:bg-green-900/30 hover:border-green-300 dark:hover:border-green-600 hover:text-green-600"
                                 >
                                   <Plus className="h-3 w-3" />
                                 </Button>
                               </div>
                             </TableCell>
-                            <TableCell className="font-bold text-green-600">R$ {item.total.toFixed(2)}</TableCell>
+                            <TableCell className="font-bold text-green-600 dark:text-green-500">R$ {item.total.toFixed(2)}</TableCell>
                             <TableCell>
                               <Button
                                 size="icon"
                                 variant="outline"
                                 onClick={() => removeItem(item.id)}
                                 disabled={comanda.status !== 'Aberta'}
-                                className="h-8 w-8 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                                className="h-8 w-8 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-500/50 dark:hover:bg-red-900/30 dark:text-red-500"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
@@ -444,9 +444,9 @@ const ComandaForm = () => {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500 text-lg">Nenhum item adicionado ao pedido</p>
-                    <p className="text-gray-400 text-sm">Use a busca acima para adicionar produtos</p>
+                    <Package className="h-12 w-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                    <p className="text-slate-500 dark:text-slate-400 text-lg">Nenhum item adicionado ao pedido</p>
+                    <p className="text-slate-400 dark:text-slate-500 text-sm">Use a busca acima para adicionar produtos</p>
                   </div>
                 )}
               </CardContent>
@@ -454,10 +454,10 @@ const ComandaForm = () => {
           </div>
 
           {/* Sidebar direita - Resumo e ações */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Card de resumo financeiro */}
-            <Card className="summary-section border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-t-lg">
+            <Card className="summary-section bg-white dark:bg-slate-800 shadow-lg rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-t-2xl p-5">
                 <CardTitle className="flex items-center gap-3 text-lg">
                   <Receipt className="h-5 w-5" />
                   Resumo Financeiro
@@ -466,19 +466,19 @@ const ComandaForm = () => {
               <CardContent className="p-6 space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="font-semibold text-lg">R$ {subtotal.toFixed(2)}</span>
+                    <span className="text-slate-600 dark:text-slate-300">Subtotal</span>
+                    <span className="font-semibold text-lg text-slate-800 dark:text-slate-100">R$ {subtotal.toFixed(2)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between items-center text-orange-600">
+                    <div className="flex justify-between items-center text-orange-600 dark:text-orange-400">
                       <span>Desconto</span>
                       <span className="font-semibold">- R$ {discountAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="border-t pt-3">
+                  <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold text-gray-900">Total</span>
-                      <span className="text-2xl font-bold text-green-600">R$ {total.toFixed(2)}</span>
+                      <span className="text-xl font-bold text-slate-900 dark:text-white">Total</span>
+                      <span className="text-2xl font-bold text-green-600 dark:text-green-500">R$ {total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -487,12 +487,12 @@ const ComandaForm = () => {
 
             {/* Card de ações */}
             {comanda.status === 'Aberta' && (
-              <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
+              <Card className="bg-white dark:bg-slate-800 shadow-lg rounded-2xl">
+                <CardHeader className="bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-t-2xl p-5">
                   <CardTitle className="text-lg">
                     {isNewComanda ? 'Salvar Comanda' : 'Finalizar Pedido'}
                   </CardTitle>
-                  <CardDescription className="text-orange-100">
+                  <CardDescription className="text-slate-300">
                     {isNewComanda ? 'Criar nova comanda' : 'Definir pagamento e fechar'}
                   </CardDescription>
                 </CardHeader>
@@ -500,9 +500,9 @@ const ComandaForm = () => {
                   {!isNewComanda && (
                     <>
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium text-gray-700">Forma de Pagamento</Label>
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Forma de Pagamento</Label>
                         <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                          <SelectTrigger className="border-gray-200 focus:border-orange-400 focus:ring-orange-400">
+                          <SelectTrigger className="border-slate-200 dark:border-slate-600 bg-transparent focus:border-orange-400 focus:ring-orange-400">
                             <SelectValue placeholder="Selecionar forma de pagamento" />
                           </SelectTrigger>
                           <SelectContent>
@@ -514,14 +514,14 @@ const ComandaForm = () => {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium text-gray-700">Desconto (R$)</Label>
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Desconto (R$)</Label>
                         <Input
                           type="number"
                           step="0.01"
                           placeholder="0,00"
                           value={discount}
                           onChange={(e) => setDiscount(e.target.value)}
-                          className="border-gray-200 focus:border-orange-400 focus:ring-orange-400"
+                          className="border-slate-200 dark:border-slate-600 bg-transparent focus:border-orange-400 focus:ring-orange-400"
                         />
                       </div>
                     </>
@@ -530,7 +530,7 @@ const ComandaForm = () => {
                   {isNewComanda ? (
                     <Button 
                       onClick={handleSaveComanda} 
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg" 
+                      className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg" 
                       size="lg"
                     >
                       <Receipt className="h-4 w-4 mr-2" />
@@ -551,12 +551,12 @@ const ComandaForm = () => {
             )}
 
             {/* Card de navegação */}
-            <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+            <Card className="bg-transparent shadow-none border-none">
               <CardContent className="p-4 space-y-3">
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/bar/comandas')}
-                  className="w-full border-gray-300 hover:bg-gray-50"
+                  className="w-full border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Ver Todas as Comandas
@@ -565,7 +565,7 @@ const ComandaForm = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => navigate('/bar/comandas/novo')}
-                    className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
+                    className="w-full border-orange-300 text-orange-600 hover:bg-orange-50 dark:border-orange-500/50 dark:text-orange-400 dark:hover:bg-orange-900/20"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Nova Comanda
