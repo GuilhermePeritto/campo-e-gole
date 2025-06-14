@@ -69,6 +69,7 @@ import EscolinhaTeachers from './pages/escolinha/Teachers';
 
 // Bar pages
 import BarCheckout from './pages/bar/Checkout';
+import ComandaForm from './pages/bar/Comanda';
 import BarComandas from './pages/bar/Comandas';
 import BarEditProduct from './pages/bar/EditProduct';
 import BarInventory from './pages/bar/Inventory';
@@ -76,7 +77,6 @@ import BarNewProduct from './pages/bar/NewProduct';
 import BarProducts from './pages/bar/Products';
 import BarReports from './pages/bar/Reports';
 import BarUnifiedSale from './pages/bar/UnifiedSale';
-import ComandaForm from './pages/bar/ViewComanda';
 
 // Settings pages
 import ConfiguracoesEditGroup from './pages/configuracoes/EditGroup';
