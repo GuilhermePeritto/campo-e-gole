@@ -97,15 +97,17 @@ function App() {
               <Routes>
                 {/* Main routes */}
                 <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/painel" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
+
+                {/* Module routes */}
                 <Route path="/eventos" element={<Events />} />
                 <Route path="/financeiro" element={<Financial />} />
                 <Route path="/escolinha" element={<School />} />
                 <Route path="/bar" element={<Bar />} />
                 <Route path="/configuracoes" element={<Settings />} />
-                <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
 
                 {/* Events routes */}
                 <Route path="/eventos/calendario" element={<EventsCalendar />} />
@@ -114,16 +116,11 @@ function App() {
                 <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
                 <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
                 <Route path="/eventos/espacos" element={<EventsVenues />} />
-                <Route path="/eventos/locais" element={<EventsVenues />} />
                 <Route path="/eventos/espacos/novo" element={<EventsNewVenue />} />
-                <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
                 <Route path="/eventos/espacos/:id/editar" element={<EventsEditVenue />} />
-                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
                 <Route path="/eventos/novo" element={<EventsNewReservation />} />
                 <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
-                <Route path="/eventos/contas-receber" element={<EventsReceivables />} />
-                <Route path="/eventos/receivables" element={<EventsReceivables />} />
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
@@ -161,7 +158,6 @@ function App() {
                 <Route path="/escolinha/chamada" element={<EscolinhaAttendanceCall />} />
                 <Route path="/escolinha/chamada-publica" element={<EscolinhaPublicAttendanceCall />} />
                 <Route path="/escolinha/mensalidades" element={<EscolinhaPayments />} />
-                <Route path="/escolinha/pagamentos" element={<EscolinhaPayments />} />
                 <Route path="/escolinha/receber-pagamento" element={<EscolinhaReceivePayment />} />
                 <Route path="/escolinha/relatorios" element={<EscolinhaReports />} />
 
@@ -171,16 +167,10 @@ function App() {
                 <Route path="/bar/produtos/:id/editar" element={<BarEditProduct />} />
                 <Route path="/bar/estoque" element={<BarInventory />} />
                 <Route path="/bar/comandas" element={<BarComandas />} />
-                {/* Usar ViewComanda para visualização e criação */}
                 <Route path="/bar/comandas/novo" element={<Comanda />} />
-                <Route path="/bar/comandas/new" element={<Comanda />} />
                 <Route path="/bar/comandas/:id" element={<Comanda />} />
-                {/* As próximas três rotas direcionam o usuário para ViewComanda, para manter o botão Nova Comanda funcionando */}
-                <Route path="/bar/venda/novo" element={<Comanda />} />
-                <Route path="/bar/vendas/novo" element={<Comanda />} />
-                <Route path="/bar/nova-venda" element={<Comanda />} />
-                <Route path="/bar/vendas/unificada" element={<BarUnifiedSale />} />
                 <Route path="/bar/checkout" element={<BarCheckout />} />
+                <Route path="/bar/vendas/unificada" element={<BarUnifiedSale />} />
                 <Route path="/bar/relatorios" element={<BarReports />} />
 
                 {/* Settings routes */}
@@ -202,4 +192,3 @@ function App() {
 }
 
 export default App;
-
