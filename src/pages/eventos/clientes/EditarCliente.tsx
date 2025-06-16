@@ -1,3 +1,4 @@
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -87,7 +88,7 @@ const EditarCliente = () => {
   };
 
   return (
-    <PaginaFormularioBase
+    <BaseFormPage
       title="Editar Dados do Cliente"
       description="Atualize as informações do cliente"
       icon={<Users className="h-5 w-5" />}
@@ -188,7 +189,7 @@ const EditarCliente = () => {
           rows={3}
         />
       </div>
-    </PaginaFormularioBase>
+    </BaseFormPage>
   );
 };
 

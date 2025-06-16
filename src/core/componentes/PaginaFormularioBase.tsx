@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ModuleHeader from '@/components/ModuleHeader';
-import PageTour, { TourStep } from '@/components/PageTour';
+import { PageTour, TourStep } from '@/components/PageTour';
 
 interface PaginaFormularioBaseProps {
   title: string;
