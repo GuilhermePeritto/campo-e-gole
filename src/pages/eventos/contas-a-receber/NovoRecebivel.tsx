@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CreditCard } from 'lucide-react';
@@ -105,7 +104,7 @@ const NovoRecebivel = () => {
             label="Cliente"
             value={formData.client}
             onChange={handleClientChange}
-            opcoes={clientesExemplo}
+            items={clientesExemplo}
             placeholder="Digite o nome do cliente..."
             required
           />

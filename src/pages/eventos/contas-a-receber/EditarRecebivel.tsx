@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CreditCard } from 'lucide-react';
@@ -107,7 +106,7 @@ const EditarRecebivel = () => {
             label="Cliente"
             value={formData.client}
             onChange={handleClientChange}
-            opcoes={clientesExemplo}
+            items={clientesExemplo}
             required
           />
 
