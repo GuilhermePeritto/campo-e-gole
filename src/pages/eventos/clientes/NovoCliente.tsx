@@ -1,4 +1,3 @@
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -71,7 +70,7 @@ const NovoCliente = () => {
   };
 
   return (
-    <BaseFormPage
+    <PaginaFormularioBase
       title="Cadastrar Novo Cliente"
       description="Registre um novo cliente no sistema de eventos"
       icon={<UserPlus className="h-5 w-5" />}
@@ -170,7 +169,7 @@ const NovoCliente = () => {
           rows={3}
         />
       </div>
-    </BaseFormPage>
+    </PaginaFormularioBase>
   );
 };
 
