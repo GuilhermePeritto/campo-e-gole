@@ -8,7 +8,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { useCalendar } from '@/hooks/useCalendar';
 import { getWeekDays, getDateTitle } from '@/utils/calendarUtils';
 
-const Calendar = () => {
+const Agenda = () => {
   const {
     viewType,
     setViewType,
@@ -76,4 +76,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default Agenda;

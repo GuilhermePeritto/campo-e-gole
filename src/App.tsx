@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -18,21 +17,23 @@ import Settings from './pages/Settings';
 import UniversalReceivePayment from './pages/UniversalReceivePayment';
 
 // Events pages
-import EventsCalendar from './pages/eventos/Calendar';
-import EventsClientHistory from './pages/eventos/ClientHistory';
-import EventsClients from './pages/eventos/Clients';
-import EventsEditClient from './pages/eventos/EditClient';
-import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
-import EventsEditReservation from './pages/eventos/EditReservation';
-import EventsEditVenue from './pages/eventos/EditVenue';
-import EventsNewClient from './pages/eventos/NewClient';
-import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
-import EventsNewReservation from './pages/eventos/NewReservation';
-import EventsNewVenue from './pages/eventos/NewVenue';
-import EventsReceivables from './pages/eventos/Receivables';
-import EventsReceivePayment from './pages/eventos/ReceivePayment';
-import EventsReports from './pages/eventos/Reports';
-import EventsVenues from './pages/eventos/Venues';
+import Agenda from './pages/eventos/agenda/Agenda';
+import Clientes from './pages/eventos/clientes/Clientes';
+import NovoCliente from './pages/eventos/clientes/NovoCliente';
+import EditarCliente from './pages/eventos/clientes/EditarCliente';
+import HistoricoCliente from './pages/eventos/clientes/HistoricoCliente';
+import Locais from './pages/eventos/locais/Locais';
+import NovoLocal from './pages/eventos/locais/NovoLocal';
+import EditarLocal from './pages/eventos/locais/EditarLocal';
+import NovaReserva from './pages/eventos/reservas/NovaReserva';
+import EditarReserva from './pages/eventos/reservas/EditarReserva';
+import NovoEvento from './pages/eventos/eventos/NovoEvento';
+import EditarEvento from './pages/eventos/eventos/EditarEvento';
+import ContasAReceber from './pages/eventos/contas-a-receber/ContasAReceber';
+import NovoRecebivel from './pages/eventos/contas-a-receber/NovoRecebivel';
+import EditarRecebivel from './pages/eventos/contas-a-receber/EditarRecebivel';
+import Relatorios from './pages/eventos/relatorios/Relatorios';
+import ReceberPagamento from './pages/eventos/financeiro/ReceberPagamento';
 
 // Financial pages
 import FinanceiroContasPagar from './pages/financeiro/AccountsPayable';
@@ -97,7 +98,7 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <Router>
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background text-foreground">
               <Routes>
                 {/* Main routes */}
                 <Route path="/" element={<Index />} />
@@ -118,22 +119,24 @@ function App() {
                 <Route path="/configuracoes" element={<Settings />} />
 
                 {/* Events routes */}
-                <Route path="/eventos/calendario" element={<EventsCalendar />} />
-                <Route path="/eventos/clientes" element={<EventsClients />} />
-                <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
-                <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
-                <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
-                <Route path="/eventos/locais" element={<EventsVenues />} />
-                <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
-                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
-                <Route path="/eventos/novo" element={<EventsNewReservation />} />
-                <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
-                <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
-                <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
-                <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
-                <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
-                <Route path="/eventos/receber-pagamento" element={<EventsReceivePayment />} />
-                <Route path="/eventos/relatorios" element={<EventsReports />} />
+                <Route path="/eventos/calendario" element={<Agenda />} />
+                <Route path="/eventos/agenda" element={<Agenda />} />
+                <Route path="/eventos/clientes" element={<Clientes />} />
+                <Route path="/eventos/clientes/novo" element={<NovoCliente />} />
+                <Route path="/eventos/clientes/:id/editar" element={<EditarCliente />} />
+                <Route path="/eventos/clientes/:id/historico" element={<HistoricoCliente />} />
+                <Route path="/eventos/locais" element={<Locais />} />
+                <Route path="/eventos/locais/novo" element={<NovoLocal />} />
+                <Route path="/eventos/locais/:id/editar" element={<EditarLocal />} />
+                <Route path="/eventos/novo" element={<NovaReserva />} />
+                <Route path="/eventos/reservas/:id/editar" element={<EditarReserva />} />
+                <Route path="/eventos/eventos/novo" element={<NovoEvento />} />
+                <Route path="/eventos/eventos/:id/editar" element={<EditarEvento />} />
+                <Route path="/eventos/contas-a-receber" element={<ContasAReceber />} />
+                <Route path="/eventos/contas-a-receber/novo" element={<NovoRecebivel />} />
+                <Route path="/eventos/contas-a-receber/:id/editar" element={<EditarRecebivel />} />
+                <Route path="/eventos/receber-pagamento" element={<ReceberPagamento />} />
+                <Route path="/eventos/relatorios" element={<Relatorios />} />
 
                 {/* Financial routes */}
                 <Route path="/financeiro/receitas" element={<FinanceiroReceitas />} />

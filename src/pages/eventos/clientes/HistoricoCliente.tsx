@@ -1,11 +1,10 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Calendar, Mail, MapPin, Phone, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const ClientHistory = () => {
+const HistoricoCliente = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -213,4 +212,4 @@ const ClientHistory = () => {
   );
 };
 
-export default ClientHistory;
+export default HistoricoCliente;
