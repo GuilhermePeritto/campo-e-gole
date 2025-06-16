@@ -93,6 +93,7 @@ const EditReservation = () => {
       date: '2024-06-15',
       startTime: '19:00',
       endTime: '20:00',
+      amount: 160,
       recurring: false,
       recurringType: '',
       customRecurringDays: '',
@@ -329,8 +330,8 @@ const EditReservation = () => {
                     <SeletorData
                       id="date"
                       label="Data"
-                      value={formData.date}
-                      onChange={(value) => handleChange('date', value)}
+                      value={formData.date ? new Date(formData.date) : undefined}
+                      onChange={(date) => handleChange('date', date ? date.toISOString().split('T')[0] : '')}
                       required
                     />
                     
@@ -355,8 +356,8 @@ const EditReservation = () => {
                     <CampoValor
                       id="amount"
                       label="Valor"
-                      value={formData.amount}
-                      onChange={(value) => handleChange('amount', value)}
+                      value={formData.amount.toString()}
+                      onChange={(value) => handleChange('amount', parseFloat(value) || 0)}
                       required
                     />
                   </div>

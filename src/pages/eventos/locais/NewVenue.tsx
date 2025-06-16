@@ -120,8 +120,8 @@ const NewVenue = () => {
           <CampoValor
             id="hourlyRate"
             label="Valor por Hora"
-            value={formData.hourlyRate}
-            onChange={(value) => handleChange('hourlyRate', value)}
+            value={formData.hourlyRate.toString()}
+            onChange={(value) => handleChange('hourlyRate', parseFloat(value) || 0)}
             required
           />
         </div>

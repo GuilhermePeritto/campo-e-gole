@@ -5,17 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface OpcaoBusca {
-  id: string;
-  label: string;
-  subtitle?: string;
-}
-
 interface CampoBuscaProps {
   label?: string;
   value?: string;
-  onChange?: (value: string, item?: OpcaoBusca) => void;
-  opcoes?: OpcaoBusca[];
+  onChange?: (value: string, item?: any) => void;
+  items?: any[];
+  displayField?: string;
   placeholder?: string;
   className?: string;
   required?: boolean;
@@ -28,7 +23,8 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
   label,
   value = '',
   onChange,
-  opcoes = [],
+  items = [],
+  displayField = 'label',
   placeholder = "Digite para buscar...",
   className,
   required = false,
@@ -38,7 +34,7 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(value);
-  const [filteredOptions, setFilteredOptions] = useState<OpcaoBusca[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<any[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -46,15 +42,14 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = opcoes.filter(option =>
-        option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (option.subtitle && option.subtitle.toLowerCase().includes(searchTerm.toLowerCase()))
+      const filtered = items.filter(item =>
+        item[displayField]?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredOptions(filtered);
     } else {
-      setFilteredOptions(opcoes);
+      setFilteredOptions(items);
     }
-  }, [searchTerm, opcoes]);
+  }, [searchTerm, items, displayField]);
 
   useEffect(() => {
     if (onBuscar && searchTerm) {
@@ -91,13 +86,13 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
     }
   };
 
-  const handleOptionSelect = (option: OpcaoBusca) => {
-    setSearchTerm(option.label);
+  const handleOptionSelect = (option: any) => {
+    setSearchTerm(option[displayField]);
     setIsOpen(false);
     setSelectedIndex(-1);
     
     if (onChange) {
-      onChange(option.label, option);
+      onChange(option[displayField], option);
     }
   };
 
@@ -181,16 +176,19 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
           ) : filteredOptions.length > 0 ? (
             filteredOptions.map((option, index) => (
               <div
-                key={option.id}
+                key={option.id || index}
                 onClick={() => handleOptionSelect(option)}
                 className={cn(
                   "p-3 cursor-pointer hover:bg-muted/50 border-b border-border last:border-0",
                   selectedIndex === index && "bg-muted"
                 )}
               >
-                <div className="font-medium text-foreground">{option.label}</div>
-                {option.subtitle && (
-                  <div className="text-sm text-muted-foreground">{option.subtitle}</div>
+                <div className="font-medium text-foreground">{option[displayField]}</div>
+                {option.tipo && (
+                  <div className="text-sm text-muted-foreground">{option.tipo}</div>
+                )}
+                {option.email && (
+                  <div className="text-sm text-muted-foreground">{option.email}</div>
                 )}
               </div>
             ))

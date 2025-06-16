@@ -111,7 +111,7 @@ const NewReservation = () => {
           startTime: eventData.startTime,
           endTime: eventData.endTime,
           notes: eventData.notes,
-          amount: eventData.amount,
+          amount: parseFloat(eventData.amount),
           date: dateParam || prev.date
         }));
         setIsEditing(true);
@@ -192,7 +192,7 @@ const NewReservation = () => {
       startTime: event.startTime,
       endTime: event.endTime,
       notes: event.notes || '',
-      amount: '160' // Mock amount
+      amount: 160 // Mock amount
     });
     
     setIsEditing(true);
@@ -324,16 +324,16 @@ const NewReservation = () => {
                     <SeletorData
                       id="date"
                       label="Data"
-                      value={formData.date}
-                      onChange={(value) => handleChange('date', value)}
+                      value={formData.date ? new Date(formData.date) : undefined}
+                      onChange={(date) => handleChange('date', date ? date.toISOString().split('T')[0] : '')}
                       required
                     />
 
                     <CampoValor
                       id="amount"
                       label="Valor (R$)"
-                      value={formData.amount}
-                      onChange={(value) => handleChange('amount', value)}
+                      value={formData.amount.toString()}
+                      onChange={(value) => handleChange('amount', parseFloat(value) || 0)}
                       required
                     />
 
