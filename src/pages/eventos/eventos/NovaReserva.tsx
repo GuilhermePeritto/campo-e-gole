@@ -1,412 +1,211 @@
-import EventTimeline from '@/components/EventTimeline';
-import ModuleHeader from '@/components/ModuleHeader';
-import PageTour, { TourStep } from '@/components/PageTour';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Calendar, Edit, Plus, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { TourStep } from '@/components/PageTour';
+import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
-import CampoHorario from '@/core/componentes/CampoHorario';
-import CampoBusca from '@/core/componentes/CampoBusca';
+import SeletorHora from '@/core/componentes/SeletorHora';
 
-const NewReservation = () => {
+interface ReservationFormData {
+  client: string;
+  venue: string;
+  date: Date | undefined;
+  startTime: string;
+  endTime: string;
+  notes: string;
+  amount: string;
+}
+
+const NovaReserva = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingEventId, setEditingEventId] = useState<number | null>(null);
-  
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ReservationFormData>({
     client: '',
     venue: '',
-    date: '',
+    date: new Date(),
     startTime: '',
     endTime: '',
     notes: '',
-    amount: 0
+    amount: ''
   });
 
-  // Tour steps
+  // Dados de exemplo
+  const clientesExemplo = [
+    { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
+    { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
+    { id: '3', label: 'Pedro Costa', subtitle: 'CNPJ: 12.345.678/0001-90' },
+  ];
+
+  const locaisExemplo = [
+    { id: '1', label: 'Quadra A', subtitle: 'Futebol Society' },
+    { id: '2', label: 'Quadra B', subtitle: 'Basquete' },
+    { id: '3', label: 'Campo Principal', subtitle: 'Futebol' },
+  ];
+
   const tourSteps: TourStep[] = [
     {
-      target: '[data-tour="form-card"]',
-      title: 'Formulário de Reserva',
-      content: 'Preencha os dados da reserva aqui. Selecione o cliente, local, data e horários.'
+      target: '#client',
+      title: 'Cliente',
+      content: 'Selecione o cliente que está fazendo a reserva.'
     },
     {
-      target: '[data-tour="client-select"]',
-      title: 'Seleção de Cliente',
-      content: 'Escolha o cliente para esta reserva. Você pode cadastrar novos clientes se necessário.'
+      target: '#venue',
+      title: 'Local',
+      content: 'Escolha o local que será reservado.'
     },
     {
-      target: '[data-tour="venue-select"]',
-      title: 'Local da Reserva',
-      content: 'Selecione qual espaço esportivo será reservado para o evento.'
+      target: '#date',
+      title: 'Data',
+      content: 'Selecione a data da reserva.'
     },
     {
-      target: '[data-tour="datetime-inputs"]',
-      title: 'Data e Horário',
-      content: 'Defina quando a reserva acontecerá. A timeline ao lado mostrará conflitos de horário.'
+      target: '#startTime',
+      title: 'Horário de Início',
+      content: 'Defina o horário de início da reserva.'
     },
     {
-      target: '[data-tour="timeline"]',
-      title: 'Timeline de Eventos',
-      content: 'Visualize outros eventos do dia selecionado. Clique nos horários vazios para facilitar o preenchimento.'
+      target: '#endTime',
+      title: 'Horário de Fim',
+      content: 'Defina o horário de término da reserva.'
     },
     {
-      target: '[data-tour="submit-buttons"]',
-      title: 'Finalizar Reserva',
-      content: 'Após preencher todos os dados, clique em "Criar Reserva" para confirmar.'
-    }
-  ];
-
-  // Mock events data (in a real app, this would come from a service)
-  const mockEventsData = {
-    1: { client: 'joao-silva', venue: 'quadra-1', startTime: '08:00', endTime: '10:00', notes: 'Cliente preferencial', amount: '160' },
-    2: { client: 'maria-santos', venue: 'campo-futebol', startTime: '14:00', endTime: '15:30', notes: 'Time Unidos', amount: '225' },
-    3: { client: 'pedro-costa', venue: 'quadra-2', startTime: '18:00', endTime: '19:00', notes: '', amount: '60' },
-    4: { client: 'ana-oliveira', venue: 'campo-futebol', startTime: '20:00', endTime: '22:00', notes: 'Grupo que joga toda semana', amount: '200' }
-  };
-
-  // Mock clients and venues for search
-  const mockClients = [
-    { id: 1, nome: 'João Silva', email: 'joao@email.com' },
-    { id: 2, nome: 'Maria Santos', email: 'maria@email.com' },
-    { id: 3, nome: 'Pedro Costa', email: 'pedro@email.com' },
-    { id: 4, nome: 'Ana Oliveira', email: 'ana@email.com' }
-  ];
-
-  const mockVenues = [
-    { id: 1, nome: 'Quadra 1', tipo: 'Futebol Society' },
-    { id: 2, nome: 'Quadra 2', tipo: 'Basquete' },
-    { id: 3, nome: 'Campo de Futebol', tipo: 'Futebol 11' },
-    { id: 4, nome: 'Quadra Coberta', tipo: 'Vôlei' }
-  ];
-
-  // Set date and event from URL parameters when component mounts
-  useEffect(() => {
-    const dateParam = searchParams.get('date');
-    const eventIdParam = searchParams.get('eventId');
-    
-    if (dateParam) {
-      setFormData(prev => ({ ...prev, date: dateParam }));
-    }
-    
-    if (eventIdParam) {
-      const eventId = parseInt(eventIdParam);
-      const eventData = mockEventsData[eventId as keyof typeof mockEventsData];
-      
-      if (eventData) {
-        setFormData(prev => ({
-          ...prev,
-          client: eventData.client,
-          venue: eventData.venue,
-          startTime: eventData.startTime,
-          endTime: eventData.endTime,
-          notes: eventData.notes,
-          amount: parseFloat(eventData.amount),
-          date: dateParam || prev.date
-        }));
-        setIsEditing(true);
-        setEditingEventId(eventId);
-      }
-    }
-  }, [searchParams]);
-
-  // Mock events for timeline demonstration
-  const mockEvents = [
-    { 
-      id: 1, 
-      client: 'João Silva', 
-      venue: 'Quadra 1', 
-      startTime: '08:00', 
-      endTime: '10:00', 
-      status: 'confirmed' as const, 
-      color: '#10b981',
-      sport: 'Futebol Society'
-    },
-    { 
-      id: 2, 
-      client: 'Maria Santos', 
-      venue: 'Campo de Futebol', 
-      startTime: '14:00', 
-      endTime: '15:30', 
-      status: 'pending' as const, 
-      color: '#f59e0b',
-      sport: 'Futebol 11'
-    },
-    { 
-      id: 3, 
-      client: 'Pedro Costa', 
-      venue: 'Quadra 2', 
-      startTime: '18:00', 
-      endTime: '20:00', 
-      status: 'confirmed' as const, 
-      color: '#3b82f6',
-      sport: 'Basquete'
+      target: '#amount',
+      title: 'Valor',
+      content: 'Informe o valor total da reserva.'
     }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isEditing ? 'Editando reserva:' : 'Nova reserva:', formData);
-    
-    // Reset editing state after save
-    if (isEditing) {
-      setIsEditing(false);
-      setEditingEventId(null);
-    }
-    
-    navigate('/eventos');
+    console.log('Nova reserva:', formData);
+    navigate('/eventos/eventos');
   };
 
-  const handleChange = (field: string, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleClientChange = (value: string, item?: any) => {
+    setFormData(prev => ({ ...prev, client: value }));
   };
 
-  const handleTimeSlotClick = (time: string) => {
-    if (!isEditing) {
-      setFormData(prev => ({ ...prev, startTime: time }));
-    }
+  const handleVenueChange = (value: string, item?: any) => {
+    setFormData(prev => ({ ...prev, venue: value }));
   };
 
-  const handleEventEdit = (event: any) => {
-    // If clicking on the same event that's already being edited, cancel editing
-    if (editingEventId === event.id) {
-      handleCancelEdit();
-      return;
-    }
-
-    // Load event data into form
-    setFormData({
-      client: event.client,
-      venue: event.venue,
-      date: formData.date, // Keep current date
-      startTime: event.startTime,
-      endTime: event.endTime,
-      notes: event.notes || '',
-      amount: 160 // Mock amount
-    });
-    
-    setIsEditing(true);
-    setEditingEventId(event.id);
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData(prev => ({ ...prev, date }));
   };
 
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditingEventId(null);
-    
-    // Reset form to initial state
-    const dateParam = searchParams.get('date');
-    setFormData({
-      client: '',
-      venue: '',
-      date: dateParam || '',
-      startTime: '',
-      endTime: '',
-      notes: '',
-      amount: 0
-    });
-    
-    // Update URL to remove eventId parameter
-    if (dateParam) {
-      navigate(`/eventos/novo?date=${dateParam}`, { replace: true });
-    } else {
-      navigate('/eventos/novo', { replace: true });
-    }
+  const handleStartTimeChange = (time: string) => {
+    setFormData(prev => ({ ...prev, startTime: time }));
   };
 
-  const handleCancel = () => {
-    if (isEditing) {
-      handleCancelEdit();
-    } else {
-      navigate('/eventos');
-    }
+  const handleEndTimeChange = (time: string) => {
+    setFormData(prev => ({ ...prev, endTime: time }));
   };
 
-  // Filter events by selected date
-  const eventsForSelectedDate = formData.date 
-    ? mockEvents.filter(event => {
-        // In a real app, you would filter by actual date
-        return true; // For demo, show all events
-      })
-    : [];
+  const handleAmountChange = (value: string) => {
+    setFormData(prev => ({ ...prev, amount: value }));
+  };
+
+  const handleNotesChange = (value: string) => {
+    setFormData(prev => ({ ...prev, notes: value }));
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <ModuleHeader
-        title={isEditing ? "Editar Reserva" : "Nova Reserva"}
-        icon={isEditing ? <Edit className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.events}
-        backTo="/eventos"
-        backLabel="Eventos"
-      />
+    <BaseFormPage
+      title="Nova Reserva"
+      description="Crie uma nova reserva de local para um cliente"
+      icon={<Calendar className="h-5 w-5" />}
+      moduleColor={MODULE_COLORS.events}
+      backTo="/eventos/eventos"
+      backLabel="Agenda"
+      onSubmit={handleSubmit}
+      submitLabel="Salvar Reserva"
+      tourSteps={tourSteps}
+      tourTitle="Criação de Nova Reserva"
+    >
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 pb-2 border-b">
+          <h3 className="text-lg font-semibold text-foreground">Informações da Reserva</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CampoBusca
+            id="client"
+            label="Cliente"
+            value={formData.client}
+            onChange={handleClientChange}
+            items={clientesExemplo}
+            placeholder="Digite o nome do cliente..."
+            required
+          />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Formulário */}
-          <Card className={`border h-fit relative ${isEditing ? 'ring-2 ring-module-events/100' : ''}`} data-tour="form-card">
-            <PageTour steps={tourSteps} title="Nova Reserva" />
-            <CardHeader>
-              <CardTitle className="text-card-foreground flex items-center gap-2">
-                {isEditing ? (
-                  <>
-                    <Edit className="h-5 w-5" />
-                    Editando Reserva
-                  </>
-                ) : (
-                  "Criar Nova Reserva"
-                )}
-              </CardTitle>
-              <CardDescription>
-                {isEditing 
-                  ? "Atualize os dados da reserva selecionada" 
-                  : "Preencha os dados para criar uma nova reserva"
-                }
-              </CardDescription>
-              {isEditing && (
-                <div className="bg-module-events/20 p-3 rounded-lg border border-module-events/50 mt-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-module-events/100">
-                      Modo de edição ativo para evento selecionado
-                    </span>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={handleCancelEdit}
-                      className="text-module-events/90 hover:bg-module-events/30"
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Cancelar Edição
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 gap-6">
-                  <div className="space-y-2" data-tour="client-select">
-                    <CampoBusca
-                      id="client"
-                      label="Cliente"
-                      value={formData.client}
-                      onChange={(value) => handleChange('client', value)}
-                      items={mockClients}
-                      displayField="nome"
-                      placeholder="Buscar cliente..."
-                      required
-                    />
-                  </div>
+          <CampoBusca
+            id="venue"
+            label="Local"
+            value={formData.venue}
+            onChange={handleVenueChange}
+            items={locaisExemplo}
+            placeholder="Selecione o local..."
+            required
+          />
 
-                  <div className="space-y-2" data-tour="venue-select">
-                    <CampoBusca
-                      id="venue"
-                      label="Local"
-                      value={formData.venue}
-                      onChange={(value) => handleChange('venue', value)}
-                      items={mockVenues}
-                      displayField="nome"
-                      placeholder="Buscar local..."
-                      required
-                    />
-                  </div>
+          <div className="md:col-span-2">
+            <SeletorData
+              id="date"
+              label="Data da Reserva"
+              value={formData.date}
+              onChange={handleDateChange}
+              required
+            />
+          </div>
 
-                  <div className="space-y-4" data-tour="datetime-inputs">
-                    <SeletorData
-                      id="date"
-                      label="Data"
-                      value={formData.date ? new Date(formData.date) : undefined}
-                      onChange={(date) => handleChange('date', date ? date.toISOString().split('T')[0] : '')}
-                      required
-                    />
+          <SeletorHora
+            id="startTime"
+            label="Horário de Início"
+            value={formData.startTime}
+            onChange={handleStartTimeChange}
+            placeholder="Selecione o horário de início"
+            required
+          />
 
-                    <CampoValor
-                      id="amount"
-                      label="Valor (R$)"
-                      value={formData.amount.toString()}
-                      onChange={(value) => handleChange('amount', parseFloat(value) || 0)}
-                      required
-                    />
+          <SeletorHora
+            id="endTime"
+            label="Horário de Fim"
+            value={formData.endTime}
+            onChange={handleEndTimeChange}
+            placeholder="Selecione o horário de fim"
+            required
+          />
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <CampoHorario
-                        id="startTime"
-                        label="Horário de Início"
-                        value={formData.startTime}
-                        onChange={(value) => handleChange('startTime', value)}
-                        required
-                      />
-
-                      <CampoHorario
-                        id="endTime"
-                        label="Horário de Término"
-                        value={formData.endTime}
-                        onChange={(value) => handleChange('endTime', value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Observações</Label>
-                    <Textarea
-                      id="notes"
-                      value={formData.notes}
-                      onChange={(e) => handleChange('notes', e.target.value)}
-                      placeholder="Observações adicionais sobre a reserva..."
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="flex gap-4 pt-6" data-tour="submit-buttons">
-                    <Button type="submit" className="flex-1">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {isEditing ? 'Salvar Alterações' : 'Criar Reserva'}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={handleCancel}>
-                      {isEditing ? 'Cancelar Edição' : 'Cancelar'}
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Timeline */}
-          <div className="space-y-4" data-tour="timeline">
-            {formData.date ? (
-              <EventTimeline
-                selectedDate={formData.date}
-                events={eventsForSelectedDate}
-                onTimeSlotClick={handleTimeSlotClick}
-                onEventEdit={handleEventEdit}
-                editingEventId={editingEventId}
-              />
-            ) : (
-              <Card className="h-[500px] flex items-center justify-center">
-                <CardContent className="text-center">
-                  <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Selecione uma data</h3>
-                  <p className="text-muted-foreground">
-                    Escolha uma data no formulário para ver a timeline dos eventos
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+          <div className="md:col-span-2">
+            <CampoValor
+              id="amount"
+              label="Valor Total"
+              value={formData.amount}
+              onChange={handleAmountChange}
+              required
+            />
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="notes" className="text-sm font-medium">Observações</Label>
+        <Textarea
+          id="notes"
+          value={formData.notes}
+          onChange={(e) => handleNotesChange(e.target.value)}
+          placeholder="Observações sobre a reserva..."
+          rows={3}
+          className="resize-none"
+        />
+      </div>
+    </BaseFormPage>
   );
 };
 
-export default NewReservation;
+export default NovaReserva;

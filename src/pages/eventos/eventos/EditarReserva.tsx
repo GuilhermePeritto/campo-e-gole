@@ -1,471 +1,222 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import EventTimeline from '@/components/EventTimeline';
-import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Calendar, Clock, MapPin, Search, User } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import BaseFormPage from '@/components/BaseFormPage';
+import { MODULE_COLORS } from '@/constants/moduleColors';
+import { TourStep } from '@/components/PageTour';
+import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
-import CampoHorario from '@/core/componentes/CampoHorario';
-import CampoBusca from '@/core/componentes/CampoBusca';
+import SeletorHora from '@/core/componentes/SeletorHora';
 
-const EditReservation = () => {
+interface ReservationFormData {
+  client: string;
+  venue: string;
+  date: Date | undefined;
+  startTime: string;
+  endTime: string;
+  notes: string;
+  amount: string;
+}
+
+const EditarReserva = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [formData, setFormData] = useState({
-    clientEmail: '',
-    clientName: '',
-    clientPhone: '',
+  const [formData, setFormData] = useState<ReservationFormData>({
+    client: '',
     venue: '',
-    sport: '',
-    date: '',
+    date: undefined,
     startTime: '',
     endTime: '',
-    amount: 0,
-    recurring: false,
-    recurringType: '',
-    customRecurringDays: '',
-    notes: ''
+    notes: '',
+    amount: ''
   });
 
-  const [emailSearching, setEmailSearching] = useState(false);
-  const [clientFound, setClientFound] = useState(false);
+  // Dados de exemplo
+  const clientesExemplo = [
+    { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
+    { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
+    { id: '3', label: 'Pedro Costa', subtitle: 'CNPJ: 12.345.678/0001-90' },
+  ];
 
-  // Mock events for timeline
-  const mockEvents = [
-    { 
-      id: 1, 
-      client: 'João Silva', 
-      venue: 'Quadra 1', 
-      startTime: '08:00', 
-      endTime: '10:00', 
-      status: 'confirmed' as const, 
-      color: '#10b981',
-      sport: 'Futebol Society'
+  const locaisExemplo = [
+    { id: '1', label: 'Quadra A', subtitle: 'Futebol Society' },
+    { id: '2', label: 'Quadra B', subtitle: 'Basquete' },
+    { id: '3', label: 'Campo Principal', subtitle: 'Futebol' },
+  ];
+
+  const tourSteps: TourStep[] = [
+    {
+      target: '#client',
+      title: 'Cliente',
+      content: 'Altere o cliente desta reserva se necessário.'
     },
-    { 
-      id: 2, 
-      client: 'Maria Santos', 
-      venue: 'Campo de Futebol', 
-      startTime: '14:00', 
-      endTime: '15:30', 
-      status: 'pending' as const, 
-      color: '#f59e0b',
-      sport: 'Futebol 11'
+    {
+      target: '#venue',
+      title: 'Local',
+      content: 'Modifique o local da reserva.'
     },
-    { 
-      id: 3, 
-      client: 'Pedro Costa', 
-      venue: 'Quadra 2', 
-      startTime: '18:00', 
-      endTime: '20:00', 
-      status: 'confirmed' as const, 
-      color: '#3b82f6',
-      sport: 'Basquete'
+    {
+      target: '#date',
+      title: 'Data',
+      content: 'Atualize a data da reserva.'
+    },
+    {
+      target: '#startTime',
+      title: 'Horário de Início',
+      content: 'Ajuste o horário de início.'
+    },
+    {
+      target: '#endTime',
+      title: 'Horário de Fim',
+      content: 'Ajuste o horário de término.'
+    },
+    {
+      target: '#amount',
+      title: 'Valor',
+      content: 'Atualize o valor da reserva.'
     }
   ];
 
-  // Mock data for search components
-  const mockVenues = [
-    { id: 1, nome: 'Quadra A - Futebol Society', tipo: 'Futebol Society' },
-    { id: 2, nome: 'Quadra B - Basquete', tipo: 'Basquete' },
-    { id: 3, nome: 'Campo 1 - Futebol 11', tipo: 'Futebol 11' },
-    { id: 4, nome: 'Campo 2 - Futebol 7', tipo: 'Futebol 7' },
-    { id: 5, nome: 'Quadra C - Vôlei', tipo: 'Vôlei' },
-    { id: 6, nome: 'Quadra de Areia - Poliesportiva', tipo: 'Poliesportiva' }
-  ];
-
-  // Carregar dados da reserva para edição
   useEffect(() => {
     // Simular carregamento dos dados da reserva
-    const mockReservationData = {
-      clientEmail: 'joao@exemplo.com',
-      clientName: 'João Silva',
-      clientPhone: '(11) 99999-9999',
-      venue: 'Quadra A - Futebol Society',
-      sport: 'Futebol Society',
-      date: '2024-06-15',
-      startTime: '19:00',
-      endTime: '20:00',
-      amount: 160,
-      recurring: false,
-      recurringType: '',
-      customRecurringDays: '',
-      notes: 'Reserva para treino do time'
+    const mockData = {
+      client: 'João Silva',
+      venue: 'Quadra A',
+      date: new Date('2024-06-15'),
+      startTime: '14:00',
+      endTime: '16:00',
+      notes: 'Reserva para partida de futebol society',
+      amount: '120'
     };
-    
-    setFormData(mockReservationData);
-    setClientFound(true);
+    setFormData(mockData);
   }, [id]);
-
-  const venues = [
-    { name: 'Quadra A - Futebol Society', color: '#10B981' },
-    { name: 'Quadra B - Basquete', color: '#3B82F6' },
-    { name: 'Campo 1 - Futebol 11', color: '#EF4444' },
-    { name: 'Campo 2 - Futebol 7', color: '#F59E0B' },
-    { name: 'Quadra C - Vôlei', color: '#8B5CF6' },
-    { name: 'Quadra de Areia - Poliesportiva', color: '#EC4899' }
-  ];
-
-  const sports = [
-    'Futebol Society',
-    'Basquete',
-    'Futebol 11',
-    'Futebol 7', 
-    'Vôlei',
-    'Futvolei',
-    'Beach Tennis',
-    'Tênis',
-    'Outros'
-  ];
-
-  const handleEmailSearch = async () => {
-    if (!formData.clientEmail) return;
-    
-    setEmailSearching(true);
-    
-    setTimeout(() => {
-      const mockClientExists = formData.clientEmail === 'joao@exemplo.com';
-      
-      if (mockClientExists) {
-        setFormData(prev => ({
-          ...prev,
-          clientName: 'João Silva',
-          clientPhone: '(11) 99999-9999'
-        }));
-        setClientFound(true);
-        toast({
-          title: "Cliente encontrado!",
-          description: "Dados do cliente carregados automaticamente.",
-        });
-      } else {
-        setClientFound(false);
-        setFormData(prev => ({
-          ...prev,
-          clientName: '',
-          clientPhone: ''
-        }));
-        toast({
-          title: "Cliente não encontrado",
-          description: "Preencha os dados para criar um novo cliente.",
-          variant: "destructive"
-        });
-      }
-      setEmailSearching(false);
-    }, 1000);
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.clientEmail || !formData.clientName || !formData.venue || !formData.sport) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha email, nome do cliente, local e esporte.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    toast({
-      title: "Reserva atualizada com sucesso!",
-      description: "As alterações da reserva foram salvas.",
-    });
-    navigate('/eventos/reservas');
+    console.log('Reserva editada:', formData);
+    navigate('/eventos/eventos');
   };
 
-  const handleChange = (field: string, value: string | number | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleClientChange = (value: string, item?: any) => {
+    setFormData(prev => ({ ...prev, client: value }));
   };
 
-  const handleTimeSlotClick = (time: string) => {
+  const handleVenueChange = (value: string, item?: any) => {
+    setFormData(prev => ({ ...prev, venue: value }));
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData(prev => ({ ...prev, date }));
+  };
+
+  const handleStartTimeChange = (time: string) => {
     setFormData(prev => ({ ...prev, startTime: time }));
   };
 
-  // Filter events by selected date (excluding current event being edited)
-  const eventsForSelectedDate = formData.date 
-    ? mockEvents.filter(event => event.id !== parseInt(id || '0'))
-    : [];
+  const handleEndTimeChange = (time: string) => {
+    setFormData(prev => ({ ...prev, endTime: time }));
+  };
+
+  const handleAmountChange = (value: string) => {
+    setFormData(prev => ({ ...prev, amount: value }));
+  };
+
+  const handleNotesChange = (value: string) => {
+    setFormData(prev => ({ ...prev, notes: value }));
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/eventos/reservas')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Editar Reserva</h1>
-            </div>
+    <BaseFormPage
+      title="Editar Reserva"
+      description="Altere as informações da reserva conforme necessário"
+      icon={<Calendar className="h-5 w-5" />}
+      moduleColor={MODULE_COLORS.events}
+      backTo="/eventos/eventos"
+      backLabel="Agenda"
+      onSubmit={handleSubmit}
+      submitLabel="Salvar Alterações"
+      tourSteps={tourSteps}
+      tourTitle="Edição de Reserva"
+    >
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 pb-2 border-b">
+          <h3 className="text-lg font-semibold text-foreground">Informações da Reserva</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CampoBusca
+            id="client"
+            label="Cliente"
+            value={formData.client}
+            onChange={handleClientChange}
+            items={clientesExemplo}
+            required
+          />
+
+          <CampoBusca
+            id="venue"
+            label="Local"
+            value={formData.venue}
+            onChange={handleVenueChange}
+            items={locaisExemplo}
+            required
+          />
+
+          <div className="md:col-span-2">
+            <SeletorData
+              id="date"
+              label="Data da Reserva"
+              value={formData.date}
+              onChange={handleDateChange}
+              required
+            />
+          </div>
+
+          <SeletorHora
+            id="startTime"
+            label="Horário de Início"
+            value={formData.startTime}
+            onChange={handleStartTimeChange}
+            required
+          />
+
+          <SeletorHora
+            id="endTime"
+            label="Horário de Fim"
+            value={formData.endTime}
+            onChange={handleEndTimeChange}
+            required
+          />
+
+          <div className="md:col-span-2">
+            <CampoValor
+              id="amount"
+              label="Valor Total"
+              value={formData.amount}
+              onChange={handleAmountChange}
+              required
+            />
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Formulário */}
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle>Editar Reserva #{id}</CardTitle>
-              <CardDescription>
-                Atualize as informações da reserva esportiva
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Informações do Cliente */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <User className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-medium">Informações do Cliente</h3>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="clientEmail">E-mail do Cliente *</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="clientEmail"
-                          type="email"
-                          value={formData.clientEmail}
-                          onChange={(e) => handleChange('clientEmail', e.target.value)}
-                          placeholder="cliente@exemplo.com"
-                          required
-                          className="flex-1"
-                        />
-                        <Button
-                          type="button"
-                          onClick={handleEmailSearch}
-                          disabled={!formData.clientEmail || emailSearching}
-                          variant="outline"
-                          className="gap-2"
-                        >
-                          {emailSearching ? (
-                            <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
-                          ) : (
-                            <Search className="h-4 w-4" />
-                          )}
-                          Buscar
-                        </Button>
-                      </div>
-                      {clientFound && (
-                        <p className="text-sm text-green-600">✓ Cliente encontrado no sistema</p>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="clientName">Nome do Cliente *</Label>
-                        <Input
-                          id="clientName"
-                          value={formData.clientName}
-                          onChange={(e) => handleChange('clientName', e.target.value)}
-                          required
-                          readOnly={clientFound}
-                          className={clientFound ? "bg-gray-50" : ""}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="clientPhone">Telefone</Label>
-                        <Input
-                          id="clientPhone"
-                          type="tel"
-                          value={formData.clientPhone}
-                          onChange={(e) => handleChange('clientPhone', e.target.value)}
-                          readOnly={clientFound}
-                          className={clientFound ? "bg-gray-50" : ""}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Informações da Reserva */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-medium">Detalhes da Reserva</h3>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CampoBusca
-                      id="venue"
-                      label="Local"
-                      value={formData.venue}
-                      onChange={(value) => handleChange('venue', value)}
-                      items={mockVenues}
-                      displayField="nome"
-                      placeholder="Buscar local..."
-                      required
-                    />
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="sport">Esporte Praticado *</Label>
-                      <Select value={formData.sport} onValueChange={(value) => handleChange('sport', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o esporte" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {sports.map((sport) => (
-                            <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <SeletorData
-                      id="date"
-                      label="Data"
-                      value={formData.date ? new Date(formData.date) : undefined}
-                      onChange={(date) => handleChange('date', date ? date.toISOString().split('T')[0] : '')}
-                      required
-                    />
-                    
-                    <div className="space-y-2">
-                      <Label>Período *</Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <CampoHorario
-                          id="startTime"
-                          value={formData.startTime}
-                          onChange={(value) => handleChange('startTime', value)}
-                          required
-                        />
-                        <CampoHorario
-                          id="endTime"
-                          value={formData.endTime}
-                          onChange={(value) => handleChange('endTime', value)}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <CampoValor
-                      id="amount"
-                      label="Valor"
-                      value={formData.amount.toString()}
-                      onChange={(value) => handleChange('amount', parseFloat(value) || 0)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Reserva Recorrente */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-medium">Recorrência</h3>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <div className="font-medium">Reserva Recorrente</div>
-                      <div className="text-sm text-gray-500">
-                        Repetir esta reserva automaticamente
-                      </div>
-                    </div>
-                    <Switch
-                      checked={formData.recurring}
-                      onCheckedChange={(checked) => setFormData({...formData, recurring: checked})}
-                    />
-                  </div>
-
-                  {formData.recurring && (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="recurringType">Tipo de Recorrência</Label>
-                        <Select value={formData.recurringType} onValueChange={(value) => setFormData({...formData, recurringType: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione a frequência" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="weekly">Semanal (mesmo dia da semana)</SelectItem>
-                            <SelectItem value="biweekly">Quinzenal</SelectItem>
-                            <SelectItem value="monthly">Mensal</SelectItem>
-                            <SelectItem value="custom">Personalizado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      {formData.recurringType === 'custom' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="customRecurringDays">Repetir a cada quantos dias?</Label>
-                          <Input
-                            id="customRecurringDays"
-                            type="number"
-                            min="1"
-                            max="365"
-                            value={formData.customRecurringDays}
-                            onChange={(e) => setFormData({...formData, customRecurringDays: e.target.value})}
-                            placeholder="Ex: 3 (a cada 3 dias)"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Observações */}
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Observações</Label>
-                  <Textarea
-                    id="notes"
-                    className="w-full min-h-[100px] p-3 border rounded-md resize-none"
-                    value={formData.notes}
-                    onChange={(e) => handleChange('notes', e.target.value)}
-                    placeholder="Informações adicionais sobre a reserva..."
-                  />
-                </div>
-
-                <div className="flex gap-4 pt-6">
-                  <Button type="button" variant="outline" onClick={() => navigate('/eventos/reservas')} className="flex-1">
-                    Cancelar
-                  </Button>
-                  <Button type="submit" className="flex-1">
-                    Salvar Alterações
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Timeline */}
-          <div className="space-y-4">
-            {formData.date ? (
-              <EventTimeline
-                selectedDate={formData.date}
-                events={eventsForSelectedDate}
-                onTimeSlotClick={handleTimeSlotClick}
-              />
-            ) : (
-              <Card className="h-[500px] flex items-center justify-center">
-                <CardContent className="text-center">
-                  <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Selecione uma data</h3>
-                  <p className="text-muted-foreground">
-                    Escolha uma data no formulário para ver a timeline dos eventos
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-      </main>
-    </div>
+      <div className="space-y-2">
+        <Label htmlFor="notes" className="text-sm font-medium">Observações</Label>
+        <Textarea
+          id="notes"
+          value={formData.notes}
+          onChange={(e) => handleNotesChange(e.target.value)}
+          placeholder="Observações sobre a reserva..."
+          rows={3}
+          className="resize-none"
+        />
+      </div>
+    </BaseFormPage>
   );
 };
 
-export default EditReservation;
+export default EditarReserva;

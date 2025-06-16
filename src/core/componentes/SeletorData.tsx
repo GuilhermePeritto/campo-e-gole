@@ -114,6 +114,14 @@ const SeletorData: React.FC<SeletorDataProps> = ({
     setIsOpen(false);
   };
 
+  const selecionarHoje = () => {
+    const hoje = new Date();
+    if (onChange) {
+      onChange(hoje);
+    }
+    setIsOpen(false);
+  };
+
   const dataEstaDesabilitada = (data: Date) => {
     if (minDate && data < minDate) return true;
     if (maxDate && data > maxDate) return true;
@@ -234,13 +242,7 @@ const SeletorData: React.FC<SeletorDataProps> = ({
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => {
-                  if (value) {
-                    selecionarData(value);
-                  } else {
-                    selecionarData(new Date());
-                  }
-                }}
+                onClick={selecionarHoje}
               >
                 Hoje
               </Button>
