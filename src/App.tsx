@@ -1,3 +1,4 @@
+
 import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -21,11 +22,11 @@ import EventsCalendar from './pages/eventos/Calendar';
 import EventsClientHistory from './pages/eventos/ClientHistory';
 import EventsClients from './pages/eventos/Clients';
 import EventsEditClient from './pages/eventos/EditClient';
-import EventsEditReceivable from './pages/eventos/EditReceivable';
+import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
 import EventsEditReservation from './pages/eventos/EditReservation';
 import EventsEditVenue from './pages/eventos/EditVenue';
 import EventsNewClient from './pages/eventos/NewClient';
-import EventsNewReceivable from './pages/eventos/NewReceivable';
+import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
 import EventsNewReservation from './pages/eventos/NewReservation';
 import EventsNewVenue from './pages/eventos/NewVenue';
 import EventsReceivables from './pages/eventos/Receivables';
