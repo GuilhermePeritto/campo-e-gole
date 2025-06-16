@@ -42,6 +42,7 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (searchTerm) {
@@ -63,6 +64,21 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
       return () => clearTimeout(timeoutId);
     }
   }, [searchTerm, onBuscar]);
+
+  // Fechar lista quando clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setSelectedIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -122,7 +138,7 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
   };
 
   return (
-    <div className="relative space-y-2">
+    <div ref={containerRef} className="relative space-y-2">
       {label && (
         <Label htmlFor={id} className="text-sm font-medium">
           {label} {required && <span className="text-red-500">*</span>}

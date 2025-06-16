@@ -83,21 +83,20 @@ const NovoRecebivel = () => {
 
   return (
     <BaseFormPage
-      title="Criar Novo Recebível"
-      description="Adicione um novo recebível manualmente usando os componentes base"
+      title="Criar Nova Conta a Receber"
+      description="Registre um novo valor a receber de clientes por serviços prestados ou reservas realizadas"
       icon={<CreditCard className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}
       backTo="/eventos/contas-a-receber"
       backLabel="Contas a Receber"
       onSubmit={handleSubmit}
-      submitLabel="Salvar Recebível"
+      submitLabel="Salvar Conta a Receber"
       tourSteps={tourSteps}
-      tourTitle="Criação de Novo Recebível - Componentes Base"
+      tourTitle="Criação de Nova Conta a Receber"
     >
       <div className="space-y-6">
         <div className="flex items-center gap-2 pb-2 border-b">
-          <h3 className="text-lg font-semibold text-foreground">Informações do Recebível</h3>
-          <span className="text-sm text-muted-foreground">(Testando componentes base)</span>
+          <h3 className="text-lg font-semibold text-foreground">Informações da Conta a Receber</h3>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
