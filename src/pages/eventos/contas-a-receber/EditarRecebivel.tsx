@@ -1,81 +1,73 @@
 
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/hooks/use-toast';
 import { CreditCard } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import PaginaFormularioBase from '@/core/componentes/PaginaFormularioBase';
+import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
 
-interface ReceivableFormData {
-  client: string;
-  description: string;
-  amount: string;
-  dueDate: Date | undefined;
-}
-
 const EditarRecebivel = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  
-  // Mock data - em produção viria de uma API
-  const [formData, setFormData] = useState<ReceivableFormData>({
-    client: 'João Silva',
-    description: 'Reserva Quadra A - 15/06',
-    amount: '150.00',
-    dueDate: new Date('2024-06-20')
+  const [formData, setFormData] = useState({
+    client: '',
+    amount: '',
+    dueDate: undefined as Date | undefined,
+    description: ''
   });
 
-  // Dados de exemplo para o campo de busca de clientes
   const clientesExemplo = [
     { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
     { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
     { id: '3', label: 'Pedro Costa', subtitle: 'CNPJ: 12.345.678/0001-90' },
-    { id: '4', label: 'Ana Oliveira', subtitle: 'CPF: 456.789.123-00' },
-    { id: '5', label: 'Carlos Ferreira', subtitle: 'CPF: 789.123.456-00' },
   ];
 
   const tourSteps: TourStep[] = [
     {
       target: '#client',
-      title: 'Campo de Busca de Cliente',
-      content: 'Altere o cliente se necessário. Digite o nome e selecione da lista que aparece.'
+      title: 'Cliente',
+      content: 'Atualize o nome do cliente responsável por esta conta a receber.'
     },
     {
       target: '#amount',
-      title: 'Campo de Valor',
-      content: 'Atualize o valor da conta a receber. Digite da direita para esquerda.'
+      title: 'Valor',
+      content: 'Altere o valor da conta a receber se necessário.'
     },
     {
       target: '#dueDate',
-      title: 'Seletor de Data',
-      content: 'Altere a data de vencimento se necessário.'
+      title: 'Data de Vencimento',
+      content: 'Atualize a data de vencimento conforme acordado com o cliente.'
     },
     {
       target: '#description',
       title: 'Descrição',
-      content: 'Atualize a descrição da conta a receber conforme necessário.'
+      content: 'Modifique ou adicione detalhes sobre esta conta a receber.'
     }
   ];
 
+  useEffect(() => {
+    // Simular carregamento dos dados da conta
+    const mockData = {
+      client: 'João Silva',
+      amount: '150',
+      dueDate: new Date('2024-06-10'),
+      description: 'Reserva Quadra A - 08/06'
+    };
+    setFormData(mockData);
+  }, [id]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Editando conta a receber:', formData);
-    
-    toast({
-      title: "Conta a receber atualizada!",
-      description: "As alterações foram salvas com sucesso.",
-    });
-    
+    console.log('Dados da conta atualizados:', formData);
     navigate('/eventos/contas-a-receber');
   };
 
-  const handleClientChange = (value: string, item?: any) => {
+  const handleClientChange = (value: string) => {
     setFormData(prev => ({ ...prev, client: value }));
   };
 
@@ -92,9 +84,9 @@ const EditarRecebivel = () => {
   };
 
   return (
-    <PaginaFormularioBase
+    <BaseFormPage
       title="Editar Conta a Receber"
-      description="Atualize as informações da conta a receber"
+      description="Altere as informações da conta a receber conforme necessário"
       icon={<CreditCard className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}
       backTo="/eventos/contas-a-receber"
@@ -106,7 +98,7 @@ const EditarRecebivel = () => {
     >
       <div className="space-y-6">
         <div className="flex items-center gap-2 pb-2 border-b">
-          <h3 className="text-lg font-semibold text-foreground">Informações da Conta a Receber</h3>
+          <h3 className="text-lg font-semibold text-foreground">Informações da Conta</h3>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -116,7 +108,6 @@ const EditarRecebivel = () => {
             value={formData.client}
             onChange={handleClientChange}
             opcoes={clientesExemplo}
-            placeholder="Digite o nome do cliente..."
             required
           />
 
@@ -144,15 +135,15 @@ const EditarRecebivel = () => {
         <Label htmlFor="description" className="text-sm font-medium">Descrição *</Label>
         <Textarea
           id="description"
-          placeholder="Descrição da conta (ex: Reserva Quadra A - 10/06)"
           value={formData.description}
           onChange={(e) => handleDescriptionChange(e.target.value)}
+          placeholder="Descrição da conta a receber..."
           rows={3}
           className="resize-none"
           required
         />
       </div>
-    </PaginaFormularioBase>
+    </BaseFormPage>
   );
 };
 

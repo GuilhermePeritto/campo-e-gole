@@ -1,4 +1,3 @@
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -6,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PaginaFormularioBase from '@/core/componentes/PaginaFormularioBase';
+import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 

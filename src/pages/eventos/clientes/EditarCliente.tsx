@@ -1,4 +1,3 @@
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -7,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import PaginaFormularioBase from '@/core/componentes/PaginaFormularioBase';
+import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 

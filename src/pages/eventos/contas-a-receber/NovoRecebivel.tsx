@@ -1,9 +1,10 @@
+
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PaginaFormularioBase from '@/core/componentes/PaginaFormularioBase';
+import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 import CampoBusca from '@/core/componentes/CampoBusca';
@@ -81,7 +82,7 @@ const NovoRecebivel = () => {
   };
 
   return (
-    <PaginaFormularioBase
+    <BaseFormPage
       title="Criar Nova Conta a Receber"
       description="Registre um novo valor a receber de clientes por serviços prestados ou reservas realizadas"
       icon={<CreditCard className="h-5 w-5" />}
@@ -141,7 +142,7 @@ const NovoRecebivel = () => {
           required
         />
       </div>
-    </PaginaFormularioBase>
+    </BaseFormPage>
   );
 };
 
