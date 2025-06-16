@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -220,31 +219,33 @@ const EditVenue = () => {
                   </div>
                 </div>
 
-                {/* Cor do Local */}
+                {/* Seletor de Cor RGB */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Palette className="h-4 w-4" />
-                    <Label>Cor de Identificação</Label>
+                    <Label htmlFor="color">Cor de Identificação</Label>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    {colorOptions.map((color) => (
-                      <button
-                        key={color.value}
-                        type="button"
-                        onClick={() => handleInputChange('color', color.value)}
-                        className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                          formData.color === color.value ? 'border-gray-900 scale-110' : 'border-gray-300'
-                        }`}
-                        style={{ backgroundColor: color.value }}
-                        title={color.name}
-                      >
-                        {formData.color === color.value && (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
-                          </div>
-                        )}
-                      </button>
-                    ))}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="color"
+                        type="color"
+                        value={formData.color}
+                        onChange={(e) => handleInputChange('color', e.target.value)}
+                        className="w-16 h-10 p-1 rounded-lg border"
+                      />
+                      <Input
+                        type="text"
+                        value={formData.color}
+                        onChange={(e) => handleInputChange('color', e.target.value)}
+                        placeholder="#10B981"
+                        className="font-mono text-sm w-32"
+                      />
+                    </div>
+                    <div 
+                      className="w-10 h-10 rounded-lg border-2 border-gray-300"
+                      style={{ backgroundColor: formData.color }}
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground">
                     A cor será usada para identificar visualmente o local na agenda
