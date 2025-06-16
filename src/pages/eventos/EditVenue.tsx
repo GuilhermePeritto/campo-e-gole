@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -7,9 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, MapPin, Palette, Plus, X } from 'lucide-react';
+import { MapPin, Palette, Plus, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import ModuleHeader from '@/components/ModuleHeader';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 
 const EditVenue = () => {
   const navigate = useNavigate();
@@ -43,17 +46,6 @@ const EditVenue = () => {
   });
 
   const venueTypes = ['Futebol Society', 'Basquete', 'Futebol', 'Futebol 7', 'Vôlei', 'Tênis', 'Beach Tennis', 'Futvolei', 'Outros'];
-
-  const colorOptions = [
-    { name: 'Verde', value: '#10B981' },
-    { name: 'Azul', value: '#3B82F6' },
-    { name: 'Vermelho', value: '#EF4444' },
-    { name: 'Amarelo', value: '#F59E0B' },
-    { name: 'Roxo', value: '#8B5CF6' },
-    { name: 'Rosa', value: '#EC4899' },
-    { name: 'Laranja', value: '#F97316' },
-    { name: 'Cinza', value: '#6B7280' }
-  ];
 
   const characteristicLabels = {
     covered: 'Quadra coberta',
@@ -132,56 +124,50 @@ const EditVenue = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/eventos/locais')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Editar Local</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        title="Editar Local"
+        icon={<MapPin className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.events}
+        backTo="/eventos/locais"
+        backLabel="Locais"
+      />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Editar Dados do Local</CardTitle>
+        <Card className="shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b">
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-primary" />
+              Editar Dados do Local
+            </CardTitle>
             <CardDescription>
-              Atualize as informações do local
+              Atualize as informações do local esportivo
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Informações Básicas */}
               <div className="space-y-6">
-                <h3 className="text-lg font-medium">Informações Básicas</h3>
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <h3 className="text-lg font-semibold text-foreground">Informações Básicas</h3>
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nome do Local *</Label>
+                    <Label htmlFor="name" className="text-sm font-medium">Nome do Local *</Label>
                     <Input
                       id="name"
                       placeholder="Ex: Quadra A - Futebol Society"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="h-11"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="type">Tipo de Esporte *</Label>
+                    <Label htmlFor="type" className="text-sm font-medium">Tipo de Esporte *</Label>
                     <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11">
                         <SelectValue placeholder="Selecionar tipo" />
                       </SelectTrigger>
                       <SelectContent>
@@ -193,19 +179,20 @@ const EditVenue = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="capacity">Capacidade (pessoas) *</Label>
+                    <Label htmlFor="capacity" className="text-sm font-medium">Capacidade (pessoas) *</Label>
                     <Input
                       id="capacity"
                       type="number"
                       placeholder="Ex: 14"
                       value={formData.capacity}
                       onChange={(e) => handleInputChange('capacity', e.target.value)}
+                      className="h-11"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="hourlyRate">Valor por Hora (R$) *</Label>
+                    <Label htmlFor="hourlyRate" className="text-sm font-medium">Valor por Hora (R$) *</Label>
                     <Input
                       id="hourlyRate"
                       type="number"
@@ -214,16 +201,17 @@ const EditVenue = () => {
                       value={formData.hourlyRate}
                       onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
                       onBlur={calculatePeakRate}
+                      className="h-11"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Seletor de Cor RGB */}
-                <div className="space-y-3">
+                <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
                   <div className="flex items-center gap-2">
-                    <Palette className="h-4 w-4" />
-                    <Label htmlFor="color">Cor de Identificação</Label>
+                    <Palette className="h-4 w-4 text-primary" />
+                    <Label htmlFor="color" className="text-sm font-medium">Cor de Identificação</Label>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
@@ -232,7 +220,7 @@ const EditVenue = () => {
                         type="color"
                         value={formData.color}
                         onChange={(e) => handleInputChange('color', e.target.value)}
-                        className="w-16 h-10 p-1 rounded-lg border"
+                        className="w-16 h-10 p-1 rounded-lg border cursor-pointer"
                       />
                       <Input
                         type="text"
@@ -243,7 +231,7 @@ const EditVenue = () => {
                       />
                     </div>
                     <div 
-                      className="w-10 h-10 rounded-lg border-2 border-gray-300"
+                      className="w-12 h-10 rounded-lg border-2 border-gray-300 shadow-sm"
                       style={{ backgroundColor: formData.color }}
                     />
                   </div>
@@ -255,11 +243,13 @@ const EditVenue = () => {
 
               {/* Características */}
               <div className="space-y-6">
-                <h3 className="text-lg font-medium">Características do Local</h3>
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <h3 className="text-lg font-semibold text-foreground">Características do Local</h3>
+                </div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {Object.entries(characteristicLabels).map(([key, label]) => (
-                    <div key={key} className="flex items-center space-x-2">
+                    <div key={key} className="flex items-center space-x-2 p-2 hover:bg-muted/30 rounded-md transition-colors">
                       <Checkbox
                         id={key}
                         checked={characteristics[key as keyof typeof characteristics]}
@@ -267,7 +257,7 @@ const EditVenue = () => {
                       />
                       <Label
                         htmlFor={key}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                       >
                         {label}
                       </Label>
@@ -278,40 +268,41 @@ const EditVenue = () => {
 
               {/* Descrição */}
               <div className="space-y-2">
-                <Label htmlFor="description">Descrição</Label>
+                <Label htmlFor="description" className="text-sm font-medium">Descrição</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   placeholder="Descrição adicional do local (ex: Quadra de grama sintética com iluminação LED)"
                   rows={3}
+                  className="resize-none"
                 />
               </div>
 
               {/* Equipamentos */}
               <div className="space-y-4">
-                <Label>Equipamentos Disponíveis</Label>
+                <Label className="text-sm font-medium">Equipamentos Disponíveis</Label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Ex: Traves, Redes, Bolas..."
                     value={newEquipment}
                     onChange={(e) => setNewEquipment(e.target.value)}
-                    className="flex-1"
+                    className="flex-1 h-11"
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addEquipment())}
                   />
-                  <Button type="button" onClick={addEquipment} variant="outline">
+                  <Button type="button" onClick={addEquipment} variant="outline" className="h-11 px-4">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
                 {equipment.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {equipment.map((item, index) => (
-                      <div key={index} className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full text-sm">
+                      <div key={index} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm border">
                         <span>{item}</span>
                         <button
                           type="button"
                           onClick={() => removeEquipment(item)}
-                          className="text-muted-foreground hover:text-red-500"
+                          className="text-primary/70 hover:text-red-500 transition-colors"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -323,9 +314,11 @@ const EditVenue = () => {
 
               {/* Preços */}
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Configuração de Preços</h3>
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <h3 className="text-lg font-semibold text-foreground">Configuração de Preços</h3>
+                </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/20">
                   <div className="space-y-1">
                     <div className="font-medium">Horário Nobre</div>
                     <div className="text-sm text-muted-foreground">
@@ -339,27 +332,29 @@ const EditVenue = () => {
                 </div>
 
                 {formData.hasPeakHours && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg border">
                     <div className="space-y-2">
-                      <Label htmlFor="peakHourStart">Início do Horário Nobre</Label>
+                      <Label htmlFor="peakHourStart" className="text-sm font-medium">Início do Horário Nobre</Label>
                       <Input
                         id="peakHourStart"
                         type="time"
                         value={formData.peakHourStart}
                         onChange={(e) => handleInputChange('peakHourStart', e.target.value)}
+                        className="h-11"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="peakHourEnd">Fim do Horário Nobre</Label>
+                      <Label htmlFor="peakHourEnd" className="text-sm font-medium">Fim do Horário Nobre</Label>
                       <Input
                         id="peakHourEnd"
                         type="time"
                         value={formData.peakHourEnd}
                         onChange={(e) => handleInputChange('peakHourEnd', e.target.value)}
+                        className="h-11"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="peakHourRate">Valor Horário Nobre (R$) *</Label>
+                      <Label htmlFor="peakHourRate" className="text-sm font-medium">Valor Horário Nobre (R$) *</Label>
                       <Input
                         id="peakHourRate"
                         type="number"
@@ -367,10 +362,11 @@ const EditVenue = () => {
                         value={formData.peakHourRate}
                         onChange={(e) => handleInputChange('peakHourRate', e.target.value)}
                         placeholder="Ex: 120.00"
+                        className="h-11"
                         required={formData.hasPeakHours}
                       />
                       {formData.hourlyRate && formData.peakHourRate && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-green-600 font-medium">
                           {(((parseFloat(formData.peakHourRate) / parseFloat(formData.hourlyRate)) - 1) * 100).toFixed(0)}% mais caro
                         </p>
                       )}
@@ -380,23 +376,26 @@ const EditVenue = () => {
               </div>
 
               {/* Status */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-muted/20">
                 <Switch
                   checked={formData.active}
                   onCheckedChange={(checked) => handleInputChange('active', checked)}
                 />
-                <Label>Local ativo</Label>
+                <Label className="font-medium">Local ativo</Label>
+                <span className="text-sm text-muted-foreground">
+                  {formData.active ? 'O local estará disponível para reservas' : 'O local não aparecerá na lista de disponíveis'}
+                </span>
               </div>
 
-              <div className="flex gap-4 pt-6">
-                <Button type="submit" className="flex-1">
+              <div className="flex gap-4 pt-6 border-t">
+                <Button type="submit" className="flex-1 h-11 font-medium">
                   Salvar Alterações
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/eventos/locais')}
-                  className="flex-1"
+                  className="flex-1 h-11 font-medium"
                 >
                   Cancelar
                 </Button>
