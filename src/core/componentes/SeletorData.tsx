@@ -1,10 +1,7 @@
 
-import React, { useState } from 'react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, ChevronLeft, ChevronRight, Edit } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import { Label } from '@/components/ui/label';
 import {
   Popover,
@@ -39,30 +36,102 @@ const SeletorData: React.FC<SeletorDataProps> = ({
   maxDate
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [viewDate, setViewDate] = useState(value || new Date());
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
 
-  const handleDateSelect = (date: Date | undefined) => {
+  const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+
+  const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  const formatarData = (date: Date) => {
+    const dia = date.getDate().toString().padStart(2, '0');
+    const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+    const ano = date.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  };
+
+  const obterDiasDoMes = () => {
+    const ano = currentMonth.getFullYear();
+    const mes = currentMonth.getMonth();
+    
+    const primeiroDia = new Date(ano, mes, 1);
+    const ultimoDia = new Date(ano, mes + 1, 0);
+    const diasNoMes = ultimoDia.getDate();
+    const primeiroDiaSemana = primeiroDia.getDay();
+    
+    const dias = [];
+    
+    // Dias do mês anterior para completar a primeira semana
+    for (let i = primeiroDiaSemana - 1; i >= 0; i--) {
+      const diaAnterior = new Date(ano, mes, -i);
+      dias.push({
+        data: diaAnterior,
+        mesAtual: false
+      });
+    }
+    
+    // Dias do mês atual
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+      dias.push({
+        data: new Date(ano, mes, dia),
+        mesAtual: true
+      });
+    }
+    
+    // Dias do próximo mês para completar a última semana
+    const diasRestantes = 42 - dias.length; // 6 semanas * 7 dias
+    for (let dia = 1; dia <= diasRestantes; dia++) {
+      dias.push({
+        data: new Date(ano, mes + 1, dia),
+        mesAtual: false
+      });
+    }
+    
+    return dias;
+  };
+
+  const navegarMes = (direcao: 'anterior' | 'proximo') => {
+    setCurrentMonth(prev => {
+      const novoMes = new Date(prev);
+      if (direcao === 'anterior') {
+        novoMes.setMonth(prev.getMonth() - 1);
+      } else {
+        novoMes.setMonth(prev.getMonth() + 1);
+      }
+      return novoMes;
+    });
+  };
+
+  const selecionarData = (data: Date) => {
     if (onChange) {
-      onChange(date);
+      onChange(data);
     }
     setIsOpen(false);
   };
 
-  const isDateDisabled = (date: Date) => {
-    if (minDate && date < minDate) return true;
-    if (maxDate && date > maxDate) return true;
+  const dataEstaDesabilitada = (data: Date) => {
+    if (minDate && data < minDate) return true;
+    if (maxDate && data > maxDate) return true;
     return false;
   };
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    const newDate = new Date(viewDate);
-    if (direction === 'prev') {
-      newDate.setMonth(newDate.getMonth() - 1);
-    } else {
-      newDate.setMonth(newDate.getMonth() + 1);
-    }
-    setViewDate(newDate);
+  const datasSaoIguais = (data1: Date, data2: Date) => {
+    return data1.getDate() === data2.getDate() &&
+           data1.getMonth() === data2.getMonth() &&
+           data1.getFullYear() === data2.getFullYear();
   };
+
+  const ehHoje = (data: Date) => {
+    const hoje = new Date();
+    return datasSaoIguais(data, hoje);
+  };
+
+  const dias = obterDiasDoMes();
 
   return (
     <div className="space-y-2">
@@ -84,111 +153,98 @@ const SeletorData: React.FC<SeletorDataProps> = ({
             disabled={disabled}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {value ? (
-              format(value, "dd/MM/yyyy", { locale: ptBR })
-            ) : (
-              <span>{placeholder}</span>
-            )}
+            {value ? formatarData(value) : <span>{placeholder}</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-0" align="start">
-          <div className="bg-muted/30 p-4 border-b">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Selecionar data</h3>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-semibold text-foreground">
-                {value ? format(value, "MMM d, yyyy", { locale: ptBR }) : "Nenhuma data"}
-              </div>
-              {value && <Edit className="h-4 w-4 text-muted-foreground" />}
-            </div>
-          </div>
-
           <div className="p-4">
-            {/* Cabeçalho do calendário */}
+            {/* Cabeçalho com navegação */}
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-medium">
-                {format(viewDate, "MMMM yyyy", { locale: ptBR })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navegarMes('anterior')}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              <h4 className="text-sm font-semibold">
+                {meses[currentMonth.getMonth()]} {currentMonth.getFullYear()}
               </h4>
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigateMonth('prev')}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigateMonth('next')}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navegarMes('proximo')}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Dias da semana */}
             <div className="grid grid-cols-7 gap-1 mb-2">
-              {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, index) => (
+              {diasSemana.map((dia, index) => (
                 <div key={index} className="text-center text-xs font-medium text-muted-foreground py-2">
-                  {day}
+                  {dia}
                 </div>
               ))}
             </div>
 
-            {/* Calendário personalizado */}
-            <Calendar
-              mode="single"
-              selected={value}
-              onSelect={handleDateSelect}
-              disabled={isDateDisabled}
-              month={viewDate}
-              onMonthChange={setViewDate}
-              locale={ptBR}
-              className="p-0 pointer-events-auto"
-              classNames={{
-                months: "flex flex-col",
-                month: "space-y-2",
-                caption: "hidden", // Escondemos o caption padrão pois criamos o nosso
-                table: "w-full border-collapse",
-                head_row: "hidden", // Escondemos a linha de cabeçalho padrão
-                row: "flex w-full",
-                cell: "h-8 w-8 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent/50 rounded-md",
-                day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-accent rounded-md transition-colors",
-                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                day_today: "bg-accent text-accent-foreground font-semibold",
-                day_outside: "text-muted-foreground opacity-50",
-                day_disabled: "text-muted-foreground opacity-25",
-              }}
-            />
-          </div>
+            {/* Grade do calendário */}
+            <div className="grid grid-cols-7 gap-1">
+              {dias.map((item, index) => {
+                const { data, mesAtual } = item;
+                const estaSelecionado = value && datasSaoIguais(data, value);
+                const estaDesabilitado = dataEstaDesabilitada(data);
+                const eHoje = ehHoje(data);
 
-          {/* Rodapé com botões */}
-          <div className="flex justify-between items-center p-4 border-t bg-muted/10">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsOpen(false)}
-              className="text-muted-foreground"
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => {
-                if (value) {
-                  handleDateSelect(value);
-                } else {
-                  handleDateSelect(new Date());
-                }
-              }}
-            >
-              OK
-            </Button>
+                return (
+                  <Button
+                    key={index}
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "h-8 w-8 p-0 font-normal transition-colors",
+                      !mesAtual && "text-muted-foreground opacity-50",
+                      estaSelecionado && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                      eHoje && !estaSelecionado && "bg-accent text-accent-foreground font-semibold",
+                      estaDesabilitado && "opacity-25 cursor-not-allowed"
+                    )}
+                    disabled={estaDesabilitado}
+                    onClick={() => selecionarData(data)}
+                  >
+                    {data.getDate()}
+                  </Button>
+                );
+              })}
+            </div>
+
+            {/* Rodapé */}
+            <div className="flex justify-between items-center pt-4 border-t mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(false)}
+                className="text-muted-foreground"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => {
+                  if (value) {
+                    selecionarData(value);
+                  } else {
+                    selecionarData(new Date());
+                  }
+                }}
+              >
+                Hoje
+              </Button>
+            </div>
           </div>
         </PopoverContent>
       </Popover>

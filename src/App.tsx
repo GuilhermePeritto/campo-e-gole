@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -18,21 +17,21 @@ import Settings from './pages/Settings';
 import UniversalReceivePayment from './pages/UniversalReceivePayment';
 
 // Events pages
-import EventsCalendar from './pages/eventos/Calendar';
+import EventsCalendar from './pages/eventos/agenda/Agenda';
+import EventsClients from './pages/eventos/clientes/Clientes';
+import EventsNewClient from './pages/eventos/clientes/NovoCliente';
+import EventsEditClient from './pages/eventos/clientes/EditarCliente';
 import EventsClientHistory from './pages/eventos/ClientHistory';
-import EventsClients from './pages/eventos/Clients';
-import EventsEditClient from './pages/eventos/EditClient';
-import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
-import EventsEditReservation from './pages/eventos/EditReservation';
-import EventsEditVenue from './pages/eventos/EditVenue';
-import EventsNewClient from './pages/eventos/NewClient';
-import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
-import EventsNewReservation from './pages/eventos/NewReservation';
-import EventsNewVenue from './pages/eventos/NewVenue';
-import EventsReceivables from './pages/eventos/Receivables';
-import EventsReceivePayment from './pages/eventos/ReceivePayment';
-import EventsReports from './pages/eventos/Reports';
 import EventsVenues from './pages/eventos/Venues';
+import EventsNewVenue from './pages/eventos/NewVenue';
+import EventsEditVenue from './pages/eventos/EditVenue';
+import EventsNewReservation from './pages/eventos/NewReservation';
+import EventsEditReservation from './pages/eventos/EditReservation';
+import EventsReceivables from './pages/eventos/Receivables';
+import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
+import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
+import EventsReceivePayment from './pages/eventos/financeiro/ReceberPagamento';
+import EventsReports from './pages/eventos/Reports';
 
 // Financial pages
 import FinanceiroContasPagar from './pages/financeiro/AccountsPayable';
