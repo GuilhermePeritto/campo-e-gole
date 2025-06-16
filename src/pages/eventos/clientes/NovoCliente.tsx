@@ -1,4 +1,3 @@
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -7,9 +6,6 @@ import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PaginaFormularioBase from '@/core/componentes/PaginaFormularioBase';
-import CampoDocumento from '@/core/componentes/CampoDocumento';
-import CampoTelefone from '@/core/componentes/CampoTelefone';
-import CampoEmail from '@/core/componentes/CampoEmail';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 
@@ -116,26 +112,37 @@ const NovoCliente = () => {
             </Select>
           </div>
 
-          <CampoDocumento
-            id="document"
-            label={formData.type === 'pessoa-juridica' ? 'CNPJ' : 'CPF'}
-            value={formData.document}
-            onChange={(value) => handleChange('document', value)}
-            tipo={formData.type === 'pessoa-juridica' ? 'cnpj' : 'cpf'}
-          />
+          <div className="space-y-2">
+            <Label htmlFor="document">
+              {formData.type === 'pessoa-juridica' ? 'CNPJ' : 'CPF'}
+            </Label>
+            <Input
+              id="document"
+              value={formData.document}
+              onChange={(e) => handleChange('document', e.target.value)}
+              placeholder={formData.type === 'pessoa-juridica' ? '00.000.000/0000-00' : '000.000.000-00'}
+            />
+          </div>
 
-          <CampoTelefone
-            id="phone"
-            value={formData.phone}
-            onChange={(value) => handleChange('phone', value)}
-            required
-          />
+          <div className="space-y-2">
+            <Label htmlFor="phone">Telefone *</Label>
+            <Input
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => handleChange('phone', e.target.value)}
+              placeholder="(11) 99999-9999"
+              required
+            />
+          </div>
 
-          <div className="md:col-span-2">
-            <CampoEmail
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="email">E-mail</Label>
+            <Input
               id="email"
+              type="email"
               value={formData.email}
-              onChange={(value) => handleChange('email', value)}
+              onChange={(e) => handleChange('email', e.target.value)}
+              placeholder="cliente@email.com"
             />
           </div>
         </div>
