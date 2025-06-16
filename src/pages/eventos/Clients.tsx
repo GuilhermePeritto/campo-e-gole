@@ -19,7 +19,7 @@ interface Client {
   status: 'active' | 'inactive';
 }
 
-const Clientes = () => {
+const Clients = () => {
   const navigate = useNavigate();
 
   const mockClients: Client[] = [
@@ -237,4 +237,4 @@ const Clientes = () => {
   );
 };
 
-export default Clientes;
+export default Clients;
