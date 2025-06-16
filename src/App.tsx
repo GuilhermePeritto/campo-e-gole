@@ -17,21 +17,21 @@ import Settings from './pages/Settings';
 import UniversalReceivePayment from './pages/UniversalReceivePayment';
 
 // Events pages
-import EventsCalendar from './pages/eventos/agenda/Agenda';
 import EventsClients from './pages/eventos/clientes/Clientes';
-import EventsNewClient from './pages/eventos/clientes/NovoCliente';
+import EventsClientHistory from './pages/eventos/clientes/ClientHistory';
 import EventsEditClient from './pages/eventos/clientes/EditarCliente';
-import EventsClientHistory from './pages/eventos/ClientHistory';
-import EventsVenues from './pages/eventos/Venues';
-import EventsNewVenue from './pages/eventos/NewVenue';
-import EventsEditVenue from './pages/eventos/EditVenue';
-import EventsNewReservation from './pages/eventos/NewReservation';
-import EventsEditReservation from './pages/eventos/EditReservation';
-import EventsReceivables from './pages/eventos/Receivables';
-import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
+import EventsNewClient from './pages/eventos/clientes/NovoCliente';
 import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
-import EventsReceivePayment from './pages/eventos/financeiro/ReceberPagamento';
-import EventsReports from './pages/eventos/Reports';
+import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
+import EventsReceivePayment from './pages/eventos/contas-a-receber/ReceberPagamento';
+import EventsReceivables from './pages/eventos/contas-a-receber/Recebiveis';
+import EventsCalendar from './pages/eventos/eventos/Agenda';
+import EventsEditReservation from './pages/eventos/eventos/EditarReserva';
+import EventsNewReservation from './pages/eventos/eventos/NovaReserva';
+import EventsEditVenue from './pages/eventos/locais/EditVenue';
+import EventsNewVenue from './pages/eventos/locais/NewVenue';
+import EventsVenues from './pages/eventos/locais/Venues';
+import EventsReports from './pages/eventos/relatorios/Reports';
 
 // Financial pages
 import FinanceiroContasPagar from './pages/financeiro/AccountsPayable';
