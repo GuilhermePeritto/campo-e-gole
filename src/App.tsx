@@ -21,17 +21,10 @@ import EventsCalendar from './pages/eventos/agenda/Agenda';
 import EventsClients from './pages/eventos/clientes/Clientes';
 import EventsNewClient from './pages/eventos/clientes/NovoCliente';
 import EventsEditClient from './pages/eventos/clientes/EditarCliente';
-import EventsClientHistory from './pages/eventos/ClientHistory';
-import EventsVenues from './pages/eventos/Venues';
-import EventsNewVenue from './pages/eventos/NewVenue';
-import EventsEditVenue from './pages/eventos/EditVenue';
-import EventsNewReservation from './pages/eventos/NewReservation';
-import EventsEditReservation from './pages/eventos/EditReservation';
-import EventsReceivables from './pages/eventos/Receivables';
+import EventsReceivables from './pages/eventos/contas-a-receber/ContasAReceber';
 import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
 import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
 import EventsReceivePayment from './pages/eventos/financeiro/ReceberPagamento';
-import EventsReports from './pages/eventos/Reports';
 
 // Financial pages
 import FinanceiroContasPagar from './pages/financeiro/AccountsPayable';
@@ -117,22 +110,14 @@ function App() {
                 <Route path="/configuracoes" element={<Settings />} />
 
                 {/* Events routes */}
-                <Route path="/eventos/calendario" element={<EventsCalendar />} />
+                <Route path="/eventos/agenda" element={<EventsCalendar />} />
                 <Route path="/eventos/clientes" element={<EventsClients />} />
                 <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
                 <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
-                <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
-                <Route path="/eventos/locais" element={<EventsVenues />} />
-                <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
-                <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
-                <Route path="/eventos/novo" element={<EventsNewReservation />} />
-                <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
-                <Route path="/eventos/receber-pagamento" element={<EventsReceivePayment />} />
-                <Route path="/eventos/relatorios" element={<EventsReports />} />
 
                 {/* Financial routes */}
                 <Route path="/financeiro/receitas" element={<FinanceiroReceitas />} />
