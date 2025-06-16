@@ -11,6 +11,10 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Calendar, Edit, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CampoValor from '@/core/componentes/CampoValor';
+import SeletorData from '@/core/componentes/SeletorData';
+import CampoHorario from '@/core/componentes/CampoHorario';
+import CampoBusca from '@/core/componentes/CampoBusca';
 
 const NewReservation = () => {
   const navigate = useNavigate();
@@ -26,7 +30,7 @@ const NewReservation = () => {
     startTime: '',
     endTime: '',
     notes: '',
-    amount: ''
+    amount: 0
   });
 
   // Tour steps
@@ -70,6 +74,21 @@ const NewReservation = () => {
     3: { client: 'pedro-costa', venue: 'quadra-2', startTime: '18:00', endTime: '19:00', notes: '', amount: '60' },
     4: { client: 'ana-oliveira', venue: 'campo-futebol', startTime: '20:00', endTime: '22:00', notes: 'Grupo que joga toda semana', amount: '200' }
   };
+
+  // Mock clients and venues for search
+  const mockClients = [
+    { id: 1, nome: 'João Silva', email: 'joao@email.com' },
+    { id: 2, nome: 'Maria Santos', email: 'maria@email.com' },
+    { id: 3, nome: 'Pedro Costa', email: 'pedro@email.com' },
+    { id: 4, nome: 'Ana Oliveira', email: 'ana@email.com' }
+  ];
+
+  const mockVenues = [
+    { id: 1, nome: 'Quadra 1', tipo: 'Futebol Society' },
+    { id: 2, nome: 'Quadra 2', tipo: 'Basquete' },
+    { id: 3, nome: 'Campo de Futebol', tipo: 'Futebol 11' },
+    { id: 4, nome: 'Quadra Coberta', tipo: 'Vôlei' }
+  ];
 
   // Set date and event from URL parameters when component mounts
   useEffect(() => {
@@ -148,7 +167,7 @@ const NewReservation = () => {
     navigate('/eventos');
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -193,7 +212,7 @@ const NewReservation = () => {
       startTime: '',
       endTime: '',
       notes: '',
-      amount: ''
+      amount: 0
     });
     
     // Update URL to remove eventId parameter
@@ -276,82 +295,64 @@ const NewReservation = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2" data-tour="client-select">
-                    <Label htmlFor="client">Cliente</Label>
-                    <Select value={formData.client} onValueChange={(value) => handleChange('client', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um cliente" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="joao-silva">João Silva</SelectItem>
-                        <SelectItem value="maria-santos">Maria Santos</SelectItem>
-                        <SelectItem value="pedro-costa">Pedro Costa</SelectItem>
-                        <SelectItem value="ana-oliveira">Ana Oliveira</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <CampoBusca
+                      id="client"
+                      label="Cliente"
+                      value={formData.client}
+                      onChange={(value) => handleChange('client', value)}
+                      items={mockClients}
+                      displayField="nome"
+                      placeholder="Buscar cliente..."
+                      required
+                    />
                   </div>
 
                   <div className="space-y-2" data-tour="venue-select">
-                    <Label htmlFor="venue">Local</Label>
-                    <Select value={formData.venue} onValueChange={(value) => handleChange('venue', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um local" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="quadra-1">Quadra 1</SelectItem>
-                        <SelectItem value="quadra-2">Quadra 2</SelectItem>
-                        <SelectItem value="campo-futebol">Campo de Futebol</SelectItem>
-                        <SelectItem value="quadra-coberta">Quadra Coberta</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <CampoBusca
+                      id="venue"
+                      label="Local"
+                      value={formData.venue}
+                      onChange={(value) => handleChange('venue', value)}
+                      items={mockVenues}
+                      displayField="nome"
+                      placeholder="Buscar local..."
+                      required
+                    />
                   </div>
 
                   <div className="space-y-4" data-tour="datetime-inputs">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Data</Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) => handleChange('date', e.target.value)}
-                        required
-                      />
-                    </div>
+                    <SeletorData
+                      id="date"
+                      label="Data"
+                      value={formData.date}
+                      onChange={(value) => handleChange('date', value)}
+                      required
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="amount">Valor (R$)</Label>
-                      <Input
-                        id="amount"
-                        type="number"
-                        step="0.01"
-                        value={formData.amount}
-                        onChange={(e) => handleChange('amount', e.target.value)}
-                        placeholder="0,00"
-                        required
-                      />
-                    </div>
+                    <CampoValor
+                      id="amount"
+                      label="Valor (R$)"
+                      value={formData.amount}
+                      onChange={(value) => handleChange('amount', value)}
+                      required
+                    />
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="startTime">Horário de Início</Label>
-                        <Input
-                          id="startTime"
-                          type="time"
-                          value={formData.startTime}
-                          onChange={(e) => handleChange('startTime', e.target.value)}
-                          required
-                        />
-                      </div>
+                      <CampoHorario
+                        id="startTime"
+                        label="Horário de Início"
+                        value={formData.startTime}
+                        onChange={(value) => handleChange('startTime', value)}
+                        required
+                      />
 
-                      <div className="space-y-2">
-                        <Label htmlFor="endTime">Horário de Término</Label>
-                        <Input
-                          id="endTime"
-                          type="time"
-                          value={formData.endTime}
-                          onChange={(e) => handleChange('endTime', e.target.value)}
-                          required
-                        />
-                      </div>
+                      <CampoHorario
+                        id="endTime"
+                        label="Horário de Término"
+                        value={formData.endTime}
+                        onChange={(value) => handleChange('endTime', value)}
+                        required
+                      />
                     </div>
                   </div>
 

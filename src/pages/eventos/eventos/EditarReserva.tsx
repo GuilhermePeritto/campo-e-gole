@@ -10,6 +10,10 @@ import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, Calendar, Clock, MapPin, Search, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import CampoValor from '@/core/componentes/CampoValor';
+import SeletorData from '@/core/componentes/SeletorData';
+import CampoHorario from '@/core/componentes/CampoHorario';
+import CampoBusca from '@/core/componentes/CampoBusca';
 
 const EditReservation = () => {
   const navigate = useNavigate();
@@ -23,6 +27,7 @@ const EditReservation = () => {
     date: '',
     startTime: '',
     endTime: '',
+    amount: 0,
     recurring: false,
     recurringType: '',
     customRecurringDays: '',
@@ -64,6 +69,16 @@ const EditReservation = () => {
       color: '#3b82f6',
       sport: 'Basquete'
     }
+  ];
+
+  // Mock data for search components
+  const mockVenues = [
+    { id: 1, nome: 'Quadra A - Futebol Society', tipo: 'Futebol Society' },
+    { id: 2, nome: 'Quadra B - Basquete', tipo: 'Basquete' },
+    { id: 3, nome: 'Campo 1 - Futebol 11', tipo: 'Futebol 11' },
+    { id: 4, nome: 'Campo 2 - Futebol 7', tipo: 'Futebol 7' },
+    { id: 5, nome: 'Quadra C - Vôlei', tipo: 'Vôlei' },
+    { id: 6, nome: 'Quadra de Areia - Poliesportiva', tipo: 'Poliesportiva' }
   ];
 
   // Carregar dados da reserva para edição
@@ -164,6 +179,10 @@ const EditReservation = () => {
     navigate('/eventos/reservas');
   };
 
+  const handleChange = (field: string, value: string | number | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleTimeSlotClick = (time: string) => {
     setFormData(prev => ({ ...prev, startTime: time }));
   };
@@ -222,7 +241,7 @@ const EditReservation = () => {
                           id="clientEmail"
                           type="email"
                           value={formData.clientEmail}
-                          onChange={(e) => setFormData({...formData, clientEmail: e.target.value})}
+                          onChange={(e) => handleChange('clientEmail', e.target.value)}
                           placeholder="cliente@exemplo.com"
                           required
                           className="flex-1"
@@ -253,7 +272,7 @@ const EditReservation = () => {
                         <Input
                           id="clientName"
                           value={formData.clientName}
-                          onChange={(e) => setFormData({...formData, clientName: e.target.value})}
+                          onChange={(e) => handleChange('clientName', e.target.value)}
                           required
                           readOnly={clientFound}
                           className={clientFound ? "bg-gray-50" : ""}
@@ -265,7 +284,7 @@ const EditReservation = () => {
                           id="clientPhone"
                           type="tel"
                           value={formData.clientPhone}
-                          onChange={(e) => setFormData({...formData, clientPhone: e.target.value})}
+                          onChange={(e) => handleChange('clientPhone', e.target.value)}
                           readOnly={clientFound}
                           className={clientFound ? "bg-gray-50" : ""}
                         />
@@ -282,31 +301,20 @@ const EditReservation = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="venue">Local *</Label>
-                      <Select value={formData.venue} onValueChange={(value) => setFormData({...formData, venue: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o local" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {venues.map((venue) => (
-                            <SelectItem key={venue.name} value={venue.name}>
-                              <div className="flex items-center gap-2">
-                                <div 
-                                  className="w-3 h-3 rounded-full" 
-                                  style={{ backgroundColor: venue.color }}
-                                ></div>
-                                {venue.name}
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <CampoBusca
+                      id="venue"
+                      label="Local"
+                      value={formData.venue}
+                      onChange={(value) => handleChange('venue', value)}
+                      items={mockVenues}
+                      displayField="nome"
+                      placeholder="Buscar local..."
+                      required
+                    />
                     
                     <div className="space-y-2">
                       <Label htmlFor="sport">Esporte Praticado *</Label>
-                      <Select value={formData.sport} onValueChange={(value) => setFormData({...formData, sport: value})}>
+                      <Select value={formData.sport} onValueChange={(value) => handleChange('sport', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o esporte" />
                         </SelectTrigger>
@@ -318,36 +326,39 @@ const EditReservation = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Data *</Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) => setFormData({...formData, date: e.target.value})}
-                        required
-                      />
-                    </div>
+                    <SeletorData
+                      id="date"
+                      label="Data"
+                      value={formData.date}
+                      onChange={(value) => handleChange('date', value)}
+                      required
+                    />
                     
                     <div className="space-y-2">
                       <Label>Período *</Label>
                       <div className="grid grid-cols-2 gap-2">
-                        <Input
-                          type="time"
+                        <CampoHorario
+                          id="startTime"
                           value={formData.startTime}
-                          onChange={(e) => setFormData({...formData, startTime: e.target.value})}
+                          onChange={(value) => handleChange('startTime', value)}
                           required
-                          placeholder="Início"
                         />
-                        <Input
-                          type="time"
+                        <CampoHorario
+                          id="endTime"
                           value={formData.endTime}
-                          onChange={(e) => setFormData({...formData, endTime: e.target.value})}
+                          onChange={(value) => handleChange('endTime', value)}
                           required
-                          placeholder="Término"
                         />
                       </div>
                     </div>
+
+                    <CampoValor
+                      id="amount"
+                      label="Valor"
+                      value={formData.amount}
+                      onChange={(value) => handleChange('amount', value)}
+                      required
+                    />
                   </div>
                 </div>
 
@@ -413,7 +424,7 @@ const EditReservation = () => {
                     id="notes"
                     className="w-full min-h-[100px] p-3 border rounded-md resize-none"
                     value={formData.notes}
-                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                    onChange={(e) => handleChange('notes', e.target.value)}
                     placeholder="Informações adicionais sobre a reserva..."
                   />
                 </div>

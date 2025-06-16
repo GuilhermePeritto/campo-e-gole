@@ -1,13 +1,17 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { UserPlus } from 'lucide-react';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserPlus } from 'lucide-react';
 import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import CampoDocumento from '@/core/componentes/CampoDocumento';
+import CampoTelefone from '@/core/componentes/CampoTelefone';
+import CampoEmail from '@/core/componentes/CampoEmail';
+import { Input } from '@/components/ui/input';
 
 const NovoCliente = () => {
   const navigate = useNavigate();
@@ -96,13 +100,14 @@ const NovoCliente = () => {
               onChange={(e) => handleChange('name', e.target.value)}
               placeholder="Nome completo ou razão social"
               required
+              className="h-11"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="type">Tipo de Cliente *</Label>
             <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
-              <SelectTrigger id="type">
+              <SelectTrigger id="type" className="h-11">
                 <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
               <SelectContent>
@@ -112,37 +117,28 @@ const NovoCliente = () => {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="document">
-              {formData.type === 'pessoa-juridica' ? 'CNPJ' : 'CPF'}
-            </Label>
-            <Input
-              id="document"
-              value={formData.document}
-              onChange={(e) => handleChange('document', e.target.value)}
-              placeholder={formData.type === 'pessoa-juridica' ? '00.000.000/0000-00' : '000.000.000-00'}
-            />
-          </div>
+          <CampoDocumento
+            id="document"
+            label={formData.type === 'pessoa-juridica' ? 'CNPJ' : 'CPF'}
+            value={formData.document}
+            onChange={(value) => handleChange('document', value)}
+            tipo={formData.type === 'pessoa-juridica' ? 'cnpj' : 'cpf'}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="phone">Telefone *</Label>
-            <Input
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
-              placeholder="(11) 99999-9999"
-              required
-            />
-          </div>
+          <CampoTelefone
+            id="phone"
+            label="Telefone"
+            value={formData.phone}
+            onChange={(value) => handleChange('phone', value)}
+            required
+          />
 
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input
+          <div className="md:col-span-2">
+            <CampoEmail
               id="email"
-              type="email"
+              label="E-mail"
               value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-              placeholder="cliente@email.com"
+              onChange={(value) => handleChange('email', value)}
             />
           </div>
         </div>
