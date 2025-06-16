@@ -1,12 +1,15 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Users } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
-import { Users } from 'lucide-react';
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import PaginaFormularioBase from '@/core/componentes/PaginaFormularioBase';
+import CampoDocumento from '@/core/componentes/CampoDocumento';
+import CampoTelefone from '@/core/componentes/CampoTelefone';
+import CampoEmail from '@/core/componentes/CampoEmail';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 
@@ -18,9 +21,9 @@ const EditarCliente = () => {
   const [formData, setFormData] = useState({
     name: 'João Silva',
     email: 'joao@email.com',
-    phone: '(11) 99999-9999',
+    phone: '11999999999',
     type: 'pessoa-fisica',
-    document: '123.456.789-00',
+    document: '12345678900',
     address: 'Rua das Flores, 123, Centro, São Paulo',
     notes: 'Cliente preferencial'
   });
@@ -116,28 +119,20 @@ const EditarCliente = () => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="joao@email.com"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              className="h-11"
-            />
-          </div>
+          <CampoEmail
+            id="email"
+            label="Email"
+            value={formData.email}
+            onChange={(value) => handleInputChange('email', value)}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium">Telefone *</Label>
-            <Input
-              id="phone"
-              placeholder="(11) 99999-9999"
-              value={formData.phone}
-              onChange={(e) => handleInputChange('phone', e.target.value)}
-              className="h-11"
-            />
-          </div>
+          <CampoTelefone
+            id="phone"
+            label="Telefone *"
+            value={formData.phone}
+            onChange={(value) => handleInputChange('phone', value)}
+            required
+          />
 
           <div className="space-y-2">
             <Label htmlFor="type" className="text-sm font-medium">Tipo de Cliente</Label>
@@ -153,16 +148,13 @@ const EditarCliente = () => {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="document" className="text-sm font-medium">CPF/CNPJ</Label>
-            <Input
-              id="document"
-              placeholder="000.000.000-00"
-              value={formData.document}
-              onChange={(e) => handleInputChange('document', e.target.value)}
-              className="h-11"
-            />
-          </div>
+          <CampoDocumento
+            id="document"
+            label="CPF/CNPJ"
+            value={formData.document}
+            onChange={(value) => handleInputChange('document', value)}
+            tipo={formData.type === 'pessoa-juridica' ? 'cnpj' : 'cpf'}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="address" className="text-sm font-medium">Endereço</Label>

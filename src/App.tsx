@@ -25,6 +25,8 @@ import EventsReceivables from './pages/eventos/contas-a-receber/ContasAReceber';
 import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
 import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
 import EventsReceivePayment from './pages/eventos/financeiro/ReceberPagamento';
+import NovoEvento from './pages/eventos/NovoEvento';
+import EditarEvento from './pages/eventos/EditarEvento';
 
 // Financial pages
 import FinanceiroContasPagar from './pages/financeiro/AccountsPayable';
@@ -118,6 +120,8 @@ function App() {
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/receber" element={<EventsReceivePayment />} />
+                <Route path="/eventos/novo" element={<NovoEvento />} />
+                <Route path="/eventos/:id/editar" element={<EditarEvento />} />
 
                 {/* Financial routes */}
                 <Route path="/financeiro/receitas" element={<FinanceiroReceitas />} />
