@@ -1,5 +1,4 @@
 
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CreditCard } from 'lucide-react';
@@ -8,16 +7,25 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
+import CampoBusca from '@/core/componentes/CampoBusca';
+import CampoValor from '@/core/componentes/CampoValor';
+import SeletorData from '@/core/componentes/SeletorData';
 
-const EditReceivable = () => {
+const EditarRecebivel = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [formData, setFormData] = useState({
     client: '',
     amount: '',
-    dueDate: '',
+    dueDate: undefined as Date | undefined,
     description: ''
   });
+
+  const clientesExemplo = [
+    { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
+    { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
+    { id: '3', label: 'Pedro Costa', subtitle: 'CNPJ: 12.345.678/0001-90' },
+  ];
 
   const tourSteps: TourStep[] = [
     {
@@ -47,7 +55,7 @@ const EditReceivable = () => {
     const mockData = {
       client: 'João Silva',
       amount: '150',
-      dueDate: '2024-06-10',
+      dueDate: new Date('2024-06-10'),
       description: 'Reserva Quadra A - 08/06'
     };
     setFormData(mockData);
@@ -56,12 +64,23 @@ const EditReceivable = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Dados da conta atualizados:', formData);
-    // Aqui seria feita a atualização no backend
     navigate('/eventos/contas-a-receber');
   };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleClientChange = (value: string) => {
+    setFormData(prev => ({ ...prev, client: value }));
+  };
+
+  const handleAmountChange = (value: string) => {
+    setFormData(prev => ({ ...prev, amount: value }));
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData(prev => ({ ...prev, dueDate: date }));
+  };
+
+  const handleDescriptionChange = (value: string) => {
+    setFormData(prev => ({ ...prev, description: value }));
   };
 
   return (
@@ -83,38 +102,29 @@ const EditReceivable = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="client" className="text-sm font-medium">Cliente *</Label>
-            <Input
-              id="client"
-              value={formData.client}
-              onChange={(e) => handleChange('client', e.target.value)}
-              className="h-11"
-              required
-            />
-          </div>
+          <CampoBusca
+            id="client"
+            label="Cliente"
+            value={formData.client}
+            onChange={handleClientChange}
+            opcoes={clientesExemplo}
+            required
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="amount" className="text-sm font-medium">Valor (R$) *</Label>
-            <Input
-              id="amount"
-              type="number"
-              step="0.01"
-              value={formData.amount}
-              onChange={(e) => handleChange('amount', e.target.value)}
-              className="h-11"
-              required
-            />
-          </div>
+          <CampoValor
+            id="amount"
+            label="Valor"
+            value={formData.amount}
+            onChange={handleAmountChange}
+            required
+          />
 
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="dueDate" className="text-sm font-medium">Data de Vencimento *</Label>
-            <Input
+          <div className="md:col-span-2">
+            <SeletorData
               id="dueDate"
-              type="date"
+              label="Data de Vencimento"
               value={formData.dueDate}
-              onChange={(e) => handleChange('dueDate', e.target.value)}
-              className="h-11"
+              onChange={handleDateChange}
               required
             />
           </div>
@@ -126,7 +136,7 @@ const EditReceivable = () => {
         <Textarea
           id="description"
           value={formData.description}
-          onChange={(e) => handleChange('description', e.target.value)}
+          onChange={(e) => handleDescriptionChange(e.target.value)}
           placeholder="Descrição da conta a receber..."
           rows={3}
           className="resize-none"
@@ -137,4 +147,4 @@ const EditReceivable = () => {
   );
 };
 
-export default EditReceivable;
+export default EditarRecebivel;
