@@ -5,8 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { DollarSign, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Recebiveis = () => {
+  const navigate = useNavigate();
+
   // Mock data
   const recebiveis = [
     {
@@ -51,12 +54,12 @@ const Recebiveis = () => {
     {
       key: 'dueDate',
       label: 'Vencimento',
-      render: (value: string) => new Date(value).toLocaleDateString('pt-BR')
+      render: (item: any) => new Date(item.dueDate).toLocaleDateString('pt-BR')
     },
     {
       key: 'amount',
       label: 'Valor',
-      render: (value: number) => `R$ ${value.toFixed(2)}`
+      render: (item: any) => `R$ ${item.amount.toFixed(2)}`
     },
     {
       key: 'installment',
@@ -65,11 +68,11 @@ const Recebiveis = () => {
     {
       key: 'status',
       label: 'Situação',
-      render: (value: string) => {
+      render: (item: any) => {
         const variants = {
           pendente: 'default',
           vencido: 'destructive',
-          pago: 'success'
+          pago: 'default'
         } as const;
         
         const labels = {
@@ -79,8 +82,8 @@ const Recebiveis = () => {
         };
         
         return (
-          <Badge variant={variants[value as keyof typeof variants]}>
-            {labels[value as keyof typeof labels]}
+          <Badge variant={variants[item.status as keyof typeof variants]}>
+            {labels[item.status as keyof typeof labels]}
           </Badge>
         );
       }
@@ -89,12 +92,17 @@ const Recebiveis = () => {
 
   const actions = [
     {
-      label: 'Nova Conta a Receber',
-      icon: <Plus className="h-4 w-4" />,
-      href: '/eventos/contas-a-receber/novo',
-      variant: 'default' as const
+      label: 'Editar',
+      onClick: (item: any) => navigate(`/eventos/contas-a-receber/${item.id}/editar`),
+      variant: 'outline' as const
     }
   ];
+
+  const createButton = {
+    label: 'Nova Conta a Receber',
+    icon: <Plus className="h-4 w-4" />,
+    onClick: () => navigate('/eventos/contas-a-receber/novo')
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,10 +121,11 @@ const Recebiveis = () => {
           data={recebiveis}
           columns={columns}
           actions={actions}
+          createButton={createButton}
           searchPlaceholder="Buscar contas..."
           searchFields={['client', 'description']}
-          itemsPerPage={10}
-          editPath="/eventos/contas-a-receber/:id/editar"
+          getItemId={(item) => item.id}
+          pageSize={10}
         />
       </main>
     </div>
