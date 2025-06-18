@@ -1,14 +1,13 @@
 
-import BaseFormPage from '@/components/BaseFormPage';
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
@@ -165,7 +164,7 @@ const NovaReserva = () => {
       setEditingEventId(null);
     }
     
-    navigate('/eventos/eventos');
+    navigate('/eventos');
   };
 
   const handleClientChange = (value: string, item?: any) => {
@@ -274,7 +273,7 @@ const NovaReserva = () => {
     if (isEditing) {
       handleCancelEdit();
     } else {
-      navigate('/eventos/eventos');
+      navigate('/eventos');
     }
   };
 
@@ -291,7 +290,7 @@ const NovaReserva = () => {
         title={isEditing ? "Editar Reserva" : "Nova Reserva"}
         icon={isEditing ? <Edit className="h-5 w-5" /> : <Calendar className="h-5 w-5" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos/eventos"
+        backTo="/eventos"
         backLabel="Agenda"
       />
 

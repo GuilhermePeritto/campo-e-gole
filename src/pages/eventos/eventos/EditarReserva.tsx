@@ -1,23 +1,22 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Calendar, Plus } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import EventTimeline from '@/components/EventTimeline';
+import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import ModuleHeader from '@/components/ModuleHeader';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { TourStep } from '@/components/PageTour';
-import PageTour from '@/components/PageTour';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
-import EventTimeline from '@/components/EventTimeline';
+import { Calendar, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface ReservationFormData {
   client: string;
@@ -146,7 +145,7 @@ const EditarReserva = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Reserva editada:', formData);
-    navigate('/eventos/eventos');
+    navigate('/eventos');
   };
 
   const handleClientChange = (value: string, item?: any) => {
@@ -210,7 +209,7 @@ const EditarReserva = () => {
         title="Editar Reserva"
         icon={<Calendar className="h-5 w-5" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos/eventos"
+        backTo="/eventos"
         backLabel="Agenda"
       />
 
@@ -365,7 +364,7 @@ const EditarReserva = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate('/eventos/eventos')}
+                    onClick={() => navigate('/eventos')}
                     className="flex-1 h-11 font-medium"
                   >
                     Cancelar
