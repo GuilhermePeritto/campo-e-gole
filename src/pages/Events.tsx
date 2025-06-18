@@ -38,7 +38,7 @@ const Events = () => {
       action: () => navigate('/eventos/calendario')
     },
     {
-      title: 'Financeiro',
+      title: 'Recebiveis',
       description: 'Contas a receber',
       icon: CreditCard,
       color: 'bg-module-events',

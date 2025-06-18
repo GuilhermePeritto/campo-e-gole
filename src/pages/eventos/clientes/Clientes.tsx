@@ -1,165 +1,119 @@
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users, Plus, Edit, Eye, Phone, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Users, Plus, Edit, Eye, Trash2 } from 'lucide-react';
 import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 
 interface Cliente {
-  id: number;
-  name: string;
+  id: string;
+  nome: string;
   email: string;
-  phone: string;
-  reservations: number;
-  totalSpent: number;
-  lastReservation: string;
-  status: 'active' | 'inactive';
+  telefone: string;
+  tipo: string;
+  situacao: 'Ativo' | 'Inativo' | 'Pendente';
+  dataCadastro: string;
 }
 
 const Clientes = () => {
   const navigate = useNavigate();
 
-  const mockClients: Cliente[] = [
-    { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 99999-9999', reservations: 5, totalSpent: 1200.00, lastReservation: '05/05/2024', status: 'active' },
-    { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 88888-8888', reservations: 3, totalSpent: 800.00, lastReservation: '02/05/2024', status: 'active' },
-    { id: 3, name: 'Pedro Costa', email: 'pedro@email.com', phone: '(11) 77777-7777', reservations: 8, totalSpent: 2100.00, lastReservation: '01/05/2024', status: 'active' },
-    { id: 4, name: 'Ana Oliveira', email: 'ana@email.com', phone: '(11) 66666-6666', reservations: 2, totalSpent: 450.00, lastReservation: '28/04/2024', status: 'inactive' }
+  const clientes: Cliente[] = [
+    {
+      id: '1',
+      nome: 'João Silva',
+      email: 'joao@email.com',
+      telefone: '(11) 99999-1111',
+      tipo: 'Pessoa Física',
+      situacao: 'Ativo',
+      dataCadastro: '2024-01-15'
+    },
+    {
+      id: '2',
+      nome: 'Maria Santos',
+      email: 'maria@email.com',
+      telefone: '(11) 88888-2222',
+      tipo: 'Pessoa Física',
+      situacao: 'Ativo',
+      dataCadastro: '2024-02-20'
+    },
+    {
+      id: '3',
+      nome: 'Empresa XYZ Ltda',
+      email: 'contato@xyz.com',
+      telefone: '(11) 77777-3333',
+      tipo: 'Pessoa Jurídica',
+      situacao: 'Pendente',
+      dataCadastro: '2024-03-10'
+    }
   ];
-
-  const getStatusColor = (status: string) => {
-    return status === 'active' ? 'default' : 'secondary';
-  };
 
   const columns: BaseListColumn<Cliente>[] = [
     {
-      key: 'name',
-      label: 'Cliente',
-      render: (client) => (
-        <div>
-          <div className="font-medium">{client.name}</div>
-          <div className="text-sm text-muted-foreground flex items-center gap-1">
-            <Mail className="h-3 w-3" />
-            {client.email}
-          </div>
-        </div>
-      )
+      key: 'nome',
+      label: 'Nome',
+      sortable: true
     },
     {
-      key: 'phone',
-      label: 'Telefone',
-      render: (client) => (
-        <div className="flex items-center gap-1">
-          <Phone className="h-3 w-3" />
-          {client.phone}
-        </div>
-      )
+      key: 'email',
+      label: 'E-mail',
+      sortable: true
     },
     {
-      key: 'reservations',
-      label: 'Reservas',
-      render: (client) => client.reservations
+      key: 'telefone',
+      label: 'Telefone'
     },
     {
-      key: 'totalSpent',
-      label: 'Total Gasto',
-      render: (client) => `R$ ${client.totalSpent.toFixed(2)}`
+      key: 'tipo',
+      label: 'Tipo',
+      sortable: true
     },
     {
-      key: 'lastReservation',
-      label: 'Última Reserva',
-      render: (client) => client.lastReservation
+      key: 'situacao',
+      label: 'Situação',
+      render: (cliente) => (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+          cliente.situacao === 'Ativo' ? 'bg-green-100 text-green-800' :
+          cliente.situacao === 'Inativo' ? 'bg-red-100 text-red-800' :
+          'bg-yellow-100 text-yellow-800'
+        }`}>
+          {cliente.situacao}
+        </span>
+      ),
+      sortable: true
     },
     {
-      key: 'status',
-      label: 'Status',
-      render: (client) => (
-        <Badge variant={getStatusColor(client.status)}>
-          {client.status === 'active' ? 'Ativo' : 'Inativo'}
-        </Badge>
-      )
+      key: 'dataCadastro',
+      label: 'Data Cadastro',
+      render: (cliente) => new Date(cliente.dataCadastro).toLocaleDateString('pt-BR'),
+      sortable: true
     }
   ];
 
   const actions: BaseListAction<Cliente>[] = [
     {
-      label: 'Ver histórico',
+      label: 'Visualizar',
       icon: <Eye className="h-4 w-4" />,
-      onClick: (client) => navigate(`/eventos/clientes/${client.id}/historico`)
+      onClick: (cliente) => navigate(`/eventos/clientes/${cliente.id}`),
+      variant: 'outline'
     },
     {
       label: 'Editar',
       icon: <Edit className="h-4 w-4" />,
-      onClick: (client) => navigate(`/eventos/clientes/${client.id}/editar`)
+      onClick: (cliente) => navigate(`/eventos/clientes/${cliente.id}/editar`),
+      variant: 'outline'
+    },
+    {
+      label: 'Excluir',
+      icon: <Trash2 className="h-4 w-4" />,
+      onClick: (cliente) => console.log('Excluir cliente:', cliente.id),
+      variant: 'destructive'
     }
   ];
 
-  const renderClientCard = (client: Cliente, actions: BaseListAction<Cliente>[]) => (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-lg">{client.name}</CardTitle>
-            <CardDescription className="flex items-center gap-1">
-              <Mail className="h-3 w-3" />
-              {client.email}
-            </CardDescription>
-          </div>
-          <Badge variant={getStatusColor(client.status)}>
-            {client.status === 'active' ? 'Ativo' : 'Inativo'}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <div className="flex items-center gap-1 text-sm">
-            <Phone className="h-3 w-3" />
-            {client.phone}
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 pt-3 border-t">
-            <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{client.reservations}</div>
-              <div className="text-xs text-muted-foreground">Reservas</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold text-green-600">R$ {client.totalSpent.toFixed(2)}</div>
-              <div className="text-xs text-muted-foreground">Total Gasto</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-bold">{client.lastReservation}</div>
-              <div className="text-xs text-muted-foreground">Última</div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 pt-3">
-            {actions.map((action, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
-                className="flex-1 gap-1"
-                onClick={() => action.onClick(client)}
-              >
-                {action.icon}
-                {action.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const totalClients = mockClients.length;
-  const activeClients = mockClients.filter(c => c.status === 'active').length;
-  const totalRevenue = mockClients.reduce((sum, client) => sum + client.totalSpent, 0);
-
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       <ModuleHeader
         title="Clientes"
         icon={<Users className="h-6 w-6" />}
@@ -168,71 +122,24 @@ const Clientes = () => {
         backLabel="Eventos"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
-        {/* Summary Cards - Fixed height */}
-        <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total de Clientes</p>
-                  <p className="text-2xl font-bold">{totalClients}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Users className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Clientes Ativos</p>
-                  <p className="text-2xl font-bold text-green-600">{activeClients}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Receita Total</p>
-                  <p className="text-2xl font-bold text-purple-600">R$ {totalRevenue.toFixed(2)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex-1 min-h-0">
-          <BaseList
-            data={mockClients}
-            columns={columns}
-            actions={actions}
-            title="Lista de Clientes"
-            description="Gerencie todos os clientes do sistema"
-            searchPlaceholder="Buscar clientes por nome ou email..."
-            searchFields={['name', 'email']}
-            getItemId={(client) => client.id}
-            pageSize={8}
-            renderCard={renderClientCard}
-            createButton={{
-              label: 'Novo Cliente',
-              icon: <Plus className="h-4 w-4" />,
-              onClick: () => navigate('/eventos/clientes/novo')
-            }}
-          />
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+        <BaseList
+          data={clientes}
+          columns={columns}
+          actions={actions}
+          title="Gerenciar Clientes"
+          description="Visualize e gerencie todos os clientes do módulo de eventos"
+          searchPlaceholder="Buscar clientes..."
+          searchFields={['nome', 'email', 'tipo']}
+          getItemId={(cliente) => cliente.id}
+          createButton={{
+            label: 'Novo Cliente',
+            icon: <Plus className="h-4 w-4" />,
+            onClick: () => navigate('/eventos/clientes/novo')
+          }}
+          showExport={true}
+          exportFilename="clientes-eventos"
+        />
       </main>
     </div>
   );

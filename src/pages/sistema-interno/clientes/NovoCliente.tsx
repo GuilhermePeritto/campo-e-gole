@@ -20,6 +20,7 @@ const NovoCliente = () => {
     email: '',
     telefone: '',
     documento: '',
+    tipoDocumento: 'cpf' as 'cpf' | 'cnpj',
     plano: '',
     valorMensal: '',
     dataContrato: new Date(),
@@ -77,6 +78,7 @@ const NovoCliente = () => {
             label="CPF/CNPJ"
             value={formData.documento}
             onChange={(value) => handleChange('documento', value)}
+            tipo={formData.tipoDocumento}
             required
           />
 

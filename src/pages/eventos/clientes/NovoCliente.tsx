@@ -44,7 +44,7 @@ const NovoCliente = () => {
     {
       target: '#email',
       title: 'E-mail de Contato',
-      content: 'E-mail principal do cliente para comunicações e envio de comprovantes.'
+      content: 'E-mail principal do cliente para comunicações e envio de comprovantes. Campo obrigatório.'
     },
     {
       target: '#phone',
@@ -139,6 +139,7 @@ const NovoCliente = () => {
               label="E-mail"
               value={formData.email}
               onChange={(value) => handleChange('email', value)}
+              required
             />
           </div>
         </div>
