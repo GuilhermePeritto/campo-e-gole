@@ -3,10 +3,10 @@ import EventTimeline from '@/components/EventTimeline';
 import { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
@@ -285,51 +285,55 @@ const NovaReserva = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <BaseFormPage
+      <ModuleHeader
         title={isEditing ? "Editar Reserva" : "Nova Reserva"}
-        description={isEditing ? "Atualize os dados da reserva selecionada" : "Crie uma nova reserva de local para um cliente"}
         icon={isEditing ? <Edit className="h-5 w-5" /> : <Calendar className="h-5 w-5" />}
         moduleColor={MODULE_COLORS.events}
         backTo="/eventos/eventos"
         backLabel="Agenda"
-        onSubmit={handleSubmit}
-        submitLabel={isEditing ? "Salvar Alterações" : "Salvar Reserva"}
-        tourSteps={tourSteps}
-        tourTitle="Criação de Nova Reserva"
-      >
-        <div className="space-y-6">
-          {/* Banner de edição */}
-          {isEditing && (
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Edit className="h-5 w-5 text-blue-700" />
-                  <span className="text-sm font-medium text-blue-700">
-                    Modo de edição ativo para evento selecionado na timeline
-                  </span>
-                </div>
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleCancelEdit}
-                  className="text-blue-700 hover:text-blue-900"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Cancelar Edição
-                </Button>
-              </div>
-            </div>
-          )}
+      />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Seção do Formulário */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <h3 className="text-lg font-semibold text-foreground">Informações da Reserva</h3>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <PageTour steps={tourSteps} title="Criação de Nova Reserva" />
+        
+        {/* Banner de edição */}
+        {isEditing && (
+          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Edit className="h-5 w-5 text-blue-700" />
+                <span className="text-sm font-medium text-blue-700">
+                  Modo de edição ativo para evento selecionado na timeline
+                </span>
               </div>
-              
-              <div className="space-y-6">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm"
+                onClick={handleCancelEdit}
+                className="text-blue-700 hover:text-blue-900"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Cancelar Edição
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Card do Formulário */}
+          <Card className="h-fit">
+            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b">
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                {isEditing ? "Editar Reserva" : "Nova Reserva"}
+              </CardTitle>
+              <CardDescription>
+                {isEditing ? "Atualize os dados da reserva selecionada" : "Preencha os dados para criar uma nova reserva"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <CampoBusca
@@ -402,19 +406,19 @@ const NovaReserva = () => {
                 />
 
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="recurring" className="text-sm font-medium">
+                      Evento recorrente
+                    </Label>
+                    <Switch
                       id="recurring"
                       checked={formData.recurring}
                       onCheckedChange={handleRecurringChange}
                     />
-                    <Label htmlFor="recurring" className="text-sm font-medium">
-                      Evento recorrente
-                    </Label>
                   </div>
 
                   {formData.recurring && (
-                    <div className="space-y-4 pl-6 border-l-2 border-muted">
+                    <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
                       <div className="space-y-2">
                         <Label htmlFor="recurringType">Tipo de Recorrência</Label>
                         <Select value={formData.recurringType} onValueChange={handleRecurringTypeChange}>
@@ -460,42 +464,56 @@ const NovaReserva = () => {
                     className="resize-none"
                   />
                 </div>
-              </div>
-            </div>
 
-            {/* Timeline Card */}
-            <Card className="border h-fit">
-              <CardHeader>
-                <CardTitle className="text-card-foreground flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Agenda do Dia
-                </CardTitle>
-                <CardDescription>
-                  Clique em um horário vazio para preenchê-lo ou em um evento para editá-lo
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {selectedDateStr ? (
-                  <EventTimeline
-                    selectedDate={selectedDateStr}
-                    events={eventsForSelectedDate}
-                    onTimeSlotClick={handleTimeSlotClick}
-                    onEventEdit={handleEventEdit}
-                    editingEventId={editingEventId}
-                  />
-                ) : (
-                  <div className="h-[400px] flex items-center justify-center">
-                    <div className="text-center text-muted-foreground">
-                      <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Selecione uma data para ver a agenda</p>
-                    </div>
+                <div className="flex gap-4 pt-6 border-t">
+                  <Button type="submit" className="flex-1 h-11 font-medium">
+                    {isEditing ? "Salvar Alterações" : "Salvar Reserva"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCancel}
+                    className="flex-1 h-11 font-medium"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Timeline Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-card-foreground flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Agenda do Dia
+              </CardTitle>
+              <CardDescription>
+                Clique em um horário vazio para preenchê-lo ou em um evento para editá-lo
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {selectedDateStr ? (
+                <EventTimeline
+                  selectedDate={selectedDateStr}
+                  events={eventsForSelectedDate}
+                  onTimeSlotClick={handleTimeSlotClick}
+                  onEventEdit={handleEventEdit}
+                  editingEventId={editingEventId}
+                />
+              ) : (
+                <div className="h-[400px] flex items-center justify-center">
+                  <div className="text-center text-muted-foreground">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Selecione uma data para ver a agenda</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-      </BaseFormPage>
+      </main>
     </div>
   );
 };
