@@ -27,7 +27,6 @@ const CampoValor: React.FC<CampoValorProps> = ({
 
   useEffect(() => {
     if (value) {
-      // Converter o valor recebido para centavos para formatação
       const numericValue = parseFloat(value) || 0;
       const centavos = Math.round(numericValue * 100);
       setDisplayValue(formatCurrency(centavos.toString()));
@@ -39,14 +38,9 @@ const CampoValor: React.FC<CampoValorProps> = ({
   const formatCurrency = (centavos: string) => {
     if (!centavos || centavos === '0') return '0,00';
     
-    // Garantir que temos pelo menos 3 dígitos (para incluir os centavos)
     const paddedValue = centavos.padStart(3, '0');
-    
-    // Separar a parte inteira dos centavos
     const integerPart = paddedValue.slice(0, -2);
     const decimalPart = paddedValue.slice(-2);
-    
-    // Formatar a parte inteira com pontos a cada 3 dígitos
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     
     return `${formattedInteger},${decimalPart}`;
@@ -54,11 +48,8 @@ const CampoValor: React.FC<CampoValorProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    
-    // Extrair apenas números
     const numbersOnly = input.replace(/[^\d]/g, '');
     
-    // Se não há números, resetar para 0
     if (!numbersOnly) {
       setDisplayValue('0,00');
       if (onChange) {
@@ -67,11 +58,9 @@ const CampoValor: React.FC<CampoValorProps> = ({
       return;
     }
     
-    // Formatar para exibição
     const formatted = formatCurrency(numbersOnly);
     setDisplayValue(formatted);
     
-    // Converter para valor decimal e enviar para o onChange
     if (onChange) {
       const decimalValue = (parseInt(numbersOnly) / 100).toFixed(2);
       onChange(decimalValue);
@@ -95,7 +84,7 @@ const CampoValor: React.FC<CampoValorProps> = ({
           value={displayValue}
           onChange={handleChange}
           placeholder={placeholder}
-          className={cn("pl-10 h-11 text-right font-mono text-lg", className)}
+          className={cn("pl-10 h-11 text-right", className)}
           required={required}
         />
       </div>

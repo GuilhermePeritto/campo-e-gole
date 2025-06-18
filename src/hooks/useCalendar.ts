@@ -16,8 +16,7 @@ export interface Reservation {
   venueId: string;
   clientName: string;
   status: 'confirmed' | 'pending' | 'cancelled';
-  color: string; // Made required instead of optional
-  // Add missing properties for calendar views
+  color: string;
   client: string;
   venue: string;
   startTime: string;
@@ -44,7 +43,6 @@ export const useCalendar = () => {
     mousePosition: { x: 0, y: 0 }
   });
 
-  // Mock data
   const venues: Venue[] = [
     { id: 'all', name: 'Todos os locais', color: '#6b7280' },
     { id: '1', name: 'Quadra A', color: '#10b981' },
@@ -119,12 +117,14 @@ export const useCalendar = () => {
   }, [viewType]);
 
   const handleDateClick = useCallback((date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
     navigate(`/eventos/reservar?date=${dateStr}`);
   }, [navigate]);
 
   const handleEventClick = useCallback((event: Reservation) => {
-    // Navigate to edit page with the event ID
     navigate(`/eventos/reservas/${event.id}`);
   }, [navigate]);
 

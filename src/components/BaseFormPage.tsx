@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -13,7 +12,7 @@ interface FormSection {
   title: string;
   content: React.ReactNode;
   defaultOpen?: boolean;
-  alwaysOpen?: boolean; // New property for sections that can't be collapsed
+  alwaysOpen?: boolean;
 }
 
 interface BaseFormPageProps {
@@ -55,7 +54,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
 
   const toggleSection = (sectionId: string) => {
     const section = formSections?.find(s => s.id === sectionId);
-    if (section?.alwaysOpen) return; // Don't allow toggling if always open
+    if (section?.alwaysOpen) return;
     
     setOpenSections(prev => ({
       ...prev,
@@ -74,32 +73,34 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {tourSteps && tourTitle && (
-          <PageTour 
-            steps={tourSteps} 
-            title={tourTitle}
-            onStepChange={(stepIndex) => {
-              if (formSections && tourSteps[stepIndex]) {
-                const step = tourSteps[stepIndex];
-                const cardMatch = step.target.match(/data-card="([^"]+)"/);
-                if (cardMatch) {
-                  const sectionId = cardMatch[1];
-                  setOpenSections(prev => ({ ...prev, [sectionId]: true }));
-                }
-              }
-            }}
-          />
-        )}
-
         <form onSubmit={onSubmit} className="space-y-6">
           {formSections ? (
-            <div className="space-y-6">
+            <div className="space-y-6 relative">
+              {/* Tour Guide positioned relative to the primary card */}
+              {tourSteps && tourTitle && formSections.length > 0 && (
+                <div className="absolute top-4 right-4 z-20">
+                  <PageTour 
+                    steps={tourSteps} 
+                    title={tourTitle}
+                    onStepChange={(stepIndex) => {
+                      if (formSections && tourSteps[stepIndex]) {
+                        const step = tourSteps[stepIndex];
+                        const cardMatch = step.target.match(/data-card="([^"]+)"/);
+                        if (cardMatch) {
+                          const sectionId = cardMatch[1];
+                          setOpenSections(prev => ({ ...prev, [sectionId]: true }));
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              )}
+
               {formSections.map((section) => (
                 <Card key={section.id} className="shadow-md" data-card={section.id}>
                   {section.alwaysOpen ? (
-                    // Always open section (no collapsible)
                     <>
-                      <CardHeader className="bg-muted/20 border-b">
+                      <CardHeader className="bg-muted/30 border-b">
                         <CardTitle className="flex items-center gap-2 text-lg text-muted-foreground">
                           <div className="text-primary">
                             {icon}
@@ -112,13 +113,12 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                       </CardContent>
                     </>
                   ) : (
-                    // Collapsible section
                     <Collapsible 
                       open={openSections[section.id]} 
                       onOpenChange={() => toggleSection(section.id)}
                     >
                       <CollapsibleTrigger asChild>
-                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors bg-muted/20 border-b">
+                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors bg-muted/30 border-b">
                           <div className="flex items-center justify-between">
                             <CardTitle className="flex items-center gap-2 text-lg text-muted-foreground">
                               <div className="text-primary">

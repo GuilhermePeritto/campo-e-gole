@@ -2,10 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { TourStep } from '@/components/PageTour';
 import CampoBusca from '@/core/componentes/CampoBusca';
@@ -13,6 +12,7 @@ import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
 import BaseFormPage from '@/components/BaseFormPage';
+import { formatDateForDisplay, formatTimeForDisplay, formatDateTimeForStorage } from '@/utils/dateUtils';
 
 interface ReservationFormData {
   client: string;
@@ -41,7 +41,6 @@ const Reservar = () => {
     observations: ''
   });
 
-  // Dados de exemplo
   const clientesExemplo = [
     { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
     { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
@@ -77,7 +76,10 @@ const Reservar = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Nova reserva:', formData);
+    console.log('Nova reserva:', {
+      ...formData,
+      dateTime: formatDateTimeForStorage(formData.date, formData.startTime)
+    });
     navigate('/eventos/agenda');
   };
 
@@ -115,7 +117,7 @@ const Reservar = () => {
           <div className="md:col-span-2">
             <SeletorData
               id="date"
-              label="Data da Reserva"
+              label={`Data da Reserva ${formData.date ? `(${formatDateForDisplay(formData.date)})` : ''}`}
               value={formData.date}
               onChange={(date) => handleChange('date', date)}
               required
@@ -124,7 +126,7 @@ const Reservar = () => {
 
           <SeletorHora
             id="startTime"
-            label="Horário de Início"
+            label={`Horário de Início ${formData.startTime ? `(${formatTimeForDisplay(formData.startTime)})` : ''}`}
             value={formData.startTime}
             onChange={(value) => handleChange('startTime', value)}
             required
@@ -132,7 +134,7 @@ const Reservar = () => {
 
           <SeletorHora
             id="endTime"
-            label="Horário de Término"
+            label={`Horário de Término ${formData.endTime ? `(${formatTimeForDisplay(formData.endTime)})` : ''}`}
             value={formData.endTime}
             onChange={(value) => handleChange('endTime', value)}
             required

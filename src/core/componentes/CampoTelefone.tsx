@@ -1,7 +1,7 @@
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface CampoTelefoneProps {
   id: string;
@@ -20,28 +20,37 @@ const CampoTelefone = ({
   required = false,
   className = ""
 }: CampoTelefoneProps) => {
-  const [displayValue, setDisplayValue] = useState(value);
+  const [displayValue, setDisplayValue] = useState('');
+
+  useEffect(() => {
+    if (value) {
+      setDisplayValue(formatTelefone(value));
+    } else {
+      setDisplayValue('');
+    }
+  }, [value]);
 
   const formatTelefone = (telefone: string) => {
     const numbers = telefone.replace(/\D/g, '');
     
-    if (numbers.length <= 10) {
-      // Telefone fixo: (11) 1234-5678
-      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-    } else {
-      // Celular: (11) 91234-5678
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 6) {
+      return numbers.replace(/(\d{2})(\d+)/, '($1) $2');
     }
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d+)/, '($1) $2-$3');
+    }
+    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, '');
-    const limitedValue = rawValue.slice(0, 11); // Máximo 11 dígitos
+    const limitedValue = rawValue.slice(0, 11);
     
     const formattedValue = formatTelefone(limitedValue);
     
     setDisplayValue(formattedValue);
-    onChange(limitedValue); // Enviar apenas números
+    onChange(limitedValue);
   };
 
   return (
