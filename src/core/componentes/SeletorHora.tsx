@@ -89,15 +89,15 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
             {value || <span>{placeholder}</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 p-0" align="start">
+        <PopoverContent className="w-48 p-0" align="start">
           <div className="max-h-80 overflow-y-auto p-2">
-            <div className="grid grid-cols-2 gap-1">
+            <div className="space-y-1">
               {horarios.map((horario) => (
                 <Button
                   key={horario}
                   variant={value === horario ? "default" : "ghost"}
                   size="sm"
-                  className="justify-center text-sm"
+                  className="w-full justify-center text-sm"
                   onClick={() => selecionarHorario(horario)}
                 >
                   {horario}

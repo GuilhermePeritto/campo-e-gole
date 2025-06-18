@@ -16,7 +16,7 @@ import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
 import { Calendar, Edit, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 interface ReservationFormData {
   client: string;
@@ -31,8 +31,9 @@ interface ReservationFormData {
   customRecurringDays: string;
 }
 
-const NovaReserva = () => {
+const Reserva = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
   
   // Estados para edição
@@ -52,16 +53,35 @@ const NovaReserva = () => {
     customRecurringDays: ''
   });
 
-  // Inicializar com parâmetros da URL
+  // Detectar se é edição baseado no ID na URL
   useEffect(() => {
-    const dateParam = searchParams.get('date');
-    if (dateParam) {
-      setFormData(prev => ({
-        ...prev,
-        date: new Date(dateParam)
-      }));
+    if (id) {
+      setIsEditing(true);
+      // Simular carregamento dos dados da reserva
+      const mockData = {
+        client: 'João Silva',
+        venue: 'Quadra A',
+        date: new Date('2024-06-15'),
+        startTime: '14:00',
+        endTime: '16:00',
+        notes: 'Reserva para partida de futebol society',
+        amount: '120',
+        recurring: true,
+        recurringType: 'weekly',
+        customRecurringDays: ''
+      };
+      setFormData(mockData);
+    } else {
+      // Inicializar com parâmetros da URL para nova reserva
+      const dateParam = searchParams.get('date');
+      if (dateParam) {
+        setFormData(prev => ({
+          ...prev,
+          date: new Date(dateParam)
+        }));
+      }
     }
-  }, [searchParams]);
+  }, [id, searchParams]);
 
   // Dados de exemplo
   const clientesExemplo = [
@@ -125,45 +145,38 @@ const NovaReserva = () => {
     {
       target: '#client',
       title: 'Cliente',
-      content: 'Selecione o cliente que está fazendo a reserva.'
+      content: isEditing ? 'Altere o cliente desta reserva se necessário.' : 'Selecione o cliente que está fazendo a reserva.'
     },
     {
       target: '#venue',
       title: 'Local',
-      content: 'Escolha o local que será reservado.'
+      content: isEditing ? 'Modifique o local da reserva.' : 'Escolha o local que será reservado.'
     },
     {
       target: '#date',
       title: 'Data',
-      content: 'Selecione a data da reserva.'
+      content: isEditing ? 'Atualize a data da reserva.' : 'Selecione a data da reserva.'
     },
     {
       target: '#startTime',
       title: 'Horário de Início',
-      content: 'Defina o horário de início da reserva.'
+      content: isEditing ? 'Ajuste o horário de início.' : 'Defina o horário de início da reserva.'
     },
     {
       target: '#endTime',
       title: 'Horário de Fim',
-      content: 'Defina o horário de término da reserva.'
+      content: isEditing ? 'Ajuste o horário de término.' : 'Defina o horário de término da reserva.'
     },
     {
       target: '#amount',
       title: 'Valor',
-      content: 'Informe o valor total da reserva.'
+      content: isEditing ? 'Atualize o valor da reserva.' : 'Informe o valor total da reserva.'
     }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(isEditing ? 'Editando reserva:' : 'Nova reserva:', formData);
-    
-    // Reset editing state after save
-    if (isEditing) {
-      setIsEditing(false);
-      setEditingEventId(null);
-    }
-    
     navigate('/eventos');
   };
 
@@ -222,7 +235,7 @@ const NovaReserva = () => {
 
   // Funções para interagir com a timeline
   const handleTimeSlotClick = (time: string) => {
-    if (!isEditing) {
+    if (!editingEventId) {
       setFormData(prev => ({ ...prev, startTime: time }));
     }
   };
@@ -245,32 +258,32 @@ const NovaReserva = () => {
       amount: '160' // Mock amount
     }));
     
-    setIsEditing(true);
     setEditingEventId(event.id);
   };
 
   const handleCancelEdit = () => {
-    setIsEditing(false);
     setEditingEventId(null);
     
-    // Reset form to initial state
-    const dateParam = searchParams.get('date');
-    setFormData({
-      client: '',
-      venue: '',
-      date: dateParam ? new Date(dateParam) : new Date(),
-      startTime: '',
-      endTime: '',
-      notes: '',
-      amount: '',
-      recurring: false,
-      recurringType: '',
-      customRecurringDays: ''
-    });
+    // Reset form to initial state if not in URL edit mode
+    if (!id) {
+      const dateParam = searchParams.get('date');
+      setFormData({
+        client: '',
+        venue: '',
+        date: dateParam ? new Date(dateParam) : new Date(),
+        startTime: '',
+        endTime: '',
+        notes: '',
+        amount: '',
+        recurring: false,
+        recurringType: '',
+        customRecurringDays: ''
+      });
+    }
   };
 
   const handleCancel = () => {
-    if (isEditing) {
+    if (editingEventId && !id) {
       handleCancelEdit();
     } else {
       navigate('/eventos');
@@ -284,57 +297,59 @@ const NovaReserva = () => {
     return true; // Show all events for demo
   });
 
+  const pageTitle = id ? "Editar Reserva" : "Nova Reserva";
+  const pageIcon = id ? <Edit className="h-5 w-5" /> : <Calendar className="h-5 w-5" />;
+
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title={isEditing ? "Editar Reserva" : "Nova Reserva"}
-        icon={isEditing ? <Edit className="h-5 w-5" /> : <Calendar className="h-5 w-5" />}
+        title={pageTitle}
+        icon={pageIcon}
         moduleColor={MODULE_COLORS.events}
         backTo="/eventos"
         backLabel="Agenda"
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <PageTour steps={tourSteps} title="Criação de Nova Reserva" />
-        
-        {/* Banner de edição */}
-        {isEditing && (
-          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Edit className="h-5 w-5 text-blue-700" />
-                <span className="text-sm font-medium text-blue-700">
-                  Modo de edição ativo para evento selecionado na timeline
-                </span>
-              </div>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm"
-                onClick={handleCancelEdit}
-                className="text-blue-700 hover:text-blue-900"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Cancelar Edição
-              </Button>
-            </div>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Card do Formulário */}
-          <Card className="h-fit">
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b">
+          <Card className={`h-fit ${editingEventId ? 'border-blue-200' : ''}`}>
+            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
+              <PageTour steps={tourSteps} title={isEditing ? "Edição de Reserva" : "Criação de Nova Reserva"} />
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
                 {isEditing ? "Editar Reserva" : "Nova Reserva"}
               </CardTitle>
               <CardDescription>
-                {isEditing ? "Atualize os dados da reserva selecionada" : "Preencha os dados para criar uma nova reserva"}
+                {isEditing ? "Atualize os dados da reserva" : "Preencha os dados para criar uma nova reserva"}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Banner de edição da timeline */}
+                {editingEventId && (
+                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Edit className="h-5 w-5 text-blue-700" />
+                        <span className="text-sm font-medium text-blue-700">
+                          Modo de edição ativo para evento selecionado na timeline
+                        </span>
+                      </div>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={handleCancelEdit}
+                        className="text-blue-700 hover:text-blue-900"
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        Cancelar Edição
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <CampoBusca
@@ -519,4 +534,4 @@ const NovaReserva = () => {
   );
 };
 
-export default NovaReserva;
+export default Reserva;

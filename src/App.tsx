@@ -1,3 +1,4 @@
+
 import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -26,8 +27,7 @@ import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel'
 import EventsReceivePayment from './pages/eventos/contas-a-receber/ReceberPagamento';
 import EventsReceivables from './pages/eventos/contas-a-receber/Recebiveis';
 import EventsCalendar from './pages/eventos/eventos/Agenda';
-import EventsEditReservation from './pages/eventos/eventos/EditarReserva';
-import EventsNewReservation from './pages/eventos/eventos/NovaReserva';
+import EventsReservation from './pages/eventos/eventos/Reserva';
 import EventsEditVenue from './pages/eventos/locais/EditVenue';
 import EventsNewVenue from './pages/eventos/locais/NewVenue';
 import EventsVenues from './pages/eventos/locais/Venues';
@@ -125,8 +125,8 @@ function App() {
                 <Route path="/eventos/locais" element={<EventsVenues />} />
                 <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
                 <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
-                <Route path="/eventos/novo" element={<EventsNewReservation />} />
-                <Route path="/eventos/reservas/:id/editar" element={<EventsEditReservation />} />
+                <Route path="/eventos/novo" element={<EventsReservation />} />
+                <Route path="/eventos/reservas/:id/editar" element={<EventsReservation />} />
                 <Route path="/eventos/contas-a-receber" element={<EventsReceivables />} />
                 <Route path="/eventos/contas-a-receber/novo" element={<EventsNewReceivable />} />
                 <Route path="/eventos/contas-a-receber/:id/editar" element={<EventsEditReceivable />} />
