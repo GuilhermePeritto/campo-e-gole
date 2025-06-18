@@ -1,16 +1,16 @@
 
-import { useState } from 'react';
-import { BarChart3, TrendingUp, Calendar, Users, DollarSign, MapPin, FileText, Download } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
 import ModuleHeader from '@/components/ModuleHeader';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import SeletorData from '@/core/componentes/SeletorData';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { BarChart3, Calendar, DollarSign, Download, FileText, MapPin, TrendingUp, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-const Reports = () => {
+const Relatorios = () => {
   const [dateRange, setDateRange] = useState({
     inicio: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     fim: new Date()
@@ -318,4 +318,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default Relatorios;

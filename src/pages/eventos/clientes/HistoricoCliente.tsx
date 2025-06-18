@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Calendar, Mail, MapPin, Phone, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const ClientHistory = () => {
+const HistoricoCliente = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -213,4 +213,4 @@ const ClientHistory = () => {
   );
 };
 
-export default ClientHistory;
+export default HistoricoCliente;
