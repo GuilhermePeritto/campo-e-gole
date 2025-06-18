@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,24 +17,31 @@ export interface TourStep {
 interface PageTourProps {
   steps: TourStep[];
   title: string;
+  onStepChange?: (stepIndex: number) => void;
 }
 
-const PageTour: React.FC<PageTourProps> = ({ steps, title }) => {
+const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isOpen && steps[currentStep]) {
-      const element = document.querySelector(steps[currentStep].target) as HTMLElement;
-      if (element) {
-        setTargetElement(element);
-        // Scroll to element and highlight it
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.style.outline = '2px solid hsl(var(--primary))';
-        element.style.outlineOffset = '4px';
-        element.style.borderRadius = '8px';
-      }
+      // Notificar mudança de passo
+      onStepChange?.(currentStep);
+      
+      // Aguardar um pouco para a seção abrir antes de encontrar o elemento
+      setTimeout(() => {
+        const element = document.querySelector(steps[currentStep].target) as HTMLElement;
+        if (element) {
+          setTargetElement(element);
+          // Scroll to element and highlight it
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.style.outline = '2px solid hsl(var(--primary))';
+          element.style.outlineOffset = '4px';
+          element.style.borderRadius = '8px';
+        }
+      }, 300);
     }
 
     return () => {
@@ -46,7 +52,7 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title }) => {
         targetElement.style.borderRadius = '';
       }
     };
-  }, [currentStep, isOpen, steps, targetElement]);
+  }, [currentStep, isOpen, steps, targetElement, onStepChange]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -132,7 +138,10 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title }) => {
         <div className="fixed inset-0 z-40 pointer-events-none">
           <div 
             className="absolute bg-background border rounded-lg shadow-lg p-4 max-w-sm pointer-events-auto"
-            style={getOptimalPosition(targetElement)}
+            style={{
+              top: targetElement.getBoundingClientRect().bottom + window.scrollY + 10,
+              left: Math.min(targetElement.getBoundingClientRect().left + window.scrollX, window.innerWidth - 400),
+            }}
           >
             <div className="flex items-start justify-between mb-3">
               <div>

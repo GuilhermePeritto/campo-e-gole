@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -311,9 +310,9 @@ const Reserva = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
           {/* Card do Formulário */}
-          <Card className={`h-fit ${editingEventId ? 'border-blue-200' : ''}`}>
+          <Card className={`h-full overflow-y-auto ${editingEventId ? 'border-blue-200' : ''}`}>
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
               <PageTour steps={tourSteps} title={isEditing ? "Edição de Reserva" : "Criação de Nova Reserva"} />
               <CardTitle className="flex items-center gap-2">
@@ -499,7 +498,7 @@ const Reserva = () => {
           </Card>
 
           {/* Timeline Card */}
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="text-card-foreground flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
@@ -509,7 +508,7 @@ const Reserva = () => {
                 Clique em um horário vazio para preenchê-lo ou em um evento para editá-lo
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="h-[calc(100%-120px)] overflow-y-auto">
               {selectedDateStr ? (
                 <EventTimeline
                   selectedDate={selectedDateStr}
@@ -519,7 +518,7 @@ const Reserva = () => {
                   editingEventId={editingEventId}
                 />
               ) : (
-                <div className="h-[400px] flex items-center justify-center">
+                <div className="h-full flex items-center justify-center">
                   <div className="text-center text-muted-foreground">
                     <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>Selecione uma data para ver a agenda</p>

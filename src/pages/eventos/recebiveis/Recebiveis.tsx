@@ -93,7 +93,7 @@ const Recebiveis = () => {
   const actions = [
     {
       label: 'Editar',
-      onClick: (item: any) => navigate(`/eventos/contas-a-receber/${item.id}/editar`),
+      onClick: (item: any) => navigate(`/eventos/contas-a-receber/${item.id}`),
       variant: 'outline' as const
     }
   ];
@@ -114,7 +114,7 @@ const Recebiveis = () => {
         backLabel="Módulo Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
           title="Contas a Receber"
           description="Gerencie as contas pendentes e recebimentos"
