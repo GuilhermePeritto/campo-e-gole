@@ -1,12 +1,13 @@
 
 import { isToday } from '@/utils/calendarUtils';
+import { Reservation } from '@/hooks/useCalendar';
 
 interface CalendarMonthViewProps {
   monthDays: Date[];
   currentDate: Date;
-  mockReservations: any[];
+  mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
-  handleEventClick: (event: any, e: React.MouseEvent) => void;
+  handleEventClick: (event: Reservation) => void;
   handleDayMouseEnter: (day: Date, e: React.MouseEvent) => void;
   handleDayMouseLeave: () => void;
   handleDayMouseMove: (e: React.MouseEvent) => void;
@@ -64,7 +65,10 @@ const CalendarMonthView = ({
                     key={reservation.id}
                     className="text-xs p-1 rounded text-gray-600 dark:text-gray-300 font-medium truncate cursor-pointer hover:opacity-80 transition-opacity"
                     style={{ backgroundColor: reservation.color }}
-                    onClick={(e) => handleEventClick(reservation, e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEventClick(reservation);
+                    }}
                   >
                     {reservation.startTime} {reservation.client}
                   </div>

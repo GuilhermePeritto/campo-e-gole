@@ -1,11 +1,12 @@
 
 import { isToday, getTimeSlots } from '@/utils/calendarUtils';
+import { Reservation } from '@/hooks/useCalendar';
 
 interface CalendarWeekViewProps {
   weekDays: Date[];
-  mockReservations: any[];
+  mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
-  handleEventClick: (event: any, e: React.MouseEvent) => void;
+  handleEventClick: (event: Reservation) => void;
   handleDayMouseEnter: (day: Date, e: React.MouseEvent) => void;
   handleDayMouseLeave: () => void;
   handleDayMouseMove: (e: React.MouseEvent) => void;
@@ -74,7 +75,10 @@ const CalendarWeekView = ({
                     <div
                       className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-gray-600 dark:text-gray-300 text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity"
                       style={{ backgroundColor: reservation.color }}
-                      onClick={(e) => handleEventClick(reservation, e)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEventClick(reservation);
+                      }}
                     >
                       <div className="font-semibold truncate">{reservation.client}</div>
                       <div className="text-xs opacity-90">{reservation.venue}</div>

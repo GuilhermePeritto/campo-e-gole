@@ -1,11 +1,12 @@
 
 import { getTimeSlots } from '@/utils/calendarUtils';
+import { Reservation } from '@/hooks/useCalendar';
 
 interface CalendarDayViewProps {
   currentDate: Date;
-  mockReservations: any[];
+  mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
-  handleEventClick: (event: any, e: React.MouseEvent) => void;
+  handleEventClick: (event: Reservation) => void;
 }
 
 const CalendarDayView = ({
@@ -48,7 +49,10 @@ const CalendarDayView = ({
                   <div
                     className="p-3 rounded text-gray-600 dark:text-gray-300 font-medium w-full cursor-pointer hover:opacity-80 transition-opacity"
                     style={{ backgroundColor: reservation.color }}
-                    onClick={(e) => handleEventClick(reservation, e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEventClick(reservation);
+                    }}
                   >
                     <div className="font-semibold">{reservation.client}</div>
                     <div className="text-sm opacity-90">{reservation.venue}</div>

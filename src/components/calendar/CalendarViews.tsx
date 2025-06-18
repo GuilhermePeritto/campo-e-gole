@@ -3,13 +3,14 @@ import CalendarMonthView from './CalendarMonthView';
 import CalendarWeekView from './CalendarWeekView';
 import CalendarDayView from './CalendarDayView';
 import { getWeekDays, getMonthDays } from '@/utils/calendarUtils';
+import { Reservation } from '@/hooks/useCalendar';
 
 interface CalendarViewsProps {
   viewType: string;
   currentDate: Date;
-  mockReservations: any[];
+  mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
-  handleEventClick: (event: any, e: React.MouseEvent) => void;
+  handleEventClick: (event: Reservation) => void;
   handleDayMouseEnter: (day: Date, e: React.MouseEvent) => void;
   handleDayMouseLeave: () => void;
   handleDayMouseMove: (e: React.MouseEvent) => void;

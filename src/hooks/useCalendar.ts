@@ -17,12 +17,18 @@ export interface Reservation {
   clientName: string;
   status: 'confirmed' | 'pending' | 'cancelled';
   color?: string;
+  // Add missing properties for calendar views
+  client: string;
+  venue: string;
+  startTime: string;
+  endTime: string;
+  day: Date;
 }
 
 export interface HoverPopup {
   isVisible: boolean;
   events: Reservation[];
-  date: string;
+  date: Date;
   mousePosition: { x: number; y: number };
 }
 
@@ -34,12 +40,13 @@ export const useCalendar = () => {
   const [hoverPopup, setHoverPopup] = useState<HoverPopup>({
     isVisible: false,
     events: [],
-    date: '',
+    date: new Date(),
     mousePosition: { x: 0, y: 0 }
   });
 
   // Mock data
   const venues: Venue[] = [
+    { id: 'all', name: 'Todos os locais', color: '#6b7280' },
     { id: '1', name: 'Quadra A', color: '#10b981' },
     { id: '2', name: 'Quadra B', color: '#f59e0b' },
     { id: '3', name: 'Campo Principal', color: '#3b82f6' }
@@ -54,7 +61,12 @@ export const useCalendar = () => {
       venueId: '1',
       clientName: 'João Silva',
       status: 'confirmed',
-      color: '#10b981'
+      color: '#10b981',
+      client: 'João Silva',
+      venue: 'Quadra A',
+      startTime: '09:00',
+      endTime: '11:00',
+      day: new Date('2024-06-15')
     },
     {
       id: 2,
@@ -64,7 +76,12 @@ export const useCalendar = () => {
       venueId: '2',
       clientName: 'Maria Santos',
       status: 'pending',
-      color: '#f59e0b'
+      color: '#f59e0b',
+      client: 'Maria Santos',
+      venue: 'Quadra B',
+      startTime: '14:00',
+      endTime: '16:00',
+      day: new Date('2024-06-15')
     },
     {
       id: 3,
@@ -74,7 +91,12 @@ export const useCalendar = () => {
       venueId: '3',
       clientName: 'Pedro Costa',
       status: 'confirmed',
-      color: '#3b82f6'
+      color: '#3b82f6',
+      client: 'Pedro Costa',
+      venue: 'Campo Principal',
+      startTime: '19:00',
+      endTime: '21:00',
+      day: new Date('2024-06-15')
     }
   ];
 
@@ -98,39 +120,47 @@ export const useCalendar = () => {
 
   const handleDateClick = useCallback((date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
-    navigate(`/eventos/novo?date=${dateStr}`);
+    navigate(`/eventos/reservar?date=${dateStr}`);
   }, [navigate]);
 
   const handleEventClick = useCallback((event: Reservation) => {
-    // Navegar para a página de edição com o ID do evento
-    navigate(`/eventos/reservas/${event.id}/editar`);
+    // Navigate to edit page with the event ID
+    navigate(`/eventos/reservas/${event.id}`);
   }, [navigate]);
 
-  const handleDayMouseEnter = useCallback((date: string, events: Reservation[], mouseEvent: React.MouseEvent) => {
-    if (events.length > 0) {
+  const handleDayMouseEnter = useCallback((day: Date, e: React.MouseEvent) => {
+    const dayReservations = mockReservations.filter(r =>
+      r.day.toDateString() === day.toDateString()
+    );
+    
+    if (dayReservations.length > 0) {
       setHoverPopup({
         isVisible: true,
-        events,
-        date,
-        mousePosition: { x: mouseEvent.clientX, y: mouseEvent.clientY }
+        events: dayReservations,
+        date: day,
+        mousePosition: { x: e.clientX, y: e.clientY }
       });
     }
-  }, []);
+  }, [mockReservations]);
 
   const handleDayMouseLeave = useCallback(() => {
     setHoverPopup(prev => ({ ...prev, isVisible: false }));
   }, []);
 
-  const handleDayMouseMove = useCallback((mouseEvent: React.MouseEvent) => {
+  const handleDayMouseMove = useCallback((e: React.MouseEvent) => {
     setHoverPopup(prev => ({
       ...prev,
-      mousePosition: { x: mouseEvent.clientX, y: mouseEvent.clientY }
+      mousePosition: { x: e.clientX, y: e.clientY }
     }));
+  }, []);
+
+  const handleViewTypeChange = useCallback((view: string) => {
+    setViewType(view as 'month' | 'week' | 'day');
   }, []);
 
   return {
     viewType,
-    setViewType,
+    setViewType: handleViewTypeChange,
     selectedVenue,
     setSelectedVenue,
     currentDate,
