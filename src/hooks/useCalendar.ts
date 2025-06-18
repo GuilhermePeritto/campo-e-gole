@@ -16,7 +16,7 @@ export interface Reservation {
   venueId: string;
   clientName: string;
   status: 'confirmed' | 'pending' | 'cancelled';
-  color?: string;
+  color: string; // Made required instead of optional
   // Add missing properties for calendar views
   client: string;
   venue: string;
