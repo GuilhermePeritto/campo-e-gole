@@ -2,7 +2,6 @@
 import BaseList from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -96,7 +95,7 @@ const Venues = () => {
         backLabel="Módulo Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
           title="Gerenciar Locais"
           description="Cadastre e gerencie os locais disponíveis para reserva"

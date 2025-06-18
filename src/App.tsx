@@ -20,16 +20,16 @@ import UniversalReceivePayment from './pages/UniversalReceivePayment';
 // Events pages
 import EventsClients from './pages/eventos/clientes/Clientes';
 import EventsClientHistory from './pages/eventos/clientes/ClientHistory';
-import EventsEditClient from './pages/eventos/clientes/EditarCliente';
-import EventsNewClient from './pages/eventos/clientes/NovoCliente';
+import EventsNewClient from './pages/eventos/clientes/Cliente';
+import EventsEditClient from './pages/eventos/clientes/Cliente';
 import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
 import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
 import EventsReceivePayment from './pages/eventos/contas-a-receber/ReceberPagamento';
 import EventsReceivables from './pages/eventos/contas-a-receber/Recebiveis';
 import EventsCalendar from './pages/eventos/eventos/Agenda';
 import EventsReservation from './pages/eventos/eventos/Reserva';
-import EventsEditVenue from './pages/eventos/locais/EditVenue';
-import EventsNewVenue from './pages/eventos/locais/NewVenue';
+import EventsNewVenue from './pages/eventos/locais/Local';
+import EventsEditVenue from './pages/eventos/locais/Local';
 import EventsVenues from './pages/eventos/locais/Venues';
 import EventsReports from './pages/eventos/relatorios/Reports';
 
