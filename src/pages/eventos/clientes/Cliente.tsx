@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Users } from 'lucide-react';
@@ -73,7 +72,7 @@ const Cliente = () => {
     {
       id: 'info-basicas',
       title: 'Informações Básicas',
-      defaultOpen: true,
+      alwaysOpen: true, // This card will always be open
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">

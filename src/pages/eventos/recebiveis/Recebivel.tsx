@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CreditCard } from 'lucide-react';
@@ -105,7 +104,7 @@ const Recebivel = () => {
     {
       id: 'info-basicas',
       title: 'Informações Básicas',
-      defaultOpen: true,
+      alwaysOpen: true, // This card will always be open
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <CampoBusca

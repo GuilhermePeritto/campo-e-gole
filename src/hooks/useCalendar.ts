@@ -56,8 +56,8 @@ export const useCalendar = () => {
     {
       id: 1,
       title: 'João Silva - Treino',
-      start: '2024-06-15T09:00:00',
-      end: '2024-06-15T11:00:00',
+      start: '2025-06-18T09:00:00',
+      end: '2025-06-18T11:00:00',
       venueId: '1',
       clientName: 'João Silva',
       status: 'confirmed',
@@ -66,13 +66,13 @@ export const useCalendar = () => {
       venue: 'Quadra A',
       startTime: '09:00',
       endTime: '11:00',
-      day: new Date('2024-06-15')
+      day: new Date('2025-06-18')
     },
     {
       id: 2,
       title: 'Maria Santos - Aula',
-      start: '2024-06-15T14:00:00',
-      end: '2024-06-15T16:00:00',
+      start: '2025-06-18T14:00:00',
+      end: '2025-06-18T16:00:00',
       venueId: '2',
       clientName: 'Maria Santos',
       status: 'pending',
@@ -81,13 +81,13 @@ export const useCalendar = () => {
       venue: 'Quadra B',
       startTime: '14:00',
       endTime: '16:00',
-      day: new Date('2024-06-15')
+      day: new Date('2025-06-18')
     },
     {
       id: 3,
       title: 'Pedro Costa - Pelada',
-      start: '2024-06-15T19:00:00',
-      end: '2024-06-15T21:00:00',
+      start: '2025-06-18T19:00:00',
+      end: '2025-06-18T21:00:00',
       venueId: '3',
       clientName: 'Pedro Costa',
       status: 'confirmed',
@@ -96,7 +96,7 @@ export const useCalendar = () => {
       venue: 'Campo Principal',
       startTime: '19:00',
       endTime: '21:00',
-      day: new Date('2024-06-15')
+      day: new Date('2025-06-18')
     }
   ];
 
@@ -154,8 +154,8 @@ export const useCalendar = () => {
     }));
   }, []);
 
-  const handleViewTypeChange = useCallback((view: string) => {
-    setViewType(view as 'month' | 'week' | 'day');
+  const handleViewTypeChange = useCallback((view: 'month' | 'week' | 'day') => {
+    setViewType(view);
   }, []);
 
   return {

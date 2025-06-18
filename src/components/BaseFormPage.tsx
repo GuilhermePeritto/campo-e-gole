@@ -13,6 +13,7 @@ interface FormSection {
   title: string;
   content: React.ReactNode;
   defaultOpen?: boolean;
+  alwaysOpen?: boolean; // New property for sections that can't be collapsed
 }
 
 interface BaseFormPageProps {
@@ -48,11 +49,14 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(
     formSections?.reduce((acc, section) => ({
       ...acc,
-      [section.id]: section.defaultOpen || false
+      [section.id]: section.defaultOpen || section.alwaysOpen || false
     }), {}) || {}
   );
 
   const toggleSection = (sectionId: string) => {
+    const section = formSections?.find(s => s.id === sectionId);
+    if (section?.alwaysOpen) return; // Don't allow toggling if always open
+    
     setOpenSections(prev => ({
       ...prev,
       [sectionId]: !prev[sectionId]
@@ -60,7 +64,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
       <ModuleHeader
         title={title}
         icon={icon}
@@ -92,33 +96,51 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
             <div className="space-y-6">
               {formSections.map((section) => (
                 <Card key={section.id} className="shadow-md" data-card={section.id}>
-                  <Collapsible 
-                    open={openSections[section.id]} 
-                    onOpenChange={() => toggleSection(section.id)}
-                  >
-                    <CollapsibleTrigger asChild>
-                      <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="flex items-center gap-2 text-lg">
-                            <div className="text-primary">
-                              {icon}
-                            </div>
-                            {section.title}
-                          </CardTitle>
-                          {openSections[section.id] ? (
-                            <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                          ) : (
-                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                          )}
-                        </div>
+                  {section.alwaysOpen ? (
+                    // Always open section (no collapsible)
+                    <>
+                      <CardHeader className="bg-muted/20 border-b">
+                        <CardTitle className="flex items-center gap-2 text-lg text-muted-foreground">
+                          <div className="text-primary">
+                            {icon}
+                          </div>
+                          {section.title}
+                        </CardTitle>
                       </CardHeader>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <CardContent className="pt-0">
+                      <CardContent className="pt-6">
                         {section.content}
                       </CardContent>
-                    </CollapsibleContent>
-                  </Collapsible>
+                    </>
+                  ) : (
+                    // Collapsible section
+                    <Collapsible 
+                      open={openSections[section.id]} 
+                      onOpenChange={() => toggleSection(section.id)}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors bg-muted/20 border-b">
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2 text-lg text-muted-foreground">
+                              <div className="text-primary">
+                                {icon}
+                              </div>
+                              {section.title}
+                            </CardTitle>
+                            {openSections[section.id] ? (
+                              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                            )}
+                          </div>
+                        </CardHeader>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <CardContent className="pt-6">
+                          {section.content}
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
                 </Card>
               ))}
             </div>
