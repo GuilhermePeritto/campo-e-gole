@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
@@ -48,16 +47,19 @@ const Local = () => {
   const tourSteps: TourStep[] = [
     {
       target: '[data-tour="nome"]',
+      title: 'Nome do Local',
       content: 'Digite o nome do local que será exibido nas reservas.',
       placement: 'bottom'
     },
     {
       target: '[data-tour="tipo"]',
+      title: 'Tipo do Local',
       content: 'Selecione o tipo de esporte ou atividade do local.',
       placement: 'bottom'
     },
     {
       target: '[data-tour="caracteristicas"]',
+      title: 'Características',
       content: 'Marque as características disponíveis no local.',
       placement: 'top'
     }

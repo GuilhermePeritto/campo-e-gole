@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Users } from 'lucide-react';
@@ -37,16 +36,19 @@ const Cliente = () => {
   const tourSteps: TourStep[] = [
     {
       target: '[data-tour="nome"]',
+      title: 'Nome do Cliente',
       content: 'Digite o nome completo do cliente ou razão social da empresa.',
       placement: 'bottom'
     },
     {
       target: '[data-tour="documento"]',
+      title: 'Documento',
       content: 'Informe o CPF para pessoa física ou CNPJ para pessoa jurídica.',
       placement: 'bottom'
     },
     {
       target: '[data-tour="contato"]',
+      title: 'Informações de Contato',
       content: 'Adicione informações de contato para comunicação.',
       placement: 'top'
     }
