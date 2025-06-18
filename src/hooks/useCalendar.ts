@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export interface Venue {
@@ -121,11 +121,11 @@ export const useCalendar = () => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
-    navigate(`/eventos/reservar?date=${dateStr}`);
+    navigate(`/eventos/reserva?date=${dateStr}`);
   }, [navigate]);
 
   const handleEventClick = useCallback((event: Reservation) => {
-    navigate(`/eventos/reservas/${event.id}`);
+    navigate(`/eventos/reserva/${event.id}`);
   }, [navigate]);
 
   const handleDayMouseEnter = useCallback((day: Date, e: React.MouseEvent) => {

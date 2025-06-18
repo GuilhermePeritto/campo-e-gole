@@ -11,7 +11,7 @@ const School = () => {
   const quickActions = [
     {
       title: 'Novo Aluno',
-      description: 'Cadastrar novo aluno',
+      description: 'Novo aluno',
       icon: Plus,
       color: 'bg-module-school',
       action: () => navigate('/escolinha/alunos/novo')

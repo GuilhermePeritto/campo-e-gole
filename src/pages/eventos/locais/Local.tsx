@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+import BaseFormPage from '@/components/BaseFormPage';
+import { TourStep } from '@/components/PageTour';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,8 +10,6 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin, Palette } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import BaseFormPage from '@/components/BaseFormPage';
-import { TourStep } from '@/components/PageTour';
 
 const Local = () => {
   const navigate = useNavigate();
@@ -328,7 +327,7 @@ const Local = () => {
 
   return (
     <BaseFormPage
-      title={isEdit ? 'Editar Local' : 'Cadastrar Novo Local'}
+      title={isEdit ? 'Editar Local' : 'Novo Local'}
       description={isEdit ? 'Edite as informações do local' : 'Registre um novo local para reservas'}
       icon={<MapPin className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}

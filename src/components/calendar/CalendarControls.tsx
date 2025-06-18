@@ -61,7 +61,7 @@ const CalendarControls = ({
           </div>
         </div>
 
-        <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/eventos/novo')}>
+        <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/eventos/reserva')}>
           <Plus className="h-4 w-4" />
           Nova Reserva
         </Button>

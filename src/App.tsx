@@ -114,7 +114,7 @@ function App() {
                 <Route path="/configuracoes" element={<Settings />} />
 
                 {/* Events routes */}
-                <Route path="/eventos/calendario" element={<Agenda />} />
+                <Route path="/eventos/agenda" element={<Agenda />} />
                 <Route path="/eventos/clientes" element={<Clientes />} />
                 <Route path="/eventos/clientes/novo" element={<Cliente />} />
                 <Route path="/eventos/clientes/:id/editar" element={<Cliente />} />
@@ -122,12 +122,12 @@ function App() {
                 <Route path="/eventos/locais" element={<Locais />} />
                 <Route path="/eventos/locais/novo" element={<Local />} />
                 <Route path="/eventos/locais/:id/editar" element={<Local />} />
-                <Route path="/eventos/novo" element={<Reserva />} />
-                <Route path="/eventos/reservas/:id/editar" element={<Reserva />} />
-                <Route path="/eventos/contas-a-receber" element={<Recebiveis />} />
-                <Route path="/eventos/contas-a-receber/novo" element={<Recebivel />} />
-                <Route path="/eventos/contas-a-receber/:id/editar" element={<Recebivel />} />
-                <Route path="/eventos/contas-a-receber/:id/receber" element={<ReceberPagamento />} />
+                <Route path="/eventos/reserva" element={<Reserva />} />
+                <Route path="/eventos/reserva/:id" element={<Reserva />} />
+                <Route path="/eventos/recebiveis" element={<Recebiveis />} />
+                <Route path="/eventos/recebiveis/novo" element={<Recebivel />} />
+                <Route path="/eventos/recebiveis/:id/editar" element={<Recebivel />} />
+                <Route path="/eventos/recebiveis/:id/receber" element={<ReceberPagamento />} />
                 <Route path="/eventos/relatorios" element={<Relatorios />} />
 
                 {/* Financial routes */}

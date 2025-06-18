@@ -2,7 +2,6 @@
 import BaseList from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { DollarSign, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -93,21 +92,21 @@ const Recebiveis = () => {
   const actions = [
     {
       label: 'Editar',
-      onClick: (item: any) => navigate(`/eventos/contas-a-receber/${item.id}`),
+      onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}`),
       variant: 'outline' as const
     }
   ];
 
   const createButton = {
-    label: 'Nova Conta a Receber',
+    label: 'Novo Recebível',
     icon: <Plus className="h-4 w-4" />,
-    onClick: () => navigate('/eventos/contas-a-receber/novo')
+    onClick: () => navigate('/eventos/recebiveis/novo')
   };
 
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
-        title="Contas a Receber"
+        title="Recebíveis"
         icon={<DollarSign className="h-5 w-5" />}
         moduleColor={MODULE_COLORS.events}
         backTo="/eventos"
@@ -116,7 +115,7 @@ const Recebiveis = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
-          title="Contas a Receber"
+          title="Recebíveis"
           description="Gerencie as contas pendentes e recebimentos"
           data={recebiveis}
           columns={columns}

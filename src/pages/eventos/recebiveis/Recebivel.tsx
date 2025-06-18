@@ -1,14 +1,14 @@
+import BaseFormPage from '@/components/BaseFormPage';
+import { TourStep } from '@/components/PageTour';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { CreditCard } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import BaseFormPage from '@/components/BaseFormPage';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { TourStep } from '@/components/PageTour';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
+import { CreditCard } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface ReceivableFormData {
   client: string;
@@ -81,7 +81,7 @@ const Recebivel = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(isEdit ? 'Dados da conta atualizados:' : 'Nova conta a receber:', formData);
-    navigate('/eventos/contas-a-receber');
+    navigate('/eventos/recebiveis');
   };
 
   const handleClientChange = (value: string, item?: any) => {
@@ -164,7 +164,7 @@ const Recebivel = () => {
       description={isEdit ? "Altere as informações da conta a receber conforme necessário" : "Registre um novo valor a receber de clientes por serviços prestados ou reservas realizadas"}
       icon={<CreditCard className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}
-      backTo="/eventos/contas-a-receber"
+      backTo="/eventos/recebiveis"
       backLabel="Contas a Receber"
       onSubmit={handleSubmit}
       submitLabel={isEdit ? "Salvar Alterações" : "Salvar Conta a Receber"}

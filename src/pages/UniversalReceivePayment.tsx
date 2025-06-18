@@ -133,7 +133,7 @@ const UniversalReceivePayment = () => {
         config: {
           type: 'event_receivable',
           title: 'Receber Conta',
-          backUrl: '/eventos/contas-a-receber',
+          backUrl: '/eventos/recebiveis',
           backLabel: 'Contas a Receber',
           showDiscount: true,
           showInstallments: true,

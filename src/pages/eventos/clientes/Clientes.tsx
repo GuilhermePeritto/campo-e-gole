@@ -1,10 +1,9 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Users, Plus, Edit, Eye, Trash2 } from 'lucide-react';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { Edit, Plus, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Cliente {
   id: string;
@@ -93,22 +92,10 @@ const Clientes = () => {
 
   const actions: BaseListAction<Cliente>[] = [
     {
-      label: 'Visualizar',
-      icon: <Eye className="h-4 w-4" />,
-      onClick: (cliente) => navigate(`/eventos/clientes/${cliente.id}`),
-      variant: 'outline'
-    },
-    {
       label: 'Editar',
       icon: <Edit className="h-4 w-4" />,
       onClick: (cliente) => navigate(`/eventos/clientes/${cliente.id}/editar`),
       variant: 'outline'
-    },
-    {
-      label: 'Excluir',
-      icon: <Trash2 className="h-4 w-4" />,
-      onClick: (cliente) => console.log('Excluir cliente:', cliente.id),
-      variant: 'destructive'
     }
   ];
 

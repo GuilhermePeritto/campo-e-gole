@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Users } from 'lucide-react';
+import BaseFormPage from '@/components/BaseFormPage';
+import { TourStep } from '@/components/PageTour';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { TourStep } from '@/components/PageTour';
+import CampoDocumento from '@/core/componentes/CampoDocumento';
 import CampoEmail from '@/core/componentes/CampoEmail';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
-import CampoDocumento from '@/core/componentes/CampoDocumento';
-import BaseFormPage from '@/components/BaseFormPage';
+import { Users } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Cliente = () => {
   const navigate = useNavigate();
@@ -213,7 +213,7 @@ const Cliente = () => {
 
   return (
     <BaseFormPage
-      title={isEdit ? 'Editar Cliente' : 'Cadastrar Novo Cliente'}
+      title={isEdit ? 'Editar Cliente' : 'Novo Cliente'}
       description={isEdit ? 'Edite as informações do cliente' : 'Registre um novo cliente no sistema'}
       icon={<Users className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}

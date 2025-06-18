@@ -2,7 +2,7 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, CreditCard, Settings, BarChart3, Package, Plus, Eye, FileText } from 'lucide-react';
+import { BarChart3, Building2, CreditCard, Eye, FileText, Package, Plus, Settings, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const InternalSystem = () => {
@@ -62,7 +62,7 @@ const InternalSystem = () => {
   const quickActions = [
     {
       title: 'Novo Cliente',
-      description: 'Cadastrar novo cliente no sistema',
+      description: 'Novo Cliente no sistema',
       icon: Plus,
       route: '/sistema-interno/clientes/novo',
       color: 'bg-blue-600'

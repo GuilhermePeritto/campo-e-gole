@@ -34,10 +34,9 @@ const Reserva = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-  
-  // Estados para edição
+
+  // Estado único para controlar edição
   const [isEditing, setIsEditing] = useState(false);
-  const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ReservationFormData>({
     client: '',
@@ -208,8 +207,8 @@ const Reserva = () => {
   };
 
   const handleRecurringChange = (checked: boolean) => {
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       recurring: checked,
       recurringType: checked ? prev.recurringType : '',
       customRecurringDays: checked ? prev.customRecurringDays : ''
@@ -217,8 +216,8 @@ const Reserva = () => {
   };
 
   const handleRecurringTypeChange = (value: string) => {
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       recurringType: value,
       customRecurringDays: value === 'custom' ? prev.customRecurringDays : ''
     }));
@@ -234,18 +233,12 @@ const Reserva = () => {
 
   // Funções para interagir com a timeline
   const handleTimeSlotClick = (time: string) => {
-    if (!editingEventId) {
+    if (!isEditing) {
       setFormData(prev => ({ ...prev, startTime: time }));
     }
   };
 
   const handleEventEdit = (event: any) => {
-    // If clicking on the same event that's already being edited, cancel editing
-    if (editingEventId === event.id) {
-      handleCancelEdit();
-      return;
-    }
-
     // Load event data into form
     setFormData(prev => ({
       ...prev,
@@ -256,13 +249,14 @@ const Reserva = () => {
       notes: event.notes || '',
       amount: '160' // Mock amount
     }));
-    
-    setEditingEventId(event.id);
+
+    setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
-    setEditingEventId(null);
-    
+    debugger
+    setIsEditing(false);
+
     // Reset form to initial state if not in URL edit mode
     if (!id) {
       const dateParam = searchParams.get('date');
@@ -279,10 +273,14 @@ const Reserva = () => {
         customRecurringDays: ''
       });
     }
+
+    if (id) {
+      navigate(`/eventos/reserva`);
+    }
   };
 
   const handleCancel = () => {
-    if (editingEventId && !id) {
+    if (isEditing) {
       handleCancelEdit();
     } else {
       navigate('/eventos');
@@ -312,7 +310,7 @@ const Reserva = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-200px)]">
           {/* Card do Formulário */}
-          <Card className={`h-full overflow-y-auto ${editingEventId ? 'border-blue-200' : ''}`}>
+          <Card className={`h-full overflow-y-auto ${isEditing ? 'border-blue-200' : ''}`}>
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
               <PageTour steps={tourSteps} title={isEditing ? "Edição de Reserva" : "Criação de Nova Reserva"} />
               <CardTitle className="flex items-center gap-2">
@@ -326,7 +324,7 @@ const Reserva = () => {
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Banner de edição da timeline */}
-                {editingEventId && (
+                {isEditing && (
                   <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -335,9 +333,9 @@ const Reserva = () => {
                           Modo de edição ativo para evento selecionado na timeline
                         </span>
                       </div>
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
+                      <Button
+                        type="button"
+                        variant="ghost"
                         size="sm"
                         onClick={handleCancelEdit}
                         className="text-blue-700 hover:text-blue-900"
@@ -515,7 +513,7 @@ const Reserva = () => {
                   events={eventsForSelectedDate}
                   onTimeSlotClick={handleTimeSlotClick}
                   onEventEdit={handleEventEdit}
-                  editingEventId={editingEventId}
+                  editingEventId={isEditing ? id : null}
                 />
               ) : (
                 <div className="h-full flex items-center justify-center">

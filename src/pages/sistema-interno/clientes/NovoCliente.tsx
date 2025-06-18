@@ -1,17 +1,17 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Users } from 'lucide-react';
 import BaseFormPage from '@/components/BaseFormPage';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import CampoDocumento from '@/core/componentes/CampoDocumento';
 import CampoEmail from '@/core/componentes/CampoEmail';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
-import CampoDocumento from '@/core/componentes/CampoDocumento';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
+import { Users } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const NovoCliente = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const NovoCliente = () => {
 
   return (
     <BaseFormPage
-      title="Cadastrar Novo Cliente"
+      title="Novo Cliente"
       description="Registre um novo cliente no sistema"
       icon={<Users className="h-5 w-5" />}
       moduleColor="bg-blue-600"

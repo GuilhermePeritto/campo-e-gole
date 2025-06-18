@@ -1,11 +1,11 @@
 
-import { Button } from '@/components/ui/button';
 import ModuleHeader from '@/components/ModuleHeader';
+import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 import { ArrowLeft, CreditCard } from 'lucide-react';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 
 const ReceberPagamento = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const ReceberPagamento = () => {
         id: id
       });
     } else {
-      navigate('/eventos/contas-a-receber');
+      navigate('/eventos/recebiveis');
     }
   }, [id, navigateToPayment, navigate]);
 
@@ -30,7 +30,7 @@ const ReceberPagamento = () => {
         title="Receber Pagamento"
         icon={<CreditCard className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos/contas-a-receber"
+        backTo="/eventos/recebiveis"
         backLabel="Contas a Receber"
       />
 
@@ -41,7 +41,7 @@ const ReceberPagamento = () => {
             <p className="mt-2 text-muted-foreground">Redirecionando para o sistema de pagamento...</p>
             <Button
               variant="outline"
-              onClick={() => navigate('/eventos/contas-a-receber')}
+              onClick={() => navigate('/eventos/recebiveis')}
               className="mt-4 gap-2"
             >
               <ArrowLeft className="h-4 w-4" />

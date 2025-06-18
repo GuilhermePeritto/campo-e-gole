@@ -14,7 +14,7 @@ const Events = () => {
       description: 'Criar uma nova reserva',
       icon: Plus,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/novo')
+      action: () => navigate('/eventos/reserva')
     },
     {
       title: 'Locais',
@@ -35,14 +35,14 @@ const Events = () => {
       description: 'Visualizar agenda',
       icon: Calendar,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/calendario')
+      action: () => navigate('/eventos/agenda')
     },
     {
       title: 'Recebiveis',
       description: 'Contas a receber',
       icon: CreditCard,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/contas-a-receber')
+      action: () => navigate('/eventos/recebiveis')
     },
     {
       title: 'Relatórios',
@@ -148,7 +148,7 @@ const Events = () => {
               <Button
                 variant="outline"
                 className="w-full mt-4"
-                onClick={() => navigate('/eventos/calendario')}
+                onClick={() => navigate('/eventos/agenda')}
               >
                 Ver Todas as Reservas
               </Button>
@@ -217,7 +217,7 @@ const Events = () => {
               <Button
                 variant="outline"
                 className="w-full mt-4"
-                onClick={() => navigate('/eventos/calendario')}
+                onClick={() => navigate('/eventos/agenda')}
               >
                 Ver Agenda Completa
               </Button>

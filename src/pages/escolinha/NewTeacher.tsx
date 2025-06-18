@@ -1,14 +1,14 @@
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PageTour, { TourStep } from '@/components/PageTour';
 
 const NewTeacher = () => {
   const navigate = useNavigate();
@@ -135,7 +135,7 @@ const NewTeacher = () => {
           <PageTour steps={tourSteps} title="Cadastro de Novo Professor" />
           
           <CardHeader>
-            <CardTitle>Cadastrar Novo Professor</CardTitle>
+            <CardTitle>Novo Professor</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
