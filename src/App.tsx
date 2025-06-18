@@ -1,10 +1,11 @@
+
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Agenda from './pages/eventos/eventos/Agenda';
 import Reserva from './pages/eventos/eventos/Reserva';
-import Financeiro from './pages/financeiro/Financeiro';
-import Inicio from './pages/inicio/Inicio';
+import Financial from './pages/Financial';
+import Index from './pages/Index';
 import Locais from './pages/eventos/locais/Locais';
 import Clientes from './pages/eventos/clientes/Clientes';
 import Recebiveis from './pages/eventos/recebiveis/Recebiveis';
@@ -18,8 +19,8 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Inicio />} />
-        <Route path="/financeiro" element={<Financeiro />} />
+        <Route path="/" element={<Index />} />
+        <Route path="/financeiro" element={<Financial />} />
 
         <Route path="/eventos" element={<Agenda />} />
         <Route path="/eventos/reservar" element={<Reserva />} />
