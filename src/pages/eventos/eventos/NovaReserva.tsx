@@ -1,6 +1,8 @@
+
 import BaseFormPage from '@/components/BaseFormPage';
 import EventTimeline from '@/components/EventTimeline';
-import { TourStep } from '@/components/PageTour';
+import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
