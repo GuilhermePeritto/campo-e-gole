@@ -18,19 +18,17 @@ import Settings from './pages/Settings';
 import UniversalReceivePayment from './pages/UniversalReceivePayment';
 
 // Events pages
+import { default as EventsEditClient, default as EventsNewClient } from './pages/eventos/clientes/Cliente';
 import EventsClients from './pages/eventos/clientes/Clientes';
 import EventsClientHistory from './pages/eventos/clientes/ClientHistory';
-import EventsNewClient from './pages/eventos/clientes/Cliente';
-import EventsEditClient from './pages/eventos/clientes/Cliente';
-import EventsEditReceivable from './pages/eventos/contas-a-receber/EditarRecebivel';
-import EventsNewReceivable from './pages/eventos/contas-a-receber/NovoRecebivel';
-import EventsReceivePayment from './pages/eventos/contas-a-receber/ReceberPagamento';
-import EventsReceivables from './pages/eventos/contas-a-receber/Recebiveis';
 import EventsCalendar from './pages/eventos/eventos/Agenda';
 import EventsReservation from './pages/eventos/eventos/Reserva';
-import EventsNewVenue from './pages/eventos/locais/Local';
-import EventsEditVenue from './pages/eventos/locais/Local';
-import EventsVenues from './pages/eventos/locais/Venues';
+import EventsLocais from './pages/eventos/locais/Locais';
+import { default as EventsEditVenue, default as EventsNewVenue } from './pages/eventos/locais/Local';
+import EventsEditReceivable from './pages/eventos/recebiveis/EditarRecebivel';
+import EventsNewReceivable from './pages/eventos/recebiveis/NovoRecebivel';
+import EventsReceivePayment from './pages/eventos/recebiveis/ReceberPagamento';
+import EventsReceivables from './pages/eventos/recebiveis/Recebiveis';
 import EventsReports from './pages/eventos/relatorios/Reports';
 
 // Financial pages
@@ -122,7 +120,7 @@ function App() {
                 <Route path="/eventos/clientes/novo" element={<EventsNewClient />} />
                 <Route path="/eventos/clientes/:id/editar" element={<EventsEditClient />} />
                 <Route path="/eventos/clientes/:id/historico" element={<EventsClientHistory />} />
-                <Route path="/eventos/locais" element={<EventsVenues />} />
+                <Route path="/eventos/locais" element={<EventsLocais />} />
                 <Route path="/eventos/locais/novo" element={<EventsNewVenue />} />
                 <Route path="/eventos/locais/:id/editar" element={<EventsEditVenue />} />
                 <Route path="/eventos/novo" element={<EventsReservation />} />

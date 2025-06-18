@@ -6,7 +6,7 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Venues = () => {
+const Locais = () => {
   const navigate = useNavigate();
 
   // Mock data
@@ -113,4 +113,4 @@ const Venues = () => {
   );
 };
 
-export default Venues;
+export default Locais;

@@ -7,8 +7,8 @@
 // import EditReceivable from '@/pages/eventos/EditReceivable';
 
 // DEPOIS:
-import NovoRecebivel from '@/pages/eventos/contas-a-receber/NovoRecebivel';
-import EditarRecebivel from '@/pages/eventos/contas-a-receber/EditarRecebivel';
+import EditarRecebivel from '@/pages/eventos/recebiveis/EditarRecebivel';
+import NovoRecebivel from '@/pages/eventos/recebiveis/NovoRecebivel';
 
 // Exemplos de rotas atualizadas:
 const eventosRoutes = [

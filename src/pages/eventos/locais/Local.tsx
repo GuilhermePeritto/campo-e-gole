@@ -1,16 +1,17 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { MapPin } from 'lucide-react';
+import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import PageTour, { TourStep } from '@/components/PageTour';
+import { MapPin, Palette } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Local = () => {
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ const Local = () => {
   const [formData, setFormData] = useState({
     name: isEdit ? 'Quadra Principal' : '',
     type: isEdit ? 'Futebol Society' : '',
+    color: isEdit ? '#10B981' : '#ffffff',
+    hasPeakHours: isEdit ? true : false,
+    peakHourStart: isEdit ? '18:00' : '',
+    peakHourEnd: isEdit ? '20:00' : '',
+    peakHourRate: isEdit ? '120.00' : '',
+    active: isEdit ? true : false,
     capacity: isEdit ? '22' : '',
     hourlyRate: isEdit ? '80.00' : '',
     status: isEdit ? 'ativo' : 'ativo',
@@ -75,6 +82,10 @@ const Local = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleCharacteristicToggle = (characteristic: string) => {
     setFormData(prev => ({
       ...prev,
@@ -97,7 +108,7 @@ const Local = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="shadow-lg relative">
           <PageTour steps={tourSteps} title="Tour - Cadastro de Local" />
-          
+
           <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b">
             <CardTitle className="flex items-center gap-2">
               <div className="text-primary">
@@ -115,7 +126,7 @@ const Local = () => {
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <h3 className="text-lg font-semibold text-foreground">Informações Básicas</h3>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2" data-tour="nome">
                     <Label htmlFor="name">Nome do Local *</Label>
@@ -173,20 +184,65 @@ const Local = () => {
                       className="h-11"
                     />
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Situação</Label>
-                    <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
-                      <SelectTrigger id="status" className="h-11">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ativo">Ativo</SelectItem>
-                        <SelectItem value="manutencao">Manutenção</SelectItem>
-                        <SelectItem value="inativo">Inativo</SelectItem>
-                      </SelectContent>
-                    </Select>
+                {/* Preços */}
+                <div className="space-y-4 peak-hours-section">
+                  <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/20">
+                    <div className="space-y-1">
+                      <div className="font-medium">Horário Nobre</div>
+                      <div className="text-sm text-muted-foreground">
+                        Ativar preços diferenciados para horários de maior demanda
+                      </div>
+                    </div>
+                    <Switch
+                      checked={formData.hasPeakHours}
+                      onCheckedChange={(checked) => handleInputChange('hasPeakHours', checked)}
+                    />
                   </div>
+
+                  {formData.hasPeakHours && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg border">
+                      <div className="space-y-2">
+                        <Label htmlFor="peakHourStart" className="text-sm font-medium">Início do Horário Nobre</Label>
+                        <Input
+                          id="peakHourStart"
+                          type="time"
+                          value={formData.peakHourStart}
+                          onChange={(e) => handleInputChange('peakHourStart', e.target.value)}
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="peakHourEnd" className="text-sm font-medium">Fim do Horário Nobre</Label>
+                        <Input
+                          id="peakHourEnd"
+                          type="time"
+                          value={formData.peakHourEnd}
+                          onChange={(e) => handleInputChange('peakHourEnd', e.target.value)}
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="peakHourRate" className="text-sm font-medium">Valor Horário Nobre (R$) *</Label>
+                        <Input
+                          id="peakHourRate"
+                          type="number"
+                          step="0.01"
+                          value={formData.peakHourRate}
+                          onChange={(e) => handleInputChange('peakHourRate', e.target.value)}
+                          placeholder="Ex: 120.00"
+                          className="h-11"
+                          required={formData.hasPeakHours}
+                        />
+                        {formData.hourlyRate && formData.peakHourRate && (
+                          <p className="text-xs text-green-600 font-medium">
+                            {(((parseFloat(formData.peakHourRate) / parseFloat(formData.hourlyRate)) - 1) * 100).toFixed(0)}% mais caro
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -201,11 +257,44 @@ const Local = () => {
                 </div>
               </div>
 
+              {/* Seletor de Cor RGB */}
+              <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-primary" />
+                  <Label htmlFor="color" className="text-sm font-medium">Cor de Identificação</Label>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="color"
+                      type="color"
+                      value={formData.color}
+                      onChange={(e) => handleInputChange('color', e.target.value)}
+                      className="w-16 h-10 p-1 rounded-lg border cursor-pointer"
+                    />
+                    <Input
+                      type="text"
+                      value={formData.color}
+                      onChange={(e) => handleInputChange('color', e.target.value)}
+                      placeholder="#10B981"
+                      className="font-mono text-sm w-32"
+                    />
+                  </div>
+                  <div
+                    className="w-12 h-10 rounded-lg border-2 border-gray-300 shadow-sm"
+                    style={{ backgroundColor: formData.color }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  A cor será usada para identificar visualmente o local na agenda
+                </p>
+              </div>
+
               <div className="space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <h3 className="text-lg font-semibold text-foreground">Características</h3>
                 </div>
-                
+
                 <div className="space-y-2" data-tour="caracteristicas">
                   <Label>Selecione as características disponíveis</Label>
                   <div className="border rounded-lg p-4 max-h-60 overflow-y-auto space-y-3">
@@ -224,7 +313,19 @@ const Local = () => {
                   </div>
                 </div>
               </div>
-              
+
+              {/* Status */}
+              <div className="flex items-center gap-3 p-4 border rounded-lg bg-muted/20">
+                <Switch
+                  checked={formData.active}
+                  onCheckedChange={(checked) => handleInputChange('active', checked)}
+                />
+                <Label className="font-medium">Local ativo</Label>
+                <span className="text-sm text-muted-foreground">
+                  {formData.active ? 'O local estará disponível para reservas' : 'O local não aparecerá na lista de disponíveis'}
+                </span>
+              </div>
+
               <div className="flex gap-4 pt-6 border-t">
                 <Button type="submit" className="flex-1 h-11 font-medium">
                   {isEdit ? 'Salvar Alterações' : 'Cadastrar Local'}
