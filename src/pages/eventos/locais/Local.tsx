@@ -1,5 +1,4 @@
 
-import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -54,7 +53,7 @@ const Local = () => {
 
   const tourSteps: TourStep[] = [
     {
-      target: '[data-accordion="info-basicas"]',
+      target: '[data-card="info-basicas"]',
       title: 'Informações Básicas',
       content: 'Este card contém os dados principais do local como nome, tipo e capacidade.',
       placement: 'bottom'
@@ -66,13 +65,13 @@ const Local = () => {
       placement: 'bottom'
     },
     {
-      target: '[data-accordion="precos"]',
+      target: '[data-card="precos"]',
       title: 'Preços e Horários',
       content: 'Configure os valores e horários especiais do local.',
       placement: 'bottom'
     },
     {
-      target: '[data-accordion="caracteristicas"]',
+      target: '[data-card="caracteristicas"]',
       title: 'Características',
       content: 'Selecione as características disponíveis no local.',
       placement: 'top'

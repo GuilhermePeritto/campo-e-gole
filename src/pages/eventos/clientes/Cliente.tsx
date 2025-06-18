@@ -34,7 +34,7 @@ const Cliente = () => {
 
   const tourSteps: TourStep[] = [
     {
-      target: '[data-accordion="info-basicas"]',
+      target: '[data-card="info-basicas"]',
       title: 'Informações Básicas',
       content: 'Este card contém os dados principais do cliente como nome, documento e tipo.',
       placement: 'bottom'
@@ -46,13 +46,13 @@ const Cliente = () => {
       placement: 'bottom'
     },
     {
-      target: '[data-accordion="contato"]',
+      target: '[data-card="contato"]',
       title: 'Informações de Contato',
       content: 'Adicione informações de contato para comunicação.',
       placement: 'bottom'
     },
     {
-      target: '[data-accordion="endereco"]',
+      target: '[data-card="endereco"]',
       title: 'Endereço',
       content: 'Cadastre o endereço completo do cliente.',
       placement: 'top'
@@ -130,7 +130,7 @@ const Cliente = () => {
     },
     {
       id: 'contato',
-      title: 'Contato',
+      title: 'Informações de Contato',
       defaultOpen: false,
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

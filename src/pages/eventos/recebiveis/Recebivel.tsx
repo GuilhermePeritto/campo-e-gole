@@ -41,7 +41,7 @@ const Recebivel = () => {
 
   const tourSteps: TourStep[] = [
     {
-      target: '[data-accordion="info-basicas"]',
+      target: '[data-card="info-basicas"]',
       title: 'Informações Básicas',
       content: 'Este card contém os dados principais da conta a receber como cliente e valor.',
       placement: 'bottom'
@@ -59,7 +59,7 @@ const Recebivel = () => {
       placement: 'bottom'
     },
     {
-      target: '[data-accordion="detalhes"]',
+      target: '[data-card="detalhes"]',
       title: 'Detalhes',
       content: 'Aqui você pode adicionar informações complementares sobre a conta a receber.',
       placement: 'top'
