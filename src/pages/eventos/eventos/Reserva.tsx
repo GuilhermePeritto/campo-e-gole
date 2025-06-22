@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -514,7 +513,7 @@ const Reserva = () => {
                   events={eventsForSelectedDate}
                   onTimeSlotClick={handleTimeSlotClick}
                   onEventEdit={handleEventEdit}
-                  editingEventId={isEditing ? id : null}
+                  editingEventId={isEditing && id ? parseInt(id) : null}
                 />
               ) : (
                 <div className="h-[500px] flex items-center justify-center">
