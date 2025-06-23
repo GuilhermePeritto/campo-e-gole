@@ -1,10 +1,11 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface FormSection {
@@ -62,6 +63,23 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
     }));
   };
 
+  const handleTourStepChange = useCallback((stepIndex: number) => {
+    if (formSections && tourSteps && tourSteps[stepIndex]) {
+      const step = tourSteps[stepIndex];
+      const cardMatch = step.target.match(/data-card="([^"]+)"/);
+      if (cardMatch) {
+        const sectionId = cardMatch[1];
+        // Só abre a seção se ela não estiver já aberta
+        setOpenSections(prev => {
+          if (prev[sectionId]) {
+            return prev; // Não alterar se já estiver aberta
+          }
+          return { ...prev, [sectionId]: true };
+        });
+      }
+    }
+  }, [formSections, tourSteps]);
+
   return (
     <div className="min-h-screen bg-background relative">
       <ModuleHeader
@@ -82,16 +100,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                   <PageTour 
                     steps={tourSteps} 
                     title={tourTitle}
-                    onStepChange={(stepIndex) => {
-                      if (formSections && tourSteps[stepIndex]) {
-                        const step = tourSteps[stepIndex];
-                        const cardMatch = step.target.match(/data-card="([^"]+)"/);
-                        if (cardMatch) {
-                          const sectionId = cardMatch[1];
-                          setOpenSections(prev => ({ ...prev, [sectionId]: true }));
-                        }
-                      }
-                    }}
+                    onStepChange={handleTourStepChange}
                   />
                 </div>
               )}
