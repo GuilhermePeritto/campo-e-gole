@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -90,21 +89,21 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
         backLabel={backLabel}
       />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+        {/* Tour Guide Button positioned in the main container */}
+        {tourSteps && tourTitle && (
+          <div className="absolute top-4 right-4 z-20">
+            <PageTour 
+              steps={tourSteps} 
+              title={tourTitle}
+              onStepChange={handleTourStepChange}
+            />
+          </div>
+        )}
+
         <form onSubmit={onSubmit} className="space-y-6">
           {formSections ? (
-            <div className="space-y-6 relative">
-              {/* Tour Guide positioned relative to the primary card */}
-              {tourSteps && tourTitle && formSections.length > 0 && (
-                <div className="absolute top-4 right-4 z-20">
-                  <PageTour 
-                    steps={tourSteps} 
-                    title={tourTitle}
-                    onStepChange={handleTourStepChange}
-                  />
-                </div>
-              )}
-
+            <div className="space-y-6">
               {formSections.map((section) => (
                 <Card key={section.id} className="shadow-md" data-card={section.id}>
                   {section.alwaysOpen ? (

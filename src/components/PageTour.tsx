@@ -1,10 +1,7 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { HelpCircle, ArrowLeft, ArrowRight, X } from 'lucide-react';
 
 export interface TourStep {
@@ -24,6 +21,7 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     if (isOpen && steps[currentStep]) {
@@ -35,11 +33,17 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
         const element = document.querySelector(steps[currentStep].target) as HTMLElement;
         if (element) {
           setTargetElement(element);
+          
           // Scroll to element and highlight it
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
           element.style.outline = '2px solid hsl(var(--primary))';
           element.style.outlineOffset = '4px';
           element.style.borderRadius = '8px';
+          
+          // Calcular posição do popover
+          const rect = element.getBoundingClientRect();
+          const position = getOptimalPosition(rect);
+          setPopoverPosition(position);
         }
       }, 300);
     }
@@ -53,6 +57,20 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
       }
     };
   }, [currentStep, isOpen, steps, targetElement, onStepChange]);
+
+  // Recalcular posição quando a janela é redimensionada
+  useEffect(() => {
+    const handleResize = () => {
+      if (targetElement && isOpen) {
+        const rect = targetElement.getBoundingClientRect();
+        const position = getOptimalPosition(rect);
+        setPopoverPosition(position);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [targetElement, isOpen]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -82,37 +100,38 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
     setIsOpen(true);
   };
 
-  const getOptimalPosition = (element: HTMLElement) => {
-    const rect = element.getBoundingClientRect();
+  const getOptimalPosition = (rect: DOMRect) => {
     const windowHeight = window.innerHeight;
     const windowWidth = window.innerWidth;
+    const popoverWidth = 350;
+    const popoverHeight = 200;
     
-    // Se há espaço suficiente abaixo do elemento
-    if (rect.bottom + 200 < windowHeight) {
+    // Posição preferencial: abaixo do elemento
+    if (rect.bottom + popoverHeight + 20 < windowHeight) {
       return {
-        top: rect.bottom + window.scrollY + 10,
-        left: Math.min(rect.left + window.scrollX, windowWidth - 400),
+        top: rect.bottom + 10,
+        left: Math.max10, Math.min(rect.left, windowWidth - popoverWidth - 10)),
       };
     }
-    // Se há espaço acima
-    else if (rect.top - 200 > 0) {
+    // Se não cabe abaixo, tenta acima
+    else if (rect.top - popoverHeight - 20 > 0) {
       return {
-        top: rect.top + window.scrollY - 210,
-        left: Math.min(rect.left + window.scrollX, windowWidth - 400),
+        top: rect.top - popoverHeight - 10,
+        left: Math.max(10, Math.min(rect.left, windowWidth - popoverWidth - 10)),
       };
     }
-    // Posição à direita se possível
-    else if (rect.right + 400 < windowWidth) {
+    // Se não cabe acima nem abaixo, posiciona à direita
+    else if (rect.right + popoverWidth + 20 < windowWidth) {
       return {
-        top: rect.top + window.scrollY,
-        left: rect.right + window.scrollX + 10,
+        top: Math.max(10, Math.min(rect.top, windowHeight - popoverHeight - 10)),
+        left: rect.right + 10,
       };
     }
-    // Posição à esquerda
+    // Por último, posiciona à esquerda
     else {
       return {
-        top: rect.top + window.scrollY,
-        left: Math.max(rect.left + window.scrollX - 410, 10),
+        top: Math.max(10, Math.min(rect.top, windowHeight - popoverHeight - 10)),
+        left: Math.max(10, rect.left - popoverWidth - 10),
       };
     }
   };
@@ -121,26 +140,24 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
 
   return (
     <>
-      {/* Help Icon Button - Now positioned absolutely within parent */}
-      <div className="absolute top-4 right-4 z-10">
-        <Button
-          onClick={startTour}
-          size="icon"
-          className="w-8 h-8 rounded-full bg-primary hover:bg-primary/90 shadow-md"
-          title={`Iniciar tour: ${title}`}
-        >
-          <HelpCircle className="h-4 w-4 text-primary-foreground" />
-        </Button>
-      </div>
+      {/* Help Icon Button */}
+      <Button
+        onClick={startTour}
+        size="icon"
+        className="w-8 h-8 rounded-full bg-primary hover:bg-primary/90 shadow-md"
+        title={`Iniciar tour: ${title}`}
+      >
+        <HelpCircle className="h-4 w-4 text-primary-foreground" />
+      </Button>
 
       {/* Tour Popover */}
-      {isOpen && targetElement && (
-        <div className="fixed inset-0 z-40 pointer-events-none">
+      {isOpen && (
+        <div className="fixed inset-0 z-50 pointer-events-none">
           <div 
-            className="absolute bg-background border rounded-lg shadow-lg p-4 max-w-sm pointer-events-auto"
+            className="absolute bg-background border rounded-lg shadow-xl p-4 w-80 pointer-events-auto"
             style={{
-              top: targetElement.getBoundingClientRect().bottom + window.scrollY + 10,
-              left: Math.min(targetElement.getBoundingClientRect().left + window.scrollX, window.innerWidth - 400),
+              top: `${popoverPosition.top}px`,
+              left: `${popoverPosition.left}px`,
             }}
           >
             <div className="flex items-start justify-between mb-3">
@@ -219,3 +236,4 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
 };
 
 export default PageTour;
+
