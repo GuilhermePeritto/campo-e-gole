@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { HelpCircle, ArrowLeft, ArrowRight, X } from 'lucide-react';
@@ -110,7 +109,7 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
     if (rect.bottom + popoverHeight + 20 < windowHeight) {
       return {
         top: rect.bottom + 10,
-        left: Math.max10, Math.min(rect.left, windowWidth - popoverWidth - 10)),
+        left: Math.max(10, Math.min(rect.left, windowWidth - popoverWidth - 10)),
       };
     }
     // Se não cabe abaixo, tenta acima
@@ -236,4 +235,3 @@ const PageTour: React.FC<PageTourProps> = ({ steps, title, onStepChange }) => {
 };
 
 export default PageTour;
-
