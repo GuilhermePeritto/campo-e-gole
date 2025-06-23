@@ -90,17 +90,6 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-        {/* Tour Guide Button positioned in the main container */}
-        {tourSteps && tourTitle && (
-          <div className="absolute top-4 right-4 z-20">
-            <PageTour 
-              steps={tourSteps} 
-              title={tourTitle}
-              onStepChange={handleTourStepChange}
-            />
-          </div>
-        )}
-
         <form onSubmit={onSubmit} className="space-y-6">
           {formSections ? (
             <div className="space-y-6">
@@ -108,13 +97,23 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                 <Card key={section.id} className="shadow-md" data-card={section.id}>
                   {section.alwaysOpen ? (
                     <>
-                      <CardHeader className="bg-muted/30 border-b">
+                      <CardHeader className="bg-muted/30 border-b relative">
                         <CardTitle className="flex items-center gap-2 text-lg text-muted-foreground">
                           <div className="text-primary">
                             {icon}
                           </div>
                           {section.title}
                         </CardTitle>
+                        {/* Tour Guide Button positioned in the first card header */}
+                        {formSections[0].id === section.id && tourSteps && tourTitle && (
+                          <div className="absolute top-4 right-4">
+                            <PageTour 
+                              steps={tourSteps} 
+                              title={tourTitle}
+                              onStepChange={handleTourStepChange}
+                            />
+                          </div>
+                        )}
                       </CardHeader>
                       <CardContent className="pt-6">
                         {section.content}
@@ -126,7 +125,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                       onOpenChange={() => toggleSection(section.id)}
                     >
                       <CollapsibleTrigger asChild>
-                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors bg-muted/30 border-b">
+                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors bg-muted/30 border-b relative">
                           <div className="flex items-center justify-between">
                             <CardTitle className="flex items-center gap-2 text-lg text-muted-foreground">
                               <div className="text-primary">
@@ -134,11 +133,21 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                               </div>
                               {section.title}
                             </CardTitle>
-                            {openSections[section.id] ? (
-                              <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                            ) : (
-                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                            )}
+                            <div className="flex items-center gap-2">
+                              {/* Tour Guide Button positioned in the first card header */}
+                              {formSections[0].id === section.id && tourSteps && tourTitle && (
+                                <PageTour 
+                                  steps={tourSteps} 
+                                  title={tourTitle}
+                                  onStepChange={handleTourStepChange}
+                                />
+                              )}
+                              {openSections[section.id] ? (
+                                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                              ) : (
+                                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                              )}
+                            </div>
                           </div>
                         </CardHeader>
                       </CollapsibleTrigger>
@@ -154,7 +163,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
             </div>
           ) : (
             <Card className="shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b">
+              <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
                 <CardTitle className="flex items-center gap-2">
                   <div className="text-primary">
                     {icon}
@@ -164,6 +173,16 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                 <CardDescription>
                   {description}
                 </CardDescription>
+                {/* Tour Guide Button positioned in the card header */}
+                {tourSteps && tourTitle && (
+                  <div className="absolute top-4 right-4">
+                    <PageTour 
+                      steps={tourSteps} 
+                      title={tourTitle}
+                      onStepChange={handleTourStepChange}
+                    />
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="p-8">
                 {children}
