@@ -37,6 +37,7 @@ const Reserva = () => {
 
   // Estado único para controlar edição
   const [isEditing, setIsEditing] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ReservationFormData>({
     client: '',
@@ -55,6 +56,7 @@ const Reserva = () => {
   useEffect(() => {
     if (id) {
       setIsEditing(true);
+      setEditingEventId(parseInt(id));
       // Simular carregamento dos dados da reserva
       const mockData = {
         client: 'João Silva',
@@ -251,11 +253,12 @@ const Reserva = () => {
     }));
 
     setIsEditing(true);
+    setEditingEventId(event.id);
   };
 
   const handleCancelEdit = () => {
-    debugger
     setIsEditing(false);
+    setEditingEventId(null);
 
     // Reset form to initial state if not in URL edit mode
     if (!id) {
@@ -310,221 +313,225 @@ const Reserva = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Card do Formulário */}
-          <Card className={`${isEditing ? 'border-blue-200' : ''}`}>
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
-              <PageTour steps={tourSteps} title={isEditing ? "Edição de Reserva" : "Criação de Nova Reserva"} />
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                {isEditing ? "Editar Reserva" : "Nova Reserva"}
-              </CardTitle>
-              <CardDescription>
-                {isEditing ? "Atualize os dados da reserva" : "Preencha os dados para criar uma nova reserva"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Banner de edição da timeline */}
-                {isEditing && (
-                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Edit className="h-5 w-5 text-blue-700" />
-                        <span className="text-sm font-medium text-blue-700">
-                          Modo de edição ativo para evento selecionado na timeline
-                        </span>
+          <div className="space-y-0">
+            <Card className={`${isEditing ? 'border-blue-200' : ''}`}>
+              <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
+                <PageTour steps={tourSteps} title={isEditing ? "Edição de Reserva" : "Criação de Nova Reserva"} />
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  {isEditing ? "Editar Reserva" : "Nova Reserva"}
+                </CardTitle>
+                <CardDescription>
+                  {isEditing ? "Atualize os dados da reserva" : "Preencha os dados para criar uma nova reserva"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Banner de edição da timeline */}
+                  {isEditing && (
+                    <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Edit className="h-5 w-5 text-blue-700" />
+                          <span className="text-sm font-medium text-blue-700">
+                            Modo de edição ativo para evento selecionado na timeline
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCancelEdit}
+                          className="text-blue-700 hover:text-blue-900"
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Cancelar Edição
+                        </Button>
                       </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <CampoBusca
+                        id="client"
+                        label="Cliente"
+                        value={formData.client}
+                        onChange={handleClientChange}
+                        items={clientesExemplo}
+                        placeholder="Digite o nome do cliente..."
+                        required
+                      />
+                    </div>
+                    <div className="flex items-end">
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        onClick={handleCancelEdit}
-                        className="text-blue-700 hover:text-blue-900"
+                        onClick={handleNewClient}
+                        className="h-11"
                       >
-                        <X className="h-4 w-4 mr-1" />
-                        Cancelar Edição
+                        <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
-                )}
 
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <CampoBusca
-                      id="client"
-                      label="Cliente"
-                      value={formData.client}
-                      onChange={handleClientChange}
-                      items={clientesExemplo}
-                      placeholder="Digite o nome do cliente..."
+                  <CampoBusca
+                    id="venue"
+                    label="Local"
+                    value={formData.venue}
+                    onChange={handleVenueChange}
+                    items={locaisExemplo}
+                    placeholder="Selecione o local..."
+                    required
+                  />
+
+                  <SeletorData
+                    id="date"
+                    label="Data da Reserva"
+                    value={formData.date}
+                    onChange={handleDateChange}
+                    required
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <SeletorHora
+                      id="startTime"
+                      label="Horário de Início"
+                      value={formData.startTime}
+                      onChange={handleStartTimeChange}
+                      placeholder="Selecione o horário de início"
+                      required
+                    />
+
+                    <SeletorHora
+                      id="endTime"
+                      label="Horário de Fim"
+                      value={formData.endTime}
+                      onChange={handleEndTimeChange}
+                      placeholder="Selecione o horário de fim"
                       required
                     />
                   </div>
-                  <div className="flex items-end">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleNewClient}
-                      className="h-11"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
+
+                  <CampoValor
+                    id="amount"
+                    label="Valor Total"
+                    value={formData.amount}
+                    onChange={handleAmountChange}
+                    required
+                  />
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="recurring" className="text-sm font-medium">
+                        Evento recorrente
+                      </Label>
+                      <Switch
+                        id="recurring"
+                        checked={formData.recurring}
+                        onCheckedChange={handleRecurringChange}
+                      />
+                    </div>
+
+                    {formData.recurring && (
+                      <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                        <div className="space-y-2">
+                          <Label htmlFor="recurringType">Tipo de Recorrência</Label>
+                          <Select value={formData.recurringType} onValueChange={handleRecurringTypeChange}>
+                            <SelectTrigger id="recurringType" className="h-11">
+                              <SelectValue placeholder="Selecione o tipo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {recurringOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {formData.recurringType === 'custom' && (
+                          <div className="space-y-2">
+                            <Label htmlFor="customDays">Repetir a cada quantos dias?</Label>
+                            <Input
+                              id="customDays"
+                              type="number"
+                              min="1"
+                              value={formData.customRecurringDays}
+                              onChange={(e) => handleCustomDaysChange(e.target.value)}
+                              placeholder="Ex: 3"
+                              className="h-11"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                <CampoBusca
-                  id="venue"
-                  label="Local"
-                  value={formData.venue}
-                  onChange={handleVenueChange}
-                  items={locaisExemplo}
-                  placeholder="Selecione o local..."
-                  required
-                />
-
-                <SeletorData
-                  id="date"
-                  label="Data da Reserva"
-                  value={formData.date}
-                  onChange={handleDateChange}
-                  required
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <SeletorHora
-                    id="startTime"
-                    label="Horário de Início"
-                    value={formData.startTime}
-                    onChange={handleStartTimeChange}
-                    placeholder="Selecione o horário de início"
-                    required
-                  />
-
-                  <SeletorHora
-                    id="endTime"
-                    label="Horário de Fim"
-                    value={formData.endTime}
-                    onChange={handleEndTimeChange}
-                    placeholder="Selecione o horário de fim"
-                    required
-                  />
-                </div>
-
-                <CampoValor
-                  id="amount"
-                  label="Valor Total"
-                  value={formData.amount}
-                  onChange={handleAmountChange}
-                  required
-                />
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="recurring" className="text-sm font-medium">
-                      Evento recorrente
-                    </Label>
-                    <Switch
-                      id="recurring"
-                      checked={formData.recurring}
-                      onCheckedChange={handleRecurringChange}
+                  <div className="space-y-2">
+                    <Label htmlFor="notes" className="text-sm font-medium">Observações</Label>
+                    <Textarea
+                      id="notes"
+                      value={formData.notes}
+                      onChange={(e) => handleNotesChange(e.target.value)}
+                      placeholder="Observações sobre a reserva..."
+                      rows={3}
+                      className="resize-none"
                     />
                   </div>
 
-                  {formData.recurring && (
-                    <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                      <div className="space-y-2">
-                        <Label htmlFor="recurringType">Tipo de Recorrência</Label>
-                        <Select value={formData.recurringType} onValueChange={handleRecurringTypeChange}>
-                          <SelectTrigger id="recurringType" className="h-11">
-                            <SelectValue placeholder="Selecione o tipo" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {recurringOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {formData.recurringType === 'custom' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="customDays">Repetir a cada quantos dias?</Label>
-                          <Input
-                            id="customDays"
-                            type="number"
-                            min="1"
-                            value={formData.customRecurringDays}
-                            onChange={(e) => handleCustomDaysChange(e.target.value)}
-                            placeholder="Ex: 3"
-                            className="h-11"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="notes" className="text-sm font-medium">Observações</Label>
-                  <Textarea
-                    id="notes"
-                    value={formData.notes}
-                    onChange={(e) => handleNotesChange(e.target.value)}
-                    placeholder="Observações sobre a reserva..."
-                    rows={3}
-                    className="resize-none"
-                  />
-                </div>
-
-                <div className="flex gap-4 pt-6 border-t">
-                  <Button type="submit" className="flex-1 h-11 font-medium">
-                    {isEditing ? "Salvar Alterações" : "Salvar Reserva"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCancel}
-                    className="flex-1 h-11 font-medium"
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                  <div className="flex gap-4 pt-6 border-t">
+                    <Button type="submit" className="flex-1 h-11 font-medium">
+                      {isEditing ? "Salvar Alterações" : "Salvar Reserva"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                      className="flex-1 h-11 font-medium"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Timeline Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-card-foreground flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Agenda do Dia
-              </CardTitle>
-              <CardDescription>
-                Clique em um horário vazio para preenchê-lo ou em um evento para editá-lo
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              {selectedDateStr ? (
-                <EventTimeline
-                  selectedDate={selectedDateStr}
-                  events={eventsForSelectedDate}
-                  onTimeSlotClick={handleTimeSlotClick}
-                  onEventEdit={handleEventEdit}
-                  editingEventId={isEditing && id ? parseInt(id) : null}
-                />
-              ) : (
-                <div className="h-[500px] flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Selecione uma data para ver a agenda</p>
+          <div className="space-y-0">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-card-foreground flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Agenda do Dia
+                </CardTitle>
+                <CardDescription>
+                  Clique em um horário vazio para preenchê-lo ou em um evento para editá-lo
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0 h-full">
+                {selectedDateStr ? (
+                  <EventTimeline
+                    selectedDate={selectedDateStr}
+                    events={eventsForSelectedDate}
+                    onTimeSlotClick={handleTimeSlotClick}
+                    onEventEdit={handleEventEdit}
+                    editingEventId={editingEventId}
+                  />
+                ) : (
+                  <div className="h-[500px] flex items-center justify-center">
+                    <div className="text-center text-muted-foreground">
+                      <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Selecione uma data para ver a agenda</p>
+                    </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>

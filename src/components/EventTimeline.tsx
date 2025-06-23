@@ -62,8 +62,8 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
   const isDisabled = (event: Event) => isEditingMode && event.id !== editingEventId;
 
   return (
-    <div className="h-full overflow-hidden">
-      <div className="sticky top-0 bg-background border-b p-4 z-10">
+    <div className="flex flex-col h-full">
+      <div className="flex-shrink-0 bg-background border-b p-4">
         <h3 className="font-semibold flex items-center gap-2">
           <Clock className="h-4 w-4" />
           Timeline - {new Date(selectedDate).toLocaleDateString('pt-BR', { 
@@ -79,7 +79,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
         )}
       </div>
       
-      <div className="overflow-y-auto h-[calc(100%-120px)] relative">
+      <div className="flex-1 overflow-y-auto relative">
         {/* Time slots grid */}
         <div className="relative">
           {timeSlots.map((time, index) => {
