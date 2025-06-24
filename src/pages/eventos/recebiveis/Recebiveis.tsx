@@ -92,7 +92,7 @@ const Recebiveis = () => {
   const actions = [
     {
       label: 'Editar',
-      onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}`),
+      onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}/editar`),
       variant: 'outline' as const
     }
   ];
