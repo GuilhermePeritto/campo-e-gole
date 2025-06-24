@@ -10,6 +10,9 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
+import { mockClientes } from '@/data/mockClientes';
+import { mockLocais } from '@/data/mockLocais';
+import { mockReservations } from '@/data/mockReservations';
 import { Calendar, CreditCard, Edit, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -28,6 +31,7 @@ interface ReservationFormData {
   customRecurringDays: string;
   hourlyRate: number;
   totalHours: number;
+  totalMinutes: number;
 }
 
 const Reserva = () => {
@@ -52,8 +56,22 @@ const Reserva = () => {
     recurringType: '',
     customRecurringDays: '',
     hourlyRate: 80,
-    totalHours: 0
+    totalHours: 0,
+    totalMinutes: 0
   });
+
+  // Dados de exemplo usando arquivos centralizados
+  const clientesExemplo = mockClientes.map(cliente => ({
+    id: cliente.id,
+    label: cliente.label,
+    subtitle: cliente.subtitle
+  }));
+
+  const locaisExemplo = mockLocais.map(local => ({
+    id: local.id,
+    label: local.label,
+    subtitle: local.subtitle
+  }));
 
   // Detectar se é edição baseado no ID na URL
   useEffect(() => {
@@ -63,7 +81,7 @@ const Reserva = () => {
       // Simular carregamento dos dados da reserva
       const mockData = {
         client: 'João Silva',
-        venue: 'Quadra A',
+        venue: 'Quadra Principal',
         date: new Date('2024-06-15'),
         startTime: '14:00',
         endTime: '16:00',
@@ -74,7 +92,8 @@ const Reserva = () => {
         recurringType: 'weekly',
         customRecurringDays: '',
         hourlyRate: 80,
-        totalHours: 2
+        totalHours: 2,
+        totalMinutes: 120
       };
       setFormData(mockData);
     } else {
@@ -89,7 +108,7 @@ const Reserva = () => {
     }
   }, [id, searchParams]);
 
-  // Calcular total de horas e valor total
+  // Calcular total de horas e minutos
   useEffect(() => {
     if (formData.startTime && formData.endTime) {
       const [startHour, startMinute] = formData.startTime.split(':').map(Number);
@@ -100,36 +119,42 @@ const Reserva = () => {
       
       if (endTotalMinutes > startTotalMinutes) {
         const totalMinutes = endTotalMinutes - startTotalMinutes;
-        const hours = totalMinutes / 60;
-        setFormData(prev => ({ ...prev, totalHours: hours }));
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        const decimalHours = totalMinutes / 60;
+        
+        setFormData(prev => ({ 
+          ...prev, 
+          totalHours: decimalHours,
+          totalMinutes: totalMinutes
+        }));
       }
     }
   }, [formData.startTime, formData.endTime]);
 
   // Atualizar taxa horária baseado no local selecionado
   useEffect(() => {
-    const selectedVenue = locaisExemplo.find(v => v.label === formData.venue);
+    const selectedVenue = mockLocais.find(v => v.label === formData.venue);
     if (selectedVenue) {
-      const rate = selectedVenue.subtitle.includes('R$ 80') ? 80 : 
-                   selectedVenue.subtitle.includes('R$ 60') ? 60 : 100;
-      setFormData(prev => ({ ...prev, hourlyRate: rate }));
+      setFormData(prev => ({ ...prev, hourlyRate: selectedVenue.hourlyRate }));
     }
   }, [formData.venue]);
 
   const totalValue = formData.totalHours * formData.hourlyRate;
 
-  // Dados de exemplo
-  const clientesExemplo = [
-    { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
-    { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
-    { id: '3', label: 'Pedro Costa', subtitle: 'CNPJ: 12.345.678/0001-90' },
-  ];
-
-  const locaisExemplo = [
-    { id: '1', label: 'Quadra Principal', subtitle: 'Futebol Society - R$ 80/h' },
-    { id: '2', label: 'Quadra Coberta', subtitle: 'Basquete - R$ 60/h' },
-    { id: '3', label: 'Campo Externo', subtitle: 'Futebol - R$ 100/h' },
-  ];
+  // Formatar duração em horas e minutos
+  const formatDuration = (totalMinutes: number) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    if (hours === 0) {
+      return `${minutes} minutos`;
+    } else if (minutes === 0) {
+      return `${hours} hora${hours > 1 ? 's' : ''}`;
+    } else {
+      return `${hours}h ${minutes}min`;
+    }
+  };
 
   const recurringOptions = [
     { value: 'daily', label: 'Diário' },
@@ -139,75 +164,18 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
-  // Eventos mockados com horários coerentes aos intervalos dos locais
-  const mockEvents = [
-    {
-      id: 1,
-      client: 'João Silva',
-      venue: 'Quadra Principal', // 30min intervals
-      startTime: '09:00',
-      endTime: '10:30',
-      status: 'confirmed' as const,
-      color: '#10b981',
-      sport: 'Futebol Society',
-      notes: 'Treino da equipe'
-    },
-    {
-      id: 2,
-      client: 'Maria Santos',
-      venue: 'Quadra Coberta', // 15min intervals
-      startTime: '08:30',
-      endTime: '09:15',
-      status: 'pending' as const,
-      color: '#f59e0b',
-      sport: 'Basquete',
-      notes: 'Aula particular'
-    },
-    {
-      id: 3,
-      client: 'Pedro Costa',
-      venue: 'Campo Externo', // 60min intervals
-      startTime: '10:00',
-      endTime: '12:00',
-      status: 'confirmed' as const,
-      color: '#3b82f6',
-      sport: 'Futebol',
-      notes: 'Pelada dos amigos'
-    },
-    {
-      id: 4,
-      client: 'Ana Paula',
-      venue: 'Quadra Principal', // 30min intervals
-      startTime: '14:00',
-      endTime: '16:00',
-      status: 'confirmed' as const,
-      color: '#10b981',
-      sport: 'Vôlei',
-      notes: 'Treino feminino'
-    },
-    {
-      id: 5,
-      client: 'Carlos Mendes',
-      venue: 'Campo Externo', // 60min intervals
-      startTime: '19:00',
-      endTime: '21:00',
-      status: 'confirmed' as const,
-      color: '#3b82f6',
-      sport: 'Futebol',
-      notes: 'Jogo oficial'
-    },
-    {
-      id: 6,
-      client: 'Julia Rodrigues',
-      venue: 'Quadra Coberta', // 15min intervals
-      startTime: '15:30',
-      endTime: '16:15',
-      status: 'pending' as const,
-      color: '#f59e0b',
-      sport: 'Tênis',
-      notes: 'Aula de tênis'
-    }
-  ];
+  // Eventos mockados usando dados centralizados
+  const mockEvents = mockReservations.map(reservation => ({
+    id: reservation.id,
+    client: reservation.client,
+    venue: reservation.venue,
+    startTime: reservation.startTime,
+    endTime: reservation.endTime,
+    status: reservation.status,
+    color: reservation.color,
+    sport: reservation.sport,
+    notes: reservation.notes
+  }));
 
   const tourSteps: TourStep[] = [
     {
@@ -274,7 +242,8 @@ const Reserva = () => {
         recurringType: '',
         customRecurringDays: '',
         hourlyRate: 80,
-        totalHours: 0
+        totalHours: 0,
+        totalMinutes: 0
       });
     }
 
@@ -301,11 +270,11 @@ const Reserva = () => {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-180px)]">
           {/* Formulário */}
-          <div className="space-y-4">
-            <Card className={`${isEdit ? 'border-module-events/90 border border-2 rounded-lg' : ''}`}>
-              <CardHeader>
+          <div className="space-y-4 flex flex-col">
+            <Card className={`${isEdit ? 'border-module-events/90 border border-2 rounded-lg' : ''} flex-1 flex flex-col`}>
+              <CardHeader className="flex-shrink-0">
                 {/* Card de informação de edição movido para dentro do formulário */}
                 {isEdit && (
                   <div className="bg-module-events/10 border border-module-events/30 rounded-lg p-2">
@@ -329,7 +298,7 @@ const Reserva = () => {
                   </div>
                 )}
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 flex-1 overflow-y-auto">
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <CampoBusca
@@ -406,13 +375,13 @@ const Reserva = () => {
                 </div>
 
                 {/* Totalizador */}
-                {formData.totalHours > 0 && (
+                {formData.totalMinutes > 0 && (
                   <div className="p-4 bg-muted/30 rounded-lg border">
                     <h3 className="font-semibold mb-3">Resumo da Reserva</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span>Duração:</span>
-                        <span>{formData.totalHours.toFixed(1)} horas</span>
+                        <span>{formatDuration(formData.totalMinutes)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Taxa por hora:</span>
@@ -468,8 +437,8 @@ const Reserva = () => {
           </div>
 
           {/* Timeline com altura flexível que acompanha o formulário */}
-          <div className="h-full">
-            <Card className="h-full flex flex-col">
+          <div className="flex flex-col">
+            <Card className="flex-1 flex flex-col">
               <CardContent className="h-full p-0 flex flex-col">
                 <EventTimeline
                   selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
@@ -481,9 +450,12 @@ const Reserva = () => {
                     }
                   }}
                   onEventEdit={(event) => {
+                    // Encontrar o cliente pelo nome
+                    const selectedClient = mockClientes.find(c => c.name === event.client);
+                    
                     setFormData(prev => ({
                       ...prev,
-                      client: event.client,
+                      client: selectedClient?.label || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
@@ -496,9 +468,12 @@ const Reserva = () => {
                   }}
                   editingEventId={editingEventId}
                   onEventSelect={(event) => {
+                    // Encontrar o cliente pelo nome
+                    const selectedClient = mockClientes.find(c => c.name === event.client);
+                    
                     setFormData(prev => ({
                       ...prev,
-                      client: event.client,
+                      client: selectedClient?.label || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,

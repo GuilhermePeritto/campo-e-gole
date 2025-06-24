@@ -1,5 +1,6 @@
 
 import { useState, useMemo } from 'react';
+import { mockLocais } from '@/data/mockLocais';
 
 interface VenueSettings {
   id: string;
@@ -8,11 +9,13 @@ interface VenueSettings {
 }
 
 export const useVenueSettings = () => {
-  // Mock data com intervalos diferentes por local
+  // Usar dados centralizados dos locais
   const [venueSettings] = useState<VenueSettings[]>([
-    { id: '1', name: 'Quadra Principal', eventInterval: 30 },
-    { id: '2', name: 'Quadra Coberta', eventInterval: 15 },
-    { id: '3', name: 'Campo Externo', eventInterval: 60 },
+    ...mockLocais.map(local => ({
+      id: local.id,
+      name: local.name,
+      eventInterval: local.interval
+    })),
     { id: 'all', name: 'Todos os locais', eventInterval: 30 }
   ]);
 

@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { Clock, MapPin, Plus, User, X } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface Event {
   id: number;
@@ -50,8 +51,8 @@ const EventTimeline = ({
   const interval = getVenueInterval(venueId);
   const slotHeight = 48; // altura em pixels por slot
   
-  // Filtrar eventos por local selecionado
-  const filteredEvents = selectedVenue && selectedVenue !== 'all' 
+  // Filtrar eventos por local selecionado - melhorado para respeitar o filtro
+  const filteredEvents = selectedVenue && selectedVenue !== '' && selectedVenue !== 'all' 
     ? events.filter(event => event.venue === selectedVenue)
     : events;
 
@@ -119,7 +120,7 @@ const EventTimeline = ({
               day: '2-digit', 
               month: 'long' 
             })}
-            {selectedVenue && selectedVenue !== 'all' && (
+            {selectedVenue && selectedVenue !== 'all' && selectedVenue !== '' && (
               <span className="text-sm text-gray-600 ml-2">({selectedVenue}) - Intervalo: {interval}min</span>
             )}
           </h3>
