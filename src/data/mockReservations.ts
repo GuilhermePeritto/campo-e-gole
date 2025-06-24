@@ -24,7 +24,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '1',
     venue: 'Quadra Principal',
     venueId: '1',
-    date: '2024-12-24',
+    date: '2025-06-24',
     startTime: '09:00',
     endTime: '10:30', // 1h30 = 3 slots de 30min
     status: 'confirmed',
@@ -32,7 +32,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Futebol Society',
     notes: 'Treino da equipe',
     amount: 120,
-    createdAt: '2024-12-20'
+    createdAt: '2025-06-24'
   },
   {
     id: 4,
@@ -40,7 +40,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '4',
     venue: 'Quadra Principal',
     venueId: '1',
-    date: '2024-12-24',
+    date: '2025-06-24',
     startTime: '14:00',
     endTime: '16:00', // 2h = 4 slots de 30min
     status: 'confirmed',
@@ -48,7 +48,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Vôlei',
     notes: 'Treino feminino',
     amount: 160,
-    createdAt: '2024-12-22'
+    createdAt: '2025-06-24'
   },
   // Quadra Coberta (ID: 2) - Intervalo: 15 min
   {
@@ -57,7 +57,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '2',
     venue: 'Quadra Coberta',
     venueId: '2',
-    date: '2024-12-24',
+    date: '2025-06-24',
     startTime: '08:30',
     endTime: '09:15', // 45min = 3 slots de 15min
     status: 'pending',
@@ -65,7 +65,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Basquete',
     notes: 'Aula particular',
     amount: 45,
-    createdAt: '2024-12-21'
+    createdAt: '2025-06-24'
   },
   {
     id: 6,
@@ -73,7 +73,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '6',
     venue: 'Quadra Coberta',
     venueId: '2',
-    date: '2024-12-24',
+    date: '2025-06-24',
     startTime: '15:30',
     endTime: '16:15', // 45min = 3 slots de 15min
     status: 'pending',
@@ -81,7 +81,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Tênis',
     notes: 'Aula de tênis',
     amount: 45,
-    createdAt: '2024-12-23'
+    createdAt: '2025-06-24'
   },
   // Campo Externo (ID: 3) - Intervalo: 60 min
   {
@@ -90,7 +90,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '3',
     venue: 'Campo Externo',
     venueId: '3',
-    date: '2024-12-24',
+    date: '2025-06-24',
     startTime: '10:00',
     endTime: '12:00', // 2h = 2 slots de 60min
     status: 'confirmed',
@@ -98,7 +98,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Futebol',
     notes: 'Pelada dos amigos',
     amount: 200,
-    createdAt: '2024-12-19'
+    createdAt: '2025-06-24'
   },
   {
     id: 5,
@@ -106,7 +106,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '5',
     venue: 'Campo Externo',
     venueId: '3',
-    date: '2024-12-24',
+    date: '2025-06-24',
     startTime: '19:00',
     endTime: '21:00', // 2h = 2 slots de 60min
     status: 'confirmed',
@@ -114,7 +114,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Futebol',
     notes: 'Jogo oficial',
     amount: 200,
-    createdAt: '2024-12-23'
+    createdAt: '2025-06-24'
   },
   // Eventos para outros dias
   {
@@ -123,7 +123,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '7',
     venue: 'Quadra Principal',
     venueId: '1',
-    date: '2024-12-25',
+    date: '2025-06-24',
     startTime: '08:00',
     endTime: '10:00', // 2h = 4 slots de 30min
     status: 'confirmed',
@@ -131,7 +131,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Basquete',
     notes: 'Treino matinal',
     amount: 160,
-    createdAt: '2024-12-24'
+    createdAt: '2025-06-24'
   },
   {
     id: 8,
@@ -139,7 +139,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '8',
     venue: 'Quadra Coberta',
     venueId: '2',
-    date: '2024-12-25',
+    date: '2025-06-24',
     startTime: '18:00',
     endTime: '20:00', // 2h = 8 slots de 15min
     status: 'confirmed',
@@ -147,7 +147,7 @@ export const mockReservations: MockReservation[] = [
     sport: 'Aeróbica',
     notes: 'Aula de aeróbica',
     amount: 90,
-    createdAt: '2024-12-24'
+    createdAt: '2025-06-24'
   },
   {
     id: 9,
@@ -155,7 +155,7 @@ export const mockReservations: MockReservation[] = [
     clientId: '9',
     venue: 'Campo Externo',
     venueId: '3',
-    date: '2024-12-26',
+    date: '2025-06-24',
     startTime: '16:00',
     endTime: '18:00', // 2h = 2 slots de 60min
     status: 'confirmed',
@@ -163,6 +163,6 @@ export const mockReservations: MockReservation[] = [
     sport: 'Futsal',
     notes: 'Partida amistosa',
     amount: 200,
-    createdAt: '2024-12-24'
+    createdAt: '2025-06-24'
   }
 ];
