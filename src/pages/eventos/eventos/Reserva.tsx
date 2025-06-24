@@ -63,7 +63,7 @@ const Reserva = () => {
   // Hooks de dados
   const { getClientesForSearch, getClienteByClientId } = useClientes();
   const { locais, getLocalByVenueId } = useLocais();
-  const { getReservaById, createReserva, updateReserva, getReservasByDate } = useReservas();
+  const { getReservaById, createReserva, updateReserva, getReservasByDate, deleteReserva } = useReservas();
 
   // Dados usando hooks
   const clientesExemplo = getClientesForSearch();
@@ -228,8 +228,7 @@ const Reserva = () => {
   const venueConfig = getSelectedVenueConfig();
   const occupiedTimes = getOccupiedTimes();
 
-  // Eventos mockados usando hook
-  const { getReservasByDate } = useReservas();
+  // Eventos mockados usando hook - removendo a segunda declaração de getReservasByDate
   const selectedDateStr = formData.date ? formData.date.toISOString().split('T')[0] : '';
   const mockEvents = getReservasByDate(selectedDateStr).map(reservation => ({
     id: reservation.id,
