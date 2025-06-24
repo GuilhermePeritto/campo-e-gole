@@ -48,10 +48,18 @@ export const useLocais = () => {
       ...locais.map(local => ({
         id: local.id,
         name: local.name,
-        color: local.status === 'active' ? '#10b981' : 
-               local.status === 'maintenance' ? '#f59e0b' : '#ef4444'
+        color: local.color
       }))
     ];
+  }, [locais]);
+
+  // Para campos de busca - sempre retornar todos os locais
+  const getLocaisForSearch = useCallback(() => {
+    return locais.map(local => ({
+      id: local.id,
+      label: local.label,
+      subtitle: local.subtitle
+    }));
   }, [locais]);
 
   // Função para buscar local por venueId das reservas
@@ -69,6 +77,7 @@ export const useLocais = () => {
     createLocal,
     updateLocal,
     deleteLocal,
-    getVenuesForCalendar
+    getVenuesForCalendar,
+    getLocaisForSearch
   };
 };

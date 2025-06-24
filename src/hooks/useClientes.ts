@@ -42,7 +42,7 @@ export const useClientes = () => {
     setLoading(false);
   }, []);
 
-  // Para campos de busca
+  // Para campos de busca - sempre retornar todos os clientes
   const getClientesForSearch = useCallback(() => {
     return clientes.map(cliente => ({
       id: cliente.id,

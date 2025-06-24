@@ -1,10 +1,12 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { mockReservations, MockReservation } from '@/data/mockReservations';
+import { useLocais } from './useLocais';
 
 export const useReservas = () => {
   const [reservas, setReservas] = useState<MockReservation[]>(mockReservations);
   const [loading, setLoading] = useState(false);
+  const { getLocalById } = useLocais();
 
   const getReservaById = useCallback((id: number) => {
     return reservas.find(r => r.id === id);
@@ -47,12 +49,16 @@ export const useReservas = () => {
     setLoading(false);
   }, []);
 
-  // Converter para formato do calendário
+  // Converter para formato do calendário com cores dos locais
   const getCalendarReservations = useMemo(() => {
     return reservas.map(reservation => {
       const reservationDate = new Date(reservation.date);
       const startDateTime = `${reservation.date}T${reservation.startTime}:00`;
       const endDateTime = `${reservation.date}T${reservation.endTime}:00`;
+      
+      // Buscar cor do local
+      const local = getLocalById(reservation.venueId);
+      const venueColor = local?.color || '#6b7280';
       
       return {
         id: reservation.id,
@@ -62,7 +68,7 @@ export const useReservas = () => {
         venueId: reservation.venueId,
         clientName: reservation.client,
         status: reservation.status,
-        color: reservation.color,
+        color: venueColor,
         client: reservation.client,
         venue: reservation.venue,
         startTime: reservation.startTime,
@@ -70,7 +76,7 @@ export const useReservas = () => {
         day: reservationDate
       };
     });
-  }, [reservas]);
+  }, [reservas, getLocalById]);
 
   return {
     reservas,

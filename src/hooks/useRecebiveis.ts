@@ -42,6 +42,15 @@ export const useRecebiveis = () => {
     setLoading(false);
   }, []);
 
+  // Para campos de busca - sempre retornar todos os recebíveis
+  const getRecebiveisForSearch = useCallback(() => {
+    return recebiveis.map(recebivel => ({
+      id: recebivel.id,
+      label: `Recebível #${recebivel.id}`,
+      subtitle: `R$ ${recebivel.amount.toFixed(2)} - ${recebivel.description}`
+    }));
+  }, [recebiveis]);
+
   return {
     recebiveis,
     loading,
@@ -50,6 +59,7 @@ export const useRecebiveis = () => {
     getRecebiveisByStatus,
     createRecebivel,
     updateRecebivel,
-    deleteRecebivel
+    deleteRecebivel,
+    getRecebiveisForSearch
   };
 };

@@ -40,8 +40,8 @@ const EventTimeline = ({
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
   const { getLocalByName } = useLocais();
   
-  // Se não há local selecionado, mostrar estado vazio
-  if (!selectedVenue || selectedVenue === '') {
+  // Se não há local selecionado ou está vazio, mostrar estado vazio
+  if (!selectedVenue || selectedVenue === '' || selectedVenue === 'all') {
     return <EmptyTimelineState />;
   }
   
@@ -55,12 +55,12 @@ const EventTimeline = ({
   const venueId = selectedVenue ? getVenueIdByName(selectedVenue) : 'all';
   const timeSlots = generateTimeSlots(venueId);
   const interval = getVenueInterval(venueId);
-  const slotHeight = 48; // altura em pixels por slot
+  const slotHeight = 48;
   
   // Filtrar eventos por local selecionado - melhorado para respeitar o filtro
   const filteredEvents = selectedVenue && selectedVenue !== '' && selectedVenue !== 'all' 
     ? events.filter(event => event.venue === selectedVenue)
-    : events;
+    : [];
 
   // Converter horário para minutos para cálculos
   const timeToMinutes = (time: string) => {

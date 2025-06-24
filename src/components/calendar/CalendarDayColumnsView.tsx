@@ -19,7 +19,7 @@ const CalendarDayColumnsView = ({
   handleEventClick
 }: CalendarDayColumnsViewProps) => {
   
-  const { generateTimeSlots, getVenueInterval } = useVenueSettings();
+  const { generateTimeSlots } = useVenueSettings();
   const { locais } = useLocais();
   
   // Usar o menor intervalo entre todos os locais para a timeline
@@ -45,44 +45,49 @@ const CalendarDayColumnsView = ({
 
   return (
     <div className="h-[calc(100vh-200px)] overflow-y-auto">
-      <div className="grid grid-cols-4 gap-4 h-full">
-        {/* Coluna de horários */}
-        <div className="col-span-1">
-          <Card className="h-full">
-            <CardHeader className="py-3">
-              <h3 className="text-sm font-semibold">Horários</h3>
-            </CardHeader>
-            <CardContent className="p-0">
-              {timeSlots.map((time, index) => (
+      <Card className="h-full">
+        <CardHeader className="py-3">
+          <h3 className="text-sm font-semibold">Todos os Locais - {currentDate.toLocaleDateString('pt-BR', { 
+            weekday: 'long', 
+            day: '2-digit', 
+            month: 'long' 
+          })}</h3>
+          <p className="text-xs text-gray-500">Intervalo da timeline: {smallestInterval}min</p>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="grid" style={{ gridTemplateColumns: `80px repeat(${locais.length}, 1fr)` }}>
+            {/* Coluna de horários */}
+            <div className="border-r border-gray-200">
+              <div className="h-12 border-b border-gray-200 bg-gray-50 flex items-center justify-center">
+                <span className="text-xs font-medium text-gray-600">Horário</span>
+              </div>
+              {timeSlots.map((time) => (
                 <div 
                   key={time} 
-                  className="border-b border-gray-100 flex items-center p-3"
+                  className="border-b border-gray-100 flex items-center justify-center px-2"
                   style={{ height: `${slotHeight}px` }}
                 >
-                  <div className="text-sm font-medium text-gray-600">
+                  <div className="text-xs font-medium text-gray-600">
                     {time}
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
 
-        {/* Colunas dos locais */}
-        {locais.map((local) => {
-          const venueReservations = filteredReservations.filter(r => r.venueId === local.id);
-          
-          return (
-            <div key={local.id} className="col-span-1">
-              <Card className="h-full">
-                <CardHeader className="py-3">
-                  <h3 className="text-sm font-semibold">{local.name}</h3>
-                  <p className="text-xs text-gray-500">Intervalo: {local.interval}min</p>
-                </CardHeader>
-                <CardContent className="p-0 relative">
+            {/* Colunas dos locais */}
+            {locais.map((local) => {
+              const venueReservations = filteredReservations.filter(r => r.venueId === local.id);
+              
+              return (
+                <div key={local.id} className="border-r border-gray-200 relative">
+                  <div className="h-12 border-b border-gray-200 bg-gray-50 flex flex-col items-center justify-center px-2">
+                    <span className="text-xs font-medium text-gray-700 text-center">{local.name}</span>
+                    <span className="text-xs text-gray-500">{local.interval}min</span>
+                  </div>
+                  
                   {/* Time slots grid */}
                   <div className="relative">
-                    {timeSlots.map((time, index) => {
+                    {timeSlots.map((time) => {
                       const slotStart = timeToMinutes(time);
                       const slotEnd = slotStart + local.interval;
                       
@@ -97,7 +102,7 @@ const CalendarDayColumnsView = ({
                       return (
                         <div 
                           key={time} 
-                          className={`border-b border-gray-100 flex items-center p-3 transition-colors ${
+                          className={`border-b border-gray-100 flex items-center justify-center p-1 transition-colors ${
                             isAvailable ? 'cursor-pointer hover:bg-green-50' : ''
                           }`}
                           style={{ height: `${slotHeight}px` }}
@@ -106,7 +111,6 @@ const CalendarDayColumnsView = ({
                           {isAvailable && (
                             <div className="text-green-600 text-xs font-medium flex items-center gap-1">
                               <Plus className="h-3 w-3" />
-                              Disponível
                             </div>
                           )}
                         </div>
@@ -115,7 +119,7 @@ const CalendarDayColumnsView = ({
                   </div>
 
                   {/* Events overlay */}
-                  <div className="absolute top-0 left-0 right-0 pointer-events-none">
+                  <div className="absolute top-12 left-0 right-0 pointer-events-none">
                     {venueReservations.map((event) => {
                       const startMinutes = timeToMinutes(event.startTime);
                       const endMinutes = timeToMinutes(event.endTime);
@@ -128,7 +132,7 @@ const CalendarDayColumnsView = ({
                       return (
                         <div
                           key={event.id}
-                          className="absolute left-2 right-2 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all"
+                          className="absolute left-1 right-1 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all"
                           style={{
                             top: `${topOffset}px`,
                             height: `${Math.max(height - 4, 32)}px`,
@@ -137,7 +141,7 @@ const CalendarDayColumnsView = ({
                           }}
                           onClick={() => handleEventClick(event)}
                         >
-                          <div className="p-2 h-full overflow-hidden">
+                          <div className="p-1 h-full overflow-hidden">
                             <div className="space-y-1">
                               <div className="flex items-center gap-1">
                                 <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
@@ -169,12 +173,12 @@ const CalendarDayColumnsView = ({
                       );
                     })}
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          );
-        })}
-      </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

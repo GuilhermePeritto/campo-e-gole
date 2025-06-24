@@ -11,6 +11,7 @@ export interface MockLocal {
   description?: string;
   amenities?: string[];
   status: 'active' | 'inactive' | 'maintenance';
+  color: string;
 }
 
 export const mockLocais: MockLocal[] = [
@@ -25,7 +26,8 @@ export const mockLocais: MockLocal[] = [
     capacity: 14,
     description: 'Quadra principal com grama sintética',
     amenities: ['Vestiário', 'Iluminação', 'Arquibancada'],
-    status: 'active'
+    status: 'active',
+    color: '#10b981'
   },
   {
     id: '2',
@@ -38,7 +40,8 @@ export const mockLocais: MockLocal[] = [
     capacity: 10,
     description: 'Quadra coberta para basquete e vôlei',
     amenities: ['Vestiário', 'Ar condicionado', 'Som'],
-    status: 'active'
+    status: 'active',
+    color: '#3b82f6'
   },
   {
     id: '3',
@@ -51,6 +54,7 @@ export const mockLocais: MockLocal[] = [
     capacity: 22,
     description: 'Campo oficial de futebol',
     amenities: ['Vestiário', 'Iluminação', 'Estacionamento'],
-    status: 'active'
+    status: 'active',
+    color: '#f59e0b'
   }
 ];
