@@ -3,9 +3,12 @@ import BaseList from '@/components/BaseList';
 import { Card, CardContent } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { mockLocais } from '@/data/mockLocais';
-import { MapPin } from 'lucide-react';
+import { MapPin, Plus, Edit2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Locais = () => {
+  const navigate = useNavigate();
+  
   // Usar dados centralizados
   const mockData = mockLocais.map(local => ({
     id: local.id,
@@ -19,35 +22,44 @@ const Locais = () => {
   }));
 
   const tableColumns = [
-    { key: 'name', header: 'Nome' },
-    { key: 'type', header: 'Tipo' },
+    { key: 'name', label: 'Nome' },
+    { key: 'type', label: 'Tipo' },
     { 
       key: 'hourlyRate', 
-      header: 'Valor/Hora',
-      render: (value: number) => `R$ ${value.toFixed(2)}`
+      label: 'Valor/Hora',
+      render: (item: any) => `R$ ${item.hourlyRate.toFixed(2)}`
     },
     { 
       key: 'interval', 
-      header: 'Intervalo',
-      render: (value: number) => `${value} min`
+      label: 'Intervalo',
+      render: (item: any) => `${item.interval} min`
     },
     { 
       key: 'status', 
-      header: 'Status',
-      render: (value: string) => (
+      label: 'Status',
+      render: (item: any) => (
         <span className={`px-2 py-1 rounded-full text-xs ${
-          value === 'active' ? 'bg-green-100 text-green-800' :
-          value === 'maintenance' ? 'bg-yellow-100 text-yellow-800' :
+          item.status === 'active' ? 'bg-green-100 text-green-800' :
+          item.status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' :
           'bg-red-100 text-red-800'
         }`}>
-          {value === 'active' ? 'Ativo' : 
-           value === 'maintenance' ? 'Manutenção' : 'Inativo'}
+          {item.status === 'active' ? 'Ativo' : 
+           item.status === 'maintenance' ? 'Manutenção' : 'Inativo'}
         </span>
       )
     }
   ];
 
-  const cardRender = (item: any) => (
+  const actions = [
+    {
+      label: 'Editar',
+      icon: <Edit2 className="h-4 w-4" />,
+      onClick: (item: any) => navigate(`/eventos/locais/${item.id}`),
+      variant: 'outline' as const
+    }
+  ];
+
+  const cardRender = (item: any, itemActions: any[]) => (
     <Card className="h-full">
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
@@ -89,16 +101,19 @@ const Locais = () => {
   return (
     <BaseList
       title="Locais"
-      icon={<MapPin className="h-6 w-6" />}
-      moduleColor={MODULE_COLORS.events}
       data={mockData}
-      tableColumns={tableColumns}
-      cardRender={cardRender}
+      columns={tableColumns}
+      actions={actions}
+      getItemId={(item) => item.id}
       searchFields={['name', 'type']}
-      newItemPath="/eventos/locais/novo"
-      editPath="/eventos/locais"
-      emptyStateTitle="Nenhum local cadastrado"
-      emptyStateDescription="Comece adicionando o primeiro local esportivo"
+      createButton={{
+        label: 'Novo Local',
+        icon: <Plus className="h-4 w-4" />,
+        onClick: () => navigate('/eventos/locais/novo')
+      }}
+      renderCard={cardRender}
+      showExport={true}
+      exportFilename="locais"
     />
   );
 };
