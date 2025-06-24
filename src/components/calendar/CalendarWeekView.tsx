@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { Reservation } from '@/hooks/useCalendar';
-import { Filter } from 'lucide-react';
 
 interface CalendarWeekViewProps {
   weekDays: Date[];
@@ -18,8 +17,6 @@ const CalendarWeekView = ({
   handleEventClick,
   handleDayFilterClick
 }: CalendarWeekViewProps) => {
-  const [hoveredDay, setHoveredDay] = useState<Date | null>(null);
-
   const getDayEvents = (day: Date) => {
     return mockReservations.filter(event =>
       event.day.toDateString() === day.toDateString()
@@ -31,20 +28,12 @@ const CalendarWeekView = ({
     return date.toDateString() === today.toDateString();
   };
 
-  const handleFilterClick = (day: Date, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (handleDayFilterClick) {
-      handleDayFilterClick(day);
-    }
-  };
-
   return (
-    <div>
+    <div className="h-[calc(100vh-200px)] overflow-y-auto">
       {/* Header */}
-      <div className="grid grid-cols-7 gap-px bg-gray-200">
+      <div className="grid grid-cols-7 gap-px bg-gray-200 sticky top-0 z-10">
         {weekDays.map((day, index) => {
           const dayEvents = getDayEvents(day);
-          const isHovered = hoveredDay?.toDateString() === day.toDateString();
           
           return (
             <div key={index} className="bg-gray-50 p-3 text-center">
@@ -53,20 +42,9 @@ const CalendarWeekView = ({
                   {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
                 </div>
                 {dayEvents.length > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
-                      {dayEvents.length}
-                    </span>
-                    {isHovered && (
-                      <button
-                        onClick={(e) => handleFilterClick(day, e)}
-                        className="p-1 hover:bg-primary/20 rounded transition-colors"
-                        title="Filtrar por este dia"
-                      >
-                        <Filter className="h-3 w-3 text-primary" />
-                      </button>
-                    )}
-                  </div>
+                  <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                    {dayEvents.length}
+                  </span>
                 )}
               </div>
               <div className={`text-2xl font-bold ${isToday(day) ? 'text-blue-600' : 'text-gray-900'}`}>
@@ -89,8 +67,6 @@ const CalendarWeekView = ({
                 isToday(day) ? 'bg-blue-50' : ''
               }`}
               onClick={() => handleDateClick(day)}
-              onMouseEnter={() => setHoveredDay(day)}
-              onMouseLeave={() => setHoveredDay(null)}
             >
               <div className="space-y-1">
                 {dayEvents.map((event) => (

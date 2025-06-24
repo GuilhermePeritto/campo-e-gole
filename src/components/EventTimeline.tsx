@@ -41,10 +41,12 @@ const EventTimeline = ({
     ? events.filter(event => event.venue === selectedVenue)
     : events;
 
-  // Gerar slots de 1 em 1 hora (7h às 21h)
-  const timeSlots = Array.from({ length: 15 }, (_, i) => {
-    const hour = i + 7;
-    return `${hour.toString().padStart(2, '0')}:00`;
+  // Gerar slots de 30 em 30 minutos (7h às 21h)
+  const timeSlots = Array.from({ length: 28 }, (_, i) => {
+    const totalMinutes = 7 * 60 + i * 30; // 7h + i*30min
+    const hour = Math.floor(totalMinutes / 60);
+    const minute = totalMinutes % 60;
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
   });
 
   // Converter horário para minutos para cálculos
@@ -53,16 +55,25 @@ const EventTimeline = ({
     return hours * 60 + minutes;
   };
 
-  // Verificar se há evento em um horário específico
-  const hasEventAtTime = (timeSlot: string) => {
-    const slotStart = timeToMinutes(timeSlot);
-    const slotEnd = slotStart + 60;
+  // Verificar se há espaço disponível em um slot
+  const getAvailableSlot = (slotTime: string) => {
+    const slotStart = timeToMinutes(slotTime);
+    const slotEnd = slotStart + 30; // 30 minutos depois
     
-    return filteredEvents.some(event => {
+    // Verificar se há algum evento que conflita com este slot
+    const hasConflict = filteredEvents.some(event => {
       const eventStart = timeToMinutes(event.startTime);
       const eventEnd = timeToMinutes(event.endTime);
+      
+      // Verifica se há sobreposição
       return !(eventEnd <= slotStart || eventStart >= slotEnd);
     });
+
+    if (!hasConflict) {
+      return { available: true, time: slotTime };
+    }
+
+    return { available: false };
   };
 
   const getStatusColor = (status: string) => {
@@ -118,13 +129,13 @@ const EventTimeline = ({
         {/* Time slots grid */}
         <div className="relative">
           {timeSlots.map((time, index) => {
-            const hasEvent = hasEventAtTime(time);
-            const canClick = !isEditingMode && !hasEvent;
+            const availability = getAvailableSlot(time);
+            const canClick = !isEditingMode && availability.available;
             
             return (
               <div 
                 key={time} 
-                className={`border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative ${
+                className={`border-b border-gray-100 h-12 flex items-center p-3 transition-colors relative ${
                   canClick ? 'cursor-pointer hover:bg-green-50' : ''
                 }`}
                 onClick={() => canClick && handleTimeSlotClick(time)}
@@ -140,7 +151,7 @@ const EventTimeline = ({
                       Disponível - clique para reservar
                     </div>
                   )}
-                  {isEditingMode && !hasEvent && (
+                  {isEditingMode && availability.available && (
                     <div className="text-sm text-gray-400 font-medium">
                       Disponível (modo edição ativo)
                     </div>
@@ -158,10 +169,10 @@ const EventTimeline = ({
             const endMinutes = timeToMinutes(event.endTime);
             const duration = endMinutes - startMinutes;
             
-            // Calcular posição baseada em slots de 1 hora (7h = 0, 8h = 1, etc.)
+            // Calcular posição baseada em slots de 30 minutos (7h = 0, 7:30 = 1, etc.)
             const baseHour = 7 * 60; // 7h em minutos
-            const topOffset = ((startMinutes - baseHour) / 60) * 64; // 64px por hora
-            const height = (duration / 60) * 64; // altura proporcional à duração
+            const topOffset = ((startMinutes - baseHour) / 30) * 48; // 48px por slot de 30min
+            const height = (duration / 30) * 48; // altura proporcional à duração
 
             const isCurrentlyEditing = editingEventId === event.id;
             const isDisabledEvent = isEditingMode && !isCurrentlyEditing;
@@ -169,7 +180,7 @@ const EventTimeline = ({
             return (
               <div
                 key={event.id}
-                className={`absolute left-20 right-4 rounded-lg p-2 shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto ${
+                className={`absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto ${
                   isCurrentlyEditing 
                     ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/10'
                     : isDisabledEvent
@@ -192,33 +203,40 @@ const EventTimeline = ({
                 }}
                 onClick={() => !isDisabledEvent && handleEventClick(event)}
               >
-                <div className="flex items-start justify-between h-full">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1 mb-1">
-                      <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
-                      <span className="font-medium text-xs truncate">{event.client}</span>
+                <div className="p-3 h-full">
+                  <div className="flex items-start justify-between h-full">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <User className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                        <span className="font-semibold text-sm truncate">{event.client}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                        <span className="text-sm text-gray-600 truncate">{event.venue}</span>
+                      </div>
+                      <div className="text-sm text-gray-500 font-medium">
+                        {event.startTime} - {event.endTime}
+                      </div>
+                      {event.sport && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {event.sport}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
-                      <span className="text-xs text-gray-600 truncate">{event.venue}</span>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {event.startTime} - {event.endTime}
-                    </div>
+                    {isCurrentlyEditing && onCancelEdit && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onCancelEdit();
+                        }}
+                        className="ml-2 h-8 w-8 p-0 flex-shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                  {isCurrentlyEditing && onCancelEdit && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onCancelEdit();
-                      }}
-                      className="ml-2 h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  )}
                 </div>
               </div>
             );

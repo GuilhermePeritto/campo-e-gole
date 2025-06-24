@@ -29,10 +29,12 @@ const CalendarControls = ({
   const navigate = useNavigate();
 
   return (
-    <>
-      {/* Top Controls */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+    <div className="mb-6">
+      {/* Linha única com todos os controles */}
+      <div className="flex flex-wrap items-center gap-4 justify-between">
+        {/* Lado esquerdo - Filtros e controles */}
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Filtro de local */}
           <Select value={selectedVenue} onValueChange={setSelectedVenue}>
             <SelectTrigger className="w-48 border">
               <Filter className="h-4 w-4 mr-2" />
@@ -45,6 +47,7 @@ const CalendarControls = ({
             </SelectContent>
           </Select>
 
+          {/* Tipo de visualização */}
           <div className="flex bg-muted rounded-lg p-1">
             {['month', 'week', 'day'].map((view) => (
               <button
@@ -59,17 +62,8 @@ const CalendarControls = ({
               </button>
             ))}
           </div>
-        </div>
 
-        <Button className="gap-2 text-gray-900 dark:text-gray-300" variant='outline' onClick={() => navigate('/eventos/reserva')}>
-          <Plus className="h-4 w-4" />
-          Nova Reserva
-        </Button>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
+          {/* Navegação de data */}
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -88,20 +82,30 @@ const CalendarControls = ({
               <ChevronRight className="h-5 w-5" />
             </Button>
           </div>
-          <h2 className="text-xl font-medium text-gray-900 dark:text-gray-300">
+
+          {/* Título da data */}
+          <h2 className="text-xl font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap">
             {dateTitle}
           </h2>
+
+          {/* Botão hoje */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentDate(new Date())}
+            className="border text-gray-900 dark:text-gray-300 whitespace-nowrap"
+          >
+            Hoje
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCurrentDate(new Date())}
-          className="border text-gray-900 dark:text-gray-300"
-        >
-          Hoje
+
+        {/* Lado direito - Botão nova reserva */}
+        <Button className="gap-2 text-gray-900 dark:text-gray-300 whitespace-nowrap" variant='outline' onClick={() => navigate('/eventos/reserva')}>
+          <Plus className="h-4 w-4" />
+          Nova Reserva
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 
