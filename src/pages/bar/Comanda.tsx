@@ -95,10 +95,10 @@ const Comanda = () => {
   ];
 
   // Converter produtos para o formato do SearchableSelect
-  const productItems = mockProducts.map(product => ({
-    value: product.id.toString(),
-    label: `${product.name} - R$ ${product.price.toFixed(2)} (${product.stock} disponível)`,
-    data: product
+  const productOptions = mockProducts.map(product => ({
+    id: product.id.toString(),
+    label: product.name,
+    subtitle: `R$ ${product.price.toFixed(2)} (${product.stock} disponível)`
   }));
 
   const subtotal = comanda.items.reduce((sum, item) => sum + item.total, 0);
@@ -117,9 +117,11 @@ const Comanda = () => {
     return 'outline';
   };
 
-  const handleProductSelect = (item: any) => {
-    const product = item.data as Product;
-    addProductToComanda(product);
+  const handleProductSelect = (productId: string) => {
+    const product = mockProducts.find(p => p.id.toString() === productId);
+    if (product) {
+      addProductToComanda(product);
+    }
   };
 
   const addProductToComanda = (product: Product) => {
@@ -344,10 +346,10 @@ const Comanda = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Buscar Produto</label>
                     <SearchableSelect
-                      items={productItems}
+                      options={productOptions}
                       placeholder="Digite para buscar produtos..."
-                      emptyText="Nenhum produto encontrado."
-                      onSelect={handleProductSelect}
+                      searchPlaceholder="Buscar produtos..."
+                      onValueChange={handleProductSelect}
                       className="w-full"
                     />
                   </div>
