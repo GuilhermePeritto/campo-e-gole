@@ -1,7 +1,6 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, MapPin, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface Event {
   id: number;
@@ -20,14 +19,22 @@ interface EventTimelineProps {
   onTimeSlotClick?: (time: string) => void;
   onEventEdit?: (event: Event) => void;
   editingEventId?: number | null;
+  onEventSelect?: (event: Event) => void;
 }
 
-const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, editingEventId }: EventTimelineProps) => {
-  const navigate = useNavigate();
+const EventTimeline = ({ 
+  selectedDate, 
+  events, 
+  onTimeSlotClick, 
+  onEventEdit, 
+  editingEventId,
+  onEventSelect 
+}: EventTimelineProps) => {
   
-  const timeSlots = Array.from({ length: 15 }, (_, i) => {
-    const hour = i + 7;
-    return `${hour.toString().padStart(2, '0')}:00`;
+  const timeSlots = Array.from({ length: 29 }, (_, i) => {
+    const hour = Math.floor(i / 2) + 7;
+    const minute = (i % 2) * 30;
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
   });
 
   // Get events that overlap with specific time slot
@@ -53,6 +60,9 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
   };
 
   const handleEventClick = (event: Event) => {
+    if (onEventSelect) {
+      onEventSelect(event);
+    }
     if (onEventEdit) {
       onEventEdit(event);
     }
@@ -89,7 +99,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
             return (
               <div 
                 key={time} 
-                className={`border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative ${
+                className={`border-b border-gray-100 h-8 flex items-center p-3 transition-colors relative ${
                   canClickTimeSlot 
                     ? 'hover:bg-green-50 cursor-pointer' 
                     : isEditingMode 
@@ -121,16 +131,14 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
         {/* Events overlay */}
         <div className="absolute top-0 left-0 right-0">
           {events.map((event) => {
-            const startHour = parseInt(event.startTime.split(':')[0]);
-            const startMinute = parseInt(event.startTime.split(':')[1]);
-            const endHour = parseInt(event.endTime.split(':')[0]);
-            const endMinute = parseInt(event.endTime.split(':')[1]);
+            const [startHour, startMinute] = event.startTime.split(':').map(Number);
+            const [endHour, endMinute] = event.endTime.split(':').map(Number);
             
-            const startOffset = ((startHour - 7) * 60 + startMinute) / 60;
-            const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 60;
+            const startOffset = ((startHour - 7) * 60 + startMinute) / 30;
+            const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 30;
             
-            const topPosition = startOffset * 64;
-            const height = duration * 64;
+            const topPosition = startOffset * 32;
+            const height = duration * 32;
 
             const isCurrentlyEditing = editingEventId === event.id;
             const isDisabledEvent = isDisabled(event);
@@ -138,7 +146,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
             return (
               <div
                 key={event.id}
-                className={`absolute left-20 right-4 rounded-lg p-3 shadow-sm border-l-4 z-10 transition-all cursor-pointer ${
+                className={`absolute left-20 right-4 rounded-lg p-2 shadow-sm border-l-4 z-10 transition-all cursor-pointer ${
                   isCurrentlyEditing 
                     ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/10'
                     : isDisabledEvent
@@ -147,7 +155,7 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
                 }`}
                 style={{
                   top: `${topPosition}px`,
-                  height: `${Math.max(height - 4, 48)}px`,
+                  height: `${Math.max(height - 4, 24)}px`,
                   backgroundColor: isCurrentlyEditing 
                     ? ''
                     : isDisabledEvent 
@@ -163,26 +171,19 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
               >
                 <div className="flex items-start justify-between h-full">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-1 mb-1">
                       <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
-                      <span className="font-medium text-sm truncate">{event.client}</span>
+                      <span className="font-medium text-xs truncate">{event.client}</span>
                       {isCurrentlyEditing && (
-                        <span className="text-xs bg-module-events/10 text-module-events/70 px-2 py-1 rounded">
+                        <span className="text-xs bg-module-events/10 text-module-events/70 px-1 py-0.5 rounded">
                           Editando
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
                       <span className="text-xs text-gray-600 truncate">{event.venue}</span>
                     </div>
-                    {event.sport && (
-                      <div className="mt-1">
-                        <span className="text-xs bg-white/60 px-2 py-1 rounded">
-                          {event.sport}
-                        </span>
-                      </div>
-                    )}
                   </div>
                   <div className="flex flex-col items-end ml-2 flex-shrink-0">
                     <div className="text-xs font-medium text-gray-700">
@@ -190,9 +191,6 @@ const EventTimeline = ({ selectedDate, events, onTimeSlotClick, onEventEdit, edi
                     </div>
                     <div className="text-xs text-gray-500">
                       {event.endTime}
-                    </div>
-                    <div className="text-xs mt-1 font-medium">
-                      {duration.toFixed(1)}h
                     </div>
                   </div>
                 </div>

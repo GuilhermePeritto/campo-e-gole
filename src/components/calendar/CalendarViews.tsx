@@ -11,9 +11,7 @@ interface CalendarViewsProps {
   mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
   handleEventClick: (event: Reservation) => void;
-  handleDayMouseEnter: (day: Date, e: React.MouseEvent) => void;
-  handleDayMouseLeave: () => void;
-  handleDayMouseMove: (e: React.MouseEvent) => void;
+  handleDayFilterClick?: (day: Date) => void;
 }
 
 const CalendarViews = ({
@@ -22,9 +20,7 @@ const CalendarViews = ({
   mockReservations,
   handleDateClick,
   handleEventClick,
-  handleDayMouseEnter,
-  handleDayMouseLeave,
-  handleDayMouseMove
+  handleDayFilterClick
 }: CalendarViewsProps) => {
   const weekDays = getWeekDays(currentDate);
   const monthDays = getMonthDays(currentDate);
@@ -38,9 +34,7 @@ const CalendarViews = ({
           mockReservations={mockReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}
-          handleDayMouseEnter={handleDayMouseEnter}
-          handleDayMouseLeave={handleDayMouseLeave}
-          handleDayMouseMove={handleDayMouseMove}
+          handleDayFilterClick={handleDayFilterClick}
         />
       )}
 
@@ -50,9 +44,7 @@ const CalendarViews = ({
           mockReservations={mockReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}
-          handleDayMouseEnter={handleDayMouseEnter}
-          handleDayMouseLeave={handleDayMouseLeave}
-          handleDayMouseMove={handleDayMouseMove}
+          handleDayFilterClick={handleDayFilterClick}
         />
       )}
 

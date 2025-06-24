@@ -1,136 +1,112 @@
+
 import BaseFormPage from '@/components/BaseFormPage';
 import { TourStep } from '@/components/PageTour';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
 import { CreditCard } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-interface ReceivableFormData {
-  client: string;
-  description: string;
-  amount: string;
-  dueDate: Date | undefined;
-}
 
 const Recebivel = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
 
-  const [formData, setFormData] = useState<ReceivableFormData>({
-    client: '',
-    description: '',
-    amount: '',
-    dueDate: new Date()
+  const [formData, setFormData] = useState({
+    client: isEdit ? 'João Silva' : '',
+    description: isEdit ? 'Reserva Quadra A - 18/06/2025' : '',
+    amount: isEdit ? '160.00' : '',
+    dueDate: isEdit ? new Date('2025-06-25') : new Date(),
+    status: isEdit ? 'pending' : 'pending',
+    notes: isEdit ? 'Reserva confirmada via telefone' : ''
   });
 
-  // Dados de exemplo para o campo de busca de clientes
   const clientesExemplo = [
     { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
     { id: '2', label: 'Maria Santos', subtitle: 'CPF: 987.654.321-00' },
     { id: '3', label: 'Pedro Costa', subtitle: 'CNPJ: 12.345.678/0001-90' },
-    { id: '4', label: 'Ana Oliveira', subtitle: 'CPF: 456.789.123-00' },
-    { id: '5', label: 'Carlos Ferreira', subtitle: 'CPF: 789.123.456-00' },
   ];
 
   const tourSteps: TourStep[] = [
     {
       target: '[data-card="info-basicas"]',
-      title: 'Informações Básicas',
-      content: 'Este card contém os dados principais da conta a receber como cliente e valor.',
+      title: 'Informações do Recebível',
+      content: 'Preencha os dados básicos do valor a receber.',
       placement: 'bottom'
     },
     {
       target: '#client',
-      title: 'Campo de Busca de Cliente',
-      content: 'Use este campo para buscar e selecionar o cliente. Digite o nome e selecione da lista que aparece.',
-      placement: 'bottom'
-    },
-    {
-      target: '#amount',
-      title: 'Campo de Valor',
-      content: 'Este campo permite inserir valores monetários. Digite da direita para esquerda, como nos apps bancários.',
+      title: 'Cliente Devedor',
+      content: 'Selecione o cliente que deve o valor.',
       placement: 'bottom'
     },
     {
       target: '[data-card="detalhes"]',
-      title: 'Detalhes',
-      content: 'Aqui você pode adicionar informações complementares sobre a conta a receber.',
+      title: 'Detalhes do Recebível',
+      content: 'Configure valor, vencimento e observações.',
       placement: 'top'
     }
   ];
 
-  useEffect(() => {
-    if (isEdit) {
-      // Simular carregamento dos dados da conta
-      const mockData = {
-        client: 'João Silva',
-        amount: '150',
-        dueDate: new Date('2024-06-10'),
-        description: 'Reserva Quadra A - 08/06'
-      };
-      setFormData(mockData);
-    }
-  }, [id, isEdit]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isEdit ? 'Dados da conta atualizados:' : 'Nova conta a receber:', formData);
+    console.log(isEdit ? 'Editando recebível:' : 'Criando recebível:', formData);
     navigate('/eventos/recebiveis');
   };
 
-  const handleClientChange = (value: string, item?: any) => {
-    setFormData(prev => ({ ...prev, client: value }));
-  };
-
-  const handleAmountChange = (value: string) => {
-    setFormData(prev => ({ ...prev, amount: value }));
-  };
-
-  const handleDateChange = (date: Date | undefined) => {
-    setFormData(prev => ({ ...prev, dueDate: date }));
-  };
-
-  const handleDescriptionChange = (value: string) => {
-    setFormData(prev => ({ ...prev, description: value }));
+  const handleChange = (field: string, value: string | Date | undefined) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const formSections = [
     {
       id: 'info-basicas',
-      title: 'Informações Básicas',
-      alwaysOpen: true, // This card will always be open
+      title: 'Informações do Recebível',
+      alwaysOpen: true,
       content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
           <CampoBusca
             id="client"
             label="Cliente"
             value={formData.client}
-            onChange={handleClientChange}
+            onChange={(value) => handleChange('client', value)}
             items={clientesExemplo}
-            placeholder="Digite o nome do cliente..."
+            placeholder="Selecione o cliente..."
             required
           />
 
-          <CampoValor
-            id="amount"
-            label="Valor"
-            value={formData.amount}
-            onChange={handleAmountChange}
-            required
-          />
+          <div className="space-y-2">
+            <Label htmlFor="description">Descrição *</Label>
+            <Input
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleChange('description', e.target.value)}
+              placeholder="Ex: Reserva Quadra A - 18/06/2025"
+              required
+              className="h-11"
+            />
+          </div>
 
-          <div className="md:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CampoValor
+              id="amount"
+              label="Valor"
+              value={formData.amount}
+              onChange={(value) => handleChange('amount', value)}
+              required
+            />
+
             <SeletorData
               id="dueDate"
               label="Data de Vencimento"
               value={formData.dueDate}
-              onChange={handleDateChange}
+              onChange={(date) => handleChange('dueDate', date)}
               required
             />
           </div>
@@ -142,17 +118,35 @@ const Recebivel = () => {
       title: 'Detalhes',
       defaultOpen: false,
       content: (
-        <div className="space-y-2">
-          <Label htmlFor="description" className="text-sm font-medium">Descrição *</Label>
-          <Textarea
-            id="description"
-            placeholder={isEdit ? "Descrição da conta a receber..." : "Descrição da conta (ex: Reserva Quadra A - 10/06)"}
-            value={formData.description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
-            rows={3}
-            className="resize-none"
-            required
-          />
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select 
+              value={formData.status} 
+              onValueChange={(value) => handleChange('status', value)}
+            >
+              <SelectTrigger id="status" className="h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pendente</SelectItem>
+                <SelectItem value="paid">Pago</SelectItem>
+                <SelectItem value="overdue">Vencido</SelectItem>
+                <SelectItem value="cancelled">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="notes">Observações</Label>
+            <Textarea
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => handleChange('notes', e.target.value)}
+              placeholder="Observações sobre o recebível..."
+              rows={3}
+            />
+          </div>
         </div>
       )
     }
@@ -160,16 +154,16 @@ const Recebivel = () => {
 
   return (
     <BaseFormPage
-      title={isEdit ? "Editar Conta a Receber" : "Criar Nova Conta a Receber"}
-      description={isEdit ? "Altere as informações da conta a receber conforme necessário" : "Registre um novo valor a receber de clientes por serviços prestados ou reservas realizadas"}
+      title={isEdit ? 'Editar Recebível' : 'Novo Recebível'}
+      description={isEdit ? 'Edite as informações do recebível' : 'Registre um novo valor a receber'}
       icon={<CreditCard className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}
       backTo="/eventos/recebiveis"
-      backLabel="Contas a Receber"
+      backLabel="Recebíveis"
       onSubmit={handleSubmit}
-      submitLabel={isEdit ? "Salvar Alterações" : "Salvar Conta a Receber"}
+      submitLabel={isEdit ? 'Salvar Alterações' : 'Cadastrar Recebível'}
       tourSteps={tourSteps}
-      tourTitle={isEdit ? "Edição de Conta a Receber" : "Criação de Nova Conta a Receber"}
+      tourTitle={isEdit ? "Edição de Recebível" : "Cadastro de Recebível"}
       formSections={formSections}
     />
   );

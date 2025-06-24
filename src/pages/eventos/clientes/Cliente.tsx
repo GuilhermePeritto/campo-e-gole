@@ -1,3 +1,4 @@
+
 import BaseFormPage from '@/components/BaseFormPage';
 import { TourStep } from '@/components/PageTour';
 import { Input } from '@/components/ui/input';
@@ -8,8 +9,8 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoDocumento from '@/core/componentes/CampoDocumento';
 import CampoEmail from '@/core/componentes/CampoEmail';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
-import { Users } from 'lucide-react';
-import { useState } from 'react';
+import { User } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Cliente = () => {
@@ -18,42 +19,44 @@ const Cliente = () => {
   const isEdit = !!id;
 
   const [formData, setFormData] = useState({
-    nome: isEdit ? 'João Silva' : '',
+    name: isEdit ? 'João Silva' : '',
     email: isEdit ? 'joao@email.com' : '',
-    telefone: isEdit ? '(11) 99999-1111' : '',
-    documento: isEdit ? '123.456.789-00' : '',
-    tipoDocumento: 'cpf' as 'cpf' | 'cnpj',
-    tipo: isEdit ? 'Pessoa Física' : 'Pessoa Física',
-    situacao: isEdit ? 'Ativo' : 'Ativo',
-    endereco: isEdit ? 'Rua das Flores, 123' : '',
-    cidade: isEdit ? 'São Paulo' : '',
-    cep: isEdit ? '01234-567' : '',
-    observacoes: isEdit ? 'Cliente regular, sempre pontual nos pagamentos.' : ''
+    phone: isEdit ? '(11) 99999-9999' : '',
+    document: isEdit ? '123.456.789-00' : '',
+    documentType: isEdit ? 'cpf' : 'cpf',
+    address: isEdit ? 'Rua das Flores, 123' : '',
+    city: isEdit ? 'São Paulo' : '',
+    state: isEdit ? 'SP' : '',
+    zipCode: isEdit ? '01234-567' : '',
+    notes: isEdit ? 'Cliente frequente, prefere horários noturnos' : ''
   });
+
+  useEffect(() => {
+    // Verificar se existe URL de retorno no sessionStorage
+    const returnUrl = sessionStorage.getItem('returnUrl');
+    if (returnUrl && !isEdit) {
+      // Se estamos criando um novo cliente e existe URL de retorno, usar ela
+      return;
+    }
+  }, [isEdit]);
 
   const tourSteps: TourStep[] = [
     {
-      target: '[data-card="info-basicas"]',
-      title: 'Informações Básicas',
-      content: 'Este card contém os dados principais do cliente como nome, documento e tipo.',
+      target: '[data-card="info-pessoais"]',
+      title: 'Informações Pessoais',
+      content: 'Preencha os dados pessoais do cliente.',
       placement: 'bottom'
     },
     {
-      target: '#nome',
-      title: 'Nome do Cliente',
-      content: 'Digite o nome completo do cliente ou razão social da empresa.',
+      target: '#name',
+      title: 'Nome Completo',
+      content: 'Digite o nome completo do cliente.',
       placement: 'bottom'
     },
     {
       target: '[data-card="contato"]',
-      title: 'Informações de Contato',
-      content: 'Adicione informações de contato para comunicação.',
-      placement: 'bottom'
-    },
-    {
-      target: '[data-card="endereco"]',
-      title: 'Endereço',
-      content: 'Cadastre o endereço completo do cliente.',
+      title: 'Dados de Contato',
+      content: 'Informe email e telefone para contato.',
       placement: 'top'
     }
   ];
@@ -61,7 +64,15 @@ const Cliente = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(isEdit ? 'Editando cliente:' : 'Criando cliente:', formData);
-    navigate('/eventos/clientes');
+    
+    // Verificar se existe URL de retorno
+    const returnUrl = sessionStorage.getItem('returnUrl');
+    if (returnUrl && !isEdit) {
+      sessionStorage.removeItem('returnUrl');
+      navigate(returnUrl);
+    } else {
+      navigate('/eventos/clientes');
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -70,66 +81,52 @@ const Cliente = () => {
 
   const formSections = [
     {
-      id: 'info-basicas',
-      title: 'Informações Básicas',
-      alwaysOpen: true, // This card will always be open
+      id: 'info-pessoais',
+      title: 'Informações Pessoais',
+      alwaysOpen: true,
       content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="nome">Nome/Razão Social *</Label>
+            <Label htmlFor="name">Nome Completo *</Label>
             <Input
-              id="nome"
-              value={formData.nome}
-              onChange={(e) => handleChange('nome', e.target.value)}
-              placeholder="Nome do cliente ou empresa"
+              id="name"
+              value={formData.name}
+              onChange={(e) => handleChange('name', e.target.value)}
+              placeholder="Ex: João Silva"
               required
               className="h-11"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="documentType">Tipo de Documento</Label>
+              <Select value={formData.documentType} onValueChange={(value) => handleChange('documentType', value)}>
+                <SelectTrigger id="documentType" className="h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cpf">CPF</SelectItem>
+                  <SelectItem value="cnpj">CNPJ</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <CampoDocumento
-              id="documento"
-              label="CPF/CNPJ"
-              value={formData.documento}
-              onChange={(value) => handleChange('documento', value)}
-              tipo={formData.tipoDocumento}
+              id="document"
+              label={formData.documentType === 'cpf' ? 'CPF' : 'CNPJ'}
+              value={formData.document}
+              onChange={(value) => handleChange('document', value)}
+              type={formData.documentType as 'cpf' | 'cnpj'}
               required
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="tipo">Tipo de Cliente *</Label>
-            <Select value={formData.tipo} onValueChange={(value) => handleChange('tipo', value)}>
-              <SelectTrigger id="tipo" className="h-11">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pessoa Física">Pessoa Física</SelectItem>
-                <SelectItem value="Pessoa Jurídica">Pessoa Jurídica</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="situacao">Situação</Label>
-            <Select value={formData.situacao} onValueChange={(value) => handleChange('situacao', value)}>
-              <SelectTrigger id="situacao" className="h-11">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Ativo">Ativo</SelectItem>
-                <SelectItem value="Inativo">Inativo</SelectItem>
-                <SelectItem value="Pendente">Pendente</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       )
     },
     {
       id: 'contato',
-      title: 'Informações de Contato',
+      title: 'Dados de Contato',
       defaultOpen: false,
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -138,15 +135,15 @@ const Cliente = () => {
             label="E-mail"
             value={formData.email}
             onChange={(value) => handleChange('email', value)}
-            required
+            placeholder="cliente@email.com"
           />
 
           <CampoTelefone
-            id="telefone"
+            id="phone"
             label="Telefone"
-            value={formData.telefone}
-            onChange={(value) => handleChange('telefone', value)}
-            required
+            value={formData.phone}
+            onChange={(value) => handleChange('phone', value)}
+            placeholder="(11) 99999-9999"
           />
         </div>
       )
@@ -156,38 +153,51 @@ const Cliente = () => {
       title: 'Endereço',
       defaultOpen: false,
       content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="endereco">Endereço</Label>
+            <Label htmlFor="address">Endereço</Label>
             <Input
-              id="endereco"
-              value={formData.endereco}
-              onChange={(e) => handleChange('endereco', e.target.value)}
-              placeholder="Rua, número, complemento"
+              id="address"
+              value={formData.address}
+              onChange={(e) => handleChange('address', e.target.value)}
+              placeholder="Ex: Rua das Flores, 123"
               className="h-11"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="cidade">Cidade</Label>
-            <Input
-              id="cidade"
-              value={formData.cidade}
-              onChange={(e) => handleChange('cidade', e.target.value)}
-              placeholder="Nome da cidade"
-              className="h-11"
-            />
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="city">Cidade</Label>
+              <Input
+                id="city"
+                value={formData.city}
+                onChange={(e) => handleChange('city', e.target.value)}
+                placeholder="Ex: São Paulo"
+                className="h-11"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="cep">CEP</Label>
-            <Input
-              id="cep"
-              value={formData.cep}
-              onChange={(e) => handleChange('cep', e.target.value)}
-              placeholder="00000-000"
-              className="h-11"
-            />
+            <div className="space-y-2">
+              <Label htmlFor="state">Estado</Label>
+              <Input
+                id="state"
+                value={formData.state}
+                onChange={(e) => handleChange('state', e.target.value)}
+                placeholder="Ex: SP"
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="zipCode">CEP</Label>
+              <Input
+                id="zipCode"
+                value={formData.zipCode}
+                onChange={(e) => handleChange('zipCode', e.target.value)}
+                placeholder="12345-678"
+                className="h-11"
+              />
+            </div>
           </div>
         </div>
       )
@@ -198,13 +208,13 @@ const Cliente = () => {
       defaultOpen: false,
       content: (
         <div className="space-y-2">
-          <Label htmlFor="observacoes">Observações</Label>
+          <Label htmlFor="notes">Observações</Label>
           <Textarea
-            id="observacoes"
-            value={formData.observacoes}
-            onChange={(e) => handleChange('observacoes', e.target.value)}
-            placeholder="Observações sobre o cliente..."
-            rows={3}
+            id="notes"
+            value={formData.notes}
+            onChange={(e) => handleChange('notes', e.target.value)}
+            placeholder="Informações adicionais sobre o cliente..."
+            rows={4}
           />
         </div>
       )
@@ -214,8 +224,8 @@ const Cliente = () => {
   return (
     <BaseFormPage
       title={isEdit ? 'Editar Cliente' : 'Novo Cliente'}
-      description={isEdit ? 'Edite as informações do cliente' : 'Registre um novo cliente no sistema'}
-      icon={<Users className="h-5 w-5" />}
+      description={isEdit ? 'Edite as informações do cliente' : 'Cadastre um novo cliente'}
+      icon={<User className="h-5 w-5" />}
       moduleColor={MODULE_COLORS.events}
       backTo="/eventos/clientes"
       backLabel="Clientes"

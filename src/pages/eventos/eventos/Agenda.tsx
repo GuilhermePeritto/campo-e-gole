@@ -1,5 +1,4 @@
 
-import EventHoverPopup from '@/components/EventHoverPopup';
 import ModuleHeader from '@/components/ModuleHeader';
 import CalendarControls from '@/components/calendar/CalendarControls';
 import CalendarViews from '@/components/calendar/CalendarViews';
@@ -16,15 +15,12 @@ const Agenda = () => {
     setSelectedVenue,
     currentDate,
     setCurrentDate,
-    hoverPopup,
     venues,
     mockReservations,
     navigateDate,
     handleDateClick,
     handleEventClick,
-    handleDayMouseEnter,
-    handleDayMouseLeave,
-    handleDayMouseMove
+    handleDayFilterClick
   } = useCalendar();
 
   const weekDays = getWeekDays(currentDate);
@@ -59,19 +55,9 @@ const Agenda = () => {
           mockReservations={mockReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}
-          handleDayMouseEnter={handleDayMouseEnter}
-          handleDayMouseLeave={handleDayMouseLeave}
-          handleDayMouseMove={handleDayMouseMove}
+          handleDayFilterClick={handleDayFilterClick}
         />
       </main>
-
-      {/* Hover Popup */}
-      <EventHoverPopup
-        events={hoverPopup.events}
-        date={hoverPopup.date}
-        mousePosition={hoverPopup.mousePosition}
-        isVisible={hoverPopup.isVisible}
-      />
     </div>
   );
 };

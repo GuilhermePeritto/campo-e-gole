@@ -104,7 +104,7 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
-  // Eventos mockados para a timeline
+  // Eventos mockados para a timeline com mais variedade
   const mockEvents = [
     {
       id: 1,
@@ -121,8 +121,8 @@ const Reserva = () => {
       id: 2,
       client: 'Maria Santos',
       venue: 'Quadra B',
-      startTime: '14:00',
-      endTime: '16:00',
+      startTime: '09:30',
+      endTime: '10:30',
       status: 'pending' as const,
       color: '#f59e0b',
       sport: 'Basquete',
@@ -132,12 +132,45 @@ const Reserva = () => {
       id: 3,
       client: 'Pedro Costa',
       venue: 'Campo Principal',
+      startTime: '10:00',
+      endTime: '11:00',
+      status: 'confirmed' as const,
+      color: '#3b82f6',
+      sport: 'Futebol',
+      notes: 'Pelada dos amigos'
+    },
+    {
+      id: 4,
+      client: 'Ana Paula',
+      venue: 'Quadra A',
+      startTime: '14:00',
+      endTime: '16:00',
+      status: 'confirmed' as const,
+      color: '#10b981',
+      sport: 'Vôlei',
+      notes: 'Treino feminino'
+    },
+    {
+      id: 5,
+      client: 'Carlos Mendes',
+      venue: 'Campo Principal',
       startTime: '19:00',
       endTime: '21:00',
       status: 'confirmed' as const,
-      color: '#10b981',
+      color: '#3b82f6',
       sport: 'Futebol',
-      notes: 'Pelada dos amigos'
+      notes: 'Jogo oficial'
+    },
+    {
+      id: 6,
+      client: 'Julia Rodrigues',
+      venue: 'Quadra B',
+      startTime: '15:30',
+      endTime: '17:00',
+      status: 'pending' as const,
+      color: '#f59e0b',
+      sport: 'Tênis',
+      notes: 'Aula de tênis'
     }
   ];
 
@@ -238,6 +271,22 @@ const Reserva = () => {
     if (!isEditing) {
       setFormData(prev => ({ ...prev, startTime: time }));
     }
+  };
+
+  const handleEventSelect = (event: any) => {
+    // Preencher tanto horário inicial quanto final
+    setFormData(prev => ({
+      ...prev,
+      client: event.client,
+      venue: event.venue,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      notes: event.notes || '',
+      amount: '160' // Mock amount
+    }));
+
+    setIsEditing(true);
+    setEditingEventId(event.id);
   };
 
   const handleEventEdit = (event: any) => {
@@ -518,7 +567,7 @@ const Reserva = () => {
                     selectedDate={selectedDateStr}
                     events={eventsForSelectedDate}
                     onTimeSlotClick={handleTimeSlotClick}
-                    onEventEdit={handleEventEdit}
+                    onEventSelect={handleEventSelect}
                     editingEventId={editingEventId}
                   />
                 ) : (

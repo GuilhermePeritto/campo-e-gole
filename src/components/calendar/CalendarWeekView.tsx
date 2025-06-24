@@ -1,15 +1,14 @@
 
-import { isToday, getTimeSlots } from '@/utils/calendarUtils';
+import { useState } from 'react';
 import { Reservation } from '@/hooks/useCalendar';
+import { Filter } from 'lucide-react';
 
 interface CalendarWeekViewProps {
   weekDays: Date[];
   mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
   handleEventClick: (event: Reservation) => void;
-  handleDayMouseEnter: (day: Date, e: React.MouseEvent) => void;
-  handleDayMouseLeave: () => void;
-  handleDayMouseMove: (e: React.MouseEvent) => void;
+  handleDayFilterClick?: (day: Date) => void;
 }
 
 const CalendarWeekView = ({
@@ -17,35 +16,60 @@ const CalendarWeekView = ({
   mockReservations,
   handleDateClick,
   handleEventClick,
-  handleDayMouseEnter,
-  handleDayMouseLeave,
-  handleDayMouseMove
+  handleDayFilterClick
 }: CalendarWeekViewProps) => {
-  const timeSlots = getTimeSlots();
+  const [hoveredDay, setHoveredDay] = useState<Date | null>(null);
+
+  const getDayEvents = (day: Date) => {
+    return mockReservations.filter(event =>
+      event.day.toDateString() === day.toDateString()
+    );
+  };
+
+  const isToday = (date: Date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  const handleFilterClick = (day: Date, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (handleDayFilterClick) {
+      handleDayFilterClick(day);
+    }
+  };
 
   return (
     <div>
-      {/* Time Header */}
-      <div className="grid grid-cols-8 border-b border">
-        <div className="p-3 border-r border"></div>
+      {/* Header */}
+      <div className="grid grid-cols-7 gap-px bg-gray-200">
         {weekDays.map((day, index) => {
-          const isTodayDate = isToday(day);
+          const dayEvents = getDayEvents(day);
+          const isHovered = hoveredDay?.toDateString() === day.toDateString();
+          
           return (
-            <div
-              key={index}
-              className="p-3 text-center border-r border last:border-r-0 cursor-pointer"
-              onClick={() => handleDateClick(day)}
-              onMouseEnter={(e) => handleDayMouseEnter(day, e)}
-              onMouseLeave={handleDayMouseLeave}
-              onMouseMove={handleDayMouseMove}
-            >
-              <div className="text-xs text-gray-600 mb-1">
-                {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
+            <div key={index} className="bg-gray-50 p-3 text-center">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <div className="text-sm font-medium text-gray-900">
+                  {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
+                </div>
+                {dayEvents.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                      {dayEvents.length}
+                    </span>
+                    {isHovered && (
+                      <button
+                        onClick={(e) => handleFilterClick(day, e)}
+                        className="p-1 hover:bg-primary/20 rounded transition-colors"
+                        title="Filtrar por este dia"
+                      >
+                        <Filter className="h-3 w-3 text-primary" />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className={`text-sm font-medium ${isTodayDate
-                ? 'bg-green-600 text-gray-900 dark:text-gray-300 w-6 h-6 rounded-full flex items-center justify-center mx-auto'
-                : 'text-gray-900 dark:text-gray-300'
-                }`}>
+              <div className={`text-2xl font-bold ${isToday(day) ? 'text-blue-600' : 'text-gray-900'}`}>
                 {day.getDate()}
               </div>
             </div>
@@ -53,42 +77,41 @@ const CalendarWeekView = ({
         })}
       </div>
 
-      {/* Time Grid */}
-      <div className="relative">
-        {timeSlots.map((time, timeIndex) => (
-          <div key={time} className="grid grid-cols-8 border-b border-gray-100">
-            <div className="p-3 text-sm text-gray-500 border-r border text-right pr-4">
-              {time}
+      {/* Days Content */}
+      <div className="grid grid-cols-7 gap-px bg-gray-200 min-h-[500px]">
+        {weekDays.map((day, index) => {
+          const dayEvents = getDayEvents(day);
+          
+          return (
+            <div
+              key={index}
+              className={`bg-white p-2 cursor-pointer hover:bg-gray-50 transition-colors ${
+                isToday(day) ? 'bg-blue-50' : ''
+              }`}
+              onClick={() => handleDateClick(day)}
+              onMouseEnter={() => setHoveredDay(day)}
+              onMouseLeave={() => setHoveredDay(null)}
+            >
+              <div className="space-y-1">
+                {dayEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className="text-xs p-2 rounded text-white cursor-pointer hover:opacity-80"
+                    style={{ backgroundColor: event.color }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEventClick(event);
+                    }}
+                  >
+                    <div className="font-medium">{event.startTime}</div>
+                    <div className="truncate">{event.client}</div>
+                    <div className="truncate text-xs opacity-90">{event.venue}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            {weekDays.map((day, dayIndex) => {
-              const reservation = mockReservations.find(
-                r => r.startTime === time && r.day.toDateString() === day.toDateString()
-              );
-
-              return (
-                <div
-                  key={dayIndex}
-                  className="relative h-16 border-r border last:border-r-0 cursor-pointer"
-                  onClick={() => handleDateClick(day)}
-                >
-                  {reservation && (
-                    <div
-                      className="absolute inset-x-1 top-1 bottom-1 rounded p-2 text-gray-600 dark:text-gray-300 text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity"
-                      style={{ backgroundColor: reservation.color }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEventClick(reservation);
-                      }}
-                    >
-                      <div className="font-semibold truncate">{reservation.client}</div>
-                      <div className="text-xs opacity-90">{reservation.venue}</div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

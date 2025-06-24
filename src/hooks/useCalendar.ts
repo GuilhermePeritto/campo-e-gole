@@ -36,12 +36,6 @@ export const useCalendar = () => {
   const [viewType, setViewType] = useState<'month' | 'week' | 'day'>('month');
   const [selectedVenue, setSelectedVenue] = useState<string>('all');
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [hoverPopup, setHoverPopup] = useState<HoverPopup>({
-    isVisible: false,
-    events: [],
-    date: new Date(),
-    mousePosition: { x: 0, y: 0 }
-  });
 
   const venues: Venue[] = [
     { id: 'all', name: 'Todos os locais', color: '#6b7280' },
@@ -50,6 +44,7 @@ export const useCalendar = () => {
     { id: '3', name: 'Campo Principal', color: '#3b82f6' }
   ];
 
+  // Eventos mockados expandidos com horários quebrados
   const mockReservations: Reservation[] = [
     {
       id: 1,
@@ -68,48 +63,109 @@ export const useCalendar = () => {
     },
     {
       id: 2,
-      title: 'Marcos do popoti',
-      start: '2025-06-18T09:00:00',
-      end: '2025-06-18T11:00:00',
-      venueId: '1',
-      clientName: 'Marcos do popoti',
-      status: 'confirmed',
-      color: '#f59e0b',
-      client: 'João Silva',
-      venue: 'Quadra A',
-      startTime: '09:00',
-      endTime: '11:00',
-      day: new Date('2025-06-18')
-    },
-    {
-      id: 3,
       title: 'Maria Santos - Aula',
-      start: '2025-06-18T14:00:00',
-      end: '2025-06-18T16:00:00',
+      start: '2025-06-18T09:30:00',
+      end: '2025-06-18T10:30:00',
       venueId: '2',
       clientName: 'Maria Santos',
       status: 'pending',
       color: '#f59e0b',
       client: 'Maria Santos',
       venue: 'Quadra B',
-      startTime: '14:00',
-      endTime: '16:00',
+      startTime: '09:30',
+      endTime: '10:30',
       day: new Date('2025-06-18')
     },
     {
-      id: 4,
+      id: 3,
       title: 'Pedro Costa - Pelada',
-      start: '2025-06-18T19:00:00',
-      end: '2025-06-18T21:00:00',
+      start: '2025-06-18T10:00:00',
+      end: '2025-06-18T11:00:00',
       venueId: '3',
       clientName: 'Pedro Costa',
       status: 'confirmed',
       color: '#3b82f6',
       client: 'Pedro Costa',
       venue: 'Campo Principal',
+      startTime: '10:00',
+      endTime: '11:00',
+      day: new Date('2025-06-18')
+    },
+    {
+      id: 4,
+      title: 'Ana Paula - Vôlei',
+      start: '2025-06-18T14:00:00',
+      end: '2025-06-18T16:00:00',
+      venueId: '1',
+      clientName: 'Ana Paula',
+      status: 'confirmed',
+      color: '#10b981',
+      client: 'Ana Paula',
+      venue: 'Quadra A',
+      startTime: '14:00',
+      endTime: '16:00',
+      day: new Date('2025-06-18')
+    },
+    {
+      id: 5,
+      title: 'Carlos - Futebol',
+      start: '2025-06-18T19:00:00',
+      end: '2025-06-18T21:00:00',
+      venueId: '3',
+      clientName: 'Carlos Mendes',
+      status: 'confirmed',
+      color: '#3b82f6',
+      client: 'Carlos Mendes',
+      venue: 'Campo Principal',
       startTime: '19:00',
       endTime: '21:00',
       day: new Date('2025-06-18')
+    },
+    {
+      id: 6,
+      title: 'Julia - Tênis',
+      start: '2025-06-18T15:30:00',
+      end: '2025-06-18T17:00:00',
+      venueId: '2',
+      clientName: 'Julia Rodrigues',
+      status: 'pending',
+      color: '#f59e0b',
+      client: 'Julia Rodrigues',
+      venue: 'Quadra B',
+      startTime: '15:30',
+      endTime: '17:00',
+      day: new Date('2025-06-18')
+    },
+    // Eventos para outros dias
+    {
+      id: 7,
+      title: 'Roberto - Basquete',
+      start: '2025-06-19T08:30:00',
+      end: '2025-06-19T10:00:00',
+      venueId: '1',
+      clientName: 'Roberto Lima',
+      status: 'confirmed',
+      color: '#10b981',
+      client: 'Roberto Lima',
+      venue: 'Quadra A',
+      startTime: '08:30',
+      endTime: '10:00',
+      day: new Date('2025-06-19')
+    },
+    {
+      id: 8,
+      title: 'Fernanda - Aeróbica',
+      start: '2025-06-19T18:15:00',
+      end: '2025-06-19T19:45:00',
+      venueId: '2',
+      clientName: 'Fernanda Costa',
+      status: 'confirmed',
+      color: '#f59e0b',
+      client: 'Fernanda Costa',
+      venue: 'Quadra B',
+      startTime: '18:15',
+      endTime: '19:45',
+      day: new Date('2025-06-19')
     }
   ];
 
@@ -143,30 +199,9 @@ export const useCalendar = () => {
     navigate(`/eventos/reserva/${event.id}`);
   }, [navigate]);
 
-  const handleDayMouseEnter = useCallback((day: Date, e: React.MouseEvent) => {
-    const dayReservations = mockReservations.filter(r =>
-      r.day.toDateString() === day.toDateString()
-    );
-    
-    if (dayReservations.length > 0) {
-      setHoverPopup({
-        isVisible: true,
-        events: dayReservations,
-        date: day,
-        mousePosition: { x: e.clientX, y: e.clientY }
-      });
-    }
-  }, [mockReservations]);
-
-  const handleDayMouseLeave = useCallback(() => {
-    setHoverPopup(prev => ({ ...prev, isVisible: false }));
-  }, []);
-
-  const handleDayMouseMove = useCallback((e: React.MouseEvent) => {
-    setHoverPopup(prev => ({
-      ...prev,
-      mousePosition: { x: e.clientX, y: e.clientY }
-    }));
+  const handleDayFilterClick = useCallback((day: Date) => {
+    setCurrentDate(day);
+    setViewType('day');
   }, []);
 
   const handleViewTypeChange = useCallback((view: 'month' | 'week' | 'day') => {
@@ -180,14 +215,11 @@ export const useCalendar = () => {
     setSelectedVenue,
     currentDate,
     setCurrentDate,
-    hoverPopup,
     venues,
     mockReservations,
     navigateDate,
     handleDateClick,
     handleEventClick,
-    handleDayMouseEnter,
-    handleDayMouseLeave,
-    handleDayMouseMove
+    handleDayFilterClick
   };
 };
