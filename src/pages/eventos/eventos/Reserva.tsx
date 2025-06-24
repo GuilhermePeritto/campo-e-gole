@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -401,18 +400,6 @@ const Reserva = () => {
         moduleColor={MODULE_COLORS.events}
         backTo="/eventos/agenda"
         backLabel="Agenda"
-        actions={
-          isEdit ? (
-            <Button
-              variant="outline"
-              onClick={handleCancelEdit}
-              className="flex items-center gap-2"
-            >
-              <X className="h-4 w-4" />
-              Cancelar Edição
-            </Button>
-          ) : undefined
-        }
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6">
@@ -420,10 +407,20 @@ const Reserva = () => {
           {/* Formulário */}
           <div className="space-y-6">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>
                   {isEdit ? 'Editar Reserva' : 'Nova Reserva'}
                 </CardTitle>
+                {isEdit && (
+                  <Button
+                    variant="outline"
+                    onClick={handleCancelEdit}
+                    className="flex items-center gap-2"
+                  >
+                    <X className="h-4 w-4" />
+                    Cancelar Edição
+                  </Button>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <CampoBusca
