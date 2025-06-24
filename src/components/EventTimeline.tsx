@@ -1,8 +1,8 @@
-
 import { Button } from '@/components/ui/button';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { Clock, MapPin, Plus, User, X } from 'lucide-react';
 import { mockLocais } from '@/data/mockLocais';
+import { useLocais } from '@/hooks/useLocais';
 
 interface Event {
   id: number;
@@ -37,17 +37,13 @@ const EventTimeline = ({
   onCancelEdit
 }: EventTimelineProps) => {
   
-  const { generateTimeSlots, getVenueInterval, venueSettings } = useVenueSettings();
+  const { generateTimeSlots, getVenueInterval } = useVenueSettings();
+  const { getLocalByName } = useLocais();
   
-  // Mapear nome do local para ID usando dados centralizados
+  // Mapear nome do local para ID usando hook
   const getVenueIdByName = (venueName: string) => {
-    // Primeiro tentar encontrar nos dados centralizados
-    const venue = mockLocais.find(v => v.name === venueName);
-    if (venue) return venue.id;
-    
-    // Fallback para venueSettings se não encontrar
-    const venueFromSettings = venueSettings.find(v => v.name === venueName);
-    return venueFromSettings?.id || 'all';
+    const venue = getLocalByName(venueName);
+    return venue?.id || 'all';
   };
   
   // Gerar slots baseados no local selecionado

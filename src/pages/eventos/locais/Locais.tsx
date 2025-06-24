@@ -1,4 +1,3 @@
-
 import BaseList from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
@@ -6,9 +5,11 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { mockLocais } from '@/data/mockLocais';
+import { useLocais } from '@/hooks/useLocais';
 
 const Locais = () => {
   const navigate = useNavigate();
+  const { locais } = useLocais();
 
   const columns = [
     {
@@ -70,7 +71,7 @@ const Locais = () => {
         <BaseList
           title="Gerenciar Locais"
           description="Cadastre e gerencie os locais disponíveis para reserva"
-          data={mockLocais}
+          data={locais}
           columns={columns}
           actions={actions}
           createButton={createButton}

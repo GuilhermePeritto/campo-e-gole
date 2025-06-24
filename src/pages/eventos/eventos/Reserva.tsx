@@ -10,12 +10,12 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
-import { mockClientes } from '@/data/mockClientes';
-import { mockLocais } from '@/data/mockLocais';
-import { mockReservations } from '@/data/mockReservations';
 import { Calendar, CreditCard, Edit, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useClientes } from '@/hooks/useClientes';
+import { useLocais } from '@/hooks/useLocais';
+import { useReservas } from '@/hooks/useReservas';
 
 interface ReservationFormData {
   client: string;
@@ -60,14 +60,14 @@ const Reserva = () => {
     totalMinutes: 0
   });
 
-  // Dados de exemplo usando arquivos centralizados
-  const clientesExemplo = mockClientes.map(cliente => ({
-    id: cliente.id,
-    label: cliente.label,
-    subtitle: cliente.subtitle
-  }));
+  // Hooks de dados
+  const { getClientesForSearch, getClienteByName } = useClientes();
+  const { locais, getLocalByName } = useLocais();
+  const { getReservaById, createReserva, updateReserva } = useReservas();
 
-  const locaisExemplo = mockLocais.map(local => ({
+  // Dados usando hooks
+  const clientesExemplo = getClientesForSearch();
+  const locaisExemplo = locais.map(local => ({
     id: local.id,
     label: local.label,
     subtitle: local.subtitle
@@ -78,24 +78,31 @@ const Reserva = () => {
     if (id) {
       setIsEdit(true);
       setEditingEventId(parseInt(id));
-      // Simular carregamento dos dados da reserva
-      const mockData = {
-        client: 'João Silva',
-        venue: 'Quadra Principal',
-        date: new Date('2024-06-15'),
-        startTime: '14:00',
-        endTime: '16:00',
-        notes: 'Reserva para partida de futebol society',
-        observations: 'Observações adicionais',
-        amount: '160',
-        recurring: true,
-        recurringType: 'weekly',
-        customRecurringDays: '',
-        hourlyRate: 80,
-        totalHours: 2,
-        totalMinutes: 120
-      };
-      setFormData(mockData);
+      
+      // Carregar dados reais da reserva
+      const reserva = getReservaById(parseInt(id));
+      if (reserva) {
+        const cliente = getClienteByName(reserva.client);
+        const local = getLocalByName(reserva.venue);
+        
+        const mockData = {
+          client: cliente?.label || reserva.client,
+          venue: local?.label || reserva.venue,
+          date: new Date(reserva.date),
+          startTime: reserva.startTime,
+          endTime: reserva.endTime,
+          notes: reserva.notes || '',
+          observations: reserva.notes || '',
+          amount: reserva.amount.toString(),
+          recurring: false,
+          recurringType: '',
+          customRecurringDays: '',
+          hourlyRate: local?.hourlyRate || 80,
+          totalHours: 0,
+          totalMinutes: 0
+        };
+        setFormData(mockData);
+      }
     } else {
       // Inicializar com parâmetros da URL para nova reserva
       const dateParam = searchParams.get('date');
@@ -106,7 +113,7 @@ const Reserva = () => {
         }));
       }
     }
-  }, [id, searchParams]);
+  }, [id, searchParams, getReservaById, getClienteByName, getLocalByName]);
 
   // Calcular total de horas e minutos
   useEffect(() => {
@@ -134,11 +141,11 @@ const Reserva = () => {
 
   // Atualizar taxa horária baseado no local selecionado
   useEffect(() => {
-    const selectedVenue = mockLocais.find(v => v.label === formData.venue);
+    const selectedVenue = locais.find(v => v.label === formData.venue);
     if (selectedVenue) {
       setFormData(prev => ({ ...prev, hourlyRate: selectedVenue.hourlyRate }));
     }
-  }, [formData.venue]);
+  }, [formData.venue, locais]);
 
   const totalValue = formData.totalHours * formData.hourlyRate;
 
@@ -164,8 +171,10 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
-  // Eventos mockados usando dados centralizados
-  const mockEvents = mockReservations.map(reservation => ({
+  // Eventos mockados usando hook
+  const { getReservasByDate } = useReservas();
+  const selectedDateStr = formData.date ? formData.date.toISOString().split('T')[0] : '';
+  const mockEvents = getReservasByDate(selectedDateStr).map(reservation => ({
     id: reservation.id,
     client: reservation.client,
     venue: reservation.venue,
@@ -212,7 +221,43 @@ const Reserva = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isEdit ? 'Editando reserva:' : 'Nova reserva:', formData);
+    
+    if (isEdit && id) {
+      // Atualizar reserva existente
+      const updateData = {
+        client: formData.client,
+        venue: formData.venue,
+        date: formData.date?.toISOString().split('T')[0] || '',
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        notes: formData.observations,
+        amount: parseFloat(formData.amount) || totalValue
+      };
+      updateReserva(parseInt(id), updateData);
+      console.log('Editando reserva:', updateData);
+    } else {
+      // Criar nova reserva
+      const cliente = getClienteByName(formData.client);
+      const local = getLocalByName(formData.venue);
+      
+      const newReservaData = {
+        client: formData.client,
+        clientId: cliente?.id || '1',
+        venue: formData.venue,
+        venueId: local?.id || '1',
+        date: formData.date?.toISOString().split('T')[0] || '',
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        status: 'confirmed' as const,
+        color: local?.status === 'active' ? '#10b981' : '#f59e0b',
+        sport: '',
+        notes: formData.observations,
+        amount: parseFloat(formData.amount) || totalValue
+      };
+      createReserva(newReservaData);
+      console.log('Nova reserva:', newReservaData);
+    }
+    
     navigate('/eventos/agenda');
   };
 
@@ -451,7 +496,7 @@ const Reserva = () => {
                   }}
                   onEventEdit={(event) => {
                     // Encontrar o cliente pelo nome
-                    const selectedClient = mockClientes.find(c => c.name === event.client);
+                    const selectedClient = getClienteByName(event.client);
                     
                     setFormData(prev => ({
                       ...prev,
@@ -469,7 +514,7 @@ const Reserva = () => {
                   editingEventId={editingEventId}
                   onEventSelect={(event) => {
                     // Encontrar o cliente pelo nome
-                    const selectedClient = mockClientes.find(c => c.name === event.client);
+                    const selectedClient = getClienteByName(event.client);
                     
                     setFormData(prev => ({
                       ...prev,

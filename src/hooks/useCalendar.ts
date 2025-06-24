@@ -1,8 +1,8 @@
 
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockLocais } from '@/data/mockLocais';
-import { mockReservations } from '@/data/mockReservations';
+import { useLocais } from './useLocais';
+import { useReservas } from './useReservas';
 
 export interface Venue {
   id: string;
@@ -26,52 +26,17 @@ export interface Reservation {
   day: Date;
 }
 
-export interface HoverPopup {
-  isVisible: boolean;
-  events: Reservation[];
-  date: Date;
-  mousePosition: { x: number; y: number };
-}
-
 export const useCalendar = () => {
   const navigate = useNavigate();
+  const { getVenuesForCalendar } = useLocais();
+  const { getCalendarReservations } = useReservas();
+  
   const [viewType, setViewType] = useState<'month' | 'week' | 'day'>('month');
   const [selectedVenue, setSelectedVenue] = useState<string>('all');
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Usar dados centralizados dos locais
-  const venues: Venue[] = [
-    { id: 'all', name: 'Todos os locais', color: '#6b7280' },
-    ...mockLocais.map(local => ({
-      id: local.id,
-      name: local.name,
-      color: local.status === 'active' ? '#10b981' : 
-             local.status === 'maintenance' ? '#f59e0b' : '#ef4444'
-    }))
-  ];
-
-  // Converter reservas mockadas para o formato usado na agenda
-  const convertedReservations: Reservation[] = mockReservations.map(reservation => {
-    const reservationDate = new Date(reservation.date);
-    const startDateTime = `${reservation.date}T${reservation.startTime}:00`;
-    const endDateTime = `${reservation.date}T${reservation.endTime}:00`;
-    
-    return {
-      id: reservation.id,
-      title: `${reservation.client} - ${reservation.sport || 'Reserva'}`,
-      start: startDateTime,
-      end: endDateTime,
-      venueId: reservation.venueId,
-      clientName: reservation.client,
-      status: reservation.status,
-      color: reservation.color,
-      client: reservation.client,
-      venue: reservation.venue,
-      startTime: reservation.startTime,
-      endTime: reservation.endTime,
-      day: reservationDate
-    };
-  });
+  const venues = getVenuesForCalendar();
+  const mockReservations = getCalendarReservations;
 
   const navigateDate = useCallback((direction: 'prev' | 'next') => {
     setCurrentDate(prev => {
@@ -120,7 +85,7 @@ export const useCalendar = () => {
     currentDate,
     setCurrentDate,
     venues,
-    mockReservations: convertedReservations,
+    mockReservations,
     navigateDate,
     handleDateClick,
     handleEventClick,
