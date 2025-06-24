@@ -404,7 +404,7 @@ const Reserva = () => {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-160px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Formulário */}
           <div className="space-y-6">
             <Card>
@@ -573,54 +573,52 @@ const Reserva = () => {
             </Card>
           </div>
 
-          {/* Timeline com altura fixa e scroll */}
+          {/* Timeline com altura flexível que acompanha o formulário */}
           <div className="lg:sticky lg:top-6">
-            <div className="h-[calc(100vh-200px)]">
-              <Card className="h-full flex flex-col">
-                <CardContent className="p-0 h-full flex flex-col">
-                  <EventTimeline
-                    selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
-                    events={mockEvents}
-                    selectedVenue={formData.venue}
-                    onTimeSlotClick={(time) => {
-                      if (!isEdit) {
-                        setFormData(prev => ({ ...prev, startTime: time }));
-                      }
-                    }}
-                    onEventEdit={(event) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        client: event.client,
-                        venue: event.venue,
-                        startTime: event.startTime,
-                        endTime: event.endTime,
-                        notes: (event as any).notes || event.sport || '',
-                        observations: (event as any).notes || event.sport || '',
-                        amount: '160'
-                      }));
-                      setIsEdit(true);
-                      setEditingEventId(event.id);
-                    }}
-                    editingEventId={editingEventId}
-                    onEventSelect={(event) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        client: event.client,
-                        venue: event.venue,
-                        startTime: event.startTime,
-                        endTime: event.endTime,
-                        notes: (event as any).notes || event.sport || '',
-                        observations: (event as any).notes || event.sport || '',
-                        amount: '160'
-                      }));
-                      setIsEdit(true);
-                      setEditingEventId(event.id);
-                    }}
-                    onCancelEdit={handleCancelEdit}
-                  />
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="flex flex-col">
+              <CardContent className="p-0 flex flex-col">
+                <EventTimeline
+                  selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
+                  events={mockEvents}
+                  selectedVenue={formData.venue}
+                  onTimeSlotClick={(time) => {
+                    if (!isEdit) {
+                      setFormData(prev => ({ ...prev, startTime: time }));
+                    }
+                  }}
+                  onEventEdit={(event) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      client: event.client,
+                      venue: event.venue,
+                      startTime: event.startTime,
+                      endTime: event.endTime,
+                      notes: (event as any).notes || event.sport || '',
+                      observations: (event as any).notes || event.sport || '',
+                      amount: '160'
+                    }));
+                    setIsEdit(true);
+                    setEditingEventId(event.id);
+                  }}
+                  editingEventId={editingEventId}
+                  onEventSelect={(event) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      client: event.client,
+                      venue: event.venue,
+                      startTime: event.startTime,
+                      endTime: event.endTime,
+                      notes: (event as any).notes || event.sport || '',
+                      observations: (event as any).notes || event.sport || '',
+                      amount: '160'
+                    }));
+                    setIsEdit(true);
+                    setEditingEventId(event.id);
+                  }}
+                  onCancelEdit={handleCancelEdit}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
