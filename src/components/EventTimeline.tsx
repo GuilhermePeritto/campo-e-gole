@@ -2,6 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, MapPin, User, Plus, X, CreditCard } from 'lucide-react';
+import { useVenueSettings } from '@/hooks/useVenueSettings';
 
 interface Event {
   id: number;
@@ -36,18 +37,17 @@ const EventTimeline = ({
   onCancelEdit
 }: EventTimelineProps) => {
   
+  const { generateTimeSlots, getVenueInterval } = useVenueSettings();
+  
+  // Gerar slots baseados no local selecionado
+  const timeSlots = generateTimeSlots(selectedVenue || 'all');
+  const interval = getVenueInterval(selectedVenue || 'all');
+  const slotHeight = 48; // altura em pixels por slot
+  
   // Filtrar eventos por local selecionado
   const filteredEvents = selectedVenue && selectedVenue !== 'all' 
     ? events.filter(event => event.venue === selectedVenue)
     : events;
-
-  // Gerar slots de 30 em 30 minutos (7h às 21h)
-  const timeSlots = Array.from({ length: 28 }, (_, i) => {
-    const totalMinutes = 7 * 60 + i * 30; // 7h + i*30min
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = totalMinutes % 60;
-    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-  });
 
   // Converter horário para minutos para cálculos
   const timeToMinutes = (time: string) => {
@@ -58,7 +58,7 @@ const EventTimeline = ({
   // Verificar se há espaço disponível em um slot
   const getAvailableSlot = (slotTime: string) => {
     const slotStart = timeToMinutes(slotTime);
-    const slotEnd = slotStart + 30; // 30 minutos depois
+    const slotEnd = slotStart + interval;
     
     // Verificar se há algum evento que conflita com este slot
     const hasConflict = filteredEvents.some(event => {
@@ -114,7 +114,7 @@ const EventTimeline = ({
               month: 'long' 
             })}
             {selectedVenue && selectedVenue !== 'all' && (
-              <span className="text-sm text-gray-600 ml-2">({selectedVenue})</span>
+              <span className="text-sm text-gray-600 ml-2">({selectedVenue}) - Intervalo: {interval}min</span>
             )}
           </h3>
         </div>
@@ -135,9 +135,10 @@ const EventTimeline = ({
             return (
               <div 
                 key={time} 
-                className={`border-b border-gray-100 h-12 flex items-center p-3 transition-colors relative ${
+                className={`border-b border-gray-100 flex items-center p-3 transition-colors relative ${
                   canClick ? 'cursor-pointer hover:bg-green-50' : ''
                 }`}
+                style={{ height: `${slotHeight}px` }}
                 onClick={() => canClick && handleTimeSlotClick(time)}
               >
                 <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
@@ -169,10 +170,10 @@ const EventTimeline = ({
             const endMinutes = timeToMinutes(event.endTime);
             const duration = endMinutes - startMinutes;
             
-            // Calcular posição baseada em slots de 30 minutos (7h = 0, 7:30 = 1, etc.)
+            // Calcular posição baseada nos slots dinâmicos
             const baseHour = 7 * 60; // 7h em minutos
-            const topOffset = ((startMinutes - baseHour) / 30) * 48; // 48px por slot de 30min
-            const height = (duration / 30) * 48; // altura proporcional à duração
+            const topOffset = ((startMinutes - baseHour) / interval) * slotHeight;
+            const height = (duration / interval) * slotHeight;
 
             const isCurrentlyEditing = editingEventId === event.id;
             const isDisabledEvent = isEditingMode && !isCurrentlyEditing;
@@ -203,14 +204,14 @@ const EventTimeline = ({
                 }}
                 onClick={() => !isDisabledEvent && handleEventClick(event)}
               >
-                <div className="p-3 h-full">
+                <div className="p-3 h-full overflow-hidden">
                   <div className="flex items-start justify-between h-full">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-1">
                         <User className="h-4 w-4 text-gray-600 flex-shrink-0" />
                         <span className="font-semibold text-sm truncate">{event.client}</span>
                       </div>
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-1">
                         <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
                         <span className="text-sm text-gray-600 truncate">{event.venue}</span>
                       </div>
@@ -218,10 +219,20 @@ const EventTimeline = ({
                         {event.startTime} - {event.endTime}
                       </div>
                       {event.sport && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-gray-500 mt-1 truncate">
                           {event.sport}
                         </div>
                       )}
+                      <div className="flex items-center gap-1 mt-1">
+                        <div className={`h-2 w-2 rounded-full ${
+                          event.status === 'confirmed' ? 'bg-green-500' :
+                          event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                        }`} />
+                        <span className="text-xs text-gray-500 capitalize">
+                          {event.status === 'confirmed' ? 'Confirmado' :
+                           event.status === 'pending' ? 'Pendente' : 'Cancelado'}
+                        </span>
+                      </div>
                     </div>
                     {isCurrentlyEditing && onCancelEdit && (
                       <Button

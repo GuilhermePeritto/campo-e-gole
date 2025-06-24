@@ -1,3 +1,4 @@
+
 import BaseFormPage from '@/components/BaseFormPage';
 import { TourStep } from '@/components/PageTour';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -7,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { MapPin, Palette } from 'lucide-react';
+import { MapPin, Palette, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -29,7 +30,9 @@ const Local = () => {
     hourlyRate: isEdit ? '80.00' : '',
     status: isEdit ? 'ativo' : 'ativo',
     description: isEdit ? 'Quadra com grama sintética e iluminação completa' : '',
-    characteristics: isEdit ? ['Grama sintética', 'Iluminação', 'Vestiário'] : []
+    characteristics: isEdit ? ['Grama sintética', 'Iluminação', 'Vestiário'] : [],
+    eventInterval: isEdit ? '30' : '30',
+    customInterval: isEdit ? '' : ''
   });
 
   const availableCharacteristics = [
@@ -47,6 +50,13 @@ const Local = () => {
     'Estacionamento',
     'Cobertura',
     'Climatização'
+  ];
+
+  const eventIntervalOptions = [
+    { value: '15', label: '15 minutos' },
+    { value: '30', label: '30 minutos' },
+    { value: '60', label: '1 hora' },
+    { value: 'custom', label: 'Personalizado' }
   ];
 
   const tourSteps: TourStep[] = [
@@ -97,7 +107,7 @@ const Local = () => {
     {
       id: 'info-basicas',
       title: 'Informações Básicas',
-      alwaysOpen: true, // This card will always be open
+      alwaysOpen: true,
       content: (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -248,6 +258,45 @@ const Local = () => {
       defaultOpen: false,
       content: (
         <div className="space-y-6">
+          <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-primary" />
+              <Label className="text-sm font-medium">Intervalo de Eventos</Label>
+            </div>
+            <div className="space-y-3">
+              <Select value={formData.eventInterval} onValueChange={(value) => handleInputChange('eventInterval', value)}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Selecione o intervalo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {eventIntervalOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formData.eventInterval === 'custom' && (
+                <div className="space-y-2">
+                  <Label htmlFor="customInterval" className="text-sm">Intervalo personalizado (minutos)</Label>
+                  <Input
+                    id="customInterval"
+                    type="number"
+                    min="5"
+                    max="240"
+                    value={formData.customInterval}
+                    onChange={(e) => handleInputChange('customInterval', e.target.value)}
+                    placeholder="Ex: 45"
+                    className="h-11"
+                  />
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Define o intervalo de tempo entre os horários disponíveis na timeline de reservas
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
             <div className="flex items-center gap-2">
               <Palette className="h-4 w-4 text-primary" />
