@@ -36,7 +36,7 @@ interface EventTimelineProps {
   editingEventId?: number | null;
   onEventSelect?: (event: Event) => void;
   onCancelEdit?: () => void;
-  onEventDelete?: (eventId: number) => void;
+  onDeleteEvent?: (eventId: number) => void;
 }
 
 const EventTimeline = ({ 
@@ -48,7 +48,7 @@ const EventTimeline = ({
   editingEventId,
   onEventSelect,
   onCancelEdit,
-  onEventDelete
+  onDeleteEvent
 }: EventTimelineProps) => {
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
@@ -135,8 +135,8 @@ const EventTimeline = ({
   };
 
   const confirmDelete = () => {
-    if (eventToDelete && onEventDelete) {
-      onEventDelete(eventToDelete);
+    if (eventToDelete && onDeleteEvent) {
+      onDeleteEvent(eventToDelete);
     }
     setDeleteDialogOpen(false);
     setEventToDelete(null);
