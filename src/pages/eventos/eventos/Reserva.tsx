@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
@@ -505,20 +504,32 @@ const Reserva = () => {
 
                 <div className="space-y-2">
                   <Label>Pagamento</Label>
-                  <RadioGroup 
-                    value={formData.paymentOption} 
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, paymentOption: value as 'now' | 'later' }))}
-                    className="flex gap-6"
-                  >
+                  <div className="flex gap-6">
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="now" id="pay-now" />
+                      <input
+                        type="radio"
+                        id="pay-now"
+                        name="payment"
+                        value="now"
+                        checked={formData.paymentOption === 'now'}
+                        onChange={(e) => setFormData(prev => ({ ...prev, paymentOption: e.target.value as 'now' | 'later' }))}
+                        className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                      />
                       <Label htmlFor="pay-now">Pagar agora</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="later" id="pay-later" />
+                      <input
+                        type="radio"
+                        id="pay-later"
+                        name="payment"
+                        value="later"
+                        checked={formData.paymentOption === 'later'}
+                        onChange={(e) => setFormData(prev => ({ ...prev, paymentOption: e.target.value as 'now' | 'later' }))}
+                        className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                      />
                       <Label htmlFor="pay-later">Pagar depois</Label>
                     </div>
-                  </RadioGroup>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
