@@ -130,9 +130,9 @@ const Reserva = () => {
   ];
 
   const locaisExemplo = [
-    { id: '1', label: 'Quadra A', subtitle: 'Futebol Society - R$ 80/h' },
-    { id: '2', label: 'Quadra B', subtitle: 'Basquete - R$ 60/h' },
-    { id: '3', label: 'Campo Principal', subtitle: 'Futebol - R$ 100/h' },
+    { id: '1', label: 'Quadra Principal', subtitle: 'Futebol Society - R$ 80/h' },
+    { id: '2', label: 'Quadra Coberta', subtitle: 'Basquete - R$ 60/h' },
+    { id: '3', label: 'Campo Externo', subtitle: 'Futebol - R$ 100/h' },
   ];
 
   const recurringOptions = [
@@ -143,25 +143,25 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
-  // Eventos mockados para a timeline
+  // Eventos mockados com horários coerentes aos intervalos dos locais
   const mockEvents = [
     {
       id: 1,
       client: 'João Silva',
-      venue: 'Quadra A',
+      venue: 'Quadra Principal', // 30min intervals
       startTime: '09:00',
-      endTime: '11:00',
+      endTime: '10:30',
       status: 'confirmed' as const,
       color: '#10b981',
-      sport: 'Futebol',
+      sport: 'Futebol Society',
       notes: 'Treino da equipe'
     },
     {
       id: 2,
       client: 'Maria Santos',
-      venue: 'Quadra B',
+      venue: 'Quadra Coberta', // 15min intervals
       startTime: '08:30',
-      endTime: '09:30',
+      endTime: '09:15',
       status: 'pending' as const,
       color: '#f59e0b',
       sport: 'Basquete',
@@ -170,7 +170,7 @@ const Reserva = () => {
     {
       id: 3,
       client: 'Pedro Costa',
-      venue: 'Campo Principal',
+      venue: 'Campo Externo', // 60min intervals
       startTime: '10:00',
       endTime: '12:00',
       status: 'confirmed' as const,
@@ -181,7 +181,7 @@ const Reserva = () => {
     {
       id: 4,
       client: 'Ana Paula',
-      venue: 'Quadra A',
+      venue: 'Quadra Principal', // 30min intervals
       startTime: '14:00',
       endTime: '16:00',
       status: 'confirmed' as const,
@@ -192,7 +192,7 @@ const Reserva = () => {
     {
       id: 5,
       client: 'Carlos Mendes',
-      venue: 'Campo Principal',
+      venue: 'Campo Externo', // 60min intervals
       startTime: '19:00',
       endTime: '21:00',
       status: 'confirmed' as const,
@@ -203,9 +203,9 @@ const Reserva = () => {
     {
       id: 6,
       client: 'Julia Rodrigues',
-      venue: 'Quadra B',
+      venue: 'Quadra Coberta', // 15min intervals
       startTime: '15:30',
-      endTime: '17:00',
+      endTime: '16:15',
       status: 'pending' as const,
       color: '#f59e0b',
       sport: 'Tênis',
@@ -407,36 +407,33 @@ const Reserva = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-160px)]">
           {/* Formulário */}
           <div className="space-y-6">
-            {/* Card de informação de edição */}
-            {isEdit && (
-              <Card className="bg-module-events/10 border-module-events/30">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Edit className="h-4 w-4 text-module-events/70" />
-                      <span className="text-sm font-medium text-module-events/70">
-                        Evento em edição - Modifique os campos necessários
-                      </span>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCancelEdit}
-                      className="h-8 px-3 text-xs"
-                    >
-                      <X className="h-3 w-3 mr-1" />
-                      Cancelar
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
             <Card>
               <CardHeader>
                 <CardTitle>
                   {isEdit ? 'Editar Reserva' : 'Nova Reserva'}
                 </CardTitle>
+                {/* Card de informação de edição movido para dentro do formulário */}
+                {isEdit && (
+                  <div className="bg-module-events/10 border border-module-events/30 rounded-lg p-4 mt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Edit className="h-4 w-4 text-module-events/70" />
+                        <span className="text-sm font-medium text-module-events/70">
+                          Evento em edição - Modifique os campos necessários
+                        </span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCancelEdit}
+                        className="h-8 px-3 text-xs"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex gap-2">
@@ -576,52 +573,54 @@ const Reserva = () => {
             </Card>
           </div>
 
-          {/* Timeline */}
+          {/* Timeline com altura fixa e scroll */}
           <div className="lg:sticky lg:top-6">
-            <Card className="h-full">
-              <CardContent className="p-0 h-full">
-                <EventTimeline
-                  selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
-                  events={mockEvents}
-                  selectedVenue={formData.venue}
-                  onTimeSlotClick={(time) => {
-                    if (!isEdit) {
-                      setFormData(prev => ({ ...prev, startTime: time }));
-                    }
-                  }}
-                  onEventEdit={(event) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      client: event.client,
-                      venue: event.venue,
-                      startTime: event.startTime,
-                      endTime: event.endTime,
-                      notes: (event as any).notes || event.sport || '',
-                      observations: (event as any).notes || event.sport || '',
-                      amount: '160'
-                    }));
-                    setIsEdit(true);
-                    setEditingEventId(event.id);
-                  }}
-                  editingEventId={editingEventId}
-                  onEventSelect={(event) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      client: event.client,
-                      venue: event.venue,
-                      startTime: event.startTime,
-                      endTime: event.endTime,
-                      notes: (event as any).notes || event.sport || '',
-                      observations: (event as any).notes || event.sport || '',
-                      amount: '160'
-                    }));
-                    setIsEdit(true);
-                    setEditingEventId(event.id);
-                  }}
-                  onCancelEdit={handleCancelEdit}
-                />
-              </CardContent>
-            </Card>
+            <div className="h-[calc(100vh-200px)]">
+              <Card className="h-full flex flex-col">
+                <CardContent className="p-0 h-full flex flex-col">
+                  <EventTimeline
+                    selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
+                    events={mockEvents}
+                    selectedVenue={formData.venue}
+                    onTimeSlotClick={(time) => {
+                      if (!isEdit) {
+                        setFormData(prev => ({ ...prev, startTime: time }));
+                      }
+                    }}
+                    onEventEdit={(event) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        client: event.client,
+                        venue: event.venue,
+                        startTime: event.startTime,
+                        endTime: event.endTime,
+                        notes: (event as any).notes || event.sport || '',
+                        observations: (event as any).notes || event.sport || '',
+                        amount: '160'
+                      }));
+                      setIsEdit(true);
+                      setEditingEventId(event.id);
+                    }}
+                    editingEventId={editingEventId}
+                    onEventSelect={(event) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        client: event.client,
+                        venue: event.venue,
+                        startTime: event.startTime,
+                        endTime: event.endTime,
+                        notes: (event as any).notes || event.sport || '',
+                        observations: (event as any).notes || event.sport || '',
+                        amount: '160'
+                      }));
+                      setIsEdit(true);
+                      setEditingEventId(event.id);
+                    }}
+                    onCancelEdit={handleCancelEdit}
+                  />
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </main>

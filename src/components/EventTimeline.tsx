@@ -37,11 +37,18 @@ const EventTimeline = ({
   onCancelEdit
 }: EventTimelineProps) => {
   
-  const { generateTimeSlots, getVenueInterval } = useVenueSettings();
+  const { generateTimeSlots, getVenueInterval, venueSettings } = useVenueSettings();
+  
+  // Mapear nome do local para ID para uso com useVenueSettings
+  const getVenueIdByName = (venueName: string) => {
+    const venue = venueSettings.find(v => v.name === venueName);
+    return venue?.id || 'all';
+  };
   
   // Gerar slots baseados no local selecionado
-  const timeSlots = generateTimeSlots(selectedVenue || 'all');
-  const interval = getVenueInterval(selectedVenue || 'all');
+  const venueId = selectedVenue ? getVenueIdByName(selectedVenue) : 'all';
+  const timeSlots = generateTimeSlots(venueId);
+  const interval = getVenueInterval(venueId);
   const slotHeight = 48; // altura em pixels por slot
   
   // Filtrar eventos por local selecionado
@@ -170,10 +177,12 @@ const EventTimeline = ({
             const endMinutes = timeToMinutes(event.endTime);
             const duration = endMinutes - startMinutes;
             
-            // Calcular posição baseada nos slots dinâmicos
+            // Calcular posição baseada nos slots dinâmicos do local específico
+            const eventVenueId = getVenueIdByName(event.venue);
+            const eventInterval = getVenueInterval(eventVenueId);
             const baseHour = 7 * 60; // 7h em minutos
-            const topOffset = ((startMinutes - baseHour) / interval) * slotHeight;
-            const height = (duration / interval) * slotHeight;
+            const topOffset = ((startMinutes - baseHour) / eventInterval) * slotHeight;
+            const height = (duration / eventInterval) * slotHeight;
 
             const isCurrentlyEditing = editingEventId === event.id;
             const isDisabledEvent = isEditingMode && !isCurrentlyEditing;
