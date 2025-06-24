@@ -80,7 +80,8 @@ const CalendarDayView = ({
             )}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 flex-1">
+        <CardContent className="p-0 flex-1 relative">
+          {/* Time slots grid */}
           <div className="relative">
             {timeSlots.map((time, index) => {
               const isAvailable = getSlotAvailability(time);
@@ -152,9 +153,13 @@ const CalendarDayView = ({
                           {event.startTime} - {event.endTime}
                         </div>
                         <div className="flex items-center gap-1 mt-1">
-                          <div className={`h-2 w-2 rounded-full bg-green-500`} />
+                          <div className={`h-2 w-2 rounded-full ${
+                            event.status === 'confirmed' ? 'bg-green-500' :
+                            event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                          }`} />
                           <span className="text-xs text-gray-500">
-                            Confirmado
+                            {event.status === 'confirmed' ? 'Confirmado' :
+                             event.status === 'pending' ? 'Pendente' : 'Cancelado'}
                           </span>
                         </div>
                       </div>
