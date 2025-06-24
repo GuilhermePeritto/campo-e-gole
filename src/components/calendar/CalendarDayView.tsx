@@ -1,164 +1,138 @@
 
-import { Reservation } from '@/hooks/useCalendar';
-import { Clock, MapPin, User, Calendar, Plus } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Clock, Plus, User, MapPin } from 'lucide-react';
+import { Reservation, Venue } from '@/hooks/useCalendar';
 
 interface CalendarDayViewProps {
   currentDate: Date;
-  mockReservations: Reservation[];
   selectedVenue: string;
+  mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
   handleEventClick: (event: Reservation) => void;
 }
 
 const CalendarDayView = ({
   currentDate,
-  mockReservations,
   selectedVenue,
+  mockReservations,
   handleDateClick,
   handleEventClick
 }: CalendarDayViewProps) => {
-  // Slots de 1 em 1 hora (7h às 21h)
+  
+  // Filtrar reservas por local e data selecionados
+  const dayStr = currentDate.toISOString().split('T')[0];
+  const filteredReservations = mockReservations.filter(reservation => {
+    const reservationDate = new Date(reservation.start).toISOString().split('T')[0];
+    const matchesDate = reservationDate === dayStr;
+    const matchesVenue = selectedVenue === 'all' || reservation.venue === selectedVenue;
+    return matchesDate && matchesVenue;
+  });
+
+  // Gerar slots de 1 em 1 hora (7h às 21h)
   const timeSlots = Array.from({ length: 15 }, (_, i) => {
     const hour = i + 7;
     return `${hour.toString().padStart(2, '0')}:00`;
   });
 
-  // Filtrar reservas por data e local selecionado
-  const filteredReservations = mockReservations.filter(r => {
-    const matchesDate = r.day.toDateString() === currentDate.toDateString();
-    const matchesVenue = selectedVenue === 'all' || r.venue === selectedVenue;
-    return matchesDate && matchesVenue;
-  });
-
-  // Converter horário para minutos
+  // Converter horário para minutos para cálculos
   const timeToMinutes = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
   };
 
-  // Verificar disponibilidade para um slot de hora
-  const getAvailabilityForSlot = (slotTime: string) => {
+  // Verificar disponibilidade em um slot específico
+  const getSlotAvailability = (slotTime: string) => {
     const slotStart = timeToMinutes(slotTime);
-    const slotEnd = slotStart + 60;
+    const slotEnd = slotStart + 60; // 1 hora depois
     
-    const overlappingReservations = filteredReservations.filter(r => {
-      const eventStart = timeToMinutes(r.startTime);
-      const eventEnd = timeToMinutes(r.endTime);
+    // Verificar eventos que se sobrepõem
+    const overlappingEvents = filteredReservations.filter(event => {
+      const eventStart = timeToMinutes(event.startTime);
+      const eventEnd = timeToMinutes(event.endTime);
       
       return !(eventEnd <= slotStart || eventStart >= slotEnd);
     });
 
-    if (overlappingReservations.length === 0) {
-      return { available: true, time: slotTime };
+    if (overlappingEvents.length === 0) {
+      return { available: true, availableTime: slotTime };
     }
 
-    // Verificar se há espaços livres no slot
-    const sortedEvents = overlappingReservations.sort((a, b) => 
+    // Verificar espaços parciais disponíveis
+    const sortedEvents = overlappingEvents.sort((a, b) => 
       timeToMinutes(a.startTime) - timeToMinutes(b.startTime)
     );
 
+    // Espaço antes do primeiro evento
     const firstEventStart = timeToMinutes(sortedEvents[0].startTime);
     if (firstEventStart > slotStart) {
-      return { available: true, time: slotTime };
+      const availableMinutes = firstEventStart - slotStart;
+      if (availableMinutes >= 30) { // Mínimo 30 minutos
+        return { available: true, availableTime: slotTime, endTime: sortedEvents[0].startTime };
+      }
     }
 
+    // Espaço após o último evento
     const lastEventEnd = timeToMinutes(sortedEvents[sortedEvents.length - 1].endTime);
     if (lastEventEnd < slotEnd) {
-      const availableHour = Math.floor(lastEventEnd / 60);
-      const availableMinute = lastEventEnd % 60;
-      const availableTime = `${availableHour.toString().padStart(2, '0')}:${availableMinute.toString().padStart(2, '0')}`;
-      return { available: true, time: availableTime };
+      const availableMinutes = slotEnd - lastEventEnd;
+      if (availableMinutes >= 30) { // Mínimo 30 minutos
+        const startHour = Math.floor(lastEventEnd / 60);
+        const startMinute = lastEventEnd % 60;
+        const startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
+        return { available: true, availableTime: startTime };
+      }
     }
 
-    return { available: false, time: null };
+    return { available: false };
   };
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'default';
-      case 'pending': return 'secondary';
-      case 'cancelled': return 'destructive';
-      default: return 'outline';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'Confirmado';
-      case 'pending': return 'Pendente';
-      case 'cancelled': return 'Cancelado';
-      default: return status;
-    }
+  const handleNewReservation = (time: string) => {
+    handleDateClick(currentDate);
   };
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Header */}
-      <div className="p-4 border-b bg-muted/30">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              {currentDate.toLocaleDateString('pt-BR', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
-            </h3>
-            {selectedVenue !== 'all' && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Exibindo apenas: {selectedVenue}
-              </p>
-            )}
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {filteredReservations.length} reserva(s)
-            </p>
-            <p className="text-xs text-gray-500">
-              {filteredReservations.filter(r => r.status === 'confirmed').length} confirmada(s)
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Timeline */}
-      <div className="flex-1 overflow-y-auto relative">
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Clock className="h-5 w-5" />
+          {currentDate.toLocaleDateString('pt-BR', { 
+            weekday: 'long', 
+            day: '2-digit', 
+            month: 'long',
+            year: 'numeric'
+          })}
+          {selectedVenue !== 'all' && (
+            <span className="text-sm text-gray-600 ml-2">({selectedVenue})</span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
         <div className="relative">
           {timeSlots.map((time, index) => {
-            const availability = getAvailabilityForSlot(time);
+            const availability = getSlotAvailability(time);
             
             return (
-              <div key={time} className="flex border-b border-gray-100 relative" style={{ minHeight: '80px' }}>
-                {/* Coluna de horário */}
-                <div className="w-20 p-4 text-sm font-medium text-gray-500 text-right border-r border-gray-200 bg-gray-50/50 flex items-start">
-                  <div className="w-full">
-                    <div className="font-semibold">{time}</div>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {index + 7}h
-                    </div>
-                  </div>
+              <div 
+                key={time} 
+                className="border-b border-gray-100 h-16 flex items-center p-3 relative"
+              >
+                <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
+                  {time}
                 </div>
-
-                {/* Coluna de conteúdo */}
-                <div className="flex-1 relative">
+                
+                <div className="flex-1 ml-4 relative">
                   {availability.available && (
-                    <div 
-                      className="absolute inset-0 flex items-center p-4 cursor-pointer hover:bg-green-50 transition-colors group z-20"
-                      onClick={() => handleDateClick(currentDate)}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleNewReservation(availability.availableTime)}
+                      className="text-green-600 border-green-200 hover:bg-green-50"
                     >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-green-600 border-green-300 hover:bg-green-100 group-hover:scale-105 transition-transform"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Criar reserva ({availability.time})
-                      </Button>
-                    </div>
+                      <Plus className="h-4 w-4 mr-1" />
+                      Disponível - {availability.availableTime}
+                      {availability.endTime && ` até ${availability.endTime}`}
+                    </Button>
                   )}
                 </div>
               </div>
@@ -167,85 +141,50 @@ const CalendarDayView = ({
         </div>
 
         {/* Events overlay */}
-        <div className="absolute top-0 left-20 right-0">
-          {filteredReservations.map((reservation) => {
-            const startMinutes = timeToMinutes(reservation.startTime);
-            const endMinutes = timeToMinutes(reservation.endTime);
+        <div className="absolute top-0 left-0 right-0 pointer-events-none">
+          {filteredReservations.map((event) => {
+            const startMinutes = timeToMinutes(event.startTime);
+            const endMinutes = timeToMinutes(event.endTime);
             const duration = endMinutes - startMinutes;
             
-            // Posição baseada no horário (7h = 0)
-            const baseMinutes = 7 * 60;
-            const topOffset = ((startMinutes - baseMinutes) / 60) * 80; // 80px por hora
-            const height = (duration / 60) * 80;
+            // Calcular posição baseada em slots de 1 hora
+            const baseHour = 7 * 60; // 7h em minutos
+            const topOffset = ((startMinutes - baseHour) / 60) * 64; // 64px por hora
+            const height = (duration / 60) * 64; // altura proporcional
 
             return (
               <div
-                key={reservation.id}
-                className="absolute left-4 right-4 rounded-lg shadow-sm border cursor-pointer hover:shadow-md transition-all z-10"
+                key={event.id}
+                className="absolute left-20 right-4 rounded-lg p-2 shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all"
                 style={{
-                  top: `${topOffset}px`,
+                  top: `${topOffset + 64}px`, // +64 para compensar header
                   height: `${Math.max(height - 4, 32)}px`,
-                  backgroundColor: reservation.color + '15',
-                  borderLeftColor: reservation.color,
-                  borderLeftWidth: '4px'
+                  backgroundColor: event.color + '20',
+                  borderLeftColor: event.color
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEventClick(reservation);
-                }}
+                onClick={() => handleEventClick(event)}
               >
-                <div className="p-3 h-full flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <User className="h-4 w-4 text-gray-600" />
-                    <span className="font-semibold text-gray-900 truncate">
-                      {reservation.client}
-                    </span>
-                    <Badge 
-                      variant={getStatusBadgeVariant(reservation.status)}
-                      className="text-xs ml-auto"
-                    >
-                      {getStatusLabel(reservation.status)}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                    <MapPin className="h-3 w-3" />
-                    <span>{reservation.venue}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Clock className="h-3 w-3" />
-                    <span>{reservation.startTime} - {reservation.endTime}</span>
+                <div className="flex items-start justify-between h-full">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1 mb-1">
+                      <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
+                      <span className="font-medium text-xs truncate">{event.client}</span>
+                    </div>
+                    <div className="flex items-center gap-1 mb-1">
+                      <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
+                      <span className="text-xs text-gray-600 truncate">{event.venue}</span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {event.startTime} - {event.endTime}
+                    </div>
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
-
-      {/* Footer com resumo */}
-      {filteredReservations.length > 0 && (
-        <div className="p-4 border-t bg-muted/20">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">
-              Resumo do dia
-            </span>
-            <div className="flex gap-4">
-              <span className="text-green-600">
-                {filteredReservations.filter(r => r.status === 'confirmed').length} confirmadas
-              </span>
-              <span className="text-yellow-600">
-                {filteredReservations.filter(r => r.status === 'pending').length} pendentes
-              </span>
-              <span className="text-red-600">
-                {filteredReservations.filter(r => r.status === 'cancelled').length} canceladas
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

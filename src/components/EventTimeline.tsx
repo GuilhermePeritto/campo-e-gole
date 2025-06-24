@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, MapPin, User, X } from 'lucide-react';
+import { Clock, MapPin, User, Plus, X } from 'lucide-react';
 
 interface Event {
   id: number;
@@ -53,44 +53,59 @@ const EventTimeline = ({
     return hours * 60 + minutes;
   };
 
-  // Verificar se um horário específico tem espaço disponível
-  const getAvailableTimeForSlot = (slotTime: string) => {
+  // Verificar disponibilidade em um slot específico
+  const getSlotAvailability = (slotTime: string) => {
     const slotStart = timeToMinutes(slotTime);
     const slotEnd = slotStart + 60; // 1 hora depois
     
-    // Verificar se há eventos que se sobrepõem a este slot
+    // Verificar eventos que se sobrepõem
     const overlappingEvents = filteredEvents.filter(event => {
       const eventStart = timeToMinutes(event.startTime);
       const eventEnd = timeToMinutes(event.endTime);
       
-      // Verifica se há sobreposição
       return !(eventEnd <= slotStart || eventStart >= slotEnd);
     });
 
     if (overlappingEvents.length === 0) {
-      return slotTime; // Horário totalmente livre
+      return { available: true, availableTime: slotTime };
     }
 
-    // Verificar se há espaços antes ou depois dos eventos
+    // Verificar espaços parciais disponíveis
     const sortedEvents = overlappingEvents.sort((a, b) => 
       timeToMinutes(a.startTime) - timeToMinutes(b.startTime)
     );
 
-    // Verificar espaço antes do primeiro evento
+    // Espaço antes do primeiro evento
     const firstEventStart = timeToMinutes(sortedEvents[0].startTime);
     if (firstEventStart > slotStart) {
-      return slotTime; // Há espaço no início do slot
+      const availableMinutes = firstEventStart - slotStart;
+      if (availableMinutes >= 30) { // Mínimo 30 minutos
+        return { 
+          available: true, 
+          availableTime: slotTime, 
+          endTime: sortedEvents[0].startTime,
+          partial: true 
+        };
+      }
     }
 
-    // Verificar espaço após o último evento
+    // Espaço após o último evento
     const lastEventEnd = timeToMinutes(sortedEvents[sortedEvents.length - 1].endTime);
     if (lastEventEnd < slotEnd) {
-      const availableHour = Math.floor(lastEventEnd / 60);
-      const availableMinute = lastEventEnd % 60;
-      return `${availableHour.toString().padStart(2, '0')}:${availableMinute.toString().padStart(2, '0')}`;
+      const availableMinutes = slotEnd - lastEventEnd;
+      if (availableMinutes >= 30) { // Mínimo 30 minutos
+        const startHour = Math.floor(lastEventEnd / 60);
+        const startMinute = lastEventEnd % 60;
+        const startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
+        return { 
+          available: true, 
+          availableTime: startTime,
+          partial: true 
+        };
+      }
     }
 
-    return null; // Não há espaço disponível
+    return { available: false };
   };
 
   const getStatusColor = (status: string) => {
@@ -112,7 +127,6 @@ const EventTimeline = ({
   };
 
   const isEditingMode = editingEventId !== null;
-  const isDisabled = (event: Event) => isEditingMode && event.id !== editingEventId;
 
   return (
     <div className="flex flex-col h-full">
@@ -129,21 +143,10 @@ const EventTimeline = ({
               <span className="text-sm text-gray-600 ml-2">({selectedVenue})</span>
             )}
           </h3>
-          {isEditingMode && onCancelEdit && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onCancelEdit}
-              className="flex items-center gap-2"
-            >
-              <X className="h-4 w-4" />
-              Cancelar Edição
-            </Button>
-          )}
         </div>
         {isEditingMode && (
           <div className="mt-2 text-sm p-2 rounded text-module-events/100 bg-module-events/10">
-            Modo de edição ativo. Clique em Cancelar para sair ou selecione outro evento.
+            Modo de edição ativo. Clique no botão cancelar no evento para sair ou selecione outro evento.
           </div>
         )}
       </div>
@@ -152,35 +155,36 @@ const EventTimeline = ({
         {/* Time slots grid */}
         <div className="relative">
           {timeSlots.map((time, index) => {
-            const availableTime = getAvailableTimeForSlot(time);
-            const canClickTimeSlot = !isEditingMode && availableTime !== null;
+            const availability = getSlotAvailability(time);
+            const canClickTimeSlot = !isEditingMode && availability.available;
             
             return (
               <div 
                 key={time} 
-                className={`border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative ${
-                  canClickTimeSlot 
-                    ? 'hover:bg-green-50 cursor-pointer' 
-                    : isEditingMode 
-                      ? 'bg-gray-100 opacity-50'
-                      : 'bg-gray-50'
-                }`}
-                onClick={() => canClickTimeSlot && onTimeSlotClick?.(availableTime)}
+                className="border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative"
               >
                 <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
                   {time}
                 </div>
                 
                 <div className="flex-1 ml-4 relative">
-                  {canClickTimeSlot ? (
-                    <div className="text-sm text-green-600 font-medium">
-                      ✓ Disponível - Clique para selecionar ({availableTime})
-                    </div>
-                  ) : isEditingMode && availableTime ? (
+                  {canClickTimeSlot && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onTimeSlotClick?.(availability.availableTime)}
+                      className="text-green-600 border-green-200 hover:bg-green-50"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Disponível - {availability.availableTime}
+                      {availability.endTime && ` até ${availability.endTime}`}
+                    </Button>
+                  )}
+                  {isEditingMode && availability.available && (
                     <div className="text-sm text-gray-400 font-medium">
                       Disponível (modo edição ativo)
                     </div>
-                  ) : null}
+                  )}
                 </div>
               </div>
             );
@@ -200,7 +204,7 @@ const EventTimeline = ({
             const height = (duration / 60) * 64; // altura proporcional à duração
 
             const isCurrentlyEditing = editingEventId === event.id;
-            const isDisabledEvent = isDisabled(event);
+            const isDisabledEvent = isEditingMode && !isCurrentlyEditing;
 
             return (
               <div
@@ -233,11 +237,6 @@ const EventTimeline = ({
                     <div className="flex items-center gap-1 mb-1">
                       <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
                       <span className="font-medium text-xs truncate">{event.client}</span>
-                      {isCurrentlyEditing && (
-                        <span className="text-xs bg-module-events/10 text-module-events/70 px-1 py-0.5 rounded">
-                          Editando
-                        </span>
-                      )}
                     </div>
                     <div className="flex items-center gap-1 mb-1">
                       <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
@@ -247,6 +246,19 @@ const EventTimeline = ({
                       {event.startTime} - {event.endTime}
                     </div>
                   </div>
+                  {isCurrentlyEditing && onCancelEdit && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onCancelEdit();
+                      }}
+                      className="ml-2 h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
               </div>
             );

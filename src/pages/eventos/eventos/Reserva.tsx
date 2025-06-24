@@ -31,6 +31,7 @@ interface ReservationFormData {
   customRecurringDays: string;
   hourlyRate: number;
   totalHours: number;
+  paymentOption: 'now' | 'later';
 }
 
 const Reserva = () => {
@@ -55,7 +56,8 @@ const Reserva = () => {
     recurringType: '',
     customRecurringDays: '',
     hourlyRate: 80,
-    totalHours: 0
+    totalHours: 0,
+    paymentOption: 'later'
   });
 
   // Detectar se é edição baseado no ID na URL
@@ -301,6 +303,8 @@ const Reserva = () => {
   };
 
   const handleNewClient = () => {
+    // Armazena a URL atual para retornar após cadastro
+    sessionStorage.setItem('returnUrl', window.location.pathname + window.location.search);
     navigate('/eventos/clientes/novo');
   };
 
@@ -365,7 +369,8 @@ const Reserva = () => {
         recurringType: '',
         customRecurringDays: '',
         hourlyRate: 80,
-        totalHours: 0
+        totalHours: 0,
+        paymentOption: 'later'
       });
     }
 
@@ -375,11 +380,7 @@ const Reserva = () => {
   };
 
   const handleCancel = () => {
-    if (isEdit) {
-      handleCancelEdit();
-    } else {
-      navigate('/eventos/agenda');
-    }
+    navigate('/eventos/agenda');
   };
 
   // Filter events by selected date
@@ -406,38 +407,68 @@ const Reserva = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-160px)]">
           {/* Formulário */}
           <div className="space-y-6">
+            {/* Card de informação de edição */}
+            {isEdit && (
+              <Card className="bg-module-events/10 border-module-events/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Edit className="h-4 w-4 text-module-events/70" />
+                      <span className="text-sm font-medium text-module-events/70">
+                        Evento em edição - Modifique os campos necessários
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      className="h-8 px-3 text-xs"
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      Cancelar
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader>
                 <CardTitle>
                   {isEdit ? 'Editar Reserva' : 'Nova Reserva'}
                 </CardTitle>
-                {isEdit && (
-                  <Button
-                    variant="outline"
-                    onClick={handleCancelEdit}
-                    className="flex items-center gap-2"
-                  >
-                    <X className="h-4 w-4" />
-                    Cancelar Edição
-                  </Button>
-                )}
               </CardHeader>
               <CardContent className="space-y-4">
-                <CampoBusca
-                  id="client"
-                  label="Cliente"
-                  value={formData.client}
-                  onChange={(value) => setFormData(prev => ({ ...prev, client: value }))}
-                  items={clientesExemplo}
-                  placeholder="Digite o nome do cliente..."
-                  required
-                />
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <CampoBusca
+                      id="client"
+                      label="Cliente"
+                      value={formData.client}
+                      onChange={handleClientChange}
+                      items={clientesExemplo}
+                      placeholder="Digite o nome do cliente..."
+                      required
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleNewClient}
+                      className="h-11 px-3"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
 
                 <CampoBusca
                   id="venue"
                   label="Local"
                   value={formData.venue}
-                  onChange={(value) => setFormData(prev => ({ ...prev, venue: value }))}
+                  onChange={handleVenueChange}
                   items={locaisExemplo}
                   placeholder="Selecione o local..."
                   required
@@ -467,6 +498,24 @@ const Reserva = () => {
                     onChange={(time) => setFormData(prev => ({ ...prev, endTime: time }))}
                     required
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Pagamento</Label>
+                  <RadioGroup 
+                    value={formData.paymentOption} 
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, paymentOption: value as 'now' | 'later' }))}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="now" id="pay-now" />
+                      <Label htmlFor="pay-now">Pagar agora</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="later" id="pay-later" />
+                      <Label htmlFor="pay-later">Pagar depois</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="space-y-2">
@@ -510,15 +559,13 @@ const Reserva = () => {
                   >
                     {isEdit ? 'Atualizar' : 'Salvar'} Reserva
                   </Button>
-                  {isEdit && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleCancelEdit}
-                    >
-                      Cancelar
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCancel}
+                  >
+                    Cancelar
+                  </Button>
                 </div>
               </CardContent>
             </Card>
