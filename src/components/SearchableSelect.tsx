@@ -35,7 +35,7 @@ const SearchableSelect = ({
 
   const selectedOption = options.find(option => option.id === value);
   
-  // Sempre mostrar todas as opções, independente se já tem valor selecionado
+  // Sempre mostrar todas as opções filtradas pela busca
   const filteredOptions = options.filter(option =>
     option.label.toLowerCase().includes(searchValue.toLowerCase()) ||
     (option.subtitle && option.subtitle.toLowerCase().includes(searchValue.toLowerCase()))
@@ -52,8 +52,16 @@ const SearchableSelect = ({
     onValueChange("");
   };
 
+  // Limpar busca quando abrir
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      setSearchValue("");
+    }
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -65,9 +73,9 @@ const SearchableSelect = ({
           <div className="flex-1 text-left">
             {selectedOption ? (
               <div>
-                <div className="font-medium">{selectedOption.label}</div>
+                <div className="text-sm">{selectedOption.label}</div>
                 {selectedOption.subtitle && (
-                  <div className="text-sm text-gray-500">{selectedOption.subtitle}</div>
+                  <div className="text-xs text-gray-500">{selectedOption.subtitle}</div>
                 )}
               </div>
             ) : (
@@ -109,9 +117,9 @@ const SearchableSelect = ({
                     )}
                   />
                   <div className="flex-1">
-                    <div className="font-medium">{option.label}</div>
+                    <div className="text-sm">{option.label}</div>
                     {option.subtitle && (
-                      <div className="text-sm text-gray-500">{option.subtitle}</div>
+                      <div className="text-xs text-gray-500">{option.subtitle}</div>
                     )}
                   </div>
                 </CommandItem>

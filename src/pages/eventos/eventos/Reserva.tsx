@@ -63,7 +63,7 @@ const Reserva = () => {
   // Hooks de dados
   const { getClientesForSearch, getClienteByClientId } = useClientes();
   const { locais, getLocalByVenueId } = useLocais();
-  const { getReservaById, createReserva, updateReserva } = useReservas();
+  const { getReservaById, createReserva, updateReserva, getReservasByDate } = useReservas();
 
   // Dados usando hooks
   const clientesExemplo = getClientesForSearch();
@@ -87,8 +87,8 @@ const Reserva = () => {
         const local = getLocalByVenueId(reserva.venueId);
         
         const mockData = {
-          client: cliente?.label || reserva.client,
-          venue: local?.label || reserva.venue,
+          client: cliente?.id || reserva.clientId,
+          venue: local?.id || reserva.venueId,
           date: new Date(reserva.date),
           startTime: reserva.startTime,
           endTime: reserva.endTime,
@@ -172,6 +172,62 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
+  // Obter horários ocupados para o local e data selecionados
+  const getOccupiedTimes = () => {
+    if (!formData.venue || !formData.date) return [];
+    
+    const selectedDateStr = formData.date.toISOString().split('T')[0];
+    const reservationsForDate = getReservasByDate(selectedDateStr);
+    const selectedVenue = locais.find(l => l.id === formData.venue);
+    
+    if (!selectedVenue) return [];
+    
+    const venueReservations = reservationsForDate.filter(r => r.venueId === selectedVenue.id);
+    
+    // Se estamos editando, excluir a reserva atual dos ocupados
+    const filteredReservations = isEdit 
+      ? venueReservations.filter(r => r.id !== parseInt(id || '0'))
+      : venueReservations;
+    
+    const occupiedTimes = [];
+    
+    for (const reservation of filteredReservations) {
+      const startMinutes = timeToMinutes(reservation.startTime);
+      const endMinutes = timeToMinutes(reservation.endTime);
+      
+      for (let minutes = startMinutes; minutes < endMinutes; minutes += selectedVenue.interval) {
+        const hour = Math.floor(minutes / 60);
+        const minute = minutes % 60;
+        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        occupiedTimes.push(timeString);
+      }
+    }
+    
+    return occupiedTimes;
+  };
+
+  const timeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Obter configurações do local selecionado
+  const getSelectedVenueConfig = () => {
+    const selectedVenue = locais.find(l => l.id === formData.venue);
+    return selectedVenue ? {
+      interval: selectedVenue.interval,
+      minTime: "07:00", // horário de abertura
+      maxTime: "21:00"  // horário de fechamento
+    } : {
+      interval: 30,
+      minTime: "07:00",
+      maxTime: "21:00"
+    };
+  };
+
+  const venueConfig = getSelectedVenueConfig();
+  const occupiedTimes = getOccupiedTimes();
+
   // Eventos mockados usando hook
   const { getReservasByDate } = useReservas();
   const selectedDateStr = formData.date ? formData.date.toISOString().split('T')[0] : '';
@@ -226,8 +282,8 @@ const Reserva = () => {
     if (isEdit && id) {
       // Atualizar reserva existente
       const updateData = {
-        client: formData.client,
-        venue: formData.venue,
+        clientId: formData.client,
+        venueId: formData.venue,
         date: formData.date?.toISOString().split('T')[0] || '',
         startTime: formData.startTime,
         endTime: formData.endTime,
@@ -242,15 +298,15 @@ const Reserva = () => {
       const local = getLocalByVenueId(formData.venue);
       
       const newReservaData = {
-        client: formData.client,
-        clientId: cliente?.id || '1',
-        venue: formData.venue,
-        venueId: local?.id || '1',
+        client: cliente?.label || formData.client,
+        clientId: formData.client,
+        venue: local?.label || formData.venue,
+        venueId: formData.venue,
         date: formData.date?.toISOString().split('T')[0] || '',
         startTime: formData.startTime,
         endTime: formData.endTime,
         status: 'confirmed' as const,
-        color: local?.status === 'active' ? '#10b981' : '#f59e0b',
+        color: local?.color || '#10b981',
         sport: '',
         notes: formData.observations,
         amount: parseFloat(formData.amount) || totalValue
@@ -394,6 +450,10 @@ const Reserva = () => {
                     label="Início"
                     value={formData.startTime}
                     onChange={(time) => setFormData(prev => ({ ...prev, startTime: time }))}
+                    interval={venueConfig.interval}
+                    minTime={venueConfig.minTime}
+                    maxTime={venueConfig.maxTime}
+                    occupiedTimes={occupiedTimes}
                     required
                   />
 
@@ -402,6 +462,10 @@ const Reserva = () => {
                     label="Término"
                     value={formData.endTime}
                     onChange={(time) => setFormData(prev => ({ ...prev, endTime: time }))}
+                    interval={venueConfig.interval}
+                    minTime={venueConfig.minTime}
+                    maxTime={venueConfig.maxTime}
+                    occupiedTimes={occupiedTimes}
                     required
                   />
                 </div>
@@ -415,6 +479,57 @@ const Reserva = () => {
                     placeholder="Observações sobre a reserva..."
                     rows={3}
                   />
+                </div>
+
+                {/* Campo de evento recorrente */}
+                <div className="space-y-4 p-4 border rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="recurring"
+                      checked={formData.recurring}
+                      onChange={(e) => setFormData(prev => ({ ...prev, recurring: e.target.checked }))}
+                      className="rounded"
+                    />
+                    <Label htmlFor="recurring" className="text-sm font-medium">
+                      Evento recorrente
+                    </Label>
+                  </div>
+                  
+                  {formData.recurring && (
+                    <div className="space-y-3">
+                      <div>
+                        <Label htmlFor="recurringType" className="text-sm">Tipo de recorrência</Label>
+                        <select
+                          id="recurringType"
+                          value={formData.recurringType}
+                          onChange={(e) => setFormData(prev => ({ ...prev, recurringType: e.target.value }))}
+                          className="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm"
+                        >
+                          <option value="">Selecione...</option>
+                          {recurringOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      {formData.recurringType === 'custom' && (
+                        <div>
+                          <Label htmlFor="customRecurringDays" className="text-sm">Dias personalizados</Label>
+                          <input
+                            type="text"
+                            id="customRecurringDays"
+                            value={formData.customRecurringDays}
+                            onChange={(e) => setFormData(prev => ({ ...prev, customRecurringDays: e.target.value }))}
+                            placeholder="Ex: Segunda, Quarta, Sexta"
+                            className="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {formData.totalMinutes > 0 && (
@@ -496,7 +611,7 @@ const Reserva = () => {
                     
                     setFormData(prev => ({
                       ...prev,
-                      client: selectedClient?.label || event.client,
+                      client: selectedClient?.id || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
@@ -513,7 +628,7 @@ const Reserva = () => {
                     
                     setFormData(prev => ({
                       ...prev,
-                      client: selectedClient?.label || event.client,
+                      client: selectedClient?.id || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,

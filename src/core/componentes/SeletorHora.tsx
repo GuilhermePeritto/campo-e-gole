@@ -22,6 +22,7 @@ interface SeletorHoraProps {
   minTime?: string;
   maxTime?: string;
   interval?: number; // intervalo em minutos
+  occupiedTimes?: string[]; // horários ocupados
 }
 
 const SeletorHora: React.FC<SeletorHoraProps> = ({
@@ -35,7 +36,8 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
   disabled = false,
   minTime = "06:00",
   maxTime = "23:00",
-  interval = 30
+  interval = 30,
+  occupiedTimes = []
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -51,7 +53,11 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
       const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      horarios.push(timeString);
+      
+      // Adicionar apenas se não estiver ocupado
+      if (!occupiedTimes.includes(timeString)) {
+        horarios.push(timeString);
+      }
     }
     
     return horarios;
@@ -92,17 +98,23 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
         <PopoverContent className="w-48 p-0" align="start">
           <div className="max-h-80 overflow-y-auto p-2">
             <div className="space-y-1">
-              {horarios.map((horario) => (
-                <Button
-                  key={horario}
-                  variant={value === horario ? "default" : "ghost"}
-                  size="sm"
-                  className="w-full justify-center text-sm"
-                  onClick={() => selecionarHorario(horario)}
-                >
-                  {horario}
-                </Button>
-              ))}
+              {horarios.length > 0 ? (
+                horarios.map((horario) => (
+                  <Button
+                    key={horario}
+                    variant={value === horario ? "default" : "ghost"}
+                    size="sm"
+                    className="w-full justify-center text-sm"
+                    onClick={() => selecionarHorario(horario)}
+                  >
+                    {horario}
+                  </Button>
+                ))
+              ) : (
+                <div className="text-center text-sm text-gray-500 p-2">
+                  Nenhum horário disponível
+                </div>
+              )}
             </div>
           </div>
         </PopoverContent>
