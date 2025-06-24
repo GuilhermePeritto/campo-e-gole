@@ -1,3 +1,4 @@
+
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -29,6 +30,8 @@ interface ReservationFormData {
   recurring: boolean;
   recurringType: string;
   customRecurringDays: string;
+  hourlyRate: number;
+  totalHours: number;
 }
 
 const Reserva = () => {
@@ -51,7 +54,9 @@ const Reserva = () => {
     amount: '',
     recurring: false,
     recurringType: '',
-    customRecurringDays: ''
+    customRecurringDays: '',
+    hourlyRate: 80,
+    totalHours: 0
   });
 
   // Detectar se é edição baseado no ID na URL
@@ -68,10 +73,12 @@ const Reserva = () => {
         endTime: '16:00',
         notes: 'Reserva para partida de futebol society',
         observations: 'Observações adicionais',
-        amount: '120',
+        amount: '160',
         recurring: true,
         recurringType: 'weekly',
-        customRecurringDays: ''
+        customRecurringDays: '',
+        hourlyRate: 80,
+        totalHours: 2
       };
       setFormData(mockData);
     } else {
@@ -86,6 +93,35 @@ const Reserva = () => {
     }
   }, [id, searchParams]);
 
+  // Calcular total de horas e valor total
+  useEffect(() => {
+    if (formData.startTime && formData.endTime) {
+      const [startHour, startMinute] = formData.startTime.split(':').map(Number);
+      const [endHour, endMinute] = formData.endTime.split(':').map(Number);
+      
+      const startTotalMinutes = startHour * 60 + startMinute;
+      const endTotalMinutes = endHour * 60 + endMinute;
+      
+      if (endTotalMinutes > startTotalMinutes) {
+        const totalMinutes = endTotalMinutes - startTotalMinutes;
+        const hours = totalMinutes / 60;
+        setFormData(prev => ({ ...prev, totalHours: hours }));
+      }
+    }
+  }, [formData.startTime, formData.endTime]);
+
+  // Atualizar taxa horária baseado no local selecionado
+  useEffect(() => {
+    const selectedVenue = locaisExemplo.find(v => v.label === formData.venue);
+    if (selectedVenue) {
+      const rate = selectedVenue.subtitle.includes('R$ 80') ? 80 : 
+                   selectedVenue.subtitle.includes('R$ 60') ? 60 : 100;
+      setFormData(prev => ({ ...prev, hourlyRate: rate }));
+    }
+  }, [formData.venue]);
+
+  const totalValue = formData.totalHours * formData.hourlyRate;
+
   // Dados de exemplo
   const clientesExemplo = [
     { id: '1', label: 'João Silva', subtitle: 'CPF: 123.456.789-00' },
@@ -94,9 +130,9 @@ const Reserva = () => {
   ];
 
   const locaisExemplo = [
-    { id: '1', label: 'Quadra A', subtitle: 'Futebol Society' },
-    { id: '2', label: 'Quadra B', subtitle: 'Basquete' },
-    { id: '3', label: 'Campo Principal', subtitle: 'Futebol' },
+    { id: '1', label: 'Quadra A', subtitle: 'Futebol Society - R$ 80/h' },
+    { id: '2', label: 'Quadra B', subtitle: 'Basquete - R$ 60/h' },
+    { id: '3', label: 'Campo Principal', subtitle: 'Futebol - R$ 100/h' },
   ];
 
   const recurringOptions = [
@@ -107,7 +143,7 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
-  // Eventos mockados para a timeline com mais variedade
+  // Eventos mockados para a timeline com horários revisados
   const mockEvents = [
     {
       id: 1,
@@ -124,8 +160,8 @@ const Reserva = () => {
       id: 2,
       client: 'Maria Santos',
       venue: 'Quadra B',
-      startTime: '09:30',
-      endTime: '10:30',
+      startTime: '08:30',
+      endTime: '09:30',
       status: 'pending' as const,
       color: '#f59e0b',
       sport: 'Basquete',
@@ -136,7 +172,7 @@ const Reserva = () => {
       client: 'Pedro Costa',
       venue: 'Campo Principal',
       startTime: '10:00',
-      endTime: '11:00',
+      endTime: '12:00',
       status: 'confirmed' as const,
       color: '#3b82f6',
       sport: 'Futebol',
@@ -328,7 +364,9 @@ const Reserva = () => {
         amount: '',
         recurring: false,
         recurringType: '',
-        customRecurringDays: ''
+        customRecurringDays: '',
+        hourlyRate: 80,
+        totalHours: 0
       });
     }
 
@@ -363,6 +401,18 @@ const Reserva = () => {
         moduleColor={MODULE_COLORS.events}
         backTo="/eventos/agenda"
         backLabel="Agenda"
+        actions={
+          isEdit ? (
+            <Button
+              variant="outline"
+              onClick={handleCancelEdit}
+              className="flex items-center gap-2"
+            >
+              <X className="h-4 w-4" />
+              Cancelar Edição
+            </Button>
+          ) : undefined
+        }
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6">
@@ -433,6 +483,27 @@ const Reserva = () => {
                   />
                 </div>
 
+                {/* Totalizador */}
+                {formData.totalHours > 0 && (
+                  <div className="p-4 bg-muted/30 rounded-lg border">
+                    <h3 className="font-semibold mb-3">Resumo da Reserva</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Duração:</span>
+                        <span>{formData.totalHours.toFixed(1)} horas</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Taxa por hora:</span>
+                        <span>R$ {formData.hourlyRate.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between font-semibold text-base border-t pt-2">
+                        <span>Valor Total:</span>
+                        <span>R$ {totalValue.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <Button
                     type="submit"
@@ -446,7 +517,7 @@ const Reserva = () => {
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setEditingEventId(null)}
+                      onClick={handleCancelEdit}
                     >
                       Cancelar
                     </Button>
@@ -463,11 +534,12 @@ const Reserva = () => {
                 <EventTimeline
                   selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
                   events={mockEvents}
-                  selectedVenue={formData.venue} // Passar o local selecionado
+                  selectedVenue={formData.venue}
                   onTimeSlotClick={handleTimeSlotClick}
                   onEventEdit={handleEventEdit}
                   editingEventId={editingEventId}
                   onEventSelect={handleEventSelect}
+                  onCancelEdit={handleCancelEdit}
                 />
               </CardContent>
             </Card>

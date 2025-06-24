@@ -44,8 +44,9 @@ export const useCalendar = () => {
     { id: '3', name: 'Campo Principal', color: '#3b82f6' }
   ];
 
-  // Eventos mockados expandidos com horários quebrados
+  // Eventos mockados revisados - sem conflitos de horário no mesmo local
   const mockReservations: Reservation[] = [
+    // Quadra A - 18/06
     {
       id: 1,
       title: 'João Silva - Treino',
@@ -58,36 +59,6 @@ export const useCalendar = () => {
       client: 'João Silva',
       venue: 'Quadra A',
       startTime: '09:00',
-      endTime: '11:00',
-      day: new Date('2025-06-18')
-    },
-    {
-      id: 2,
-      title: 'Maria Santos - Aula',
-      start: '2025-06-18T09:30:00',
-      end: '2025-06-18T10:30:00',
-      venueId: '2',
-      clientName: 'Maria Santos',
-      status: 'pending',
-      color: '#f59e0b',
-      client: 'Maria Santos',
-      venue: 'Quadra B',
-      startTime: '09:30',
-      endTime: '10:30',
-      day: new Date('2025-06-18')
-    },
-    {
-      id: 3,
-      title: 'Pedro Costa - Pelada',
-      start: '2025-06-18T10:00:00',
-      end: '2025-06-18T11:00:00',
-      venueId: '3',
-      clientName: 'Pedro Costa',
-      status: 'confirmed',
-      color: '#3b82f6',
-      client: 'Pedro Costa',
-      venue: 'Campo Principal',
-      startTime: '10:00',
       endTime: '11:00',
       day: new Date('2025-06-18')
     },
@@ -106,19 +77,21 @@ export const useCalendar = () => {
       endTime: '16:00',
       day: new Date('2025-06-18')
     },
+    
+    // Quadra B - 18/06
     {
-      id: 5,
-      title: 'Carlos - Futebol',
-      start: '2025-06-18T19:00:00',
-      end: '2025-06-18T21:00:00',
-      venueId: '3',
-      clientName: 'Carlos Mendes',
-      status: 'confirmed',
-      color: '#3b82f6',
-      client: 'Carlos Mendes',
-      venue: 'Campo Principal',
-      startTime: '19:00',
-      endTime: '21:00',
+      id: 2,
+      title: 'Maria Santos - Aula',
+      start: '2025-06-18T08:30:00',
+      end: '2025-06-18T09:30:00',
+      venueId: '2',
+      clientName: 'Maria Santos',
+      status: 'pending',
+      color: '#f59e0b',
+      client: 'Maria Santos',
+      venue: 'Quadra B',
+      startTime: '08:30',
+      endTime: '09:30',
       day: new Date('2025-06-18')
     },
     {
@@ -136,11 +109,44 @@ export const useCalendar = () => {
       endTime: '17:00',
       day: new Date('2025-06-18')
     },
+    
+    // Campo Principal - 18/06
+    {
+      id: 3,
+      title: 'Pedro Costa - Pelada',
+      start: '2025-06-18T10:00:00',
+      end: '2025-06-18T12:00:00',
+      venueId: '3',
+      clientName: 'Pedro Costa',
+      status: 'confirmed',
+      color: '#3b82f6',
+      client: 'Pedro Costa',
+      venue: 'Campo Principal',
+      startTime: '10:00',
+      endTime: '12:00',
+      day: new Date('2025-06-18')
+    },
+    {
+      id: 5,
+      title: 'Carlos - Futebol',
+      start: '2025-06-18T19:00:00',
+      end: '2025-06-18T21:00:00',
+      venueId: '3',
+      clientName: 'Carlos Mendes',
+      status: 'confirmed',
+      color: '#3b82f6',
+      client: 'Carlos Mendes',
+      venue: 'Campo Principal',
+      startTime: '19:00',
+      endTime: '21:00',
+      day: new Date('2025-06-18')
+    },
+    
     // Eventos para outros dias
     {
       id: 7,
       title: 'Roberto - Basquete',
-      start: '2025-06-19T08:30:00',
+      start: '2025-06-19T08:00:00',
       end: '2025-06-19T10:00:00',
       venueId: '1',
       clientName: 'Roberto Lima',
@@ -148,24 +154,41 @@ export const useCalendar = () => {
       color: '#10b981',
       client: 'Roberto Lima',
       venue: 'Quadra A',
-      startTime: '08:30',
+      startTime: '08:00',
       endTime: '10:00',
       day: new Date('2025-06-19')
     },
     {
       id: 8,
       title: 'Fernanda - Aeróbica',
-      start: '2025-06-19T18:15:00',
-      end: '2025-06-19T19:45:00',
+      start: '2025-06-19T18:00:00',
+      end: '2025-06-19T20:00:00',
       venueId: '2',
       clientName: 'Fernanda Costa',
       status: 'confirmed',
       color: '#f59e0b',
       client: 'Fernanda Costa',
       venue: 'Quadra B',
-      startTime: '18:15',
-      endTime: '19:45',
+      startTime: '18:00',
+      endTime: '20:00',
       day: new Date('2025-06-19')
+    },
+    
+    // Eventos para 20/06
+    {
+      id: 9,
+      title: 'Lucas - Futsal',
+      start: '2025-06-20T16:30:00',
+      end: '2025-06-20T18:30:00',
+      venueId: '3',
+      clientName: 'Lucas Oliveira',
+      status: 'confirmed',
+      color: '#3b82f6',
+      client: 'Lucas Oliveira',
+      venue: 'Campo Principal',
+      startTime: '16:30',
+      endTime: '18:30',
+      day: new Date('2025-06-20')
     }
   ];
 

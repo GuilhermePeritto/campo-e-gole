@@ -1,8 +1,8 @@
 
-import { getTimeSlots } from '@/utils/calendarUtils';
 import { Reservation } from '@/hooks/useCalendar';
-import { Clock, MapPin, User, Calendar } from 'lucide-react';
+import { Clock, MapPin, User, Calendar, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface CalendarDayViewProps {
   currentDate: Date;
@@ -19,10 +19,10 @@ const CalendarDayView = ({
   handleDateClick,
   handleEventClick
 }: CalendarDayViewProps) => {
-  const timeSlots = Array.from({ length: 28 }, (_, i) => {
-    const hour = Math.floor(i / 2) + 7;
-    const minute = (i % 2) * 30;
-    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  // Slots de 1 em 1 hora (7h às 21h)
+  const timeSlots = Array.from({ length: 15 }, (_, i) => {
+    const hour = i + 7;
+    return `${hour.toString().padStart(2, '0')}:00`;
   });
 
   // Filtrar reservas por data e local selecionado
@@ -32,19 +32,47 @@ const CalendarDayView = ({
     return matchesDate && matchesVenue;
   });
 
-  // Agrupar reservas por horário para exibir múltiplas reservas no mesmo slot
-  const getReservationsForTimeSlot = (time: string) => {
-    return filteredReservations.filter(r => {
-      const [slotHour, slotMinute] = time.split(':').map(Number);
-      const [startHour, startMinute] = r.startTime.split(':').map(Number);
-      const [endHour, endMinute] = r.endTime.split(':').map(Number);
+  // Converter horário para minutos
+  const timeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Verificar disponibilidade para um slot de hora
+  const getAvailabilityForSlot = (slotTime: string) => {
+    const slotStart = timeToMinutes(slotTime);
+    const slotEnd = slotStart + 60;
+    
+    const overlappingReservations = filteredReservations.filter(r => {
+      const eventStart = timeToMinutes(r.startTime);
+      const eventEnd = timeToMinutes(r.endTime);
       
-      const slotTotalMinutes = slotHour * 60 + slotMinute;
-      const startTotalMinutes = startHour * 60 + startMinute;
-      const endTotalMinutes = endHour * 60 + endMinute;
-      
-      return slotTotalMinutes >= startTotalMinutes && slotTotalMinutes < endTotalMinutes;
+      return !(eventEnd <= slotStart || eventStart >= slotEnd);
     });
+
+    if (overlappingReservations.length === 0) {
+      return { available: true, time: slotTime };
+    }
+
+    // Verificar se há espaços livres no slot
+    const sortedEvents = overlappingReservations.sort((a, b) => 
+      timeToMinutes(a.startTime) - timeToMinutes(b.startTime)
+    );
+
+    const firstEventStart = timeToMinutes(sortedEvents[0].startTime);
+    if (firstEventStart > slotStart) {
+      return { available: true, time: slotTime };
+    }
+
+    const lastEventEnd = timeToMinutes(sortedEvents[sortedEvents.length - 1].endTime);
+    if (lastEventEnd < slotEnd) {
+      const availableHour = Math.floor(lastEventEnd / 60);
+      const availableMinute = lastEventEnd % 60;
+      const availableTime = `${availableHour.toString().padStart(2, '0')}:${availableMinute.toString().padStart(2, '0')}`;
+      return { available: true, time: availableTime };
+    }
+
+    return { available: false, time: null };
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -67,7 +95,7 @@ const CalendarDayView = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header melhorado */}
+      {/* Header */}
       <div className="p-4 border-b bg-muted/30">
         <div className="flex items-center justify-between">
           <div>
@@ -97,84 +125,98 @@ const CalendarDayView = ({
         </div>
       </div>
 
-      {/* Timeline melhorada */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Timeline */}
+      <div className="flex-1 overflow-y-auto relative">
         <div className="relative">
           {timeSlots.map((time, index) => {
-            const reservations = getReservationsForTimeSlot(time);
-            const isOccupied = reservations.length > 0;
-
+            const availability = getAvailabilityForSlot(time);
+            
             return (
-              <div key={time} className="flex border-b border-gray-100 min-h-[80px]">
+              <div key={time} className="flex border-b border-gray-100 relative" style={{ minHeight: '80px' }}>
                 {/* Coluna de horário */}
                 <div className="w-20 p-4 text-sm font-medium text-gray-500 text-right border-r border-gray-200 bg-gray-50/50 flex items-start">
                   <div className="w-full">
                     <div className="font-semibold">{time}</div>
-                    {index % 2 === 0 && (
-                      <div className="text-xs text-gray-400 mt-1">
-                        {Math.floor(index / 2) + 7}h
-                      </div>
-                    )}
+                    <div className="text-xs text-gray-400 mt-1">
+                      {index + 7}h
+                    </div>
                   </div>
                 </div>
 
                 {/* Coluna de conteúdo */}
                 <div className="flex-1 relative">
-                  {isOccupied ? (
-                    <div className="p-3 space-y-2">
-                      {reservations.map((reservation, idx) => (
-                        <div
-                          key={reservation.id}
-                          className="p-3 rounded-lg shadow-sm border cursor-pointer hover:shadow-md transition-all"
-                          style={{ 
-                            backgroundColor: reservation.color + '15',
-                            borderLeftColor: reservation.color,
-                            borderLeftWidth: '4px'
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEventClick(reservation);
-                          }}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2">
-                                <User className="h-4 w-4 text-gray-600" />
-                                <span className="font-semibold text-gray-900 truncate">
-                                  {reservation.client}
-                                </span>
-                                <Badge 
-                                  variant={getStatusBadgeVariant(reservation.status)}
-                                  className="text-xs"
-                                >
-                                  {getStatusLabel(reservation.status)}
-                                </Badge>
-                              </div>
-                              
-                              <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                                <MapPin className="h-3 w-3" />
-                                <span>{reservation.venue}</span>
-                              </div>
-                              
-                              <div className="flex items-center gap-2 text-sm text-gray-500">
-                                <Clock className="h-3 w-3" />
-                                <span>{reservation.startTime} - {reservation.endTime}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
+                  {availability.available && (
                     <div 
-                      className="h-full flex items-center p-4 cursor-pointer hover:bg-green-50 transition-colors group"
+                      className="absolute inset-0 flex items-center p-4 cursor-pointer hover:bg-green-50 transition-colors group z-20"
                       onClick={() => handleDateClick(currentDate)}
                     >
-                      <div className="text-sm text-gray-400 group-hover:text-green-600 transition-colors">
-                        ✓ Horário disponível - Clique para criar reserva
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-green-600 border-green-300 hover:bg-green-100 group-hover:scale-105 transition-transform"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Criar reserva ({availability.time})
+                      </Button>
                     </div>
                   )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Events overlay */}
+        <div className="absolute top-0 left-20 right-0">
+          {filteredReservations.map((reservation) => {
+            const startMinutes = timeToMinutes(reservation.startTime);
+            const endMinutes = timeToMinutes(reservation.endTime);
+            const duration = endMinutes - startMinutes;
+            
+            // Posição baseada no horário (7h = 0)
+            const baseMinutes = 7 * 60;
+            const topOffset = ((startMinutes - baseMinutes) / 60) * 80; // 80px por hora
+            const height = (duration / 60) * 80;
+
+            return (
+              <div
+                key={reservation.id}
+                className="absolute left-4 right-4 rounded-lg shadow-sm border cursor-pointer hover:shadow-md transition-all z-10"
+                style={{
+                  top: `${topOffset}px`,
+                  height: `${Math.max(height - 4, 32)}px`,
+                  backgroundColor: reservation.color + '15',
+                  borderLeftColor: reservation.color,
+                  borderLeftWidth: '4px'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEventClick(reservation);
+                }}
+              >
+                <div className="p-3 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="h-4 w-4 text-gray-600" />
+                    <span className="font-semibold text-gray-900 truncate">
+                      {reservation.client}
+                    </span>
+                    <Badge 
+                      variant={getStatusBadgeVariant(reservation.status)}
+                      className="text-xs ml-auto"
+                    >
+                      {getStatusLabel(reservation.status)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                    <MapPin className="h-3 w-3" />
+                    <span>{reservation.venue}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Clock className="h-3 w-3" />
+                    <span>{reservation.startTime} - {reservation.endTime}</span>
+                  </div>
                 </div>
               </div>
             );
