@@ -16,6 +16,7 @@ interface Event {
 interface EventTimelineProps {
   selectedDate: string;
   events: Event[];
+  selectedVenue?: string; // Novo prop para filtrar por local
   onTimeSlotClick?: (time: string) => void;
   onEventEdit?: (event: Event) => void;
   editingEventId?: number | null;
@@ -25,21 +26,27 @@ interface EventTimelineProps {
 const EventTimeline = ({ 
   selectedDate, 
   events, 
+  selectedVenue,
   onTimeSlotClick, 
   onEventEdit, 
   editingEventId,
   onEventSelect 
 }: EventTimelineProps) => {
   
+  // Filtrar eventos por local selecionado
+  const filteredEvents = selectedVenue && selectedVenue !== 'all' 
+    ? events.filter(event => event.venue === selectedVenue)
+    : events;
+
   const timeSlots = Array.from({ length: 29 }, (_, i) => {
     const hour = Math.floor(i / 2) + 7;
     const minute = (i % 2) * 30;
     return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
   });
 
-  // Get events that overlap with specific time slot
+  // Get events that overlap with specific time slot - usar eventos filtrados
   const getEventsForTimeSlot = (time: string) => {
-    return events.filter(event => {
+    return filteredEvents.filter(event => {
       const eventStart = event.startTime;
       const eventEnd = event.endTime;
       return time >= eventStart && time < eventEnd;
@@ -81,6 +88,9 @@ const EventTimeline = ({
             day: '2-digit', 
             month: 'long' 
           })}
+          {selectedVenue && selectedVenue !== 'all' && (
+            <span className="text-sm text-gray-600 ml-2">({selectedVenue})</span>
+          )}
         </h3>
         {isEditingMode && (
           <div className="mt-2 text-sm p-2 rounded text-module-events/100  bg-module-events/10">
@@ -128,9 +138,9 @@ const EventTimeline = ({
           })}
         </div>
 
-        {/* Events overlay */}
+        {/* Events overlay - usar eventos filtrados */}
         <div className="absolute top-0 left-0 right-0">
-          {events.map((event) => {
+          {filteredEvents.map((event) => {
             const [startHour, startMinute] = event.startTime.split(':').map(Number);
             const [endHour, endMinute] = event.endTime.split(':').map(Number);
             

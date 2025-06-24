@@ -52,6 +52,7 @@ const Agenda = () => {
         <CalendarViews
           viewType={viewType}
           currentDate={currentDate}
+          selectedVenue={selectedVenue}
           mockReservations={mockReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}

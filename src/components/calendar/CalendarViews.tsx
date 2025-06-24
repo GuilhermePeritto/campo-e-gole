@@ -8,6 +8,7 @@ import { Reservation } from '@/hooks/useCalendar';
 interface CalendarViewsProps {
   viewType: string;
   currentDate: Date;
+  selectedVenue: string;
   mockReservations: Reservation[];
   handleDateClick: (date: Date) => void;
   handleEventClick: (event: Reservation) => void;
@@ -17,6 +18,7 @@ interface CalendarViewsProps {
 const CalendarViews = ({
   viewType,
   currentDate,
+  selectedVenue,
   mockReservations,
   handleDateClick,
   handleEventClick,
@@ -25,13 +27,18 @@ const CalendarViews = ({
   const weekDays = getWeekDays(currentDate);
   const monthDays = getMonthDays(currentDate);
 
+  // Filtrar reservas por local selecionado
+  const filteredReservations = selectedVenue === 'all' 
+    ? mockReservations 
+    : mockReservations.filter(r => r.venue === selectedVenue);
+
   return (
     <div className="border rounded-lg overflow-hidden">
       {viewType === 'month' && (
         <CalendarMonthView
           monthDays={monthDays}
           currentDate={currentDate}
-          mockReservations={mockReservations}
+          mockReservations={filteredReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}
           handleDayFilterClick={handleDayFilterClick}
@@ -41,7 +48,7 @@ const CalendarViews = ({
       {viewType === 'week' && (
         <CalendarWeekView
           weekDays={weekDays}
-          mockReservations={mockReservations}
+          mockReservations={filteredReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}
           handleDayFilterClick={handleDayFilterClick}
@@ -51,7 +58,8 @@ const CalendarViews = ({
       {viewType === 'day' && (
         <CalendarDayView
           currentDate={currentDate}
-          mockReservations={mockReservations}
+          selectedVenue={selectedVenue}
+          mockReservations={filteredReservations}
           handleDateClick={handleDateClick}
           handleEventClick={handleEventClick}
         />

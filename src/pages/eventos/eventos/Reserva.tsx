@@ -36,7 +36,7 @@ const Reserva = () => {
   const [searchParams] = useSearchParams();
 
   // Estado único para controlar edição
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ReservationFormData>({
@@ -55,7 +55,7 @@ const Reserva = () => {
   // Detectar se é edição baseado no ID na URL
   useEffect(() => {
     if (id) {
-      setIsEditing(true);
+      setIsEdit(true);
       setEditingEventId(parseInt(id));
       // Simular carregamento dos dados da reserva
       const mockData = {
@@ -178,39 +178,39 @@ const Reserva = () => {
     {
       target: '#client',
       title: 'Cliente',
-      content: isEditing ? 'Altere o cliente desta reserva se necessário.' : 'Selecione o cliente que está fazendo a reserva.'
+      content: isEdit ? 'Altere o cliente desta reserva se necessário.' : 'Selecione o cliente que está fazendo a reserva.'
     },
     {
       target: '#venue',
       title: 'Local',
-      content: isEditing ? 'Modifique o local da reserva.' : 'Escolha o local que será reservado.'
+      content: isEdit ? 'Modifique o local da reserva.' : 'Escolha o local que será reservado.'
     },
     {
       target: '#date',
       title: 'Data',
-      content: isEditing ? 'Atualize a data da reserva.' : 'Selecione a data da reserva.'
+      content: isEdit ? 'Atualize a data da reserva.' : 'Selecione a data da reserva.'
     },
     {
       target: '#startTime',
       title: 'Horário de Início',
-      content: isEditing ? 'Ajuste o horário de início.' : 'Defina o horário de início da reserva.'
+      content: isEdit ? 'Ajuste o horário de início.' : 'Defina o horário de início da reserva.'
     },
     {
       target: '#endTime',
       title: 'Horário de Fim',
-      content: isEditing ? 'Ajuste o horário de término.' : 'Defina o horário de término da reserva.'
+      content: isEdit ? 'Ajuste o horário de término.' : 'Defina o horário de término da reserva.'
     },
     {
       target: '#amount',
       title: 'Valor',
-      content: isEditing ? 'Atualize o valor da reserva.' : 'Informe o valor total da reserva.'
+      content: isEdit ? 'Atualize o valor da reserva.' : 'Informe o valor total da reserva.'
     }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isEditing ? 'Editando reserva:' : 'Nova reserva:', formData);
-    navigate('/eventos');
+    console.log(isEdit ? 'Editando reserva:' : 'Nova reserva:', formData);
+    navigate('/eventos/agenda');
   };
 
   const handleClientChange = (value: string, item?: any) => {
@@ -268,7 +268,7 @@ const Reserva = () => {
 
   // Funções para interagir com a timeline
   const handleTimeSlotClick = (time: string) => {
-    if (!isEditing) {
+    if (!isEdit) {
       setFormData(prev => ({ ...prev, startTime: time }));
     }
   };
@@ -285,7 +285,7 @@ const Reserva = () => {
       amount: '160' // Mock amount
     }));
 
-    setIsEditing(true);
+    setIsEdit(true);
     setEditingEventId(event.id);
   };
 
@@ -301,12 +301,12 @@ const Reserva = () => {
       amount: '160' // Mock amount
     }));
 
-    setIsEditing(true);
+    setIsEdit(true);
     setEditingEventId(event.id);
   };
 
   const handleCancelEdit = () => {
-    setIsEditing(false);
+    setIsEdit(false);
     setEditingEventId(null);
 
     // Reset form to initial state if not in URL edit mode
@@ -332,10 +332,10 @@ const Reserva = () => {
   };
 
   const handleCancel = () => {
-    if (isEditing) {
+    if (isEdit) {
       handleCancelEdit();
     } else {
-      navigate('/eventos');
+      navigate('/eventos/agenda');
     }
   };
 
@@ -346,238 +346,123 @@ const Reserva = () => {
     return true; // Show all events for demo
   });
 
-  const pageTitle = id ? "Editar Reserva" : "Nova Reserva";
-  const pageIcon = id ? <Edit className="h-5 w-5" /> : <Calendar className="h-5 w-5" />;
+  const pageTitle = isEdit ? "Editar Reserva" : "Nova Reserva";
+  const pageIcon = isEdit ? <Edit className="h-6 w-6" /> : <Calendar className="h-6 w-6" />;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
         title={pageTitle}
         icon={pageIcon}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos"
+        backTo="/eventos/agenda"
         backLabel="Agenda"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Card do Formulário */}
-          <div className="space-y-0">
-            <Card className={`${isEditing ? 'border-blue-200' : ''}`}>
-              <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b relative">
-                <PageTour steps={tourSteps} title={isEditing ? "Edição de Reserva" : "Criação de Nova Reserva"} />
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  {isEditing ? "Editar Reserva" : "Nova Reserva"}
+      <main className="max-w-7xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-160px)]">
+          {/* Formulário */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {isEdit ? 'Editar Reserva' : 'Nova Reserva'}
                 </CardTitle>
-                <CardDescription>
-                  {isEditing ? "Atualize os dados da reserva" : "Preencha os dados para criar uma nova reserva"}
-                </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Banner de edição da timeline */}
-                  {isEditing && (
-                    <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Edit className="h-5 w-5 text-blue-700" />
-                          <span className="text-sm font-medium text-blue-700">
-                            Modo de edição ativo para evento selecionado na timeline
-                          </span>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleCancelEdit}
-                          className="text-blue-700 hover:text-blue-900"
-                        >
-                          <X className="h-4 w-4 mr-1" />
-                          Cancelar Edição
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+              <CardContent className="space-y-4">
+                <CampoBusca
+                  id="client"
+                  label="Cliente"
+                  value={formData.client}
+                  onChange={(value) => setFormData(prev => ({ ...prev, client: value }))}
+                  items={clientesExemplo}
+                  placeholder="Digite o nome do cliente..."
+                  required
+                />
 
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <CampoBusca
-                        id="client"
-                        label="Cliente"
-                        value={formData.client}
-                        onChange={handleClientChange}
-                        items={clientesExemplo}
-                        placeholder="Digite o nome do cliente..."
-                        required
-                      />
-                    </div>
-                    <div className="flex items-end">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleNewClient}
-                        className="h-11"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+                <CampoBusca
+                  id="venue"
+                  label="Local"
+                  value={formData.venue}
+                  onChange={(value) => setFormData(prev => ({ ...prev, venue: value }))}
+                  items={locaisExemplo}
+                  placeholder="Selecione o local..."
+                  required
+                />
 
-                  <CampoBusca
-                    id="venue"
-                    label="Local"
-                    value={formData.venue}
-                    onChange={handleVenueChange}
-                    items={locaisExemplo}
-                    placeholder="Selecione o local..."
+                <SeletorData
+                  id="date"
+                  label="Data"
+                  value={formData.date}
+                  onChange={(date) => setFormData(prev => ({ ...prev, date }))}
+                  required
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <SeletorHora
+                    id="startTime"
+                    label="Início"
+                    value={formData.startTime}
+                    onChange={(time) => setFormData(prev => ({ ...prev, startTime: time }))}
                     required
                   />
 
-                  <SeletorData
-                    id="date"
-                    label="Data da Reserva"
-                    value={formData.date}
-                    onChange={handleDateChange}
+                  <SeletorHora
+                    id="endTime"
+                    label="Término"
+                    value={formData.endTime}
+                    onChange={(time) => setFormData(prev => ({ ...prev, endTime: time }))}
                     required
                   />
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <SeletorHora
-                      id="startTime"
-                      label="Horário de Início"
-                      value={formData.startTime}
-                      onChange={handleStartTimeChange}
-                      placeholder="Selecione o horário de início"
-                      required
-                    />
-
-                    <SeletorHora
-                      id="endTime"
-                      label="Horário de Fim"
-                      value={formData.endTime}
-                      onChange={handleEndTimeChange}
-                      placeholder="Selecione o horário de fim"
-                      required
-                    />
-                  </div>
-
-                  <CampoValor
-                    id="amount"
-                    label="Valor Total"
-                    value={formData.amount}
-                    onChange={handleAmountChange}
-                    required
+                <div className="space-y-2">
+                  <Label htmlFor="observations">Observações</Label>
+                  <Textarea
+                    id="observations"
+                    value={formData.observations}
+                    onChange={(e) => setFormData(prev => ({ ...prev, observations: e.target.value }))}
+                    placeholder="Observações sobre a reserva..."
+                    rows={3}
                   />
+                </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="recurring" className="text-sm font-medium">
-                        Evento recorrente
-                      </Label>
-                      <Switch
-                        id="recurring"
-                        checked={formData.recurring}
-                        onCheckedChange={handleRecurringChange}
-                      />
-                    </div>
-
-                    {formData.recurring && (
-                      <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                        <div className="space-y-2">
-                          <Label htmlFor="recurringType">Tipo de Recorrência</Label>
-                          <Select value={formData.recurringType} onValueChange={handleRecurringTypeChange}>
-                            <SelectTrigger id="recurringType" className="h-11">
-                              <SelectValue placeholder="Selecione o tipo" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {recurringOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {formData.recurringType === 'custom' && (
-                          <div className="space-y-2">
-                            <Label htmlFor="customDays">Repetir a cada quantos dias?</Label>
-                            <Input
-                              id="customDays"
-                              type="number"
-                              min="1"
-                              value={formData.customRecurringDays}
-                              onChange={(e) => handleCustomDaysChange(e.target.value)}
-                              placeholder="Ex: 3"
-                              className="h-11"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="notes" className="text-sm font-medium">Observações</Label>
-                    <Textarea
-                      id="notes"
-                      value={formData.notes}
-                      onChange={(e) => handleNotesChange(e.target.value)}
-                      placeholder="Observações sobre a reserva..."
-                      rows={3}
-                      className="resize-none"
-                    />
-                  </div>
-
-                  <div className="flex gap-4 pt-6 border-t">
-                    <Button type="submit" className="flex-1 h-11 font-medium">
-                      {isEditing ? "Salvar Alterações" : "Salvar Reserva"}
-                    </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="flex-1"
+                    disabled={!formData.client || !formData.venue || !formData.date || !formData.startTime || !formData.endTime}
+                  >
+                    {isEdit ? 'Atualizar' : 'Salvar'} Reserva
+                  </Button>
+                  {isEdit && (
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={handleCancel}
-                      className="flex-1 h-11 font-medium"
+                      onClick={() => setEditingEventId(null)}
                     >
                       Cancelar
                     </Button>
-                  </div>
-                </form>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Timeline Card */}
-          <div className="space-y-0">
+          {/* Timeline */}
+          <div className="lg:sticky lg:top-6">
             <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-card-foreground flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Agenda do Dia
-                </CardTitle>
-                <CardDescription>
-                  Clique em um horário vazio para preenchê-lo ou em um evento para editá-lo
-                </CardDescription>
-              </CardHeader>
               <CardContent className="p-0 h-full">
-                {selectedDateStr ? (
-                  <EventTimeline
-                    selectedDate={selectedDateStr}
-                    events={eventsForSelectedDate}
-                    onTimeSlotClick={handleTimeSlotClick}
-                    onEventSelect={handleEventSelect}
-                    editingEventId={editingEventId}
-                  />
-                ) : (
-                  <div className="h-[500px] flex items-center justify-center">
-                    <div className="text-center text-muted-foreground">
-                      <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Selecione uma data para ver a agenda</p>
-                    </div>
-                  </div>
-                )}
+                <EventTimeline
+                  selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
+                  events={mockEvents}
+                  selectedVenue={formData.venue} // Passar o local selecionado
+                  onTimeSlotClick={handleTimeSlotClick}
+                  onEventEdit={handleEventEdit}
+                  editingEventId={editingEventId}
+                  onEventSelect={handleEventSelect}
+                />
               </CardContent>
             </Card>
           </div>
