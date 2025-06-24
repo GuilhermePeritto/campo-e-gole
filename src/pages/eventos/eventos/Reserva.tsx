@@ -61,8 +61,8 @@ const Reserva = () => {
   });
 
   // Hooks de dados
-  const { getClientesForSearch, getClienteByName } = useClientes();
-  const { locais, getLocalByName } = useLocais();
+  const { getClientesForSearch, getClienteByClientId } = useClientes();
+  const { locais, getLocalByVenueId } = useLocais();
   const { getReservaById, createReserva, updateReserva } = useReservas();
 
   // Dados usando hooks
@@ -82,8 +82,9 @@ const Reserva = () => {
       // Carregar dados reais da reserva
       const reserva = getReservaById(parseInt(id));
       if (reserva) {
-        const cliente = getClienteByName(reserva.client);
-        const local = getLocalByName(reserva.venue);
+        // Buscar cliente e local pelos IDs corretos
+        const cliente = getClienteByClientId(reserva.clientId);
+        const local = getLocalByVenueId(reserva.venueId);
         
         const mockData = {
           client: cliente?.label || reserva.client,
@@ -113,7 +114,7 @@ const Reserva = () => {
         }));
       }
     }
-  }, [id, searchParams, getReservaById, getClienteByName, getLocalByName]);
+  }, [id, searchParams, getReservaById, getClienteByClientId, getLocalByVenueId]);
 
   // Calcular total de horas e minutos
   useEffect(() => {
@@ -237,8 +238,8 @@ const Reserva = () => {
       console.log('Editando reserva:', updateData);
     } else {
       // Criar nova reserva
-      const cliente = getClienteByName(formData.client);
-      const local = getLocalByName(formData.venue);
+      const cliente = getClienteByClientId(formData.client);
+      const local = getLocalByVenueId(formData.venue);
       
       const newReservaData = {
         client: formData.client,
@@ -263,7 +264,6 @@ const Reserva = () => {
 
   const handleReserveNow = () => {
     console.log('Reservando e pagando agora:', formData);
-    // Aqui você implementaria a lógica de pagamento
     navigate('/eventos/recebiveis/novo?payNow=true');
   };
 
@@ -271,7 +271,6 @@ const Reserva = () => {
     setIsEdit(false);
     setEditingEventId(null);
 
-    // Reset form to initial state if not in URL edit mode
     if (!id) {
       const dateParam = searchParams.get('date');
       setFormData({
@@ -320,7 +319,6 @@ const Reserva = () => {
           <div className="space-y-4 flex flex-col">
             <Card className={`${isEdit ? 'border-module-events/90 border border-2 rounded-lg' : ''} flex-1 flex flex-col`}>
               <CardHeader className="flex-shrink-0">
-                {/* Card de informação de edição movido para dentro do formulário */}
                 {isEdit && (
                   <div className="bg-module-events/10 border border-module-events/30 rounded-lg p-2">
                     <div className="flex items-center justify-between">
@@ -419,7 +417,6 @@ const Reserva = () => {
                   />
                 </div>
 
-                {/* Totalizador */}
                 {formData.totalMinutes > 0 && (
                   <div className="p-4 bg-muted/30 rounded-lg border">
                     <h3 className="font-semibold mb-3">Resumo da Reserva</h3>
@@ -495,8 +492,7 @@ const Reserva = () => {
                     }
                   }}
                   onEventEdit={(event) => {
-                    // Encontrar o cliente pelo nome
-                    const selectedClient = getClienteByName(event.client);
+                    const selectedClient = getClienteByClientId(event.client);
                     
                     setFormData(prev => ({
                       ...prev,
@@ -513,8 +509,7 @@ const Reserva = () => {
                   }}
                   editingEventId={editingEventId}
                   onEventSelect={(event) => {
-                    // Encontrar o cliente pelo nome
-                    const selectedClient = getClienteByName(event.client);
+                    const selectedClient = getClienteByClientId(event.client);
                     
                     setFormData(prev => ({
                       ...prev,

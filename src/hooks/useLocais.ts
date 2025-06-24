@@ -11,7 +11,7 @@ export const useLocais = () => {
   }, [locais]);
 
   const getLocalByName = useCallback((name: string) => {
-    return locais.find(l => l.name === name);
+    return locais.find(l => l.name === name || l.label === name);
   }, [locais]);
 
   const getActiveLocais = useCallback(() => {
@@ -54,11 +54,17 @@ export const useLocais = () => {
     ];
   }, [locais]);
 
+  // Função para buscar local por venueId das reservas
+  const getLocalByVenueId = useCallback((venueId: string) => {
+    return locais.find(l => l.id === venueId);
+  }, [locais]);
+
   return {
     locais,
     loading,
     getLocalById,
     getLocalByName,
+    getLocalByVenueId,
     getActiveLocais,
     createLocal,
     updateLocal,

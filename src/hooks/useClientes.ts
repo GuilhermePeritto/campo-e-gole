@@ -51,11 +51,17 @@ export const useClientes = () => {
     }));
   }, [clientes]);
 
+  // Função para buscar cliente por clientId das reservas
+  const getClienteByClientId = useCallback((clientId: string) => {
+    return clientes.find(c => c.id === clientId);
+  }, [clientes]);
+
   return {
     clientes,
     loading,
     getClienteById,
     getClienteByName,
+    getClienteByClientId,
     getActiveClientes,
     createCliente,
     updateCliente,

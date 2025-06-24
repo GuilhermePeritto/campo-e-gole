@@ -1,8 +1,8 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Reservation } from '@/hooks/useCalendar';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { MapPin, Plus, User } from 'lucide-react';
+import CalendarDayColumnsView from './CalendarDayColumnsView';
 
 interface CalendarDayViewProps {
   currentDate: Date;
@@ -20,12 +20,24 @@ const CalendarDayView = ({
   handleEventClick
 }: CalendarDayViewProps) => {
   
+  // Se for "todos os locais", usar visualização em colunas
+  if (selectedVenue === 'all') {
+    return (
+      <CalendarDayColumnsView
+        currentDate={currentDate}
+        mockReservations={mockReservations}
+        handleDateClick={handleDateClick}
+        handleEventClick={handleEventClick}
+      />
+    );
+  }
+  
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
   
   // Gerar slots baseados no local selecionado
   const timeSlots = generateTimeSlots(selectedVenue || 'all');
   const interval = getVenueInterval(selectedVenue || 'all');
-  const slotHeight = 48; // altura em pixels por slot
+  const slotHeight = 48;
   
   // Filtrar reservas por local e data selecionados
   const dayStr = currentDate.toISOString().split('T')[0];
@@ -121,30 +133,37 @@ const CalendarDayView = ({
                   }}
                   onClick={() => handleEventClick(event)}
                 >
-                  <div className="p-3 h-full overflow-hidden">
-                    <div className="flex items-start justify-between h-full">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <User className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                          <span className="font-semibold text-sm truncate">{event.client}</span>
+                  <div className="p-2 h-full overflow-hidden">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1">
+                        <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
+                        <span className="font-semibold text-xs truncate">{event.client}</span>
+                      </div>
+                      {height > 60 && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
+                          <span className="text-xs text-gray-600 truncate">{event.venue}</span>
                         </div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-600 truncate">{event.venue}</span>
+                      )}
+                      <div className="text-xs text-gray-500 font-medium">
+                        {event.startTime} - {event.endTime}
+                      </div>
+                      {height > 80 && (
+                        <div className="text-xs text-gray-500 truncate">
+                          {event.title.split(' - ')[1] || 'Reserva'}
                         </div>
-                        <div className="text-sm text-gray-500 font-medium">
-                          {event.startTime} - {event.endTime}
-                        </div>
-                        <div className="flex items-center gap-1 mt-1">
-                          <div className={`h-2 w-2 rounded-full ${
-                            event.status === 'confirmed' ? 'bg-green-500' :
-                            event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
-                          }`} />
+                      )}
+                      <div className="flex items-center gap-1">
+                        <div className={`h-1.5 w-1.5 rounded-full ${
+                          event.status === 'confirmed' ? 'bg-green-500' :
+                          event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                        }`} />
+                        {height > 60 && (
                           <span className="text-xs text-gray-500">
                             {event.status === 'confirmed' ? 'Confirmado' :
                              event.status === 'pending' ? 'Pendente' : 'Cancelado'}
                           </span>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>

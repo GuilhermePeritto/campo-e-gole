@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { Clock, MapPin, Plus, User, X } from 'lucide-react';
-import { mockLocais } from '@/data/mockLocais';
 import { useLocais } from '@/hooks/useLocais';
+import EmptyTimelineState from './EmptyTimelineState';
 
 interface Event {
   id: number;
@@ -39,6 +39,11 @@ const EventTimeline = ({
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
   const { getLocalByName } = useLocais();
+  
+  // Se não há local selecionado, mostrar estado vazio
+  if (!selectedVenue || selectedVenue === '') {
+    return <EmptyTimelineState />;
+  }
   
   // Mapear nome do local para ID usando hook
   const getVenueIdByName = (venueName: string) => {
@@ -214,34 +219,38 @@ const EventTimeline = ({
                 }}
                 onClick={() => !isDisabledEvent && handleEventClick(event)}
               >
-                <div className="p-3 h-full overflow-hidden">
+                <div className="p-2 h-full overflow-hidden">
                   <div className="flex items-start justify-between h-full">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <User className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                        <span className="font-semibold text-sm truncate">{event.client}</span>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-1">
+                        <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
+                        <span className="font-semibold text-xs truncate">{event.client}</span>
                       </div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                        <span className="text-sm text-gray-600 truncate">{event.venue}</span>
-                      </div>
-                      <div className="text-sm text-gray-500 font-medium">
+                      {height > 60 && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
+                          <span className="text-xs text-gray-600 truncate">{event.venue}</span>
+                        </div>
+                      )}
+                      <div className="text-xs text-gray-500 font-medium">
                         {event.startTime} - {event.endTime}
                       </div>
-                      {event.sport && (
-                        <div className="text-xs text-gray-500 mt-1 truncate">
+                      {event.sport && height > 80 && (
+                        <div className="text-xs text-gray-500 truncate">
                           {event.sport}
                         </div>
                       )}
-                      <div className="flex items-center gap-1 mt-1">
-                        <div className={`h-2 w-2 rounded-full ${
+                      <div className="flex items-center gap-1">
+                        <div className={`h-1.5 w-1.5 rounded-full ${
                           event.status === 'confirmed' ? 'bg-green-500' :
                           event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
                         }`} />
-                        <span className="text-xs text-gray-500 capitalize">
-                          {event.status === 'confirmed' ? 'Confirmado' :
-                           event.status === 'pending' ? 'Pendente' : 'Cancelado'}
-                        </span>
+                        {height > 60 && (
+                          <span className="text-xs text-gray-500 capitalize">
+                            {event.status === 'confirmed' ? 'Confirmado' :
+                             event.status === 'pending' ? 'Pendente' : 'Cancelado'}
+                          </span>
+                        )}
                       </div>
                     </div>
                     {isCurrentlyEditing && onCancelEdit && (
@@ -252,9 +261,9 @@ const EventTimeline = ({
                           e.stopPropagation();
                           onCancelEdit();
                         }}
-                        className="ml-2 h-8 w-8 p-0 flex-shrink-0"
+                        className="ml-1 h-6 w-6 p-0 flex-shrink-0"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </Button>
                     )}
                   </div>
