@@ -89,8 +89,11 @@ const CalendarDayView = ({
               return (
                 <div 
                   key={time} 
-                  className="border-b border-gray-100 flex items-center p-3 relative hover:bg-gray-50"
+                  className={`border-b border-gray-100 flex items-center p-3 transition-colors relative ${
+                    isAvailable ? 'cursor-pointer hover:bg-green-50' : ''
+                  }`}
                   style={{ height: `${slotHeight}px` }}
+                  onClick={() => isAvailable && handleNewReservation(time)}
                 >
                   <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
                     {time}
@@ -98,15 +101,10 @@ const CalendarDayView = ({
                   
                   <div className="flex-1 ml-4 relative">
                     {isAvailable && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleNewReservation(time)}
-                        className="text-green-600 border-green-200 hover:bg-green-50"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
+                      <div className="text-green-600 text-sm font-medium flex items-center gap-1">
+                        <Plus className="h-4 w-4" />
                         Disponível - clique para reservar
-                      </Button>
+                      </div>
                     )}
                   </div>
                 </div>

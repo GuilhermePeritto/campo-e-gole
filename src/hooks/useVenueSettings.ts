@@ -10,12 +10,9 @@ interface VenueSettings {
 export const useVenueSettings = () => {
   // Mock data com intervalos diferentes por local
   const [venueSettings] = useState<VenueSettings[]>([
-    { id: 'quadra-1', name: 'Quadra Principal', eventInterval: 30 },
-    { id: 'quadra-2', name: 'Quadra Society', eventInterval: 60 },
-    { id: 'campo-1', name: 'Campo de Futebol', eventInterval: 15 },
-    { id: '1', name: 'Quadra A', eventInterval: 30 },
-    { id: '2', name: 'Quadra B', eventInterval: 60 },
-    { id: '3', name: 'Campo Principal', eventInterval: 15 },
+    { id: '1', name: 'Quadra Principal', eventInterval: 30 },
+    { id: '2', name: 'Quadra Coberta', eventInterval: 15 },
+    { id: '3', name: 'Campo Externo', eventInterval: 60 },
     { id: 'all', name: 'Todos os locais', eventInterval: 30 }
   ]);
 

@@ -9,34 +9,34 @@ import { useNavigate } from 'react-router-dom';
 const Locais = () => {
   const navigate = useNavigate();
 
-  // Mock data
+  // Mock data com intervalos diferentes
   const venues = [
     {
       id: 1,
       name: 'Quadra Principal',
       type: 'Futebol Society',
-      capacity: 22,
       hourlyRate: 80,
       status: 'ativo',
-      characteristics: ['Grama sintética', 'Iluminação', 'Vestiário']
+      characteristics: ['Grama sintética', 'Iluminação', 'Vestiário'],
+      eventInterval: 30
     },
     {
       id: 2,
       name: 'Quadra Coberta',
       type: 'Futsal',
-      capacity: 12,
       hourlyRate: 60,
       status: 'ativo',
-      characteristics: ['Piso de madeira', 'Arquibancada', 'Som ambiente']
+      characteristics: ['Piso de madeira', 'Arquibancada', 'Som ambiente'],
+      eventInterval: 15
     },
     {
       id: 3,
       name: 'Campo Externo',
       type: 'Futebol',
-      capacity: 22,
       hourlyRate: 100,
       status: 'manutencao',
-      characteristics: ['Grama natural', 'Vestiário duplo']
+      characteristics: ['Grama natural', 'Vestiário duplo'],
+      eventInterval: 60
     }
   ];
 
@@ -51,9 +51,9 @@ const Locais = () => {
       label: 'Tipo'
     },
     {
-      key: 'capacity',
-      label: 'Capacidade',
-      render: (item: any) => `${item.capacity} pessoas`
+      key: 'eventInterval',
+      label: 'Intervalo',
+      render: (item: any) => `${item.eventInterval} min`
     },
     {
       key: 'hourlyRate',
