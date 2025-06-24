@@ -1,3 +1,4 @@
+
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -8,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
@@ -79,7 +81,8 @@ const Reserva = () => {
         recurringType: 'weekly',
         customRecurringDays: '',
         hourlyRate: 80,
-        totalHours: 2
+        totalHours: 2,
+        paymentOption: 'later' as const
       };
       setFormData(mockData);
     } else {
