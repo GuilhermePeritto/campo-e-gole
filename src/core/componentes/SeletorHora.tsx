@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -23,6 +23,8 @@ interface SeletorHoraProps {
   maxTime?: string;
   interval?: number; // intervalo em minutos
   occupiedTimes?: string[]; // horários ocupados
+  venueSelected?: boolean; // se há local selecionado
+  dateSelected?: boolean; // se há data selecionada
 }
 
 const SeletorHora: React.FC<SeletorHoraProps> = ({
@@ -34,14 +36,21 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
   required = false,
   id,
   disabled = false,
-  minTime = "06:00",
-  maxTime = "23:00",
+  minTime = "07:00",
+  maxTime = "21:00",
   interval = 30,
-  occupiedTimes = []
+  occupiedTimes = [],
+  venueSelected = false,
+  dateSelected = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const gerarHorarios = () => {
+  const gerarHorarios = useMemo(() => {
+    // Se não há local ou data selecionados, não mostrar horários
+    if (!venueSelected || !dateSelected) {
+      return [];
+    }
+
     const horarios = [];
     const [minHour, minMinute] = minTime.split(':').map(Number);
     const [maxHour, maxMinute] = maxTime.split(':').map(Number);
@@ -61,7 +70,7 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
     }
     
     return horarios;
-  };
+  }, [minTime, maxTime, interval, occupiedTimes, venueSelected, dateSelected]);
 
   const selecionarHorario = (horario: string) => {
     if (onChange) {
@@ -70,7 +79,8 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
     setIsOpen(false);
   };
 
-  const horarios = gerarHorarios();
+  // Determinar se deve mostrar como desabilitado
+  const isDisabledOrNoSelection = disabled || !venueSelected || !dateSelected;
 
   return (
     <div className="space-y-2">
@@ -89,17 +99,28 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
               !value && "text-muted-foreground",
               className
             )}
-            disabled={disabled}
+            disabled={isDisabledOrNoSelection}
           >
             <Clock className="mr-2 h-4 w-4" />
-            {value || <span>{placeholder}</span>}
+            {value ? (
+              <span>{value}</span>
+            ) : (
+              <span>
+                {!venueSelected 
+                  ? "Selecione um local primeiro" 
+                  : !dateSelected 
+                    ? "Selecione uma data primeiro"
+                    : placeholder
+                }
+              </span>
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-48 p-0" align="start">
           <div className="max-h-80 overflow-y-auto p-2">
             <div className="space-y-1">
-              {horarios.length > 0 ? (
-                horarios.map((horario) => (
+              {gerarHorarios.length > 0 ? (
+                gerarHorarios.map((horario) => (
                   <Button
                     key={horario}
                     variant={value === horario ? "default" : "ghost"}
@@ -112,7 +133,10 @@ const SeletorHora: React.FC<SeletorHoraProps> = ({
                 ))
               ) : (
                 <div className="text-center text-sm text-gray-500 p-2">
-                  Nenhum horário disponível
+                  {!venueSelected || !dateSelected 
+                    ? "Selecione local e data primeiro"
+                    : "Nenhum horário disponível"
+                  }
                 </div>
               )}
             </div>

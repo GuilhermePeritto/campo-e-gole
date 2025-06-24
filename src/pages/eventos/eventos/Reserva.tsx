@@ -91,8 +91,8 @@ const Reserva = () => {
         const local = getLocalByVenueId(reserva.venueId);
         
         const mockData = {
-          client: cliente?.label || reserva.client,
-          venue: local?.label || reserva.venue,
+          client: cliente?.name || reserva.client, // Usar name do cliente
+          venue: local?.id || reserva.venueId, // Usar ID do local para funcionar com seleção
           date: new Date(reserva.date),
           startTime: reserva.startTime,
           endTime: reserva.endTime,
@@ -182,6 +182,8 @@ const Reserva = () => {
     
     const selectedDateStr = formData.date.toISOString().split('T')[0];
     const reservationsForDate = getReservasByDate(selectedDateStr);
+    
+    // Buscar local pelos dados de locais
     const selectedVenue = locais.find(l => l.id === formData.venue);
     
     if (!selectedVenue) return [];
@@ -407,8 +409,11 @@ const Reserva = () => {
                       id="client"
                       label="Cliente"
                       value={formData.client}
-                      onChange={(value) => setFormData(prev => ({ ...prev, client: value }))}
+                      onChange={(value, item) => {
+                        setFormData(prev => ({ ...prev, client: item?.id || value }));
+                      }}
                       items={clientesExemplo}
+                      displayField="label"
                       placeholder="Digite o nome do cliente..."
                       required
                     />
@@ -433,8 +438,16 @@ const Reserva = () => {
                   id="venue"
                   label="Local"
                   value={formData.venue}
-                  onChange={(value) => setFormData(prev => ({ ...prev, venue: value }))}
+                  onChange={(value, item) => {
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      venue: item?.id || value,
+                      startTime: '', // Reset horários quando trocar local
+                      endTime: ''
+                    }));
+                  }}
                   items={locaisExemplo}
+                  displayField="label"
                   placeholder="Selecione o local..."
                   required
                 />
@@ -443,7 +456,12 @@ const Reserva = () => {
                   id="date"
                   label="Data"
                   value={formData.date}
-                  onChange={(date) => setFormData(prev => ({ ...prev, date }))}
+                  onChange={(date) => setFormData(prev => ({ 
+                    ...prev, 
+                    date,
+                    startTime: '', // Reset horários quando trocar data
+                    endTime: ''
+                  }))}
                   required
                 />
 
@@ -457,6 +475,8 @@ const Reserva = () => {
                     minTime={venueConfig.minTime}
                     maxTime={venueConfig.maxTime}
                     occupiedTimes={occupiedTimes}
+                    venueSelected={!!formData.venue}
+                    dateSelected={!!formData.date}
                     required
                   />
 
@@ -469,6 +489,8 @@ const Reserva = () => {
                     minTime={venueConfig.minTime}
                     maxTime={venueConfig.maxTime}
                     occupiedTimes={occupiedTimes}
+                    venueSelected={!!formData.venue}
+                    dateSelected={!!formData.date}
                     required
                   />
                 </div>
