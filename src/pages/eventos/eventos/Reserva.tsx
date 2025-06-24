@@ -24,6 +24,7 @@ interface ReservationFormData {
   startTime: string;
   endTime: string;
   notes: string;
+  observations: string;
   amount: string;
   recurring: boolean;
   recurringType: string;
@@ -46,6 +47,7 @@ const Reserva = () => {
     startTime: '',
     endTime: '',
     notes: '',
+    observations: '',
     amount: '',
     recurring: false,
     recurringType: '',
@@ -65,6 +67,7 @@ const Reserva = () => {
         startTime: '14:00',
         endTime: '16:00',
         notes: 'Reserva para partida de futebol society',
+        observations: 'Observações adicionais',
         amount: '120',
         recurring: true,
         recurringType: 'weekly',
@@ -282,6 +285,7 @@ const Reserva = () => {
       startTime: event.startTime,
       endTime: event.endTime,
       notes: event.notes || '',
+      observations: event.notes || '',
       amount: '160' // Mock amount
     }));
 
@@ -298,6 +302,7 @@ const Reserva = () => {
       startTime: event.startTime,
       endTime: event.endTime,
       notes: event.notes || '',
+      observations: event.notes || '',
       amount: '160' // Mock amount
     }));
 
@@ -319,6 +324,7 @@ const Reserva = () => {
         startTime: '',
         endTime: '',
         notes: '',
+        observations: '',
         amount: '',
         recurring: false,
         recurringType: '',
