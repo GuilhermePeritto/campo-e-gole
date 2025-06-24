@@ -1,9 +1,9 @@
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Reservation } from '@/hooks/useCalendar';
-import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { useLocais } from '@/hooks/useLocais';
-import { MapPin, Plus, User } from 'lucide-react';
+import { useVenueSettings } from '@/hooks/useVenueSettings';
+import { Plus, User } from 'lucide-react';
 
 interface CalendarDayColumnsViewProps {
   currentDate: Date;
@@ -47,15 +47,7 @@ const CalendarDayColumnsView = ({
 
   return (
     <div className="h-[calc(100vh-200px)] overflow-y-auto">
-      <Card className="h-full">
-        <CardHeader className="py-3">
-          <h3 className="text-sm font-semibold">Todos os Locais - {currentDate.toLocaleDateString('pt-BR', { 
-            weekday: 'long', 
-            day: '2-digit', 
-            month: 'long' 
-          })}</h3>
-          <p className="text-xs text-gray-500">Intervalo da timeline: {smallestInterval}min</p>
-        </CardHeader>
+      <Card className="">
         <CardContent className="p-0">
           <div className="grid" style={{ gridTemplateColumns: `80px repeat(${locais.length}, 1fr)` }}>
             {/* Coluna de horários */}
