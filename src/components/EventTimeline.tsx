@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { Clock, MapPin, Plus, User, X } from 'lucide-react';
-import { useEffect } from 'react';
+import { mockLocais } from '@/data/mockLocais';
 
 interface Event {
   id: number;
@@ -39,10 +39,15 @@ const EventTimeline = ({
   
   const { generateTimeSlots, getVenueInterval, venueSettings } = useVenueSettings();
   
-  // Mapear nome do local para ID para uso com useVenueSettings
+  // Mapear nome do local para ID usando dados centralizados
   const getVenueIdByName = (venueName: string) => {
-    const venue = venueSettings.find(v => v.name === venueName);
-    return venue?.id || 'all';
+    // Primeiro tentar encontrar nos dados centralizados
+    const venue = mockLocais.find(v => v.name === venueName);
+    if (venue) return venue.id;
+    
+    // Fallback para venueSettings se não encontrar
+    const venueFromSettings = venueSettings.find(v => v.name === venueName);
+    return venueFromSettings?.id || 'all';
   };
   
   // Gerar slots baseados no local selecionado

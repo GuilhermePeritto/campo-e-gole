@@ -5,40 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { mockLocais } from '@/data/mockLocais';
 
 const Locais = () => {
   const navigate = useNavigate();
-
-  // Mock data com intervalos diferentes
-  const venues = [
-    {
-      id: 1,
-      name: 'Quadra Principal',
-      type: 'Futebol Society',
-      hourlyRate: 80,
-      status: 'ativo',
-      characteristics: ['Grama sintética', 'Iluminação', 'Vestiário'],
-      eventInterval: 30
-    },
-    {
-      id: 2,
-      name: 'Quadra Coberta',
-      type: 'Futsal',
-      hourlyRate: 60,
-      status: 'ativo',
-      characteristics: ['Piso de madeira', 'Arquibancada', 'Som ambiente'],
-      eventInterval: 15
-    },
-    {
-      id: 3,
-      name: 'Campo Externo',
-      type: 'Futebol',
-      hourlyRate: 100,
-      status: 'manutencao',
-      characteristics: ['Grama natural', 'Vestiário duplo'],
-      eventInterval: 60
-    }
-  ];
 
   const columns = [
     {
@@ -51,9 +21,9 @@ const Locais = () => {
       label: 'Tipo'
     },
     {
-      key: 'eventInterval',
+      key: 'interval',
       label: 'Intervalo',
-      render: (item: any) => `${item.eventInterval} min`
+      render: (item: any) => `${item.interval} min`
     },
     {
       key: 'hourlyRate',
@@ -64,8 +34,9 @@ const Locais = () => {
       key: 'status',
       label: 'Situação',
       render: (item: any) => (
-        <Badge variant={item.status === 'ativo' ? 'default' : 'destructive'}>
-          {item.status === 'ativo' ? 'Ativo' : 'Manutenção'}
+        <Badge variant={item.status === 'active' ? 'default' : 'destructive'}>
+          {item.status === 'active' ? 'Ativo' : 
+           item.status === 'maintenance' ? 'Manutenção' : 'Inativo'}
         </Badge>
       )
     }
@@ -99,7 +70,7 @@ const Locais = () => {
         <BaseList
           title="Gerenciar Locais"
           description="Cadastre e gerencie os locais disponíveis para reserva"
-          data={venues}
+          data={mockLocais}
           columns={columns}
           actions={actions}
           createButton={createButton}

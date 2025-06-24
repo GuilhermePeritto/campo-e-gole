@@ -85,5 +85,44 @@ export const mockClientes: MockCliente[] = [
     phone: '(11) 44444-6666',
     status: 'active',
     createdAt: '2024-03-12'
+  },
+  {
+    id: '7',
+    label: 'Roberto Lima',
+    subtitle: 'CPF: 111.222.333-44',
+    name: 'Roberto Lima',
+    document: '111.222.333-44',
+    email: 'roberto.lima@email.com',
+    phone: '(11) 33333-7777',
+    address: 'Rua dos Esportes, 456 - São Paulo/SP',
+    notes: 'Jogador de basquete profissional',
+    status: 'active',
+    createdAt: '2024-03-15'
+  },
+  {
+    id: '8',
+    label: 'Fernanda Costa',
+    subtitle: 'CPF: 222.333.444-55',
+    name: 'Fernanda Costa',
+    document: '222.333.444-55',
+    email: 'fernanda.costa@email.com',
+    phone: '(11) 22222-8888',
+    address: 'Av. dos Atletas, 789 - São Paulo/SP',
+    notes: 'Instrutora de aeróbica',
+    status: 'active',
+    createdAt: '2024-03-18'
+  },
+  {
+    id: '9',
+    label: 'Lucas Oliveira',
+    subtitle: 'CPF: 333.444.555-66',
+    name: 'Lucas Oliveira',
+    document: '333.444.555-66',
+    email: 'lucas.oliveira@email.com',
+    phone: '(11) 11111-9999',
+    address: 'Rua do Futsal, 321 - São Paulo/SP',
+    notes: 'Organizador de eventos esportivos',
+    status: 'active',
+    createdAt: '2024-03-20'
   }
 ];

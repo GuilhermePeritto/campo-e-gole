@@ -112,5 +112,54 @@ export const mockReservations: MockReservation[] = [
     notes: 'Aula de tênis',
     amount: 45,
     createdAt: '2024-06-23'
+  },
+  // Eventos para outros dias
+  {
+    id: 7,
+    client: 'Roberto Lima',
+    clientId: '7',
+    venue: 'Quadra Principal',
+    venueId: '1',
+    date: '2024-06-25',
+    startTime: '08:00',
+    endTime: '10:00',
+    status: 'confirmed',
+    color: '#10b981',
+    sport: 'Basquete',
+    notes: 'Treino matinal',
+    amount: 160,
+    createdAt: '2024-06-24'
+  },
+  {
+    id: 8,
+    client: 'Fernanda Costa',
+    clientId: '8',
+    venue: 'Quadra Coberta',
+    venueId: '2',
+    date: '2024-06-25',
+    startTime: '18:00',
+    endTime: '20:00',
+    status: 'confirmed',
+    color: '#f59e0b',
+    sport: 'Aeróbica',
+    notes: 'Aula de aeróbica',
+    amount: 90,
+    createdAt: '2024-06-24'
+  },
+  {
+    id: 9,
+    client: 'Lucas Oliveira',
+    clientId: '9',
+    venue: 'Campo Externo',
+    venueId: '3',
+    date: '2024-06-26',
+    startTime: '16:30',
+    endTime: '18:30',
+    status: 'confirmed',
+    color: '#3b82f6',
+    sport: 'Futsal',
+    notes: 'Partida amistosa',
+    amount: 200,
+    createdAt: '2024-06-24'
   }
 ];
