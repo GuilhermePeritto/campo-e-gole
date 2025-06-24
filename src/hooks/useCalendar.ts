@@ -68,6 +68,21 @@ export const useCalendar = () => {
     },
     {
       id: 2,
+      title: 'Marcos do popoti',
+      start: '2025-06-18T09:00:00',
+      end: '2025-06-18T11:00:00',
+      venueId: '1',
+      clientName: 'Marcos do popoti',
+      status: 'confirmed',
+      color: '#f59e0b',
+      client: 'João Silva',
+      venue: 'Quadra A',
+      startTime: '09:00',
+      endTime: '11:00',
+      day: new Date('2025-06-18')
+    },
+    {
+      id: 3,
       title: 'Maria Santos - Aula',
       start: '2025-06-18T14:00:00',
       end: '2025-06-18T16:00:00',
@@ -82,7 +97,7 @@ export const useCalendar = () => {
       day: new Date('2025-06-18')
     },
     {
-      id: 3,
+      id: 4,
       title: 'Pedro Costa - Pelada',
       start: '2025-06-18T19:00:00',
       end: '2025-06-18T21:00:00',
