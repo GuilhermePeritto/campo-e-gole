@@ -24,8 +24,18 @@ export const useVenueSettings = () => {
     return venue?.eventInterval || 30; // padrão 30 minutos
   };
 
-  const generateTimeSlots = (venueId: string, startHour = 7, endHour = 21): string[] => {
-    const interval = getVenueInterval(venueId);
+  const generateTimeSlots = (venueId: string, startHour = 7, endHour = 21, customInterval?: number): string[] => {
+    let interval: number;
+    
+    if (customInterval) {
+      interval = customInterval;
+    } else if (venueId === 'custom') {
+      // Para casos especiais onde queremos usar um intervalo customizado
+      interval = 30; // padrão se não especificado
+    } else {
+      interval = getVenueInterval(venueId);
+    }
+    
     const slots: string[] = [];
     
     const startMinutes = startHour * 60;

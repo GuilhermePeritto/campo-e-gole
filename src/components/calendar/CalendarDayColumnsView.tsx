@@ -24,7 +24,9 @@ const CalendarDayColumnsView = ({
   
   // Usar o menor intervalo entre todos os locais para a timeline
   const smallestInterval = Math.min(...locais.map(local => local.interval));
-  const timeSlots = generateTimeSlots('all', 7, 21);
+  
+  // Gerar slots usando o menor intervalo calculado
+  const timeSlots = generateTimeSlots('custom', 7, 21, smallestInterval);
   const slotHeight = 48;
   
   // Filtrar reservas por data
