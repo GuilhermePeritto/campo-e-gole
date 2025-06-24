@@ -1,17 +1,13 @@
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
-import PageTour, { TourStep } from '@/components/PageTour';
+import { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
-import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
 import { Calendar, CreditCard, Edit, Plus, X } from 'lucide-react';
@@ -258,102 +254,6 @@ const Reserva = () => {
     navigate('/eventos/recebiveis/novo?payNow=true');
   };
 
-  const handleClientChange = (value: string, item?: any) => {
-    setFormData(prev => ({ ...prev, client: value }));
-  };
-
-  const handleVenueChange = (value: string, item?: any) => {
-    setFormData(prev => ({ ...prev, venue: value }));
-  };
-
-  const handleDateChange = (date: Date | undefined) => {
-    setFormData(prev => ({ ...prev, date }));
-  };
-
-  const handleStartTimeChange = (time: string) => {
-    setFormData(prev => ({ ...prev, startTime: time }));
-  };
-
-  const handleEndTimeChange = (time: string) => {
-    setFormData(prev => ({ ...prev, endTime: time }));
-  };
-
-  const handleAmountChange = (value: string) => {
-    setFormData(prev => ({ ...prev, amount: value }));
-  };
-
-  const handleNotesChange = (value: string) => {
-    setFormData(prev => ({ ...prev, notes: value }));
-  };
-
-  const handleRecurringChange = (checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      recurring: checked,
-      recurringType: checked ? prev.recurringType : '',
-      customRecurringDays: checked ? prev.customRecurringDays : ''
-    }));
-  };
-
-  const handleRecurringTypeChange = (value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      recurringType: value,
-      customRecurringDays: value === 'custom' ? prev.customRecurringDays : ''
-    }));
-  };
-
-  const handleCustomDaysChange = (value: string) => {
-    setFormData(prev => ({ ...prev, customRecurringDays: value }));
-  };
-
-  const handleNewClient = () => {
-    // Armazena a URL atual para retornar após cadastro
-    sessionStorage.setItem('returnUrl', window.location.pathname + window.location.search);
-    navigate('/eventos/clientes/novo');
-  };
-
-  // Funções para interagir com a timeline
-  const handleTimeSlotClick = (time: string) => {
-    if (!isEdit) {
-      setFormData(prev => ({ ...prev, startTime: time }));
-    }
-  };
-
-  const handleEventSelect = (event: any) => {
-    // Preencher tanto horário inicial quanto final
-    setFormData(prev => ({
-      ...prev,
-      client: event.client,
-      venue: event.venue,
-      startTime: event.startTime,
-      endTime: event.endTime,
-      notes: (event as any).notes || event.sport || '',
-      observations: (event as any).notes || event.sport || '',
-      amount: '160' // Mock amount
-    }));
-
-    setIsEdit(true);
-    setEditingEventId(event.id);
-  };
-
-  const handleEventEdit = (event: any) => {
-    // Load event data into form
-    setFormData(prev => ({
-      ...prev,
-      client: event.client,
-      venue: event.venue,
-      startTime: event.startTime,
-      endTime: event.endTime,
-      notes: (event as any).notes || event.sport || '',
-      observations: (event as any).notes || event.sport || '',
-      amount: '160' // Mock amount
-    }));
-
-    setIsEdit(true);
-    setEditingEventId(event.id);
-  };
-
   const handleCancelEdit = () => {
     setIsEdit(false);
     setEditingEventId(null);
@@ -386,9 +286,6 @@ const Reserva = () => {
   const handleCancel = () => {
     navigate('/eventos/agenda');
   };
-
-  // Filter events by selected date and venue
-  const selectedDateStr = formData.date ? formData.date.toISOString().split('T')[0] : '';
   
   const pageTitle = isEdit ? "Editar Reserva" : "Nova Reserva";
   const pageIcon = isEdit ? <Edit className="h-6 w-6" /> : <Calendar className="h-6 w-6" />;
@@ -406,15 +303,12 @@ const Reserva = () => {
       <main className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Formulário */}
-          <div className="space-y-6">
-            <Card>
+          <div className="space-y-4">
+            <Card className={`${isEdit ? 'border-module-events/90 border border-2 rounded-lg' : ''}`}>
               <CardHeader>
-                <CardTitle>
-                  {isEdit ? 'Editar Reserva' : 'Nova Reserva'}
-                </CardTitle>
                 {/* Card de informação de edição movido para dentro do formulário */}
                 {isEdit && (
-                  <div className="bg-module-events/10 border border-module-events/30 rounded-lg p-4 mt-4">
+                  <div className="bg-module-events/10 border border-module-events/30 rounded-lg p-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Edit className="h-4 w-4 text-module-events/70" />
@@ -426,7 +320,7 @@ const Reserva = () => {
                         variant="outline"
                         size="sm"
                         onClick={handleCancelEdit}
-                        className="h-8 px-3 text-xs"
+                        className="h-8 px-3 text-xs text-module-events/70 hover:bg-module-events/20 bg-transparent border-module-events/30"
                       >
                         <X className="h-3 w-3 mr-1" />
                         Cancelar
@@ -574,9 +468,9 @@ const Reserva = () => {
           </div>
 
           {/* Timeline com altura flexível que acompanha o formulário */}
-          <div className="lg:sticky lg:top-6">
-            <Card className="flex flex-col">
-              <CardContent className="p-0 flex flex-col">
+          <div className="h-full">
+            <Card className="h-full flex flex-col">
+              <CardContent className="h-full p-0 flex flex-col">
                 <EventTimeline
                   selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
                   events={mockEvents}

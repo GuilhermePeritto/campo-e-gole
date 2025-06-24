@@ -38,7 +38,7 @@ const Events = () => {
       action: () => navigate('/eventos/agenda')
     },
     {
-      title: 'Recebiveis',
+      title: 'Recebíveis',
       description: 'Contas a receber',
       icon: CreditCard,
       color: 'bg-module-events',

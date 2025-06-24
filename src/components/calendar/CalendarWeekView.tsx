@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { Reservation } from '@/hooks/useCalendar';
 
 interface CalendarWeekViewProps {
@@ -56,7 +55,7 @@ const CalendarWeekView = ({
       </div>
 
       {/* Days Content */}
-      <div className="grid grid-cols-7 gap-px bg-gray-200 min-h-[500px]">
+      <div className="h-full grid grid-cols-7 gap-px bg-gray-200 min-h-[500px]">
         {weekDays.map((day, index) => {
           const dayEvents = getDayEvents(day);
           

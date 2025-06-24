@@ -1,9 +1,8 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Clock, Plus, User, MapPin } from 'lucide-react';
-import { Reservation, Venue } from '@/hooks/useCalendar';
+import { Card, CardContent } from '@/components/ui/card';
+import { Reservation } from '@/hooks/useCalendar';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
+import { MapPin, Plus, User } from 'lucide-react';
 
 interface CalendarDayViewProps {
   currentDate: Date;
@@ -65,21 +64,7 @@ const CalendarDayView = ({
 
   return (
     <div className="h-[calc(100vh-200px)] overflow-y-auto">
-      <Card className="h-full">
-        <CardHeader className="flex-shrink-0">
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            {currentDate.toLocaleDateString('pt-BR', { 
-              weekday: 'long', 
-              day: '2-digit', 
-              month: 'long',
-              year: 'numeric'
-            })}
-            {selectedVenue !== 'all' && (
-              <span className="text-sm text-gray-600 ml-2">({selectedVenue}) - Intervalo: {interval}min</span>
-            )}
-          </CardTitle>
-        </CardHeader>
+      <Card className="">
         <CardContent className="p-0 flex-1 relative">
           {/* Time slots grid */}
           <div className="relative">

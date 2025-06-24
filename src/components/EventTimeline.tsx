@@ -1,8 +1,7 @@
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, MapPin, User, Plus, X, CreditCard } from 'lucide-react';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
+import { Clock, MapPin, Plus, User, X } from 'lucide-react';
 
 interface Event {
   id: number;
@@ -110,7 +109,7 @@ const EventTimeline = ({
   const isEditingMode = editingEventId !== null;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-h-[calc(100vh-110px)] overflow-hidden">
       <div className="flex-shrink-0 bg-background border-b p-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold flex items-center gap-2">
