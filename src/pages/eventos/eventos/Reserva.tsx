@@ -1,3 +1,4 @@
+
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import { TourStep } from '@/components/PageTour';
@@ -6,11 +7,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
-import { Calendar, CreditCard, Edit, Plus, X } from 'lucide-react';
+import { Calendar, CreditCard, Edit, Plus, X, Repeat } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useClientes } from '@/hooks/useClientes';
@@ -87,8 +91,8 @@ const Reserva = () => {
         const local = getLocalByVenueId(reserva.venueId);
         
         const mockData = {
-          client: cliente?.id || reserva.clientId,
-          venue: local?.id || reserva.venueId,
+          client: cliente?.label || reserva.client,
+          venue: local?.label || reserva.venue,
           date: new Date(reserva.date),
           startTime: reserva.startTime,
           endTime: reserva.endTime,
@@ -480,51 +484,65 @@ const Reserva = () => {
                   />
                 </div>
 
-                {/* Campo de evento recorrente */}
-                <div className="space-y-4 p-4 border rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
+                {/* Campo de evento recorrente atualizado */}
+                <div className="space-y-4 p-4 border rounded-lg bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Repeat className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div>
+                        <Label htmlFor="recurring" className="text-base font-semibold text-blue-900 dark:text-blue-100">
+                          Evento Recorrente
+                        </Label>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                          Criar várias reservas baseadas em um padrão
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
                       id="recurring"
                       checked={formData.recurring}
-                      onChange={(e) => setFormData(prev => ({ ...prev, recurring: e.target.checked }))}
-                      className="rounded"
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, recurring: checked }))}
                     />
-                    <Label htmlFor="recurring" className="text-sm font-medium">
-                      Evento recorrente
-                    </Label>
                   </div>
                   
                   {formData.recurring && (
-                    <div className="space-y-3">
-                      <div>
-                        <Label htmlFor="recurringType" className="text-sm">Tipo de recorrência</Label>
-                        <select
-                          id="recurringType"
-                          value={formData.recurringType}
-                          onChange={(e) => setFormData(prev => ({ ...prev, recurringType: e.target.value }))}
-                          className="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm"
+                    <div className="space-y-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+                      <div className="space-y-2">
+                        <Label htmlFor="recurringType" className="text-sm font-medium">
+                          Frequência de repetição
+                        </Label>
+                        <Select 
+                          value={formData.recurringType} 
+                          onValueChange={(value) => setFormData(prev => ({ ...prev, recurringType: value }))}
                         >
-                          <option value="">Selecione...</option>
-                          {recurringOptions.map(option => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione a frequência..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {recurringOptions.map(option => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       
                       {formData.recurringType === 'custom' && (
-                        <div>
-                          <Label htmlFor="customRecurringDays" className="text-sm">Dias personalizados</Label>
-                          <input
-                            type="text"
+                        <div className="space-y-2">
+                          <Label htmlFor="customRecurringDays" className="text-sm font-medium">
+                            Dias personalizados
+                          </Label>
+                          <Input
                             id="customRecurringDays"
                             value={formData.customRecurringDays}
                             onChange={(e) => setFormData(prev => ({ ...prev, customRecurringDays: e.target.value }))}
                             placeholder="Ex: Segunda, Quarta, Sexta"
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm"
+                            className="w-full"
                           />
+                          <p className="text-xs text-muted-foreground">
+                            Especifique os dias da semana separados por vírgula
+                          </p>
                         </div>
                       )}
                     </div>
@@ -610,7 +628,7 @@ const Reserva = () => {
                     
                     setFormData(prev => ({
                       ...prev,
-                      client: selectedClient?.id || event.client,
+                      client: selectedClient?.label || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
@@ -627,7 +645,7 @@ const Reserva = () => {
                     
                     setFormData(prev => ({
                       ...prev,
-                      client: selectedClient?.id || event.client,
+                      client: selectedClient?.label || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
@@ -639,6 +657,7 @@ const Reserva = () => {
                     setEditingEventId(event.id);
                   }}
                   onCancelEdit={handleCancelEdit}
+                  onDeleteEvent={deleteReserva}
                 />
               </CardContent>
             </Card>
