@@ -3,7 +3,7 @@ import BaseList from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { DollarSign, Plus } from 'lucide-react';
+import { CreditCard, DollarSign, Edit, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Recebiveis = () => {
@@ -93,7 +93,14 @@ const Recebiveis = () => {
     {
       label: 'Editar',
       onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}/editar`),
-      variant: 'outline' as const
+      variant: 'outline' as const,
+      icon: <Edit className="h-4 w-4" />
+    },
+    {
+      label: 'Pagar',
+      onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}/receber`),
+      variant: 'default' as const,
+      icon: <CreditCard className="h-4 w-4" />
     }
   ];
 

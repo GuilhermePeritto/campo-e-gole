@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
@@ -9,12 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import CampoValor from '@/core/componentes/CampoValor';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
-import { Calendar, Edit, Plus, X } from 'lucide-react';
+import { Calendar, CreditCard, Edit, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -32,7 +32,6 @@ interface ReservationFormData {
   customRecurringDays: string;
   hourlyRate: number;
   totalHours: number;
-  paymentOption: 'now' | 'later';
 }
 
 const Reserva = () => {
@@ -57,8 +56,7 @@ const Reserva = () => {
     recurringType: '',
     customRecurringDays: '',
     hourlyRate: 80,
-    totalHours: 0,
-    paymentOption: 'later'
+    totalHours: 0
   });
 
   // Detectar se é edição baseado no ID na URL
@@ -80,8 +78,7 @@ const Reserva = () => {
         recurringType: 'weekly',
         customRecurringDays: '',
         hourlyRate: 80,
-        totalHours: 2,
-        paymentOption: 'later' as const
+        totalHours: 2
       };
       setFormData(mockData);
     } else {
@@ -146,7 +143,7 @@ const Reserva = () => {
     { value: 'custom', label: 'Personalizado' }
   ];
 
-  // Eventos mockados para a timeline com horários revisados
+  // Eventos mockados para a timeline
   const mockEvents = [
     {
       id: 1,
@@ -253,6 +250,12 @@ const Reserva = () => {
     e.preventDefault();
     console.log(isEdit ? 'Editando reserva:' : 'Nova reserva:', formData);
     navigate('/eventos/agenda');
+  };
+
+  const handleReserveNow = () => {
+    console.log('Reservando e pagando agora:', formData);
+    // Aqui você implementaria a lógica de pagamento
+    navigate('/eventos/recebiveis/novo?payNow=true');
   };
 
   const handleClientChange = (value: string, item?: any) => {
@@ -371,8 +374,7 @@ const Reserva = () => {
         recurringType: '',
         customRecurringDays: '',
         hourlyRate: 80,
-        totalHours: 0,
-        paymentOption: 'later'
+        totalHours: 0
       });
     }
 
@@ -385,13 +387,9 @@ const Reserva = () => {
     navigate('/eventos/agenda');
   };
 
-  // Filter events by selected date
+  // Filter events by selected date and venue
   const selectedDateStr = formData.date ? formData.date.toISOString().split('T')[0] : '';
-  const eventsForSelectedDate = mockEvents.filter(event => {
-    // Mock filtering - in real app, you'd filter by actual date
-    return true; // Show all events for demo
-  });
-
+  
   const pageTitle = isEdit ? "Editar Reserva" : "Nova Reserva";
   const pageIcon = isEdit ? <Edit className="h-6 w-6" /> : <Calendar className="h-6 w-6" />;
 
@@ -447,7 +445,7 @@ const Reserva = () => {
                       id="client"
                       label="Cliente"
                       value={formData.client}
-                      onChange={handleClientChange}
+                      onChange={(value) => setFormData(prev => ({ ...prev, client: value }))}
                       items={clientesExemplo}
                       placeholder="Digite o nome do cliente..."
                       required
@@ -458,7 +456,10 @@ const Reserva = () => {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={handleNewClient}
+                      onClick={() => {
+                        sessionStorage.setItem('returnUrl', window.location.pathname + window.location.search);
+                        navigate('/eventos/clientes/novo');
+                      }}
                       className="h-11 px-3"
                     >
                       <Plus className="h-4 w-4" />
@@ -470,7 +471,7 @@ const Reserva = () => {
                   id="venue"
                   label="Local"
                   value={formData.venue}
-                  onChange={handleVenueChange}
+                  onChange={(value) => setFormData(prev => ({ ...prev, venue: value }))}
                   items={locaisExemplo}
                   placeholder="Selecione o local..."
                   required
@@ -500,36 +501,6 @@ const Reserva = () => {
                     onChange={(time) => setFormData(prev => ({ ...prev, endTime: time }))}
                     required
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Pagamento</Label>
-                  <div className="flex gap-6">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="pay-now"
-                        name="payment"
-                        value="now"
-                        checked={formData.paymentOption === 'now'}
-                        onChange={(e) => setFormData(prev => ({ ...prev, paymentOption: e.target.value as 'now' | 'later' }))}
-                        className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
-                      />
-                      <Label htmlFor="pay-now">Pagar agora</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="pay-later"
-                        name="payment"
-                        value="later"
-                        checked={formData.paymentOption === 'later'}
-                        onChange={(e) => setFormData(prev => ({ ...prev, paymentOption: e.target.value as 'now' | 'later' }))}
-                        className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
-                      />
-                      <Label htmlFor="pay-later">Pagar depois</Label>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -573,6 +544,26 @@ const Reserva = () => {
                   >
                     {isEdit ? 'Atualizar' : 'Salvar'} Reserva
                   </Button>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleReserveNow}
+                          className="px-3"
+                          disabled={!formData.client || !formData.venue || !formData.date || !formData.startTime || !formData.endTime}
+                        >
+                          <CreditCard className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Pagar agora</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
                   <Button
                     type="button"
                     variant="outline"
@@ -593,10 +584,40 @@ const Reserva = () => {
                   selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
                   events={mockEvents}
                   selectedVenue={formData.venue}
-                  onTimeSlotClick={handleTimeSlotClick}
-                  onEventEdit={handleEventEdit}
+                  onTimeSlotClick={(time) => {
+                    if (!isEdit) {
+                      setFormData(prev => ({ ...prev, startTime: time }));
+                    }
+                  }}
+                  onEventEdit={(event) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      client: event.client,
+                      venue: event.venue,
+                      startTime: event.startTime,
+                      endTime: event.endTime,
+                      notes: event.notes || '',
+                      observations: event.notes || '',
+                      amount: '160'
+                    }));
+                    setIsEdit(true);
+                    setEditingEventId(event.id);
+                  }}
                   editingEventId={editingEventId}
-                  onEventSelect={handleEventSelect}
+                  onEventSelect={(event) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      client: event.client,
+                      venue: event.venue,
+                      startTime: event.startTime,
+                      endTime: event.endTime,
+                      notes: event.notes || '',
+                      observations: event.notes || '',
+                      amount: '160'
+                    }));
+                    setIsEdit(true);
+                    setEditingEventId(event.id);
+                  }}
                   onCancelEdit={handleCancelEdit}
                 />
               </CardContent>

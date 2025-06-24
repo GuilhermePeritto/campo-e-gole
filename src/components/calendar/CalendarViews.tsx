@@ -27,10 +27,10 @@ const CalendarViews = ({
   const weekDays = getWeekDays(currentDate);
   const monthDays = getMonthDays(currentDate);
 
-  // Filtrar reservas por local selecionado
+  // Filtrar reservas por local selecionado - corrigindo a filtragem
   const filteredReservations = selectedVenue === 'all' 
     ? mockReservations 
-    : mockReservations.filter(r => r.venue === selectedVenue);
+    : mockReservations.filter(r => r.venueId === selectedVenue);
 
   return (
     <div className="border rounded-lg overflow-hidden">

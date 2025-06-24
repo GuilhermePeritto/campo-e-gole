@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, MapPin, User, Plus, X } from 'lucide-react';
+import { Clock, MapPin, User, Plus, X, CreditCard } from 'lucide-react';
 
 interface Event {
   id: number;
@@ -53,59 +53,16 @@ const EventTimeline = ({
     return hours * 60 + minutes;
   };
 
-  // Verificar disponibilidade em um slot específico
-  const getSlotAvailability = (slotTime: string) => {
-    const slotStart = timeToMinutes(slotTime);
-    const slotEnd = slotStart + 60; // 1 hora depois
+  // Verificar se há evento em um horário específico
+  const hasEventAtTime = (timeSlot: string) => {
+    const slotStart = timeToMinutes(timeSlot);
+    const slotEnd = slotStart + 60;
     
-    // Verificar eventos que se sobrepõem
-    const overlappingEvents = filteredEvents.filter(event => {
+    return filteredEvents.some(event => {
       const eventStart = timeToMinutes(event.startTime);
       const eventEnd = timeToMinutes(event.endTime);
-      
       return !(eventEnd <= slotStart || eventStart >= slotEnd);
     });
-
-    if (overlappingEvents.length === 0) {
-      return { available: true, availableTime: slotTime };
-    }
-
-    // Verificar espaços parciais disponíveis
-    const sortedEvents = overlappingEvents.sort((a, b) => 
-      timeToMinutes(a.startTime) - timeToMinutes(b.startTime)
-    );
-
-    // Espaço antes do primeiro evento
-    const firstEventStart = timeToMinutes(sortedEvents[0].startTime);
-    if (firstEventStart > slotStart) {
-      const availableMinutes = firstEventStart - slotStart;
-      if (availableMinutes >= 30) { // Mínimo 30 minutos
-        return { 
-          available: true, 
-          availableTime: slotTime, 
-          endTime: sortedEvents[0].startTime,
-          partial: true 
-        };
-      }
-    }
-
-    // Espaço após o último evento
-    const lastEventEnd = timeToMinutes(sortedEvents[sortedEvents.length - 1].endTime);
-    if (lastEventEnd < slotEnd) {
-      const availableMinutes = slotEnd - lastEventEnd;
-      if (availableMinutes >= 30) { // Mínimo 30 minutos
-        const startHour = Math.floor(lastEventEnd / 60);
-        const startMinute = lastEventEnd % 60;
-        const startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
-        return { 
-          available: true, 
-          availableTime: startTime,
-          partial: true 
-        };
-      }
-    }
-
-    return { available: false };
   };
 
   const getStatusColor = (status: string) => {
@@ -123,6 +80,12 @@ const EventTimeline = ({
     }
     if (onEventEdit) {
       onEventEdit(event);
+    }
+  };
+
+  const handleTimeSlotClick = (time: string) => {
+    if (editingEventId === null && onTimeSlotClick) {
+      onTimeSlotClick(time);
     }
   };
 
@@ -155,32 +118,29 @@ const EventTimeline = ({
         {/* Time slots grid */}
         <div className="relative">
           {timeSlots.map((time, index) => {
-            const availability = getSlotAvailability(time);
-            const canClickTimeSlot = !isEditingMode && availability.available;
+            const hasEvent = hasEventAtTime(time);
+            const canClick = !isEditingMode && !hasEvent;
             
             return (
               <div 
                 key={time} 
-                className="border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative"
+                className={`border-b border-gray-100 h-16 flex items-center p-3 transition-colors relative ${
+                  canClick ? 'cursor-pointer hover:bg-green-50' : ''
+                }`}
+                onClick={() => canClick && handleTimeSlotClick(time)}
               >
                 <div className="w-16 text-sm font-medium text-gray-600 flex-shrink-0">
                   {time}
                 </div>
                 
                 <div className="flex-1 ml-4 relative">
-                  {canClickTimeSlot && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onTimeSlotClick?.(availability.availableTime)}
-                      className="text-green-600 border-green-200 hover:bg-green-50"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Disponível - {availability.availableTime}
-                      {availability.endTime && ` até ${availability.endTime}`}
-                    </Button>
+                  {canClick && (
+                    <div className="text-green-600 text-sm font-medium flex items-center gap-1">
+                      <Plus className="h-4 w-4" />
+                      Disponível - clique para reservar
+                    </div>
                   )}
-                  {isEditingMode && availability.available && (
+                  {isEditingMode && !hasEvent && (
                     <div className="text-sm text-gray-400 font-medium">
                       Disponível (modo edição ativo)
                     </div>
@@ -192,7 +152,7 @@ const EventTimeline = ({
         </div>
 
         {/* Events overlay */}
-        <div className="absolute top-0 left-0 right-0">
+        <div className="absolute top-0 left-0 right-0 pointer-events-none">
           {filteredEvents.map((event) => {
             const startMinutes = timeToMinutes(event.startTime);
             const endMinutes = timeToMinutes(event.endTime);
@@ -209,7 +169,7 @@ const EventTimeline = ({
             return (
               <div
                 key={event.id}
-                className={`absolute left-20 right-4 rounded-lg p-2 shadow-sm border-l-4 z-10 transition-all cursor-pointer ${
+                className={`absolute left-20 right-4 rounded-lg p-2 shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto ${
                   isCurrentlyEditing 
                     ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/10'
                     : isDisabledEvent

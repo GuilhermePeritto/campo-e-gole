@@ -25,7 +25,7 @@ const CalendarDayView = ({
   const filteredReservations = mockReservations.filter(reservation => {
     const reservationDate = new Date(reservation.start).toISOString().split('T')[0];
     const matchesDate = reservationDate === dayStr;
-    const matchesVenue = selectedVenue === 'all' || reservation.venue === selectedVenue;
+    const matchesVenue = selectedVenue === 'all' || reservation.venueId === selectedVenue;
     return matchesDate && matchesVenue;
   });
 
