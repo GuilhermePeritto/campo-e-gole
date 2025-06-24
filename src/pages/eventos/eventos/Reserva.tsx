@@ -328,8 +328,8 @@ const Reserva = () => {
       venue: event.venue,
       startTime: event.startTime,
       endTime: event.endTime,
-      notes: event.notes || event.sport || '',
-      observations: event.notes || event.sport || '',
+      notes: (event as any).notes || event.sport || '',
+      observations: (event as any).notes || event.sport || '',
       amount: '160' // Mock amount
     }));
 
@@ -345,8 +345,8 @@ const Reserva = () => {
       venue: event.venue,
       startTime: event.startTime,
       endTime: event.endTime,
-      notes: event.notes || event.sport || '',
-      observations: event.notes || event.sport || '',
+      notes: (event as any).notes || event.sport || '',
+      observations: (event as any).notes || event.sport || '',
       amount: '160' // Mock amount
     }));
 
@@ -596,8 +596,8 @@ const Reserva = () => {
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
-                      notes: event.notes || event.sport || '',
-                      observations: event.notes || event.sport || '',
+                      notes: (event as any).notes || event.sport || '',
+                      observations: (event as any).notes || event.sport || '',
                       amount: '160'
                     }));
                     setIsEdit(true);
@@ -611,8 +611,8 @@ const Reserva = () => {
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
-                      notes: event.notes || event.sport || '',
-                      observations: event.notes || event.sport || '',
+                      notes: (event as any).notes || event.sport || '',
+                      observations: (event as any).notes || event.sport || '',
                       amount: '160'
                     }));
                     setIsEdit(true);
