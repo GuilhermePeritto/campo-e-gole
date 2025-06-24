@@ -1,4 +1,3 @@
-
 import BaseFormPage from '@/components/BaseFormPage';
 import { TourStep } from '@/components/PageTour';
 import { Input } from '@/components/ui/input';
@@ -117,7 +116,7 @@ const Cliente = () => {
               label={formData.documentType === 'cpf' ? 'CPF' : 'CNPJ'}
               value={formData.document}
               onChange={(value) => handleChange('document', value)}
-              type={formData.documentType as 'cpf' | 'cnpj'}
+              tipo={formData.documentType as 'cpf' | 'cnpj'}
               required
             />
           </div>
@@ -143,7 +142,6 @@ const Cliente = () => {
             label="Telefone"
             value={formData.phone}
             onChange={(value) => handleChange('phone', value)}
-            placeholder="(11) 99999-9999"
           />
         </div>
       )
