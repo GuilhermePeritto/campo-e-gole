@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import { TourStep } from '@/components/PageTour';
@@ -153,6 +152,23 @@ const Reserva = () => {
   }, [formData.venue, locais]);
 
   const totalValue = formData.totalHours * formData.hourlyRate;
+
+  // Função para calcular horário final baseado no intervalo do local
+  const calculateEndTime = (startTime: string, venueId: string) => {
+    if (!startTime || !venueId) return '';
+    
+    const selectedVenue = locais.find(l => l.id === venueId);
+    if (!selectedVenue) return '';
+    
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const startMinutes = hours * 60 + minutes;
+    const endMinutes = startMinutes + selectedVenue.interval;
+    
+    const endHours = Math.floor(endMinutes / 60);
+    const endMins = endMinutes % 60;
+    
+    return `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`;
+  };
 
   // Formatar duração em horas e minutos
   const formatDuration = (totalMinutes: number) => {
@@ -481,7 +497,14 @@ const Reserva = () => {
                     id="startTime"
                     label="Início"
                     value={formData.startTime}
-                    onChange={(time) => setFormData(prev => ({ ...prev, startTime: time }))}
+                    onChange={(time) => {
+                      const endTime = calculateEndTime(time, formData.venue);
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        startTime: time,
+                        endTime: endTime
+                      }));
+                    }}
                     interval={venueConfig.interval}
                     minTime={venueConfig.minTime}
                     maxTime={venueConfig.maxTime}
@@ -655,8 +678,13 @@ const Reserva = () => {
                   events={mockEvents}
                   selectedVenue={getSelectedVenueName()}
                   onTimeSlotClick={(time) => {
-                    if (!isEdit) {
-                      setFormData(prev => ({ ...prev, startTime: time }));
+                    if (!isEdit && formData.venue) {
+                      const endTime = calculateEndTime(time, formData.venue);
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        startTime: time,
+                        endTime: endTime
+                      }));
                     }
                   }}
                   onEventEdit={(event) => {
