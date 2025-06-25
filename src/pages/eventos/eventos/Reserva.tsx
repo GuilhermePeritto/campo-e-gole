@@ -1,4 +1,3 @@
-
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import { TourStep } from '@/components/PageTour';
@@ -91,7 +90,7 @@ const Reserva = () => {
         const local = getLocalByVenueId(reserva.venueId);
         
         const mockData = {
-          client: cliente?.name || reserva.client, // Usar name do cliente
+          client: cliente?.id || reserva.clientId, // Usar ID do cliente para funcionar com seleção
           venue: local?.id || reserva.venueId, // Usar ID do local para funcionar com seleção
           date: new Date(reserva.date),
           startTime: reserva.startTime,
@@ -146,7 +145,7 @@ const Reserva = () => {
 
   // Atualizar taxa horária baseado no local selecionado
   useEffect(() => {
-    const selectedVenue = locais.find(v => v.label === formData.venue);
+    const selectedVenue = locais.find(v => v.id === formData.venue);
     if (selectedVenue) {
       setFormData(prev => ({ ...prev, hourlyRate: selectedVenue.hourlyRate }));
     }
@@ -222,8 +221,8 @@ const Reserva = () => {
     const selectedVenue = locais.find(l => l.id === formData.venue);
     return selectedVenue ? {
       interval: selectedVenue.interval,
-      minTime: "07:00", // horário de abertura
-      maxTime: "21:00"  // horário de fechamento
+      minTime: selectedVenue.openTime || "07:00",
+      maxTime: selectedVenue.closeTime || "21:00"
     } : {
       interval: 30,
       minTime: "07:00",
@@ -234,7 +233,7 @@ const Reserva = () => {
   const venueConfig = getSelectedVenueConfig();
   const occupiedTimes = getOccupiedTimes();
 
-  // Eventos mockados usando hook - removendo a segunda declaração de getReservasByDate
+  // Eventos mockados usando hook - mapeando corretamente para o timeline
   const selectedDateStr = formData.date ? formData.date.toISOString().split('T')[0] : '';
   const mockEvents = getReservasByDate(selectedDateStr).map(reservation => ({
     id: reservation.id,
@@ -244,9 +243,15 @@ const Reserva = () => {
     endTime: reservation.endTime,
     status: reservation.status,
     color: reservation.color,
-    sport: reservation.sport,
-    notes: reservation.notes
+    sport: reservation.sport || '',
+    notes: reservation.notes || ''
   }));
+
+  // Obter o nome do local selecionado para passar para a timeline
+  const getSelectedVenueName = () => {
+    const selectedVenue = locais.find(l => l.id === formData.venue);
+    return selectedVenue?.label || '';
+  };
 
   const tourSteps: TourStep[] = [
     {
@@ -303,7 +308,7 @@ const Reserva = () => {
       const local = getLocalByVenueId(formData.venue);
       
       const newReservaData = {
-        client: cliente?.label || formData.client,
+        client: cliente?.name || formData.client,
         clientId: formData.client,
         venue: local?.label || formData.venue,
         venueId: formData.venue,
@@ -333,6 +338,7 @@ const Reserva = () => {
     setEditingEventId(null);
 
     if (!id) {
+      // Se não há ID na URL, limpar formulário mas manter data se veio dos parâmetros
       const dateParam = searchParams.get('date');
       setFormData({
         client: '',
@@ -350,9 +356,8 @@ const Reserva = () => {
         totalHours: 0,
         totalMinutes: 0
       });
-    }
-
-    if (id) {
+    } else {
+      // Se há ID na URL, navegar de volta para nova reserva
       navigate(`/eventos/reserva`);
     }
   };
@@ -506,16 +511,18 @@ const Reserva = () => {
                   />
                 </div>
 
-                {/* Campo de evento recorrente atualizado */}
-                <div className="space-y-4 p-4 border rounded-lg bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
-                  <div className="flex items-center justify-between">
+                {/* Seção de evento recorrente melhorada */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
                     <div className="flex items-center gap-3">
-                      <Repeat className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                        <Repeat className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      </div>
                       <div>
-                        <Label htmlFor="recurring" className="text-base font-semibold text-blue-900 dark:text-blue-100">
+                        <Label htmlFor="recurring" className="text-sm font-semibold text-blue-900 dark:text-blue-100 cursor-pointer">
                           Evento Recorrente
                         </Label>
-                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                        <p className="text-xs text-blue-700 dark:text-blue-300">
                           Criar várias reservas baseadas em um padrão
                         </p>
                       </div>
@@ -524,11 +531,12 @@ const Reserva = () => {
                       id="recurring"
                       checked={formData.recurring}
                       onCheckedChange={(checked) => setFormData(prev => ({ ...prev, recurring: checked }))}
+                      className="data-[state=checked]:bg-blue-600"
                     />
                   </div>
                   
                   {formData.recurring && (
-                    <div className="space-y-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+                    <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/10">
                       <div className="space-y-2">
                         <Label htmlFor="recurringType" className="text-sm font-medium">
                           Frequência de repetição
@@ -637,9 +645,9 @@ const Reserva = () => {
             <Card className="flex-1 flex flex-col">
               <CardContent className="h-full p-0 flex flex-col">
                 <EventTimeline
-                  selectedDate={formData.date ? formData.date.toISOString().split('T')[0] : ''}
+                  selectedDate={selectedDateStr}
                   events={mockEvents}
-                  selectedVenue={formData.venue}
+                  selectedVenue={getSelectedVenueName()}
                   onTimeSlotClick={(time) => {
                     if (!isEdit) {
                       setFormData(prev => ({ ...prev, startTime: time }));
@@ -650,7 +658,7 @@ const Reserva = () => {
                     
                     setFormData(prev => ({
                       ...prev,
-                      client: selectedClient?.label || event.client,
+                      client: selectedClient?.id || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
@@ -667,7 +675,7 @@ const Reserva = () => {
                     
                     setFormData(prev => ({
                       ...prev,
-                      client: selectedClient?.label || event.client,
+                      client: selectedClient?.id || event.client,
                       venue: event.venue,
                       startTime: event.startTime,
                       endTime: event.endTime,
