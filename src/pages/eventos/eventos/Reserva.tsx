@@ -3,22 +3,22 @@ import ModuleHeader from '@/components/ModuleHeader';
 import { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoBusca from '@/core/componentes/CampoBusca';
 import SeletorData from '@/core/componentes/SeletorData';
 import SeletorHora from '@/core/componentes/SeletorHora';
-import { Calendar, CreditCard, Edit, Plus, X, Repeat } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useClientes } from '@/hooks/useClientes';
 import { useLocais } from '@/hooks/useLocais';
 import { useReservas } from '@/hooks/useReservas';
+import { Calendar, CreditCard, Edit, Plus, Repeat, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 interface ReservationFormData {
   client: string;
@@ -397,8 +397,8 @@ const Reserva = () => {
         title={pageTitle}
         icon={pageIcon}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos/agenda"
-        backLabel="Agenda"
+        backTo='/eventos'
+        backLabel="Voltar"
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6">

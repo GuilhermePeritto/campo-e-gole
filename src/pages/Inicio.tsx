@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Switch } from '@/components/ui/switch';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { BarChart3, Calendar, HomeIcon, Moon, Settings, Sun, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,6 +15,7 @@ const Inicio = () => {
   const navigate = useNavigate();
   const { user, company, logout, hasModuleAccess } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { goBack } = useNavigationHistory();
 
   const handleLogout = () => {
     logout();
