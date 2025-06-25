@@ -42,18 +42,24 @@ export const useClientes = () => {
     setLoading(false);
   }, []);
 
-  // Para campos de busca - sempre retornar todos os clientes
+  // Para campos de busca - retornar todos os clientes mocados
   const getClientesForSearch = useCallback(() => {
     return clientes.map(cliente => ({
       id: cliente.id,
-      label: cliente.label,
-      subtitle: cliente.subtitle
+      label: cliente.name, // Usar nome ao invés de label
+      subtitle: cliente.document,
+      email: cliente.email
     }));
   }, [clientes]);
 
   // Função para buscar cliente por clientId das reservas
   const getClienteByClientId = useCallback((clientId: string) => {
-    return clientes.find(c => c.id === clientId);
+    // Primeiro tenta buscar por ID
+    const clienteById = clientes.find(c => c.id === clientId);
+    if (clienteById) return clienteById;
+    
+    // Se não encontrar por ID, tenta buscar por nome
+    return clientes.find(c => c.name === clientId || c.label === clientId);
   }, [clientes]);
 
   return {

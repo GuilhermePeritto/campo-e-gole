@@ -36,7 +36,7 @@ interface EventTimelineProps {
   editingEventId?: number | null;
   onEventSelect?: (event: Event) => void;
   onCancelEdit?: () => void;
-  onEventDelete?: (eventId: number) => void;
+  onDeleteEvent?: (eventId: number) => void;
 }
 
 const EventTimeline = ({ 
@@ -48,11 +48,11 @@ const EventTimeline = ({
   editingEventId,
   onEventSelect,
   onCancelEdit,
-  onEventDelete
+  onDeleteEvent
 }: EventTimelineProps) => {
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
-  const { getLocalByName } = useLocais();
+  const { getLocalByName, getLocalById } = useLocais();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<number | null>(null);
   
@@ -61,22 +61,24 @@ const EventTimeline = ({
     return <EmptyTimelineState />;
   }
   
-  // Mapear nome do local para ID usando hook
-  const getVenueIdByName = (venueName: string) => {
-    const venue = getLocalByName(venueName);
-    return venue?.id || 'all';
-  };
+  // Buscar o local pelo nome para obter o ID
+  const venue = getLocalByName(selectedVenue);
+  const venueId = venue?.id || 'all';
   
   // Gerar slots baseados no local selecionado
-  const venueId = selectedVenue ? getVenueIdByName(selectedVenue) : 'all';
   const timeSlots = generateTimeSlots(venueId);
   const interval = getVenueInterval(venueId);
   const slotHeight = 48;
   
-  // Filtrar eventos por local selecionado - melhorado para respeitar o filtro
+  // Filtrar eventos por local selecionado - usando o nome do local
   const filteredEvents = selectedVenue && selectedVenue !== '' && selectedVenue !== 'all' 
     ? events.filter(event => event.venue === selectedVenue)
     : [];
+
+  console.log('EventTimeline - selectedVenue:', selectedVenue);
+  console.log('EventTimeline - venue found:', venue);
+  console.log('EventTimeline - all events:', events);
+  console.log('EventTimeline - filteredEvents:', filteredEvents);
 
   // Converter horário para minutos para cálculos
   const timeToMinutes = (time: string) => {
@@ -135,8 +137,8 @@ const EventTimeline = ({
   };
 
   const confirmDelete = () => {
-    if (eventToDelete && onEventDelete) {
-      onEventDelete(eventToDelete);
+    if (eventToDelete && onDeleteEvent) {
+      onDeleteEvent(eventToDelete);
     }
     setDeleteDialogOpen(false);
     setEventToDelete(null);
@@ -214,11 +216,9 @@ const EventTimeline = ({
               const duration = endMinutes - startMinutes;
               
               // Calcular posição baseada nos slots dinâmicos do local específico
-              const eventVenueId = getVenueIdByName(event.venue);
-              const eventInterval = getVenueInterval(eventVenueId);
               const baseHour = 7 * 60; // 7h em minutos
-              const topOffset = ((startMinutes - baseHour) / eventInterval) * slotHeight;
-              const height = (duration / eventInterval) * slotHeight;
+              const topOffset = ((startMinutes - baseHour) / interval) * slotHeight;
+              const height = (duration / interval) * slotHeight;
 
               const isCurrentlyEditing = editingEventId === event.id;
               const isDisabledEvent = isEditingMode && !isCurrentlyEditing;

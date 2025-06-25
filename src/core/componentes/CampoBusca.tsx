@@ -41,15 +41,16 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (searchTerm) {
+    if (searchTerm && isOpen) {
       const filtered = items.filter(item =>
         item[displayField]?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredOptions(filtered);
     } else {
+      // Sempre mostrar todos os itens quando não há termo de busca ou quando abre o dropdown
       setFilteredOptions(items);
     }
-  }, [searchTerm, items, displayField]);
+  }, [searchTerm, items, displayField, isOpen]);
 
   useEffect(() => {
     if (onBuscar && searchTerm) {
@@ -83,6 +84,14 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
     
     if (onChange) {
       onChange(newValue);
+    }
+  };
+
+  const handleInputFocus = () => {
+    setIsOpen(true);
+    // Limpar termo de busca ao focar para mostrar todas as opções
+    if (searchTerm) {
+      setSearchTerm('');
     }
   };
 
@@ -148,7 +157,7 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
           value={searchTerm}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsOpen(true)}
+          onFocus={handleInputFocus}
           placeholder={placeholder}
           className={cn("pl-10 pr-10 h-11", className)}
           required={required}
@@ -183,7 +192,7 @@ const CampoBusca: React.FC<CampoBuscaProps> = ({
                   selectedIndex === index && "bg-muted"
                 )}
               >
-                <div className="font-medium text-foreground">{option[displayField]}</div>
+                <div className="text-foreground">{option[displayField]}</div>
                 {option.tipo && (
                   <div className="text-sm text-muted-foreground">{option.tipo}</div>
                 )}
