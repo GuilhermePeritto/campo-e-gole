@@ -124,11 +124,10 @@ const CalendarDayView = ({
               return (
                 <div
                   key={event.id}
-                  className="absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all"
+                  className="absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                   style={{
                     top: `${topOffset}px`,
                     height: `${Math.max(height - 4, 32)}px`,
-                    backgroundColor: event.color + '20',
                     borderLeftColor: event.color
                   }}
                   onClick={() => handleEventClick(event)}

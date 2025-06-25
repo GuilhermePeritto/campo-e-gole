@@ -1,3 +1,4 @@
+
 import EventTimeline from '@/components/EventTimeline';
 import ModuleHeader from '@/components/ModuleHeader';
 import { TourStep } from '@/components/PageTour';
@@ -518,16 +519,16 @@ const Reserva = () => {
 
                 {/* Seção de evento recorrente melhorada */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+                  <div className="flex items-center justify-between p-4 rounded-lg border bg-gradient-to-r from-gray-50/50 to-gray-100/50 dark:from-gray-900/20 dark:to-gray-800/20">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                        <Repeat className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-800/30">
+                        <Repeat className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                       </div>
                       <div>
-                        <Label htmlFor="recurring" className="text-sm font-semibold text-blue-900 dark:text-blue-100 cursor-pointer">
+                        <Label htmlFor="recurring" className="text-sm font-semibold text-gray-900 dark:text-gray-100 cursor-pointer">
                           Evento Recorrente
                         </Label>
-                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                        <p className="text-xs text-gray-700 dark:text-gray-300">
                           Criar várias reservas baseadas em um padrão
                         </p>
                       </div>
@@ -536,12 +537,12 @@ const Reserva = () => {
                       id="recurring"
                       checked={formData.recurring}
                       onCheckedChange={(checked) => setFormData(prev => ({ ...prev, recurring: checked }))}
-                      className="data-[state=checked]:bg-blue-600"
+                      className="data-[state=checked]:bg-gray-600"
                     />
                   </div>
                   
                   {formData.recurring && (
-                    <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/10">
+                    <div className="space-y-4 p-4 border rounded-lg bg-gray-50/30 dark:bg-gray-900/10">
                       <div className="space-y-2">
                         <Label htmlFor="recurringType" className="text-sm font-medium">
                           Frequência de repetição

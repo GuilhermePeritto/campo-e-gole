@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Reservation } from '@/hooks/useCalendar';
 import { useLocais } from '@/hooks/useLocais';
@@ -126,11 +125,10 @@ const CalendarDayColumnsView = ({
                       return (
                         <div
                           key={event.id}
-                          className="absolute left-1 right-1 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all"
+                          className="absolute left-1 right-1 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                           style={{
                             top: `${topOffset}px`,
                             height: `${Math.max(height - 4, 32)}px`,
-                            backgroundColor: event.color + '20',
                             borderLeftColor: event.color
                           }}
                           onClick={() => handleEventClick(event)}

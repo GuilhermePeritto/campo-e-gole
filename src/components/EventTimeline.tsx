@@ -111,10 +111,10 @@ const EventTimeline = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'border-green-500 bg-green-50';
-      case 'pending': return 'border-yellow-500 bg-yellow-50';
-      case 'cancelled': return 'border-red-500 bg-red-50';
-      default: return 'border-gray-300 bg-gray-50';
+      case 'confirmed': return 'border-green-500 bg-green-100 dark:bg-green-900/30';
+      case 'pending': return 'border-yellow-500 bg-yellow-100 dark:bg-yellow-900/30';
+      case 'cancelled': return 'border-red-500 bg-red-100 dark:bg-red-900/30';
+      default: return 'border-gray-300 bg-gray-100 dark:bg-gray-800/30';
     }
   };
 
@@ -229,19 +229,14 @@ const EventTimeline = ({
                   key={event.id}
                   className={`absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto ${
                     isCurrentlyEditing 
-                      ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/10'
+                      ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/20 border-module-events'
                       : isDisabledEvent
-                        ? 'opacity-40 cursor-not-allowed bg-gray-100'
+                        ? 'opacity-40 cursor-not-allowed bg-gray-100 dark:bg-gray-800 border-gray-400'
                         : getStatusColor(event.status) + ' hover:shadow-md'
                   }`}
                   style={{
                     top: `${topOffset}px`,
                     height: `${Math.max(height - 4, 32)}px`,
-                    backgroundColor: isCurrentlyEditing 
-                      ? ''
-                      : isDisabledEvent 
-                        ? '#f3f4f6'
-                        : event.color + '20',
                     borderLeftColor: isCurrentlyEditing 
                       ? 'rgb(var(--module-events))'
                       : isDisabledEvent 
