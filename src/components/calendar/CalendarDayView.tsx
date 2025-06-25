@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Reservation } from '@/hooks/useCalendar';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
@@ -35,7 +34,7 @@ const CalendarDayView = ({
   }
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
-  const { getLocalByName } = useLocais();
+  const { getLocalByName, getLocalById } = useLocais();
   
   // Gerar slots baseados no local selecionado
   const timeSlots = generateTimeSlots(selectedVenue || 'all');
