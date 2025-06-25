@@ -10,7 +10,6 @@ import Bar from './pages/Bar';
 import Events from './pages/Events';
 import Financial from './pages/Financial';
 import Index from './pages/Index';
-import Inicio from './pages/Inicio';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import School from './pages/School';
@@ -82,6 +81,7 @@ import ConfiguracoesNewUser from './pages/configuracoes/NewUser';
 
 // Adicionar novas importações
 import Comandas from './pages/bar/Comandas';
+import Inicio from './pages/Inicio';
 import InternalSystem from './pages/InternalSystem';
 import InternalClients from './pages/sistema-interno/Clients';
 

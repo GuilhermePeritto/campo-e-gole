@@ -97,7 +97,7 @@ const Recebiveis = () => {
       icon: <Edit className="h-4 w-4" />
     },
     {
-      label: 'Pagar',
+      label: 'Receber',
       onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}/receber`),
       variant: 'default' as const,
       icon: <CreditCard className="h-4 w-4" />
