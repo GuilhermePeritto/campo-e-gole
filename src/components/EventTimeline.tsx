@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { Clock, MapPin, Plus, User, X, Trash } from 'lucide-react';
@@ -340,7 +339,7 @@ const EventTimeline = ({
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogFooter>
+        </AlertDialogContent>
       </AlertDialog>
     </>
   );
