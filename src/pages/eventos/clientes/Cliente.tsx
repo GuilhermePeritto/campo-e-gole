@@ -1,8 +1,10 @@
+
 import BaseFormPage from '@/components/BaseFormPage';
 import { TourStep } from '@/components/PageTour';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoDocumento from '@/core/componentes/CampoDocumento';
@@ -27,7 +29,8 @@ const Cliente = () => {
     city: isEdit ? 'São Paulo' : '',
     state: isEdit ? 'SP' : '',
     zipCode: isEdit ? '01234-567' : '',
-    notes: isEdit ? 'Cliente frequente, prefere horários noturnos' : ''
+    notes: isEdit ? 'Cliente frequente, prefere horários noturnos' : '',
+    isRecurring: isEdit ? true : false
   });
 
   useEffect(() => {
@@ -74,7 +77,7 @@ const Cliente = () => {
     }
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -205,15 +208,33 @@ const Cliente = () => {
       title: 'Observações',
       defaultOpen: false,
       content: (
-        <div className="space-y-2">
-          <Label htmlFor="notes">Observações</Label>
-          <Textarea
-            id="notes"
-            value={formData.notes}
-            onChange={(e) => handleChange('notes', e.target.value)}
-            placeholder="Informações adicionais sobre o cliente..."
-            rows={4}
-          />
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="notes">Observações</Label>
+            <Textarea
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => handleChange('notes', e.target.value)}
+              placeholder="Informações adicionais sobre o cliente..."
+              rows={4}
+            />
+          </div>
+
+          <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/30">
+            <div className="space-y-1">
+              <Label htmlFor="isRecurring" className="text-sm font-medium">
+                Cliente Recorrente
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Marque se este cliente faz reservas com frequência
+              </p>
+            </div>
+            <Switch
+              id="isRecurring"
+              checked={formData.isRecurring}
+              onCheckedChange={(checked) => handleChange('isRecurring', checked)}
+            />
+          </div>
         </div>
       )
     }
