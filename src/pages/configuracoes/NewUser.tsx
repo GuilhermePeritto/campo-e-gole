@@ -1,17 +1,17 @@
 
-import React, { useState } from 'react';
+import ModuleHeader from '@/components/ModuleHeader';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { Upload, User, Shield, Camera, Star, CheckCircle } from 'lucide-react';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { toast } from '@/hooks/use-toast';
+import { Camera, CheckCircle, Shield, Star, Upload, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface UserGroup {
   id: string;
@@ -119,7 +119,7 @@ const NewUser = () => {
       <ModuleHeader
         title="Novo Usuário"
         icon={<User className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.dashboard}
+        moduleColor={MODULE_COLORS.inicio}
         mustReturn={true}
         backTo="/configuracoes"
         backLabel="Configurações"

@@ -1,17 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
+import ModuleHeader from '@/components/ModuleHeader';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from '@/hooks/use-toast';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Shield, Palette, CheckCircle, Star, Users, Settings, BarChart3, Edit } from 'lucide-react';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { toast } from '@/hooks/use-toast';
+import { BarChart3, CheckCircle, Edit, Palette, Settings, Shield, Star, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EditGroup = () => {
   const navigate = useNavigate();
@@ -37,12 +37,12 @@ const EditGroup = () => {
   // Simplified permissions structure with icons
   const permissionModules = [
     {
-      id: 'dashboard',
-      name: 'Dashboard',
+      id: 'inicio',
+      name: 'Inicio',
       description: 'Visualizar painel principal e estatísticas gerais',
       icon: <BarChart3 className="h-5 w-5" />,
       color: 'from-blue-500 to-cyan-500',
-      permissions: ['Visualizar Dashboard', 'Estatísticas Gerais']
+      permissions: ['Visualizar Inicio', 'Estatísticas Gerais']
     },
     {
       id: 'bar',
@@ -94,7 +94,7 @@ const EditGroup = () => {
         name: 'Gerentes',
         description: 'Acesso de gerenciamento com restrições administrativas',
         color: 'bg-gradient-to-r from-blue-500 to-cyan-500',
-        permissions: ['dashboard', 'bar', 'events', 'school']
+        permissions: ['inicio', 'bar', 'events', 'school']
       };
       
       setFormData(mockGroup);
@@ -146,7 +146,7 @@ const EditGroup = () => {
       <ModuleHeader
         title="Editar Grupo"
         icon={<Edit className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.dashboard}
+        moduleColor={MODULE_COLORS.inicio}
         mustReturn={true}
         backTo="/configuracoes"
         backLabel="Configurações"

@@ -2,15 +2,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
-import { ArrowLeft, LogOut, Settings, User, Search } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { ArrowLeft, LogOut, Search, Settings, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QuickSearch from './QuickSearch';
 
@@ -29,16 +29,16 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   moduleColor,
   mustReturn = true,
   backTo = '/painel',
-  backLabel = 'Dashboard'
+  backLabel = 'Inicio'
 }) => {
   const navigate = useNavigate();
   const { user, company, currentBranch } = useAuth();
   const [isQuickSearchOpen, setIsQuickSearchOpen] = useState(false);
 
-  // Verificar se é o dashboard para usar cores diferentes
-  const isDashboard = moduleColor === 'hsl(var(--background))';
-  const textColor = isDashboard ? 'text-foreground' : 'text-white';
-  const buttonHoverColor = isDashboard ? 'hover:bg-foreground/10' : 'hover:bg-white/20';
+  // Verificar se é o inicio para usar cores diferentes
+  const isInicio = moduleColor === 'hsl(var(--background))';
+  const textColor = isInicio ? 'text-foreground' : 'text-white';
+  const buttonHoverColor = isInicio ? 'hover:bg-foreground/10' : 'hover:bg-white/20';
 
   // Adicionar listener para o atalho F2
   useEffect(() => {
@@ -89,7 +89,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                   {company?.name || 'Arena Sports Club'}
                   {currentBranch && (
                     <>
-                      <span className={`mx-2 ${isDashboard ? 'text-muted-foreground' : 'text-white/60'}`}>-</span>
+                      <span className={`mx-2 ${isInicio ? 'text-muted-foreground' : 'text-white/60'}`}>-</span>
                       {currentBranch.name}
                     </>
                   )}
@@ -106,7 +106,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 onClick={() => setIsQuickSearchOpen(true)}
                 className={`
                   flex items-center gap-2 px-3 py-2 rounded-md
-                  ${isDashboard 
+                  ${isInicio 
                     ? 'bg-muted/50 text-foreground hover:bg-muted/70 border border-border/30' 
                     : 'bg-black/10 text-white hover:bg-black/20 border border-white/20'
                   }
@@ -118,7 +118,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                 <span className="text-sm font-medium">Buscar</span>
                 <kbd className={`
                   ml-auto text-xs px-1.5 py-0.5 rounded border
-                  ${isDashboard 
+                  ${isInicio 
                     ? 'bg-background border-border/50 text-muted-foreground' 
                     : 'bg-white/10 border-white/20 text-white/70'
                   }
@@ -135,7 +135,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                       <p className={`text-sm font-medium ${textColor}`}>
                         {user?.name || 'Administrador'}
                       </p>
-                      <p className={`text-xs ${isDashboard ? 'text-muted-foreground' : 'text-white/80'}`}>
+                      <p className={`text-xs ${isInicio ? 'text-muted-foreground' : 'text-white/80'}`}>
                         {user?.email || 'admin@exemplo.com'}
                       </p>
                     </div>

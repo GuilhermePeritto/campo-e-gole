@@ -158,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         'school.view', 'school.manage_students', 'school.manage_teachers', 'school.manage_classes', 'school.receive_payments',
         'bar.view', 'bar.manage_products', 'bar.manage_stock', 'bar.manage_comandas', 'bar.cashier',
         'financial.view', 'financial.manage_receivables', 'financial.manage_payables', 'financial.view_reports',
-        'general.view_dashboard', 'general.manage_settings', 'general.manage_users'
+        'general.view_inicio', 'general.manage_settings', 'general.manage_users'
       ]
     },
     {
@@ -171,7 +171,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         'school.view', 'school.manage_students', 'school.manage_classes', 'school.receive_payments',
         'bar.view', 'bar.manage_products', 'bar.manage_stock', 'bar.manage_comandas', 'bar.cashier',
         'financial.view', 'financial.manage_receivables', 'financial.view_reports',
-        'general.view_dashboard'
+        'general.view_inicio'
       ]
     },
     {
@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         'events.view', 'events.create', 'events.receive_payments',
         'school.view', 'school.receive_payments',
         'bar.view', 'bar.manage_comandas', 'bar.cashier',
-        'general.view_dashboard'
+        'general.view_inicio'
       ]
     },
     {
@@ -195,7 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         'bar.view', 'bar.cashier', 'bar.manage_comandas',
         'events.receive_payments',
         'school.receive_payments',
-        'general.view_dashboard'
+        'general.view_inicio'
       ]
     }
   ];

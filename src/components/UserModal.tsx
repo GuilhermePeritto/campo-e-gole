@@ -1,18 +1,18 @@
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
-import { useState, useEffect } from 'react';
-import { User, Mail, Shield, Eye, EyeOff, Trash2, Save, X, UserCheck, Clock, Users, Settings } from 'lucide-react';
+import { Eye, EyeOff, Mail, Save, Settings, Shield, Trash2, User, UserCheck, Users, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 interface User {
@@ -84,7 +84,7 @@ const UserModal = ({ open, onClose, user, mode }: UserModalProps) => {
       { id: 'financial.view_reports', name: 'Ver Relatórios', description: 'Pode visualizar relatórios financeiros' }
     ],
     general: [
-      { id: 'general.view_dashboard', name: 'Ver Dashboard', description: 'Pode acessar o dashboard principal' },
+      { id: 'general.view_inicio', name: 'Ver Inicio', description: 'Pode acessar o inicio principal' },
       { id: 'general.manage_settings', name: 'Gerenciar Configurações', description: 'Pode alterar configurações do sistema' },
       { id: 'general.manage_users', name: 'Gerenciar Usuários', description: 'Pode gerenciar usuários do sistema' }
     ]

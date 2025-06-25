@@ -1,14 +1,14 @@
 
-import ModuleHeader from '@/components/ModuleHeader';
-import UsersList from '@/components/UsersList';
-import GroupsList from '@/components/GroupsList';
-import SystemSettings from '@/components/SystemSettings';
-import CompanySettings from '@/components/CompanySettings';
 import BranchesList from '@/components/BranchesList';
+import CompanySettings from '@/components/CompanySettings';
+import GroupsList from '@/components/GroupsList';
+import ModuleHeader from '@/components/ModuleHeader';
+import SystemSettings from '@/components/SystemSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import UsersList from '@/components/UsersList';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Settings as SettingsIcon, Users, Shield, Database, Globe, Building, MapPin } from 'lucide-react';
+import { Building, Database, Globe, MapPin, Settings as SettingsIcon, Shield, Users } from 'lucide-react';
 
 const Settings = () => {
   return (
@@ -16,10 +16,10 @@ const Settings = () => {
       <ModuleHeader
         title="Configurações"
         icon={<SettingsIcon className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.dashboard}
+        moduleColor={MODULE_COLORS.inicio}
         mustReturn={true}
         backTo="/painel"
-        backLabel="Dashboard"
+        backLabel="Inicio"
       />
 
       <main className="container mx-auto p-6">

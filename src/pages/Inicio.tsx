@@ -6,11 +6,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Switch } from '@/components/ui/switch';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useTheme } from '@/contexts/ThemeContext';
-import { BarChart3, Calendar, Moon, Settings, Sun, Users2 } from 'lucide-react';
+import { BarChart3, Calendar, HomeIcon, Moon, Settings, Sun, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const Dashboard = () => {
+const Inicio = () => {
   const navigate = useNavigate();
   const { user, company, logout, hasModuleAccess } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -90,9 +90,9 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
-        title="Dashboard"
-        icon={<BarChart3 className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.dashboard}
+        title="Inicio"
+        icon={<HomeIcon className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.inicio}
         mustReturn={false}
       />
 
@@ -263,4 +263,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Inicio;

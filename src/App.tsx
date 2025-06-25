@@ -7,10 +7,10 @@ import { ThemeProvider } from './contexts/ThemeContext';
 
 // Main pages
 import Bar from './pages/Bar';
-import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import Financial from './pages/Financial';
 import Index from './pages/Index';
+import Inicio from './pages/Inicio';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import School from './pages/School';
@@ -97,8 +97,8 @@ function App() {
               <Routes>
                 {/* Main routes */}
                 <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/painel" element={<Dashboard />} />
+                <Route path="/inicio" element={<Inicio />} />
+                <Route path="/painel" element={<Inicio />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
 
