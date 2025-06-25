@@ -70,20 +70,17 @@ const EventTimeline = ({
   const interval = getVenueInterval(venueId);
   const slotHeight = 48;
   
-  // Lógica de filtro simplificada: sempre filtrar por local e data quando ambos existem
+  // Lógica de filtro corrigida: sempre mostrar eventos do local selecionado
   const filteredEvents = events.filter(event => {
-    // Se há um local selecionado, filtrar por ele
-    if (selectedVenue && selectedVenue !== '' && selectedVenue !== 'all') {
-      return event.venue === selectedVenue;
-    }
-    // Se não há filtro, retornar todos os eventos
-    return true;
+    // Sempre filtrar por local quando há um selecionado
+    return event.venue === selectedVenue;
   });
 
   console.log('EventTimeline - selectedVenue:', selectedVenue);
   console.log('EventTimeline - venue found:', venue);
   console.log('EventTimeline - all events:', events);
   console.log('EventTimeline - filteredEvents:', filteredEvents);
+  console.log('EventTimeline - editingEventId:', editingEventId);
 
   // Converter horário para minutos para cálculos
   const timeToMinutes = (time: string) => {

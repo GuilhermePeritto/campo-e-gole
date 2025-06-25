@@ -247,9 +247,12 @@ const Reserva = () => {
     notes: reservation.notes || ''
   }));
 
-  // Obter o nome do local selecionado para passar para a timeline
+  // Obter o nome do local selecionado para passar para a timeline - CORRIGIDO
   const getSelectedVenueName = () => {
     const selectedVenue = locais.find(l => l.id === formData.venue);
+    console.log('getSelectedVenueName - formData.venue:', formData.venue);
+    console.log('getSelectedVenueName - selectedVenue:', selectedVenue);
+    console.log('getSelectedVenueName - returning:', selectedVenue?.label || '');
     return selectedVenue?.label || '';
   };
 
