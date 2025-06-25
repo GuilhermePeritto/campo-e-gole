@@ -1,6 +1,8 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Reservation } from '@/hooks/useCalendar';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
+import { useLocais } from '@/hooks/useLocais';
 import { MapPin, Plus, User } from 'lucide-react';
 import CalendarDayColumnsView from './CalendarDayColumnsView';
 
@@ -33,6 +35,7 @@ const CalendarDayView = ({
   }
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
+  const { getLocalByName } = useLocais();
   
   // Gerar slots baseados no local selecionado
   const timeSlots = generateTimeSlots(selectedVenue || 'all');
@@ -68,6 +71,12 @@ const CalendarDayView = ({
     });
 
     return overlappingEvents.length === 0;
+  };
+
+  // Função para obter a cor do local baseado no venueId
+  const getVenueColorById = (venueId: string) => {
+    const local = getLocalByName(selectedVenue);
+    return local?.color || '#6b7280';
   };
 
   const handleNewReservation = (time: string) => {
@@ -121,6 +130,8 @@ const CalendarDayView = ({
               const topOffset = ((startMinutes - baseHour) / interval) * slotHeight;
               const height = (duration / interval) * slotHeight;
 
+              const venueColor = getVenueColorById(event.venueId);
+
               return (
                 <div
                   key={event.id}
@@ -128,7 +139,7 @@ const CalendarDayView = ({
                   style={{
                     top: `${topOffset}px`,
                     height: `${Math.max(height - 4, 32)}px`,
-                    borderLeftColor: event.color
+                    borderLeftColor: venueColor
                   }}
                   onClick={() => handleEventClick(event)}
                 >

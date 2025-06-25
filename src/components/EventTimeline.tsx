@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { useVenueSettings } from '@/hooks/useVenueSettings';
 import { Clock, MapPin, Plus, User, X, Trash } from 'lucide-react';
@@ -109,13 +110,10 @@ const EventTimeline = ({
     return { available: false };
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'border-green-500 bg-green-100 dark:bg-green-900/30';
-      case 'pending': return 'border-yellow-500 bg-yellow-100 dark:bg-yellow-900/30';
-      case 'cancelled': return 'border-red-500 bg-red-100 dark:bg-red-900/30';
-      default: return 'border-gray-300 bg-gray-100 dark:bg-gray-800/30';
-    }
+  // Função para obter a cor do local baseado no nome do venue
+  const getVenueColor = (venueName: string) => {
+    const local = getLocalByName(venueName);
+    return local?.color || '#6b7280';
   };
 
   const handleEventClick = (event: Event) => {
@@ -223,25 +221,22 @@ const EventTimeline = ({
 
               const isCurrentlyEditing = editingEventId === event.id;
               const isDisabledEvent = isEditingMode && !isCurrentlyEditing;
+              const venueColor = getVenueColor(event.venue);
 
               return (
                 <div
                   key={event.id}
-                  className={`absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto ${
+                  className={`absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 ${
                     isCurrentlyEditing 
-                      ? 'ring-2 ring-module-events/100 ring-offset-2 bg-module-events/20 border-module-events'
-                      : isDisabledEvent
-                        ? 'opacity-40 cursor-not-allowed bg-gray-100 dark:bg-gray-800 border-gray-400'
-                        : getStatusColor(event.status) + ' hover:shadow-md'
+                      ? 'ring-2 ring-module-events/100 ring-offset-2'
+                      : 'hover:shadow-md'
                   }`}
                   style={{
                     top: `${topOffset}px`,
                     height: `${Math.max(height - 4, 32)}px`,
                     borderLeftColor: isCurrentlyEditing 
                       ? 'rgb(var(--module-events))'
-                      : isDisabledEvent 
-                        ? '#9ca3af'
-                        : event.color
+                      : venueColor
                   }}
                   onClick={() => !isDisabledEvent && handleEventClick(event)}
                 >

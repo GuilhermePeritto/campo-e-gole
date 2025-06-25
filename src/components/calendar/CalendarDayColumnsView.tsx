@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Reservation } from '@/hooks/useCalendar';
 import { useLocais } from '@/hooks/useLocais';
@@ -19,7 +20,7 @@ const CalendarDayColumnsView = ({
 }: CalendarDayColumnsViewProps) => {
   
   const { generateTimeSlots } = useVenueSettings();
-  const { locais } = useLocais();
+  const { locais, getLocalById } = useLocais();
   
   // Usar o menor intervalo entre todos os locais para a timeline
   const smallestInterval = Math.min(...locais.map(local => local.interval));
@@ -38,6 +39,12 @@ const CalendarDayColumnsView = ({
   const timeToMinutes = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
+  };
+
+  // Função para obter a cor do local baseado no ID
+  const getVenueColorById = (venueId: string) => {
+    const local = getLocalById(venueId);
+    return local?.color || '#6b7280';
   };
 
   const handleNewReservation = (time: string) => {
@@ -122,6 +129,8 @@ const CalendarDayColumnsView = ({
                       const topOffset = ((startMinutes - baseHour) / smallestInterval) * slotHeight;
                       const height = (duration / smallestInterval) * slotHeight;
 
+                      const venueColor = getVenueColorById(event.venueId);
+
                       return (
                         <div
                           key={event.id}
@@ -129,7 +138,7 @@ const CalendarDayColumnsView = ({
                           style={{
                             top: `${topOffset}px`,
                             height: `${Math.max(height - 4, 32)}px`,
-                            borderLeftColor: event.color
+                            borderLeftColor: venueColor
                           }}
                           onClick={() => handleEventClick(event)}
                         >
