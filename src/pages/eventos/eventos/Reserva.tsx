@@ -249,6 +249,8 @@ const Reserva = () => {
 
   // Obter o nome do local selecionado para passar para a timeline - CORRIGIDO
   const getSelectedVenueName = () => {
+    if (!formData.venue) return '';
+    
     const selectedVenue = locais.find(l => l.id === formData.venue);
     console.log('getSelectedVenueName - formData.venue:', formData.venue);
     console.log('getSelectedVenueName - selectedVenue:', selectedVenue);
@@ -657,12 +659,14 @@ const Reserva = () => {
                     }
                   }}
                   onEventEdit={(event) => {
+                    // Buscar o local pelo nome do evento para obter o ID correto
+                    const eventVenue = locais.find(l => l.label === event.venue || l.name === event.venue);
                     const selectedClient = getClienteByClientId(event.client);
                     
                     setFormData(prev => ({
                       ...prev,
                       client: selectedClient?.id || event.client,
-                      venue: event.venue,
+                      venue: eventVenue?.id || '', // Usar o ID do local
                       startTime: event.startTime,
                       endTime: event.endTime,
                       notes: (event as any).notes || event.sport || '',
@@ -674,12 +678,14 @@ const Reserva = () => {
                   }}
                   editingEventId={editingEventId}
                   onEventSelect={(event) => {
+                    // Buscar o local pelo nome do evento para obter o ID correto
+                    const eventVenue = locais.find(l => l.label === event.venue || l.name === event.venue);
                     const selectedClient = getClienteByClientId(event.client);
                     
                     setFormData(prev => ({
                       ...prev,
                       client: selectedClient?.id || event.client,
-                      venue: event.venue,
+                      venue: eventVenue?.id || '', // Usar o ID do local
                       startTime: event.startTime,
                       endTime: event.endTime,
                       notes: (event as any).notes || event.sport || '',
