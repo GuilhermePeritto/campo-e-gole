@@ -92,7 +92,7 @@ const Inicio = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
-        title="Inicio"
+        title="Início"
         icon={<HomeIcon className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.inicio}
         mustReturn={false}

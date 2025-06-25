@@ -84,7 +84,7 @@ const UserModal = ({ open, onClose, user, mode }: UserModalProps) => {
       { id: 'financial.view_reports', name: 'Ver Relatórios', description: 'Pode visualizar relatórios financeiros' }
     ],
     general: [
-      { id: 'general.view_inicio', name: 'Ver Inicio', description: 'Pode acessar o inicio principal' },
+      { id: 'general.view_inicio', name: 'Ver Início', description: 'Pode acessar o inicio principal' },
       { id: 'general.manage_settings', name: 'Gerenciar Configurações', description: 'Pode alterar configurações do sistema' },
       { id: 'general.manage_users', name: 'Gerenciar Usuários', description: 'Pode gerenciar usuários do sistema' }
     ]

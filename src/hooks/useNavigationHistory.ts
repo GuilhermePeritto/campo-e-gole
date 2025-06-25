@@ -56,7 +56,7 @@ export const useNavigationHistory = () => {
       '/eventos/recebiveis/': '/eventos/recebiveis',
       '/eventos/': '/eventos',
       '/configuracoes/': '/configuracoes',
-      '/': '/painel'
+      '/': '/inicio'
     };
     
     const currentPath = location.pathname;
@@ -68,7 +68,7 @@ export const useNavigationHistory = () => {
     }
     
     // Como último recurso, ir para o painel
-    navigate('/painel');
+    navigate('/inicio');
     return true;
   };
 

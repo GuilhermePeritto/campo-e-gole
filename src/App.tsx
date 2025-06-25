@@ -98,7 +98,7 @@ function App() {
                 {/* Main routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/inicio" element={<Inicio />} />
-                <Route path="/painel" element={<Inicio />} />
+                <Route path="/inicio" element={<Inicio />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
 

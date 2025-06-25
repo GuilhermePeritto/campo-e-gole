@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { BarChart3, Calendar, Lock, Mail, Eye, EyeOff, Building2 } from 'lucide-react';
+import { BarChart3, Building2, Calendar, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -28,7 +28,7 @@ const Login = () => {
           title: "Login realizado com sucesso!",
           description: "Bem-vindo ao sistema de gestão esportiva.",
         });
-        navigate('/painel');
+        navigate('/inicio');
       } else {
         toast({
           title: "Erro no login",

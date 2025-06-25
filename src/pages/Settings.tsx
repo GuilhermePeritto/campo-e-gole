@@ -18,7 +18,7 @@ const Settings = () => {
         icon={<SettingsIcon className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.inicio}
         mustReturn={true}
-        backTo="/painel"
+        backTo="/inicio"
         backLabel="Inicio"
       />
 

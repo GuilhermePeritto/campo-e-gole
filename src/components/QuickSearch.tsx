@@ -2,33 +2,33 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
 } from '@/components/ui/sheet';
 import {
-    BarChart3,
-    Calendar,
-    ClipboardList,
-    Clock,
-    CreditCard,
-    DollarSign,
-    FileText,
-    GraduationCap,
-    MapPin,
-    Package,
-    PieChart,
-    Receipt,
-    Search,
-    Settings,
-    Shield,
-    ShoppingCart,
-    TrendingUp,
-    User,
-    UserCheck,
-    UserPlus,
-    Users2
+  BarChart3,
+  Calendar,
+  ClipboardList,
+  Clock,
+  CreditCard,
+  DollarSign,
+  FileText,
+  GraduationCap,
+  MapPin,
+  Package,
+  PieChart,
+  Receipt,
+  Search,
+  Settings,
+  Shield,
+  ShoppingCart,
+  TrendingUp,
+  User,
+  UserCheck,
+  UserPlus,
+  Users2
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -55,7 +55,7 @@ const QuickSearch: React.FC<QuickSearchProps> = ({ isOpen, onClose }) => {
 
   const menuItems: MenuItem[] = [
     // Inicio
-    { id: 'inicio', title: 'Inicio', path: '/painel', icon: <BarChart3 className="h-4 w-4" />, module: 'Inicio', keywords: ['inicio', 'painel', 'inicio'] },
+    { id: 'inicio', title: 'Início', path: '/inicio', icon: <BarChart3 className="h-4 w-4" />, module: 'Inicio', keywords: ['inicio', 'painel', 'inicio'] },
     
     // Eventos
     { id: 'events', title: 'Eventos', path: '/eventos', icon: <Calendar className="h-4 w-4" />, module: 'Eventos', keywords: ['eventos', 'reservas', 'agenda'] },

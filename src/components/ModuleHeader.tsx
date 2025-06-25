@@ -28,7 +28,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   icon,
   moduleColor,
   mustReturn = true,
-  backTo = '/painel',
+  backTo = '/inicio',
   backLabel = 'Inicio'
 }) => {
   const navigate = useNavigate();

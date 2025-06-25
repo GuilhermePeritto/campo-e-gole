@@ -81,7 +81,7 @@ const UniversalReceivePayment = () => {
         description: "Tipo ou ID do pagamento não encontrado.",
         variant: "destructive"
       });
-      navigate('/painel');
+      navigate('/inicio');
       return;
     }
 
@@ -96,7 +96,7 @@ const UniversalReceivePayment = () => {
         description: "Não foi possível carregar os dados do pagamento.",
         variant: "destructive"
       });
-      navigate('/painel');
+      navigate('/inicio');
     } finally {
       setIsLoading(false);
     }
