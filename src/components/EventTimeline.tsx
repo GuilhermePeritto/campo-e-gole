@@ -70,10 +70,15 @@ const EventTimeline = ({
   const interval = getVenueInterval(venueId);
   const slotHeight = 48;
   
-  // Filtrar eventos por local selecionado - usando o nome do local
-  const filteredEvents = selectedVenue && selectedVenue !== '' && selectedVenue !== 'all' 
-    ? events.filter(event => event.venue === selectedVenue)
-    : [];
+  // Lógica de filtro simplificada: sempre filtrar por local e data quando ambos existem
+  const filteredEvents = events.filter(event => {
+    // Se há um local selecionado, filtrar por ele
+    if (selectedVenue && selectedVenue !== '' && selectedVenue !== 'all') {
+      return event.venue === selectedVenue;
+    }
+    // Se não há filtro, retornar todos os eventos
+    return true;
+  });
 
   console.log('EventTimeline - selectedVenue:', selectedVenue);
   console.log('EventTimeline - venue found:', venue);
@@ -215,8 +220,7 @@ const EventTimeline = ({
               const endMinutes = timeToMinutes(event.endTime);
               const duration = endMinutes - startMinutes;
               
-              // Calcular posição baseada nos slots dinâmicos do local específico
-              const baseHour = 7 * 60; // 7h em minutos
+              const baseHour = 7 * 60;
               const topOffset = ((startMinutes - baseHour) / interval) * slotHeight;
               const height = (duration / interval) * slotHeight;
 
