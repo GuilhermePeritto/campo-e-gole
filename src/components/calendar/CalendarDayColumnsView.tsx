@@ -134,11 +134,12 @@ const CalendarDayColumnsView = ({
                       return (
                         <div
                           key={event.id}
-                          className="absolute left-1 right-1 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                          className="absolute left-1 right-1 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all border-gray-200 dark:border-gray-700"
                           style={{
                             top: `${topOffset}px`,
                             height: `${Math.max(height - 4, 32)}px`,
-                            borderLeftColor: venueColor
+                            borderLeftColor: venueColor,
+                            backgroundColor: `${venueColor}15`
                           }}
                           onClick={() => handleEventClick(event)}
                         >

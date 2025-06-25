@@ -222,87 +222,103 @@ const EventTimeline = ({
               const isCurrentlyEditing = editingEventId === event.id;
               const isDisabledEvent = isEditingMode && !isCurrentlyEditing;
               const venueColor = getVenueColor(event.venue);
+              
+              // Usar cor do módulo durante edição, cor do local normalmente
+              const backgroundColor = isCurrentlyEditing 
+                ? 'rgb(var(--module-events) / 0.1)'
+                : `${venueColor}15`; // Hex para RGB com transparência
+              
+              const borderColor = isCurrentlyEditing 
+                ? 'rgb(var(--module-events))'
+                : venueColor;
 
               return (
                 <div
                   key={event.id}
-                  className={`absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 ${
+                  className={`absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 transition-all cursor-pointer pointer-events-auto border-gray-200 dark:border-gray-700 ${
                     isCurrentlyEditing 
                       ? 'ring-2 ring-module-events/100 ring-offset-2'
                       : 'hover:shadow-md'
                   }`}
                   style={{
                     top: `${topOffset}px`,
-                    height: `${Math.max(height - 4, 32)}px`,
-                    borderLeftColor: isCurrentlyEditing 
-                      ? 'rgb(var(--module-events))'
-                      : venueColor
+                    height: `${Math.max(height - 4, 48)}px`, // Altura mínima de 48px
+                    borderLeftColor: borderColor,
+                    backgroundColor: backgroundColor
                   }}
                   onClick={() => !isDisabledEvent && handleEventClick(event)}
                 >
-                  <div className="p-2 h-full overflow-hidden">
-                    <div className="flex items-start justify-between h-full">
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center gap-1">
-                          <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
-                          <span className="font-semibold text-xs truncate">{event.client}</span>
-                        </div>
-                        {height > 60 && (
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
-                            <span className="text-xs text-gray-600 truncate">{event.venue}</span>
-                          </div>
-                        )}
-                        <div className="text-xs text-gray-500 font-medium">
-                          {event.startTime} - {event.endTime}
-                        </div>
-                        {event.sport && height > 80 && (
-                          <div className="text-xs text-gray-500 truncate">
-                            {event.sport}
-                          </div>
-                        )}
-                        <div className="flex items-center gap-1">
-                          <div className={`h-1.5 w-1.5 rounded-full ${
-                            event.status === 'confirmed' ? 'bg-green-500' :
-                            event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
-                          }`} />
-                          {height > 60 && (
-                            <span className="text-xs text-gray-500 capitalize">
-                              {event.status === 'confirmed' ? 'Confirmado' :
-                               event.status === 'pending' ? 'Pendente' : 'Cancelado'}
-                            </span>
-                          )}
-                        </div>
+                  <div className="p-2 h-full overflow-hidden flex">
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-1">
+                        <User className="h-3 w-3 text-gray-600 flex-shrink-0" />
+                        <span className="font-semibold text-xs truncate">{event.client}</span>
                       </div>
-                      {isCurrentlyEditing && (
-                        <div className="flex flex-col gap-1 ml-1 flex-shrink-0">
+                      
+                      {/* Sempre mostrar horário */}
+                      <div className="text-xs text-gray-500 font-medium">
+                        {event.startTime} - {event.endTime}
+                      </div>
+                      
+                      {/* Mostrar local apenas se há espaço ou sempre em cards pequenos */}
+                      {(height > 60 || height <= 48) && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-gray-500 flex-shrink-0" />
+                          <span className="text-xs text-gray-600 truncate">{event.venue}</span>
+                        </div>
+                      )}
+                      
+                      {/* Esporte/título apenas se há bastante espaço */}
+                      {event.sport && height > 80 && (
+                        <div className="text-xs text-gray-500 truncate">
+                          {event.sport}
+                        </div>
+                      )}
+                      
+                      {/* Status sempre visível */}
+                      <div className="flex items-center gap-1">
+                        <div className={`h-1.5 w-1.5 rounded-full ${
+                          event.status === 'confirmed' ? 'bg-green-500' :
+                          event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                        }`} />
+                        {height > 60 && (
+                          <span className="text-xs text-gray-500 capitalize">
+                            {event.status === 'confirmed' ? 'Confirmado' :
+                             event.status === 'pending' ? 'Pendente' : 'Cancelado'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Botões sempre visíveis quando editando */}
+                    {isCurrentlyEditing && (
+                      <div className="flex flex-col gap-1 ml-2 flex-shrink-0 justify-start">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteEvent(event.id);
+                          }}
+                          className="h-5 w-5 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash className="h-3 w-3" />
+                        </Button>
+                        {onCancelEdit && (
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteEvent(event.id);
+                              onCancelEdit();
                             }}
-                            className="h-6 w-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="h-5 w-5 p-0"
                           >
-                            <Trash className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </Button>
-                          {onCancelEdit && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onCancelEdit();
-                              }}
-                              className="h-6 w-6 p-0"
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
