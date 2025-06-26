@@ -1,5 +1,5 @@
 
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { EventoProvider } from '@/contexts/EventoContext';
 import { useAuth } from '@/hooks/useAuth';
 import Auditoria from '@/pages/configuracoes/Auditoria';
