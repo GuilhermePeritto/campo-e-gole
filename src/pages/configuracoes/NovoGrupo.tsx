@@ -49,7 +49,7 @@ const NovoGrupo = () => {
     }
   });
 
-  const checkboxRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  const checkboxRefs = useRef<{ [key: string]: HTMLElement | null }>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,11 +103,11 @@ const NovoGrupo = () => {
       const allChecked = acoes.every(acao => moduloPermissoes[acao.key]);
       const someChecked = acoes.some(acao => moduloPermissoes[acao.key]);
       
-      const checkbox = checkboxRefs.current[`${modulo.key}-all`];
-      if (checkbox && checkbox.querySelector('button')) {
-        const checkboxElement = checkbox.querySelector('button') as any;
-        if (checkboxElement) {
-          checkboxElement.indeterminate = someChecked && !allChecked;
+      const checkboxElement = checkboxRefs.current[`${modulo.key}-all`];
+      if (checkboxElement) {
+        const buttonElement = checkboxElement.querySelector('button');
+        if (buttonElement) {
+          (buttonElement as any).indeterminate = someChecked && !allChecked;
         }
       }
     });
@@ -188,7 +188,7 @@ const NovoGrupo = () => {
                       <p className="text-sm text-muted-foreground">{modulo.description}</p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div ref={(el) => checkboxRefs.current[`${modulo.key}-all`] = el}>
+                      <div ref={(el) => { checkboxRefs.current[`${modulo.key}-all`] = el; }}>
                         <Checkbox
                           id={`${modulo.key}-all`}
                           checked={allChecked}
