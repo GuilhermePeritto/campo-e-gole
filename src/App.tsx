@@ -1,3 +1,4 @@
+
 import { AuthProvider } from '@/contexts/AuthContext';
 import { EventoProvider } from '@/contexts/EventoContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -25,6 +26,7 @@ import Produtos from '@/pages/Produtos';
 import Register from '@/pages/Register';
 import ResetPassword from '@/pages/ResetPassword';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import React from 'react';
 
 function App() {
   return (
@@ -69,7 +71,11 @@ function App() {
   );
 }
 
-function PrivateRoute({ children }: { children: JSX.Element }) {
+interface PrivateRouteProps {
+  children: React.ReactElement;
+}
+
+function PrivateRoute({ children }: PrivateRouteProps) {
   const { user } = useAuth();
   return user ? children : <Navigate to="/login" />;
 }
