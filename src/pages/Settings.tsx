@@ -2,7 +2,7 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Building, Users, Shield, Palette, Globe, DollarSign, FileText, Settings as SettingsIcon } from 'lucide-react';
+import { Building, Users, Shield, MapPin, Settings as SettingsIcon, DollarSign, FileText, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
@@ -11,11 +11,19 @@ const Settings = () => {
   const configSections = [
     {
       id: 'empresa',
-      title: 'Empresa e Filiais',
-      description: 'Gerenciar dados da empresa e suas filiais',
+      title: 'Dados da Empresa',
+      description: 'Gerenciar informações básicas da empresa',
       icon: <Building className="h-6 w-6" />,
       color: 'bg-blue-500',
       path: '/configuracoes/empresa'
+    },
+    {
+      id: 'filiais',
+      title: 'Filiais',
+      description: 'Gerenciar filiais e localizações',
+      icon: <MapPin className="h-6 w-6" />,
+      color: 'bg-indigo-500',
+      path: '/configuracoes/filiais'
     },
     {
       id: 'usuarios',
@@ -35,19 +43,11 @@ const Settings = () => {
     },
     {
       id: 'parametros',
-      title: 'Parâmetros dos Módulos',
-      description: 'Configurações específicas por módulo',
+      title: 'Parâmetros por Filial',
+      description: 'Configurações específicas por filial',
       icon: <SettingsIcon className="h-6 w-6" />,
       color: 'bg-orange-500',
       path: '/configuracoes/parametros'
-    },
-    {
-      id: 'tema',
-      title: 'Personalização Visual',
-      description: 'Customizar aparência e tema do sistema',
-      icon: <Palette className="h-6 w-6" />,
-      color: 'bg-pink-500',
-      path: '/configuracoes/tema'
     },
     {
       id: 'integracoes',

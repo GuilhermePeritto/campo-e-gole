@@ -1,4 +1,5 @@
 
+import ModuleHeader from '@/components/ModuleHeader';
 import BaseList from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { FileText, Download, Calendar, User, Activity } from 'lucide-react';
 import { useState } from 'react';
 
@@ -159,7 +161,16 @@ const Auditoria = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
+      <ModuleHeader
+        title="Auditoria e Logs"
+        icon={<FileText className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.inicio}
+        mustReturn={true}
+        backTo="/configuracoes"
+        backLabel="Configurações"
+      />
+
+      <main className="container mx-auto p-6">
         {/* Filtros */}
         <Card className="mb-6">
           <CardHeader>
@@ -328,7 +339,7 @@ const Auditoria = () => {
           showExport={true}
           exportFilename="logs-auditoria"
         />
-      </div>
+      </main>
     </div>
   );
 };
