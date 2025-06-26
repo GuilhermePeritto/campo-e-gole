@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
 import CampoHorario from '@/core/componentes/CampoHorario';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin } from 'lucide-react';
 import { useState } from 'react';
 
@@ -35,7 +36,8 @@ const NovaFilial = () => {
     }
   });
 
-  const handleSave = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('Salvando filial:', filialData);
     // Aqui faria a chamada para a API
   };
@@ -53,10 +55,13 @@ const NovaFilial = () => {
   return (
     <BaseFormPage
       title="Nova Filial"
-      subtitle="Cadastre uma nova filial da empresa"
+      description="Cadastre uma nova filial da empresa"
       icon={<MapPin className="h-6 w-6" />}
+      moduleColor={MODULE_COLORS.inicio}
       backTo="/configuracoes/empresa"
-      onSave={handleSave}
+      backLabel="Empresa"
+      onSubmit={handleSubmit}
+      submitLabel="Salvar Filial"
     >
       <div className="space-y-6">
         <Card>

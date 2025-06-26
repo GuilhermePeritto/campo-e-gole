@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import CampoEmail from '@/core/componentes/CampoEmail';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,7 +25,8 @@ const NovoUsuario = () => {
     forcarTrocaSenha: true
   });
 
-  const handleSave = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('Salvando usuário:', userData);
     // Aqui faria a chamada para a API
   };
@@ -35,10 +37,13 @@ const NovoUsuario = () => {
   return (
     <BaseFormPage
       title="Novo Usuário"
-      subtitle="Cadastre um novo usuário no sistema"
+      description="Cadastre um novo usuário no sistema"
       icon={<UserPlus className="h-6 w-6" />}
+      moduleColor={MODULE_COLORS.inicio}
       backTo="/configuracoes/usuarios"
-      onSave={handleSave}
+      backLabel="Usuários"
+      onSubmit={handleSubmit}
+      submitLabel="Salvar Usuário"
     >
       <div className="space-y-6">
         <Card>

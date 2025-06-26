@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CampoDocumento from '@/core/componentes/CampoDocumento';
 import CampoEmail from '@/core/componentes/CampoEmail';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Building, MapPin, Plus, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -57,7 +58,8 @@ const Empresa = () => {
     }
   ]);
 
-  const handleSave = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('Salvando dados da empresa:', companyData);
     // Aqui faria a chamada para a API
   };
@@ -65,10 +67,13 @@ const Empresa = () => {
   return (
     <BaseFormPage
       title="Empresa e Filiais"
-      subtitle="Gerencie os dados da sua empresa e filiais"
+      description="Gerencie os dados da sua empresa e filiais"
       icon={<Building className="h-6 w-6" />}
+      moduleColor={MODULE_COLORS.inicio}
       backTo="/configuracoes"
-      onSave={handleSave}
+      backLabel="Configurações"
+      onSubmit={handleSubmit}
+      submitLabel="Salvar Alterações"
     >
       <Tabs defaultValue="empresa" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">

@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { Shield } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const NovoGrupo = () => {
   const [grupoData, setGrupoData] = useState({
@@ -48,7 +49,10 @@ const NovoGrupo = () => {
     }
   });
 
-  const handleSave = () => {
+  const checkboxRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('Salvando grupo:', grupoData);
     // Aqui faria a chamada para a API
   };
@@ -92,13 +96,33 @@ const NovoGrupo = () => {
     });
   };
 
+  // Effect to update indeterminate state
+  useEffect(() => {
+    modulos.forEach((modulo) => {
+      const moduloPermissoes = grupoData.permissoes[modulo.key];
+      const allChecked = acoes.every(acao => moduloPermissoes[acao.key]);
+      const someChecked = acoes.some(acao => moduloPermissoes[acao.key]);
+      
+      const checkbox = checkboxRefs.current[`${modulo.key}-all`];
+      if (checkbox && checkbox.querySelector('button')) {
+        const checkboxElement = checkbox.querySelector('button') as any;
+        if (checkboxElement) {
+          checkboxElement.indeterminate = someChecked && !allChecked;
+        }
+      }
+    });
+  }, [grupoData.permissoes]);
+
   return (
     <BaseFormPage
       title="Novo Grupo"
-      subtitle="Crie um novo grupo de permissões"
+      description="Crie um novo grupo de permissões"
       icon={<Shield className="h-6 w-6" />}
+      moduleColor={MODULE_COLORS.inicio}
       backTo="/configuracoes/grupos"
-      onSave={handleSave}
+      backLabel="Grupos"
+      onSubmit={handleSubmit}
+      submitLabel="Salvar Grupo"
     >
       <div className="space-y-6">
         <Card>
@@ -164,16 +188,13 @@ const NovoGrupo = () => {
                       <p className="text-sm text-muted-foreground">{modulo.description}</p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`${modulo.key}-all`}
-                        checked={allChecked}
-                        ref={(ref) => {
-                          if (ref) {
-                            ref.indeterminate = someChecked && !allChecked;
-                          }
-                        }}
-                        onCheckedChange={(checked) => toggleModulo(modulo.key, checked as boolean)}
-                      />
+                      <div ref={(el) => checkboxRefs.current[`${modulo.key}-all`] = el}>
+                        <Checkbox
+                          id={`${modulo.key}-all`}
+                          checked={allChecked}
+                          onCheckedChange={(checked) => toggleModulo(modulo.key, checked as boolean)}
+                        />
+                      </div>
                       <Label htmlFor={`${modulo.key}-all`} className="text-sm font-medium">
                         Todas as permissões
                       </Label>
