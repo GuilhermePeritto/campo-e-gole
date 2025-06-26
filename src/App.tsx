@@ -79,6 +79,19 @@ import ConfiguracoesEditUser from './pages/configuracoes/EditUser';
 import ConfiguracoesNewGroup from './pages/configuracoes/NewGroup';
 import ConfiguracoesNewUser from './pages/configuracoes/NewUser';
 
+// Novas páginas de configuração
+import ConfiguracoesEmpresa from './pages/configuracoes/Empresa';
+import ConfiguracoesNovaFilial from './pages/configuracoes/NovaFilial';
+import ConfiguracoesUsuarios from './pages/configuracoes/Usuarios';
+import ConfiguracoesNovoUsuario from './pages/configuracoes/NovoUsuario';
+import ConfiguracoesGrupos from './pages/configuracoes/Grupos';
+import ConfiguracoesNovoGrupo from './pages/configuracoes/NovoGrupo';
+import ConfiguracoesParametros from './pages/configuracoes/Parametros';
+import ConfiguracoesTema from './pages/configuracoes/Tema';
+import ConfiguracoesIntegracoes from './pages/configuracoes/Integracoes';
+import ConfiguracoesFinanceiroGlobal from './pages/configuracoes/FinanceiroGlobal';
+import ConfiguracoesAuditoria from './pages/configuracoes/Auditoria';
+
 // Adicionar novas importações
 import Comandas from './pages/bar/Comandas';
 import Inicio from './pages/Inicio';
@@ -97,7 +110,6 @@ function App() {
               <Routes>
                 {/* Main routes */}
                 <Route path="/" element={<Index />} />
-                <Route path="/inicio" element={<Inicio />} />
                 <Route path="/inicio" element={<Inicio />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />
@@ -177,10 +189,21 @@ function App() {
                 <Route path="/bar/relatorios" element={<BarReports />} />
 
                 {/* Settings routes */}
-                <Route path="/configuracoes/usuarios/novo" element={<ConfiguracoesNewUser />} />
+                <Route path="/configuracoes/empresa" element={<ConfiguracoesEmpresa />} />
+                <Route path="/configuracoes/filiais/nova" element={<ConfiguracoesNovaFilial />} />
+                <Route path="/configuracoes/filiais/:id/editar" element={<ConfiguracoesNovaFilial />} />
+                <Route path="/configuracoes/usuarios" element={<ConfiguracoesUsuarios />} />
+                <Route path="/configuracoes/usuarios/novo" element={<ConfiguracoesNovoUsuario />} />
                 <Route path="/configuracoes/usuarios/:id/editar" element={<ConfiguracoesEditUser />} />
-                <Route path="/configuracoes/grupos/novo" element={<ConfiguracoesNewGroup />} />
+                <Route path="/configuracoes/usuarios/:id/permissoes" element={<ConfiguracoesNovoUsuario />} />
+                <Route path="/configuracoes/grupos" element={<ConfiguracoesGrupos />} />
+                <Route path="/configuracoes/grupos/novo" element={<ConfiguracoesNovoGrupo />} />
                 <Route path="/configuracoes/grupos/:id/editar" element={<ConfiguracoesEditGroup />} />
+                <Route path="/configuracoes/parametros" element={<ConfiguracoesParametros />} />
+                <Route path="/configuracoes/tema" element={<ConfiguracoesTema />} />
+                <Route path="/configuracoes/integracoes" element={<ConfiguracoesIntegracoes />} />
+                <Route path="/configuracoes/financeiro-global" element={<ConfiguracoesFinanceiroGlobal />} />
+                <Route path="/configuracoes/auditoria" element={<ConfiguracoesAuditoria />} />
 
                 {/* Fallback route */}
                 <Route path="*" element={<NotFound />} />

@@ -1,16 +1,80 @@
 
-import BranchesList from '@/components/BranchesList';
-import CompanySettings from '@/components/CompanySettings';
-import GroupsList from '@/components/GroupsList';
 import ModuleHeader from '@/components/ModuleHeader';
-import SystemSettings from '@/components/SystemSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import UsersList from '@/components/UsersList';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Building, Database, Globe, MapPin, Settings as SettingsIcon, Shield, Users } from 'lucide-react';
+import { Building, Users, Shield, Palette, Globe, DollarSign, FileText, Settings as SettingsIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
+  const navigate = useNavigate();
+
+  const configSections = [
+    {
+      id: 'empresa',
+      title: 'Empresa e Filiais',
+      description: 'Gerenciar dados da empresa e suas filiais',
+      icon: <Building className="h-6 w-6" />,
+      color: 'bg-blue-500',
+      path: '/configuracoes/empresa'
+    },
+    {
+      id: 'usuarios',
+      title: 'Usuários e Permissões',
+      description: 'Controlar usuários e níveis de acesso',
+      icon: <Users className="h-6 w-6" />,
+      color: 'bg-green-500',
+      path: '/configuracoes/usuarios'
+    },
+    {
+      id: 'grupos',
+      title: 'Grupos e Perfis',
+      description: 'Definir perfis de acesso reutilizáveis',
+      icon: <Shield className="h-6 w-6" />,
+      color: 'bg-purple-500',
+      path: '/configuracoes/grupos'
+    },
+    {
+      id: 'parametros',
+      title: 'Parâmetros dos Módulos',
+      description: 'Configurações específicas por módulo',
+      icon: <SettingsIcon className="h-6 w-6" />,
+      color: 'bg-orange-500',
+      path: '/configuracoes/parametros'
+    },
+    {
+      id: 'tema',
+      title: 'Personalização Visual',
+      description: 'Customizar aparência e tema do sistema',
+      icon: <Palette className="h-6 w-6" />,
+      color: 'bg-pink-500',
+      path: '/configuracoes/tema'
+    },
+    {
+      id: 'integracoes',
+      title: 'Integrações',
+      description: 'Conectar com serviços externos',
+      icon: <Globe className="h-6 w-6" />,
+      color: 'bg-cyan-500',
+      path: '/configuracoes/integracoes'
+    },
+    {
+      id: 'financeiro-global',
+      title: 'Financeiro Global',
+      description: 'Configurações fiscais e contábeis',
+      icon: <DollarSign className="h-6 w-6" />,
+      color: 'bg-emerald-500',
+      path: '/configuracoes/financeiro-global'
+    },
+    {
+      id: 'auditoria',
+      title: 'Auditoria e Logs',
+      description: 'Histórico de alterações e atividades',
+      icon: <FileText className="h-6 w-6" />,
+      color: 'bg-gray-500',
+      path: '/configuracoes/auditoria'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <ModuleHeader
@@ -19,70 +83,38 @@ const Settings = () => {
         moduleColor={MODULE_COLORS.inicio}
         mustReturn={true}
         backTo="/inicio"
-        backLabel="Inicio"
+        backLabel="Início"
       />
 
       <main className="container mx-auto p-6">
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="users" className="gap-2">
-              <Users className="h-4 w-4" />
-              Usuários
-            </TabsTrigger>
-            <TabsTrigger value="groups" className="gap-2">
-              <Shield className="h-4 w-4" />
-              Grupos
-            </TabsTrigger>
-            <TabsTrigger value="company" className="gap-2">
-              <Building className="h-4 w-4" />
-              Empresa
-            </TabsTrigger>
-            <TabsTrigger value="branches" className="gap-2">
-              <MapPin className="h-4 w-4" />
-              Filiais
-            </TabsTrigger>
-            <TabsTrigger value="system" className="gap-2">
-              <Database className="h-4 w-4" />
-              Sistema
-            </TabsTrigger>
-            <TabsTrigger value="integrations" className="gap-2">
-              <Globe className="h-4 w-4" />
-              Integrações
-            </TabsTrigger>
-          </TabsList>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Painel de Configurações</h2>
+          <p className="text-muted-foreground">
+            Gerencie todos os aspectos do seu sistema de forma centralizada
+          </p>
+        </div>
 
-          <TabsContent value="users">
-            <UsersList />
-          </TabsContent>
-
-          <TabsContent value="groups">
-            <GroupsList />
-          </TabsContent>
-
-          <TabsContent value="company">
-            <CompanySettings />
-          </TabsContent>
-
-          <TabsContent value="branches">
-            <BranchesList />
-          </TabsContent>
-
-          <TabsContent value="system" className="space-y-6">
-            <SystemSettings />
-          </TabsContent>
-
-          <TabsContent value="integrations" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Integrações</CardTitle>
-                <CardDescription>Configure integrações com serviços externos</CardDescription>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {configSections.map((section) => (
+            <Card 
+              key={section.id}
+              className="cursor-pointer transition-all hover:shadow-lg hover:scale-105"
+              onClick={() => navigate(section.path)}
+            >
+              <CardHeader className="pb-3">
+                <div className={`w-12 h-12 rounded-lg ${section.color} flex items-center justify-center text-white mb-3`}>
+                  {section.icon}
+                </div>
+                <CardTitle className="text-lg">{section.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Integrações em desenvolvimento...</p>
+                <CardDescription className="text-sm">
+                  {section.description}
+                </CardDescription>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          ))}
+        </div>
       </main>
     </div>
   );
