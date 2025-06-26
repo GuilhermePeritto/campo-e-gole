@@ -85,16 +85,6 @@ import Inicio from './pages/Inicio';
 import InternalSystem from './pages/InternalSystem';
 import InternalClients from './pages/sistema-interno/Clients';
 
-// Novas páginas de configurações
-import ConfiguracoesEmpresa from './pages/configuracoes/Empresa';
-import ConfiguracoesFiliais from './pages/configuracoes/Filiais';
-import ConfiguracoesUsuarios from './pages/configuracoes/Usuarios';
-import ConfiguracoesGrupos from './pages/configuracoes/Grupos';
-import ConfiguracoesTema from './pages/configuracoes/Tema';
-import ConfiguracoesIntegracoes from './pages/configuracoes/Integracoes';
-import ConfiguracoesFinanceiroGlobal from './pages/configuracoes/FinanceiroGlobal';
-import ConfiguracoesAuditoria from './pages/configuracoes/Auditoria';
-
 const queryClient = new QueryClient();
 
 function App() {
@@ -191,16 +181,6 @@ function App() {
                 <Route path="/configuracoes/usuarios/:id/editar" element={<ConfiguracoesEditUser />} />
                 <Route path="/configuracoes/grupos/novo" element={<ConfiguracoesNewGroup />} />
                 <Route path="/configuracoes/grupos/:id/editar" element={<ConfiguracoesEditGroup />} />
-
-                {/* New Configuration routes */}
-                <Route path="/configuracoes/empresa" element={<ConfiguracoesEmpresa />} />
-                <Route path="/configuracoes/filiais" element={<ConfiguracoesFiliais />} />
-                <Route path="/configuracoes/usuarios" element={<ConfiguracoesUsuarios />} />
-                <Route path="/configuracoes/grupos" element={<ConfiguracoesGrupos />} />
-                <Route path="/configuracoes/tema" element={<ConfiguracoesTema />} />
-                <Route path="/configuracoes/integracoes" element={<ConfiguracoesIntegracoes />} />
-                <Route path="/configuracoes/financeiro-global" element={<ConfiguracoesFinanceiroGlobal />} />
-                <Route path="/configuracoes/auditoria" element={<ConfiguracoesAuditoria />} />
 
                 {/* Fallback route */}
                 <Route path="*" element={<NotFound />} />
