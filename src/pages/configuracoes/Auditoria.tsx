@@ -8,21 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { useAuditoria } from '@/hooks/useAuditoria';
 import { FileText, Download, Calendar, User, Activity } from 'lucide-react';
-import { useState } from 'react';
-
-interface LogAuditoria {
-  id: number;
-  usuario: string;
-  acao: string;
-  modulo: string;
-  detalhes: string;
-  ip: string;
-  dataHora: string;
-  status: 'sucesso' | 'erro' | 'aviso';
-}
+import { useState, useEffect } from 'react';
 
 const Auditoria = () => {
+  const { logs, loading, getLogs } = useAuditoria();
   const [filtros, setFiltros] = useState({
     usuario: '',
     modulo: '',
@@ -31,65 +22,16 @@ const Auditoria = () => {
     dataFim: ''
   });
 
-  const [logs] = useState<LogAuditoria[]>([
-    {
-      id: 1,
-      usuario: 'João Silva',
-      acao: 'Login no sistema',
-      modulo: 'Autenticação',
-      detalhes: 'Login realizado com sucesso',
-      ip: '192.168.1.10',
-      dataHora: '2024-01-15 14:30:25',
-      status: 'sucesso'
-    },
-    {
-      id: 2,
-      usuario: 'Maria Santos',
-      acao: 'Criação de reserva',
-      modulo: 'Eventos',
-      detalhes: 'Reserva #1234 criada para Quadra 1',
-      ip: '192.168.1.15',
-      dataHora: '2024-01-15 14:25:10',
-      status: 'sucesso'
-    },
-    {
-      id: 3,
-      usuario: 'Pedro Costa',
-      acao: 'Tentativa de exclusão',
-      modulo: 'Usuários',
-      detalhes: 'Tentativa de excluir usuário sem permissão',
-      ip: '192.168.1.20',
-      dataHora: '2024-01-15 14:20:05',
-      status: 'erro'
-    },
-    {
-      id: 4,
-      usuario: 'Ana Oliveira',
-      acao: 'Alteração de configurações',
-      modulo: 'Configurações',
-      detalhes: 'Parâmetros do módulo financeiro alterados',
-      ip: '192.168.1.12',
-      dataHora: '2024-01-15 14:15:00',
-      status: 'aviso'
-    },
-    {
-      id: 5,
-      usuario: 'Carlos Lima',
-      acao: 'Geração de relatório',
-      modulo: 'Financeiro',
-      detalhes: 'Relatório de receitas gerado',
-      ip: '192.168.1.18',
-      dataHora: '2024-01-15 14:10:30',
-      status: 'sucesso'
-    }
-  ]);
+  useEffect(() => {
+    getLogs();
+  }, [getLogs]);
 
   const columns = [
     {
       key: 'dataHora',
       label: 'Data/Hora',
       sortable: true,
-      render: (log: LogAuditoria) => (
+      render: (log: any) => (
         <div className="text-sm">
           <div>{log.dataHora.split(' ')[0]}</div>
           <div className="text-muted-foreground">{log.dataHora.split(' ')[1]}</div>
@@ -100,7 +42,7 @@ const Auditoria = () => {
       key: 'usuario',
       label: 'Usuário',
       sortable: true,
-      render: (log: LogAuditoria) => (
+      render: (log: any) => (
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-muted-foreground" />
           <span>{log.usuario}</span>
@@ -111,7 +53,7 @@ const Auditoria = () => {
       key: 'modulo',
       label: 'Módulo',
       sortable: true,
-      render: (log: LogAuditoria) => (
+      render: (log: any) => (
         <Badge variant="outline">{log.modulo}</Badge>
       ),
     },
@@ -123,7 +65,7 @@ const Auditoria = () => {
     {
       key: 'status',
       label: 'Status',
-      render: (log: LogAuditoria) => {
+      render: (log: any) => {
         const variants = {
           sucesso: 'default',
           erro: 'destructive',
@@ -141,22 +83,36 @@ const Auditoria = () => {
       key: 'ip',
       label: 'IP',
       sortable: true,
-      render: (log: LogAuditoria) => (
+      render: (log: any) => (
         <span className="font-mono text-sm">{log.ip}</span>
       ),
     },
     {
       key: 'detalhes',
       label: 'Detalhes',
-      render: (log: LogAuditoria) => (
+      render: (log: any) => (
         <span className="text-sm text-muted-foreground">{log.detalhes}</span>
       ),
     },
   ];
 
+  const aplicarFiltros = () => {
+    getLogs(filtros);
+  };
+
+  const limparFiltros = () => {
+    setFiltros({
+      usuario: '',
+      modulo: '',
+      acao: '',
+      dataInicio: '',
+      dataFim: ''
+    });
+    getLogs();
+  };
+
   const exportarLogs = () => {
     console.log('Exportando logs de auditoria...');
-    // Aqui faria a exportação dos logs
   };
 
   return (
@@ -253,10 +209,10 @@ const Auditoria = () => {
             </div>
             
             <div className="flex gap-2 mt-4">
-              <Button variant="outline">
+              <Button variant="outline" onClick={aplicarFiltros}>
                 Aplicar Filtros
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" onClick={limparFiltros}>
                 Limpar Filtros
               </Button>
             </div>

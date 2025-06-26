@@ -2,69 +2,40 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import BaseList from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Users, Plus, Settings, Mail, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { useUsuarios } from '@/hooks/useUsuarios';
+import { useFiliais } from '@/hooks/useFiliais';
+import { useGrupos } from '@/hooks/useGrupos';
+import { Users, Plus, Settings, Mail, Phone, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface Usuario {
-  id: number;
-  nome: string;
-  email: string;
-  telefone: string;
-  cargo: string;
-  filial: string;
-  grupo: string;
-  ativo: boolean;
-  ultimoAcesso: string;
-}
 
 const Usuarios = () => {
   const navigate = useNavigate();
-  
-  const [usuarios] = useState<Usuario[]>([
-    {
-      id: 1,
-      nome: 'João Silva',
-      email: 'joao@arenasports.com',
-      telefone: '11987654321',
-      cargo: 'Administrador',
-      filial: 'Filial Centro',
-      grupo: 'Administrador',
-      ativo: true,
-      ultimoAcesso: '2024-01-15 14:30'
-    },
-    {
-      id: 2,
-      nome: 'Maria Santos',
-      email: 'maria@arenasports.com',
-      telefone: '11987654322',
-      cargo: 'Atendente',
-      filial: 'Filial Centro',
-      grupo: 'Atendente',
-      ativo: true,
-      ultimoAcesso: '2024-01-15 13:20'
-    },
-    {
-      id: 3,
-      nome: 'Pedro Costa',
-      email: 'pedro@arenasports.com',
-      telefone: '11987654323',
-      cargo: 'Professor',
-      filial: 'Filial Zona Norte',
-      grupo: 'Professor',
-      ativo: false,
-      ultimoAcesso: '2024-01-10 16:45'
-    }
-  ]);
+  const { usuarios, loading, getUsuarios } = useUsuarios();
+  const { filiais } = useFiliais();
+  const { grupos } = useGrupos();
+
+  useEffect(() => {
+    getUsuarios();
+  }, [getUsuarios]);
+
+  const getFilialNome = (filialId: number) => {
+    const filial = filiais.find(f => f.id === filialId);
+    return filial ? filial.nome : 'N/A';
+  };
+
+  const getGrupoNome = (grupoId: number) => {
+    const grupo = grupos.find(g => g.id === grupoId);
+    return grupo ? grupo.nome : 'N/A';
+  };
 
   const columns = [
     {
       key: 'nome',
       label: 'Usuário',
       sortable: true,
-      render: (usuario: Usuario) => (
+      render: (usuario: any) => (
         <div>
           <div className="font-medium">{usuario.nome}</div>
           <div className="text-sm text-muted-foreground">{usuario.cargo}</div>
@@ -74,7 +45,7 @@ const Usuarios = () => {
     {
       key: 'email',
       label: 'Contato',
-      render: (usuario: Usuario) => (
+      render: (usuario: any) => (
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-sm">
             <Mail className="h-3 w-3 text-muted-foreground" />
@@ -91,19 +62,20 @@ const Usuarios = () => {
       key: 'filial',
       label: 'Filial',
       sortable: true,
+      render: (usuario: any) => getFilialNome(usuario.filialId),
     },
     {
       key: 'grupo',
       label: 'Grupo',
       sortable: true,
-      render: (usuario: Usuario) => (
-        <Badge variant="outline">{usuario.grupo}</Badge>
+      render: (usuario: any) => (
+        <Badge variant="outline">{getGrupoNome(usuario.grupoId)}</Badge>
       ),
     },
     {
       key: 'status',
       label: 'Status',
-      render: (usuario: Usuario) => (
+      render: (usuario: any) => (
         <Badge variant={usuario.ativo ? 'default' : 'secondary'}>
           {usuario.ativo ? 'Ativo' : 'Inativo'}
         </Badge>
@@ -113,7 +85,7 @@ const Usuarios = () => {
       key: 'ultimoAcesso',
       label: 'Último Acesso',
       sortable: true,
-      render: (usuario: Usuario) => (
+      render: (usuario: any) => (
         <span className="text-sm text-muted-foreground">{usuario.ultimoAcesso}</span>
       ),
     },
@@ -123,8 +95,14 @@ const Usuarios = () => {
     {
       label: 'Editar',
       icon: <Settings className="h-4 w-4" />,
-      onClick: (usuario: Usuario) => navigate(`/configuracoes/usuarios/${usuario.id}/editar`),
+      onClick: (usuario: any) => navigate(`/configuracoes/usuarios/${usuario.id}`),
       variant: 'outline' as const,
+    },
+    {
+      label: 'Permissões',
+      icon: <Shield className="h-4 w-4" />,
+      onClick: (usuario: any) => navigate(`/configuracoes/usuarios/${usuario.id}/permissoes`),
+      variant: 'default' as const,
     },
   ];
 
@@ -147,7 +125,7 @@ const Usuarios = () => {
           title="Usuários do Sistema"
           description="Gerencie usuários e suas permissões"
           searchPlaceholder="Buscar usuário..."
-          searchFields={['nome', 'email', 'cargo', 'filial']}
+          searchFields={['nome', 'email', 'cargo']}
           getItemId={(usuario) => usuario.id}
           createButton={{
             label: 'Novo Usuário',
