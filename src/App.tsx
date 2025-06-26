@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Login from './pages/Login';
@@ -82,13 +81,11 @@ import Empresa from './pages/configuracoes/Empresa';
 import Filiais from './pages/configuracoes/Filiais';
 import NovaFilial from './pages/configuracoes/NovaFilial';
 import Usuarios from './pages/configuracoes/Usuarios';
-import NovoUsuario from './pages/configuracoes/NovoUsuario';
-import EditUser from './pages/configuracoes/EditUser';
+import FormUsuario from './pages/configuracoes/FormUsuario';
+import PermissoesUsuario from './pages/configuracoes/PermissoesUsuario';
 import Grupos from './pages/configuracoes/Grupos';
 import NovoGrupo from './pages/configuracoes/NovoGrupo';
 import EditGroup from './pages/configuracoes/EditGroup';
-import NewGroup from './pages/configuracoes/NewGroup';
-import NewUser from './pages/configuracoes/NewUser';
 import ParametrosPorFilial from './pages/configuracoes/ParametrosPorFilial';
 import Parametros from './pages/configuracoes/Parametros';
 import Tema from './pages/configuracoes/Tema';
@@ -179,7 +176,7 @@ function App() {
           <Route path="/sistema-interno/clientes/novo" element={<NovoCliente />} />
           <Route path="/sistema-interno/contas/receber" element={<ContasReceber />} />
           <Route path="/sistema-interno/modulos/configurar" element={<ConfigurarModulos />} />
-
+          
           {/* Configurações */}
           <Route path="/configuracoes" element={<Settings />} />
           <Route path="/configuracoes/empresa" element={<Empresa />} />
@@ -187,8 +184,9 @@ function App() {
           <Route path="/configuracoes/filiais/nova" element={<NovaFilial />} />
           <Route path="/configuracoes/filiais/:id/editar" element={<NovaFilial />} />
           <Route path="/configuracoes/usuarios" element={<Usuarios />} />
-          <Route path="/configuracoes/usuarios/novo" element={<NovoUsuario />} />
-          <Route path="/configuracoes/usuarios/:id/editar" element={<EditUser />} />
+          <Route path="/configuracoes/usuarios/novo" element={<FormUsuario />} />
+          <Route path="/configuracoes/usuarios/:id/editar" element={<FormUsuario />} />
+          <Route path="/configuracoes/usuarios/:id/permissoes" element={<PermissoesUsuario />} />
           <Route path="/configuracoes/grupos" element={<Grupos />} />
           <Route path="/configuracoes/grupos/novo" element={<NovoGrupo />} />
           <Route path="/configuracoes/grupos/:id/editar" element={<EditGroup />} />
