@@ -215,7 +215,41 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   }
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col overflow-hidden">
+      {/* Fixed Header */}
+      <div className="flex-shrink-0 border-b">
+        <DndContext
+          id={useId()}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToHorizontalAxis]}
+          onDragEnd={handleDragEnd}
+          sensors={sensors}
+        >
+          <div className="overflow-x-auto">
+            <Table
+              style={{ width: table.getTotalSize() }}
+              className="table-fixed border-separate border-spacing-0"
+            >
+              <TableHeader className="sticky top-0 bg-background z-10">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    <SortableContext
+                      items={columnOrder}
+                      strategy={horizontalListSortingStrategy}
+                    >
+                      {headerGroup.headers.map((header) => (
+                        <DraggableTableHeader key={header.id} header={header} />
+                      ))}
+                    </SortableContext>
+                  </TableRow>
+                ))}
+              </TableHeader>
+            </Table>
+          </div>
+        </DndContext>
+      </div>
+
+      {/* Scrollable Body */}
       <div className="flex-1 overflow-auto">
         <DndContext
           id={useId()}
@@ -226,9 +260,10 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         >
           <Table
             style={{ width: table.getTotalSize() }}
-            className="table-fixed border-separate border-spacing-0 [&_td]:border-border [&_th]:border-border [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
+            className="table-fixed border-separate border-spacing-0"
           >
-            <TableHeader className="sticky top-0 bg-background border-b z-10">
+            {/* Invisible header for column alignment */}
+            <TableHeader className="opacity-0 pointer-events-none">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   <SortableContext
@@ -236,7 +271,13 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
                     strategy={horizontalListSortingStrategy}
                   >
                     {headerGroup.headers.map((header) => (
-                      <DraggableTableHeader key={header.id} header={header} />
+                      <TableHead 
+                        key={header.id}
+                        style={getPinningStyles(header.column)}
+                        className="h-0 p-0 border-0"
+                      >
+                        <div style={{ width: `${header.getSize()}px` }} />
+                      </TableHead>
                     ))}
                   </SortableContext>
                 </TableRow>

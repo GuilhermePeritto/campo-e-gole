@@ -1,3 +1,4 @@
+
 import BaseList from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
@@ -15,11 +16,15 @@ const Locais = () => {
     {
       key: 'name',
       label: 'Nome',
-      sortable: true
+      sortable: true,
+      filterable: true,
+      filterType: 'text' as const
     },
     {
       key: 'type',
-      label: 'Tipo'
+      label: 'Tipo',
+      filterable: true,
+      filterType: 'select' as const
     },
     {
       key: 'interval',
@@ -34,6 +39,8 @@ const Locais = () => {
     {
       key: 'status',
       label: 'Situação',
+      filterable: true,
+      filterType: 'select' as const,
       render: (item: any) => (
         <Badge variant={item.status === 'active' ? 'default' : 'destructive'}>
           {item.status === 'active' ? 'Ativo' : 
@@ -67,7 +74,7 @@ const Locais = () => {
         backLabel="Módulo Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+      <main className="w-full px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
           title="Gerenciar Locais"
           description="Cadastre e gerencie os locais disponíveis para reserva"

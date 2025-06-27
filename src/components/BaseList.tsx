@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import PaginationControls from '@/components/PaginationControls';
 import BaseListHeader from '@/components/BaseListHeader';
-import BaseListSearchControls from '@/components/BaseListSearchControls';
+import BaseListSearchControls, { AdvancedFilter } from '@/components/BaseListSearchControls';
 import BaseListTableAdvanced from '@/components/BaseListTableAdvanced';
 import BaseListGrid from '@/components/BaseListGrid';
 import BaseListEmptyState from '@/components/BaseListEmptyState';
@@ -16,6 +16,8 @@ export interface BaseListColumn<T> {
   render?: (item: T) => React.ReactNode;
   sortable?: boolean;
   className?: string;
+  filterable?: boolean;
+  filterType?: 'text' | 'select' | 'multiselect';
 }
 
 export interface BaseListAction<T> {
@@ -68,25 +70,71 @@ const BaseList = <T extends Record<string, any>>({
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [advancedFilters, setAdvancedFilters] = useState<Record<string, string[]>>({});
 
-  // Filter data based on search
-  const filteredData = useMemo(() => {
-    if (!searchTerm.trim()) return data;
-    
-    return data.filter(item => {
-      if (searchFields.length === 0) {
-        // If no specific search fields, search in all string values
-        return Object.values(item).some(value => 
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-      
-      return searchFields.some(field => {
-        const value = item[field];
-        return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+  // Generate advanced filters based on filterable columns
+  const availableAdvancedFilters = useMemo((): AdvancedFilter[] => {
+    return columns
+      .filter(col => col.filterable && col.filterType === 'select')
+      .map(col => {
+        const uniqueValues = Array.from(new Set(
+          data.map(item => {
+            const value = item[col.key as keyof T];
+            return value ? String(value) : '';
+          }).filter(Boolean)
+        ));
+
+        const valueCounts = uniqueValues.reduce((acc, value) => {
+          acc[value] = data.filter(item => String(item[col.key as keyof T]) === value).length;
+          return acc;
+        }, {} as Record<string, number>);
+
+        return {
+          id: String(col.key),
+          label: col.label,
+          type: 'select' as const,
+          options: uniqueValues.map(value => ({
+            value,
+            label: value,
+            count: valueCounts[value]
+          })),
+          value: advancedFilters[String(col.key)] || []
+        };
       });
+  }, [columns, data, advancedFilters]);
+
+  // Filter data based on search and advanced filters
+  const filteredData = useMemo(() => {
+    let filtered = data;
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(item => {
+        if (searchFields.length === 0) {
+          return Object.values(item).some(value => 
+            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        
+        return searchFields.some(field => {
+          const value = item[field];
+          return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+        });
+      });
+    }
+
+    // Apply advanced filters
+    Object.entries(advancedFilters).forEach(([fieldKey, selectedValues]) => {
+      if (selectedValues.length > 0) {
+        filtered = filtered.filter(item => {
+          const itemValue = String(item[fieldKey as keyof T] || '');
+          return selectedValues.includes(itemValue);
+        });
+      }
     });
-  }, [data, searchTerm, searchFields]);
+
+    return filtered;
+  }, [data, searchTerm, searchFields, advancedFilters]);
 
   const {
     currentPage,
@@ -113,7 +161,6 @@ const BaseList = <T extends Record<string, any>>({
       isVisible: columnVisibility[String(col.key)] !== false
     }));
 
-    // Add actions column if there are actions
     if (actions.length > 0) {
       baseColumns.push({
         id: 'actions',
@@ -131,6 +178,18 @@ const BaseList = <T extends Record<string, any>>({
       ...prev,
       [columnId]: visible
     }));
+  };
+
+  const handleAdvancedFilterChange = (filterId: string, values: string[]) => {
+    setAdvancedFilters(prev => ({
+      ...prev,
+      [filterId]: values
+    }));
+  };
+
+  const handleClearAllFilters = () => {
+    setAdvancedFilters({});
+    setSearchTerm('');
   };
 
   return (
@@ -152,11 +211,13 @@ const BaseList = <T extends Record<string, any>>({
         onViewModeChange={setViewMode}
         columns={columnsForVisibility}
         onColumnVisibilityChange={handleColumnVisibilityChange}
+        advancedFilters={availableAdvancedFilters}
+        onAdvancedFilterChange={handleAdvancedFilterChange}
+        onClearAllFilters={handleClearAllFilters}
       />
 
-      {/* Main Content Area - completely flexible with minimum height */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-[400px]">
-        {/* Content Area - adapts to parent height */}
         <div className="flex-1 overflow-hidden">
           {paginatedData.length === 0 ? (
             <BaseListEmptyState
@@ -182,7 +243,7 @@ const BaseList = <T extends Record<string, any>>({
           )}
         </div>
 
-        {/* Compact Pagination at Bottom */}
+        {/* Pagination */}
         {filteredData.length > 0 && (
           <div className="flex-shrink-0 mt-4 pt-3 border-t bg-background">
             <PaginationControls
