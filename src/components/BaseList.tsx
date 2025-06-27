@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import PaginationControls from '@/components/PaginationControls';
@@ -7,6 +8,7 @@ import BaseListTableAdvanced from '@/components/BaseListTableAdvanced';
 import BaseListGrid from '@/components/BaseListGrid';
 import BaseListEmptyState from '@/components/BaseListEmptyState';
 import { usePagination } from '@/hooks/usePagination';
+import { VisibilityState } from '@tanstack/react-table';
 
 export interface BaseListColumn<T> {
   key: keyof T | string;
@@ -65,6 +67,7 @@ const BaseList = <T extends Record<string, any>>({
 }: BaseListProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   // Filter data based on search
   const filteredData = useMemo(() => {
@@ -101,6 +104,35 @@ const BaseList = <T extends Record<string, any>>({
     totalItems: filteredData.length
   });
 
+  // Prepare columns for visibility control
+  const columnsForVisibility = useMemo(() => {
+    const baseColumns = columns.map(col => ({
+      id: String(col.key),
+      label: col.label,
+      canHide: true,
+      isVisible: columnVisibility[String(col.key)] !== false
+    }));
+
+    // Add actions column if there are actions
+    if (actions.length > 0) {
+      baseColumns.push({
+        id: 'actions',
+        label: 'Ações',
+        canHide: false,
+        isVisible: true
+      });
+    }
+
+    return baseColumns;
+  }, [columns, actions, columnVisibility]);
+
+  const handleColumnVisibilityChange = (columnId: string, visible: boolean) => {
+    setColumnVisibility(prev => ({
+      ...prev,
+      [columnId]: visible
+    }));
+  };
+
   return (
     <div className={cn("w-full h-full flex flex-col", className)}>
       <BaseListHeader
@@ -118,6 +150,8 @@ const BaseList = <T extends Record<string, any>>({
         searchPlaceholder={searchPlaceholder}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        columns={columnsForVisibility}
+        onColumnVisibilityChange={handleColumnVisibilityChange}
       />
 
       {/* Main Content Area - completely flexible with minimum height */}
@@ -135,6 +169,7 @@ const BaseList = <T extends Record<string, any>>({
               columns={columns}
               actions={actions}
               getItemId={getItemId}
+              columnVisibility={columnVisibility}
             />
           ) : (
             <BaseListGrid

@@ -36,8 +36,7 @@ import {
   ArrowLeftToLine, 
   ArrowRightToLine, 
   MoreHorizontal, 
-  PinOff,
-  Columns
+  PinOff
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -47,9 +46,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
   Table,
@@ -68,14 +64,20 @@ interface BaseListTableAdvancedProps<T> {
   columns: BaseListColumn<T>[];
   actions: BaseListAction<T>[];
   getItemId: (item: T) => string | number;
+  columnVisibility?: VisibilityState;
 }
 
 // Helper function to safely get nested property value
 const getNestedValue = (obj: any, path: string | keyof any): any => {
+  if (!obj) return undefined;
+  
   if (typeof path === 'string' && path.includes('.')) {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => {
+      return current && current[key] !== undefined ? current[key] : undefined;
+    }, obj);
   }
-  return obj?.[path];
+  
+  return obj[path];
 };
 
 // Helper function to compute pinning styles for columns
@@ -94,18 +96,21 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   data,
   columns,
   actions,
-  getItemId
+  getItemId,
+  columnVisibility = {}
 }: BaseListTableAdvancedProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   // Convert BaseListColumn to TanStack ColumnDef with improved data access
   const tanStackColumns: ColumnDef<T>[] = React.useMemo(() => {
     const baseColumns: ColumnDef<T>[] = columns.map((col) => ({
       id: String(col.key),
       header: col.label,
-      accessorFn: (row) => getNestedValue(row, col.key),
+      accessorFn: (row) => {
+        const value = getNestedValue(row, col.key);
+        return value;
+      },
       cell: ({ row, getValue }) => {
         if (col.render) {
           return col.render(row.original);
@@ -116,7 +121,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
       enableSorting: col.sortable ?? true,
       enableResizing: true,
       enablePinning: true,
-      minSize: 120,
+      minSize: 150, // Increased from 120
       maxSize: 800,
       size: 200,
     }));
@@ -145,8 +150,8 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         enableSorting: false,
         enableResizing: true,
         enablePinning: true,
-        minSize: Math.max(actions.length * 80 + 40, 120),
-        size: Math.max(actions.length * 100, 200),
+        minSize: Math.max(actions.length * 90 + 60, 150), // Increased minimum
+        size: Math.max(actions.length * 110, 200),
       });
     }
 
@@ -167,7 +172,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange: () => {}, // Controlled externally
     state: {
       sorting,
       columnOrder,
@@ -211,33 +216,6 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
 
   return (
     <Card className="h-full flex flex-col">
-      {/* Column Visibility Control */}
-      <div className="flex-shrink-0 flex justify-end p-4 border-b">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Columns className="h-4 w-4" />
-              Colunas
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-background">
-            <DropdownMenuLabel>Visibilidade das Colunas</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table.getAllColumns().filter(column => column.id !== 'actions').map((column) => (
-              <DropdownMenuCheckboxItem
-                key={column.id}
-                checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-              >
-                {typeof column.columnDef.header === 'string' 
-                  ? column.columnDef.header 
-                  : column.id}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
       <div className="flex-1 overflow-auto">
         <DndContext
           id={useId()}
