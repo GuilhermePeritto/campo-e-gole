@@ -1,10 +1,9 @@
-
 import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import PaginationControls from '@/components/PaginationControls';
 import BaseListHeader from '@/components/BaseListHeader';
 import BaseListSearchControls from '@/components/BaseListSearchControls';
-import BaseListTable from '@/components/BaseListTable';
+import BaseListTableAdvanced from '@/components/BaseListTableAdvanced';
 import BaseListGrid from '@/components/BaseListGrid';
 import BaseListEmptyState from '@/components/BaseListEmptyState';
 import { usePagination } from '@/hooks/usePagination';
@@ -131,7 +130,7 @@ const BaseList = <T extends Record<string, any>>({
               createButton={createButton}
             />
           ) : viewMode === 'table' ? (
-            <BaseListTable
+            <BaseListTableAdvanced
               data={paginatedData}
               columns={columns}
               actions={actions}
