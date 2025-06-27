@@ -1,4 +1,3 @@
-
 import ModuleHeader from '@/components/ModuleHeader';
 import BaseList from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
@@ -314,7 +313,6 @@ const Auditoria = () => {
           }}
           showExport={true}
           exportFilename="logs-auditoria"
-          loading={loading}
         />
       </main>
     </div>
