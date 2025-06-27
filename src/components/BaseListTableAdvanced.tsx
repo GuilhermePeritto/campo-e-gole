@@ -1,4 +1,3 @@
-
 import React, { CSSProperties, useEffect, useId, useState } from 'react';
 import {
   closestCenter,
@@ -28,6 +27,7 @@ import {
   SortingState,
   useReactTable,
   Column,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { 
   ChevronDown, 
@@ -36,7 +36,8 @@ import {
   ArrowLeftToLine, 
   ArrowRightToLine, 
   MoreHorizontal, 
-  PinOff 
+  PinOff,
+  Columns
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
   Table,
@@ -94,27 +98,27 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
 }: BaseListTableAdvancedProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   // Convert BaseListColumn to TanStack ColumnDef with improved data access
   const tanStackColumns: ColumnDef<T>[] = React.useMemo(() => {
     const baseColumns: ColumnDef<T>[] = columns.map((col) => ({
       id: String(col.key),
       header: col.label,
-      accessorKey: col.key as keyof T,
+      accessorFn: (row) => getNestedValue(row, col.key),
       cell: ({ row, getValue }) => {
         if (col.render) {
           return col.render(row.original);
         }
-        // Safely get the value using both getValue and direct access
-        const value = getValue() ?? getNestedValue(row.original, col.key);
+        const value = getValue();
         return value !== undefined && value !== null ? String(value) : '';
       },
       enableSorting: col.sortable ?? true,
       enableResizing: true,
       enablePinning: true,
-      minSize: 150, // Increased minimum size to ensure space for controls
+      minSize: 120,
       maxSize: 800,
-      size: 200, // Default size
+      size: 200,
     }));
 
     // Add actions column if there are actions
@@ -141,7 +145,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         enableSorting: false,
         enableResizing: true,
         enablePinning: true,
-        minSize: Math.max(actions.length * 80 + 40, 150),
+        minSize: Math.max(actions.length * 80 + 40, 120),
         size: Math.max(actions.length * 100, 200),
       });
     }
@@ -163,9 +167,11 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnOrder,
+      columnVisibility,
     },
     onColumnOrderChange: setColumnOrder,
     enableSortingRemoval: false,
@@ -205,6 +211,33 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
 
   return (
     <Card className="h-full flex flex-col">
+      {/* Column Visibility Control */}
+      <div className="flex-shrink-0 flex justify-end p-4 border-b">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Columns className="h-4 w-4" />
+              Colunas
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 bg-background">
+            <DropdownMenuLabel>Visibilidade das Colunas</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {table.getAllColumns().filter(column => column.id !== 'actions').map((column) => (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                checked={column.getIsVisible()}
+                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+              >
+                {typeof column.columnDef.header === 'string' 
+                  ? column.columnDef.header 
+                  : column.id}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       <div className="flex-1 overflow-auto">
         <DndContext
           id={useId()}
@@ -214,7 +247,8 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
           sensors={sensors}
         >
           <Table
-            className="w-full border-separate border-spacing-0 [&_td]:border-border [&_th]:border-border [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
+            style={{ width: table.getTotalSize() }}
+            className="table-fixed border-separate border-spacing-0 [&_td]:border-border [&_th]:border-border [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
           >
             <TableHeader className="sticky top-0 bg-background border-b z-10">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -380,7 +414,7 @@ const DraggableTableHeader = <T,>({
                       <MoreHorizontal className="opacity-60" size={16} />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="bg-background">
                     <DropdownMenuItem onClick={() => header.column.pin('left')}>
                       <ArrowLeftToLine size={16} className="opacity-60 mr-2" />
                       Fixar à esquerda
