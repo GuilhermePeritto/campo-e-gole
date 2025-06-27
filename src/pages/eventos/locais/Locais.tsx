@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { MapPin, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { mockLocais } from '@/data/mockLocais';
 import { useLocais } from '@/hooks/useLocais';
 
 const Locais = () => {
@@ -74,7 +73,7 @@ const Locais = () => {
         backLabel="Módulo Eventos"
       />
 
-      <main className="w-full px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+      <main className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8 h-[calc(100vh-80px)]">
         <BaseList
           title="Gerenciar Locais"
           description="Cadastre e gerencie os locais disponíveis para reserva"

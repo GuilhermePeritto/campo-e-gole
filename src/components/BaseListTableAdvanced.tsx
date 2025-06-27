@@ -1,3 +1,4 @@
+
 import React, { CSSProperties, useEffect, useId, useState } from 'react';
 import {
   closestCenter,
@@ -83,13 +84,28 @@ const getNestedValue = (obj: any, path: string | keyof any): any => {
 // Helper function to compute pinning styles for columns
 const getPinningStyles = <T,>(column: Column<T>): CSSProperties => {
   const isPinned = column.getIsPinned();
-  return {
+  const pinningStyles: CSSProperties = {
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     position: isPinned ? 'sticky' : 'relative',
     width: column.getSize(),
-    zIndex: isPinned ? 1 : 0,
+    zIndex: isPinned ? 10 : 0,
   };
+
+  // Add visual effects for pinned columns
+  if (isPinned) {
+    pinningStyles.backdropFilter = 'blur(8px)';
+    pinningStyles.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+    pinningStyles.borderRight = isPinned === 'left' ? '2px solid rgba(0, 0, 0, 0.1)' : undefined;
+    pinningStyles.borderLeft = isPinned === 'right' ? '2px solid rgba(0, 0, 0, 0.1)' : undefined;
+    pinningStyles.boxShadow = isPinned === 'left' 
+      ? '2px 0 8px rgba(0, 0, 0, 0.1)' 
+      : isPinned === 'right' 
+        ? '-2px 0 8px rgba(0, 0, 0, 0.1)'
+        : undefined;
+  }
+
+  return pinningStyles;
 };
 
 const BaseListTableAdvanced = <T extends Record<string, any>>({
@@ -121,7 +137,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
       enableSorting: col.sortable ?? true,
       enableResizing: true,
       enablePinning: true,
-      minSize: 150, // Increased from 120
+      minSize: 150,
       maxSize: 800,
       size: 200,
     }));
@@ -150,7 +166,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         enableSorting: false,
         enableResizing: true,
         enablePinning: true,
-        minSize: Math.max(actions.length * 90 + 60, 150), // Increased minimum
+        minSize: Math.max(actions.length * 90 + 60, 150),
         size: Math.max(actions.length * 110, 200),
       });
     }
@@ -172,7 +188,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    onColumnVisibilityChange: () => {}, // Controlled externally
+    onColumnVisibilityChange: () => {},
     state: {
       sorting,
       columnOrder,
@@ -216,40 +232,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      {/* Fixed Header */}
-      <div className="flex-shrink-0 border-b">
-        <DndContext
-          id={useId()}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToHorizontalAxis]}
-          onDragEnd={handleDragEnd}
-          sensors={sensors}
-        >
-          <div className="overflow-x-auto">
-            <Table
-              style={{ width: table.getTotalSize() }}
-              className="table-fixed border-separate border-spacing-0"
-            >
-              <TableHeader className="sticky top-0 bg-background z-10">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    <SortableContext
-                      items={columnOrder}
-                      strategy={horizontalListSortingStrategy}
-                    >
-                      {headerGroup.headers.map((header) => (
-                        <DraggableTableHeader key={header.id} header={header} />
-                      ))}
-                    </SortableContext>
-                  </TableRow>
-                ))}
-              </TableHeader>
-            </Table>
-          </div>
-        </DndContext>
-      </div>
-
-      {/* Scrollable Body */}
+      {/* Main scrollable container */}
       <div className="flex-1 overflow-auto">
         <DndContext
           id={useId()}
@@ -262,8 +245,8 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
             style={{ width: table.getTotalSize() }}
             className="table-fixed border-separate border-spacing-0"
           >
-            {/* Invisible header for column alignment */}
-            <TableHeader className="opacity-0 pointer-events-none">
+            {/* Sticky Header */}
+            <TableHeader className="sticky top-0 bg-background z-20">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   <SortableContext
@@ -271,18 +254,14 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
                     strategy={horizontalListSortingStrategy}
                   >
                     {headerGroup.headers.map((header) => (
-                      <TableHead 
-                        key={header.id}
-                        style={getPinningStyles(header.column)}
-                        className="h-0 p-0 border-0"
-                      >
-                        <div style={{ width: `${header.getSize()}px` }} />
-                      </TableHead>
+                      <DraggableTableHeader key={header.id} header={header} />
                     ))}
                   </SortableContext>
                 </TableRow>
               ))}
             </TableHeader>
+            
+            {/* Table Body */}
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
@@ -344,7 +323,7 @@ const DraggableTableHeader = <T,>({
     transform: CSS.Translate.toString(transform),
     transition,
     whiteSpace: 'nowrap',
-    zIndex: isDragging ? 1 : 0,
+    zIndex: isDragging ? 30 : (isPinned ? 20 : 0),
     ...getPinningStyles(column),
   };
 
@@ -352,7 +331,7 @@ const DraggableTableHeader = <T,>({
     <TableHead
       ref={setNodeRef}
       className={cn(
-        "relative h-12 px-4 truncate border-t data-pinned:bg-muted/90 data-pinned:backdrop-blur-sm",
+        "relative h-12 px-4 truncate border-t",
         "[&[data-pinned=left][data-last-col=left]]:border-r [&[data-pinned=right][data-last-col=right]]:border-l",
         "[&:not([data-pinned]):has(+[data-pinned])_div.cursor-col-resize:last-child]:opacity-0",
         "[&[data-last-col=left]_div.cursor-col-resize:last-child]:opacity-0",
@@ -481,7 +460,7 @@ const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
     position: 'relative',
     transform: CSS.Translate.toString(transform),
     transition,
-    zIndex: isDragging ? 1 : 0,
+    zIndex: isDragging ? 30 : 0,
     ...getPinningStyles(column),
   };
 
@@ -489,7 +468,7 @@ const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
     <TableCell
       ref={setNodeRef}
       className={cn(
-        "px-4 truncate data-pinned:bg-background/90 data-pinned:backdrop-blur-sm",
+        "px-4 truncate",
         "[&[data-pinned=left][data-last-col=left]]:border-r [&[data-pinned=right][data-last-col=right]]:border-l"
       )}
       style={style}

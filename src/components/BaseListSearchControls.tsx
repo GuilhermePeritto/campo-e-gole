@@ -225,24 +225,26 @@ const BaseListSearchControls: React.FC<BaseListSearchControlsProps> = ({
         </div>
       </div>
 
-      {/* Active Filters Row */}
-      {activeFilters.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {activeFilters.map(filter => (
-            <Badge key={filter.id} variant="secondary" className="gap-1">
-              {filter.label}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-auto p-0 w-4 h-4 hover:bg-transparent"
-                onClick={() => handleRemoveFilter(filter.id, filter.value)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          ))}
-        </div>
-      )}
+      {/* Active Filters Row - ALWAYS RESERVE SPACE */}
+      <div className="min-h-[2.5rem] flex items-start">
+        {activeFilters.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {activeFilters.map(filter => (
+              <Badge key={filter.id} variant="secondary" className="gap-1">
+                {filter.label}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 w-4 h-4 hover:bg-transparent"
+                  onClick={() => handleRemoveFilter(filter.id, filter.value)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -5,46 +5,19 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { CreditCard, DollarSign, Edit, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useRecebiveis } from '@/hooks/useRecebiveis';
 
 const Recebiveis = () => {
   const navigate = useNavigate();
-
-  // Mock data
-  const recebiveis = [
-    {
-      id: 1,
-      client: 'João Silva',
-      description: 'Reserva Quadra A - 15/06/2024',
-      dueDate: '2024-06-20',
-      amount: 120.00,
-      status: 'pendente',
-      installment: '1/1'
-    },
-    {
-      id: 2,
-      client: 'Maria Santos',
-      description: 'Reserva Quadra B - 18/06/2024',
-      dueDate: '2024-06-25',
-      amount: 160.00,
-      status: 'vencido',
-      installment: '1/3'
-    },
-    {
-      id: 3,
-      client: 'Pedro Costa',
-      description: 'Reserva Campo Principal - 20/06/2024',
-      dueDate: '2024-06-15',
-      amount: 200.00,
-      status: 'pago',
-      installment: '2/2'
-    }
-  ];
+  const { recebiveis } = useRecebiveis();
 
   const columns = [
     {
       key: 'client',
       label: 'Cliente',
-      sortable: true
+      sortable: true,
+      filterable: true,
+      filterType: 'select' as const
     },
     {
       key: 'description',
@@ -61,23 +34,21 @@ const Recebiveis = () => {
       render: (item: any) => `R$ ${item.amount.toFixed(2)}`
     },
     {
-      key: 'installment',
-      label: 'Parcela'
-    },
-    {
       key: 'status',
       label: 'Situação',
+      filterable: true,
+      filterType: 'select' as const,
       render: (item: any) => {
         const variants = {
-          pendente: 'default',
-          vencido: 'destructive',
-          pago: 'default'
+          pending: 'default',
+          overdue: 'destructive',
+          paid: 'default'
         } as const;
         
         const labels = {
-          pendente: 'Pendente',
-          vencido: 'Vencido',
-          pago: 'Pago'
+          pending: 'Pendente',
+          overdue: 'Vencido',
+          paid: 'Pago'
         };
         
         return (
@@ -120,7 +91,7 @@ const Recebiveis = () => {
         backLabel="Módulo Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+      <main className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8 h-[calc(100vh-80px)]">
         <BaseList
           title="Recebíveis"
           description="Gerencie as contas pendentes e recebimentos"
