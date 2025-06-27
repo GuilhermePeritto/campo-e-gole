@@ -1,4 +1,5 @@
 
+
 import {
   closestCenter,
   DndContext,
@@ -23,6 +24,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { useId, useMemo } from 'react';
+import { useId, useMemo } from 'react';
 
 import { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import DragAlongCell from '@/components/table/DragAlongCell';
@@ -45,6 +47,8 @@ interface BaseListTableAdvancedProps<T> {
   actions: BaseListAction<T>[];
   getItemId: (item: T) => string | number;
   columnVisibility?: VisibilityState;
+  entityName?: string;
+}
   entityName?: string;
 }
 
@@ -107,7 +111,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         enableResizing: true,
         enablePinning: true,
         minSize: Math.max(actions.length * 90 + 60, 150),
-        size: Math.max(actions.length * 110, 200),
+        size: columnSizes['actions'] || Math.max(actions.length * 110, 200),
       });
     }
 
@@ -143,10 +147,12 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
 
   const table = useReactTable({
     data,
-    columns: columnsWithSizes,
+    columns: tanStackColumns,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    onSortingChange: handleSortingChange,
+    onColumnVisibilityChange: handleColumnVisibilityChange,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleColumnVisibilityChange,
     state: {
@@ -154,7 +160,11 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
       columnOrder,
       columnVisibility: tableColumnVisibility,
       columnPinning: tablePinningState,
+      columnVisibility: tableColumnVisibility,
+      columnPinning: tablePinningState,
     },
+    onColumnOrderChange: handleColumnOrderChange,
+    onColumnPinningChange: handleColumnPinningChange,
     onColumnOrderChange: handleColumnOrderChange,
     onColumnPinningChange: handleColumnPinningChange,
     enableColumnPinning: true,
@@ -164,6 +174,8 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
+      handleColumnOrderChange((columnOrder: string[]) => {
+        return arrayMove(columnOrder, 
       handleColumnOrderChange((columnOrder: string[]) => {
         return arrayMove(columnOrder, 
           columnOrder.indexOf(active.id as string),
@@ -180,6 +192,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   );
 
   if (data.length === 0) {
+    return <TableEmptyState />;
     return <TableEmptyState />;
   }
 
@@ -199,7 +212,9 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
           }}
         >
           <TableHeader className="bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
+          <TableHeader className="bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
             {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 <SortableContext
                   items={columnOrder}
@@ -241,6 +256,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
               <TableRow>
                 <td colSpan={columnsWithSizes.length} className="h-24 text-center">
                   Nenhum resultado encontrado.
+                </td>
                 </td>
               </TableRow>
             )}
