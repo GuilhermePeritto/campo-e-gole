@@ -36,7 +36,7 @@ import {
   GripVertical, 
   ArrowLeftToLine, 
   ArrowRightToLine, 
-  MoreHorizontal, 
+  Ellipsis, 
   PinOff
 } from 'lucide-react';
 
@@ -84,28 +84,13 @@ const getNestedValue = (obj: any, path: string | keyof any): any => {
 // Helper function to compute pinning styles for columns
 const getPinningStyles = <T,>(column: Column<T>): CSSProperties => {
   const isPinned = column.getIsPinned();
-  const pinningStyles: CSSProperties = {
+  return {
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     position: isPinned ? 'sticky' : 'relative',
     width: column.getSize(),
-    zIndex: isPinned ? 10 : 0,
+    zIndex: isPinned ? 1 : 0,
   };
-
-  // Add visual effects for pinned columns
-  if (isPinned) {
-    pinningStyles.backdropFilter = 'blur(8px)';
-    pinningStyles.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-    pinningStyles.borderRight = isPinned === 'left' ? '2px solid rgba(0, 0, 0, 0.1)' : undefined;
-    pinningStyles.borderLeft = isPinned === 'right' ? '2px solid rgba(0, 0, 0, 0.1)' : undefined;
-    pinningStyles.boxShadow = isPinned === 'left' 
-      ? '2px 0 8px rgba(0, 0, 0, 0.1)' 
-      : isPinned === 'right' 
-        ? '-2px 0 8px rgba(0, 0, 0, 0.1)'
-        : undefined;
-  }
-
-  return pinningStyles;
 };
 
 const BaseListTableAdvanced = <T extends Record<string, any>>({
@@ -232,8 +217,8 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      {/* Main scrollable container */}
-      <div className="flex-1 overflow-auto">
+      {/* Main scrollable container with horizontal scroll */}
+      <div className="flex-1 overflow-x-auto">
         <DndContext
           id={useId()}
           collisionDetection={closestCenter}
@@ -243,12 +228,12 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         >
           <Table
             style={{ width: table.getTotalSize() }}
-            className="table-fixed border-separate border-spacing-0"
+            className="[&_td]:border-border [&_th]:border-border table-fixed border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
           >
-            {/* Sticky Header */}
-            <TableHeader className="sticky top-0 bg-background z-20">
+            {/* Sticky Header with backdrop blur */}
+            <TableHeader className="bg-background/90 sticky top-0 z-20 backdrop-blur-xs">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="hover:bg-transparent">
                   <SortableContext
                     items={columnOrder}
                     strategy={horizontalListSortingStrategy}
@@ -331,11 +316,13 @@ const DraggableTableHeader = <T,>({
     <TableHead
       ref={setNodeRef}
       className={cn(
-        "relative h-12 px-4 truncate border-t",
-        "[&[data-pinned=left][data-last-col=left]]:border-r [&[data-pinned=right][data-last-col=right]]:border-l",
+        "data-pinned:bg-muted/90 relative h-10 truncate border-t data-pinned:backdrop-blur-xs",
+        "[&[data-pinned][data-last-col]]:border-border",
         "[&:not([data-pinned]):has(+[data-pinned])_div.cursor-col-resize:last-child]:opacity-0",
         "[&[data-last-col=left]_div.cursor-col-resize:last-child]:opacity-0",
-        "[&[data-pinned=right]:last-child_div.cursor-col-resize:last-child]:opacity-0"
+        "[&[data-pinned=left][data-last-col=left]]:border-r",
+        "[&[data-pinned=right]:last-child_div.cursor-col-resize:last-child]:opacity-0",
+        "[&[data-pinned=right][data-last-col=right]]:border-l"
       )}
       style={style}
       data-pinned={isPinned || undefined}
@@ -409,7 +396,7 @@ const DraggableTableHeader = <T,>({
                       className="-mr-1 size-7 shadow-none"
                       aria-label={`Opções de fixação para ${header.column.columnDef.header as string}`}
                     >
-                      <MoreHorizontal className="opacity-60" size={16} />
+                      <Ellipsis className="opacity-60" size={16} />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-background">
@@ -436,7 +423,7 @@ const DraggableTableHeader = <T,>({
               onMouseDown: header.getResizeHandler(),
               onTouchStart: header.getResizeHandler(),
               className:
-                'absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:-translate-x-px hover:before:bg-primary',
+                'absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:-translate-x-px',
             }}
           />
         )}
@@ -468,8 +455,10 @@ const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
     <TableCell
       ref={setNodeRef}
       className={cn(
-        "px-4 truncate",
-        "[&[data-pinned=left][data-last-col=left]]:border-r [&[data-pinned=right][data-last-col=right]]:border-l"
+        "truncate data-pinned:bg-background/90 data-pinned:backdrop-blur-xs",
+        "[&[data-pinned][data-last-col]]:border-border",
+        "[&[data-pinned=left][data-last-col=left]]:border-r",
+        "[&[data-pinned=right][data-last-col=right]]:border-l"
       )}
       style={style}
       data-pinned={isPinned || undefined}
