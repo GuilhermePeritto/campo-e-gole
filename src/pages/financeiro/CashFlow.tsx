@@ -1,11 +1,10 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
 
 interface CashFlowItem {
   id: number;
@@ -128,7 +127,7 @@ const FluxoDeCaixa = () => {
         backLabel="Financeiro"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+      <main className="flex-1 flex flex-col max-w-none mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         {/* Resumo - Fixed height */}
         <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <Card>

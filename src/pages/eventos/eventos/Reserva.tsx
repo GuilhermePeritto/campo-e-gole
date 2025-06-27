@@ -401,7 +401,7 @@ const Reserva = () => {
         backLabel="Voltar"
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-6">
+      <main className="max-w-none mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-180px)]">
           {/* Formulário */}
           <div className="space-y-4 flex flex-col">

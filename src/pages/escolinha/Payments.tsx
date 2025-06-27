@@ -1,9 +1,9 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 import { CreditCard, DollarSign } from 'lucide-react';
@@ -198,7 +198,7 @@ const Payments = () => {
         backLabel="Escolinha"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+      <main className="flex-1 flex flex-col max-w-none mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="border">

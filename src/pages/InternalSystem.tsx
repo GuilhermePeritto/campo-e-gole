@@ -91,7 +91,7 @@ const InternalSystem = () => {
         moduleColor="bg-slate-600"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">

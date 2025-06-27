@@ -1,16 +1,15 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Minus, ShoppingCart, Trash2, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { toast } from '@/hooks/use-toast';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
-import ModuleHeader from '@/components/ModuleHeader';
-import { MODULE_COLORS } from '@/constants/moduleColors';
-import PageTour, { TourStep } from '@/components/PageTour';
+import { Minus, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -137,7 +136,7 @@ const NewSale = () => {
         backLabel="Bar"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Produtos */}
           <div className="space-y-6">

@@ -4,7 +4,7 @@ import ModuleHeader from '@/components/ModuleHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { ArrowLeft, BarChart3 } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -62,7 +62,7 @@ const EscolinhaRelatorios = () => {
         mustReturn={true}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-end mb-6">
           <ExportButton 
             data={monthlyData}

@@ -1,9 +1,8 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Users, Plus, Edit, Eye, Trash2 } from 'lucide-react';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
+import { Edit, Eye, Plus, Trash2, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Cliente {
   id: string;
@@ -125,7 +124,7 @@ const ListaClientes = () => {
         backLabel="Sistema Interno"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
           data={clientes}
           columns={columns}

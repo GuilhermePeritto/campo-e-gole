@@ -153,7 +153,7 @@ const CustomReport = () => {
         backLabel="Relatórios"
       />
 
-      <main className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-8">
+      <main className="max-w-none 3xl:max-w-9xl 4xl:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-8">
         <DndProvider backend={HTML5Backend}>
           {/* Layout Principal - Duas Colunas */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -34,7 +34,7 @@ const ReceberPagamento = () => {
         backLabel="Contas a Receber"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>

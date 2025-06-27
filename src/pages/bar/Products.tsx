@@ -1,13 +1,12 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Package, Plus, Edit, Eye } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { Edit, Eye, Package, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -170,7 +169,7 @@ const Products = () => {
         backLabel="Bar"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+      <main className="flex-1 flex flex-col max-w-none mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         {/* Summary Cards - Fixed height */}
         <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>

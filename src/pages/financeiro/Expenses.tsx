@@ -92,7 +92,7 @@ const Despesas = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
@@ -117,7 +117,7 @@ const Despesas = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Resumo */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <Card>

@@ -1,4 +1,5 @@
 
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -8,7 +9,6 @@ import { ArrowLeft, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import PageTour, { TourStep } from '@/components/PageTour';
 
 interface ReceivableFormData {
   client: string;
@@ -69,7 +69,7 @@ const NewReceivable = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"

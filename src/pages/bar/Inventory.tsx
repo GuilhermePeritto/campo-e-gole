@@ -1,14 +1,13 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { MODULE_COLORS } from '@/constants/moduleColors';
 import { toast } from '@/hooks/use-toast';
 import { AlertTriangle, Minus, Package, Plus } from 'lucide-react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
-import ModuleHeader from '@/components/ModuleHeader';
-import { MODULE_COLORS } from '@/constants/moduleColors';
 
 interface Product {
   id: number;
@@ -171,7 +170,7 @@ const Inventory = () => {
         backLabel="Bar"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+      <main className="flex-1 flex flex-col max-w-none mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         {/* Alertas de Estoque Baixo - Fixed height */}
         {lowStockProducts.length > 0 && (
           <Card className="flex-shrink-0 mb-6 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950">

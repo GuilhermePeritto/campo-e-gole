@@ -1,5 +1,5 @@
 
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, Eye, Settings, Trash2, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -147,7 +147,7 @@ const InternalClients = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <button
@@ -166,7 +166,7 @@ const InternalClients = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <BaseList
           data={mockClients}
           columns={columns}

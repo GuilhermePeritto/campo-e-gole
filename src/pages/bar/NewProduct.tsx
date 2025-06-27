@@ -1,4 +1,5 @@
 
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,6 @@ import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, Package, Save, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PageTour, { TourStep } from '@/components/PageTour';
 
 const NewProduct = () => {
   const navigate = useNavigate();
@@ -145,7 +145,7 @@ const NewProduct = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button

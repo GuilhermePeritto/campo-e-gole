@@ -1,14 +1,14 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ArrowLeft, Calendar, Save, Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ArrowLeft, Calendar, Check, ChevronsUpDown, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 
 const EditClass = () => {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ const EditClass = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"

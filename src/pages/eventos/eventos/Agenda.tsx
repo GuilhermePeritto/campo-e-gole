@@ -3,9 +3,9 @@ import ModuleHeader from '@/components/ModuleHeader';
 import CalendarControls from '@/components/calendar/CalendarControls';
 import CalendarViews from '@/components/calendar/CalendarViews';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Calendar as CalendarIcon } from 'lucide-react';
 import { useCalendar } from '@/hooks/useCalendar';
-import { getWeekDays, getDateTitle } from '@/utils/calendarUtils';
+import { getDateTitle, getWeekDays } from '@/utils/calendarUtils';
+import { Calendar as CalendarIcon } from 'lucide-react';
 
 const Agenda = () => {
   const {
@@ -36,7 +36,7 @@ const Agenda = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-6">
+      <main className="max-w-none mx-auto px-6 py-6">
         <CalendarControls
           viewType={viewType}
           setViewType={setViewType}

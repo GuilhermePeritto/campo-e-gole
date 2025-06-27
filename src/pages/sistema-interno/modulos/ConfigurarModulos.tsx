@@ -1,9 +1,8 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Package, Plus, Settings, Users } from 'lucide-react';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
+import { Package, Plus, Settings, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Modulo {
   id: string;
@@ -123,7 +122,7 @@ const ConfigurarModulos = () => {
         backLabel="Sistema Interno"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
           data={modulos}
           columns={columns}

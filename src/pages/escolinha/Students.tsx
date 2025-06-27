@@ -1,13 +1,12 @@
 
+import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Users2, Edit, Eye } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import BaseList, { BaseListColumn, BaseListAction } from '@/components/BaseList';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { Edit, Eye, Plus, Users2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Student {
   id: number;
@@ -142,7 +141,7 @@ const Students = () => {
         backLabel="Escolinha"
       />
 
-      <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
+      <main className="flex-1 flex flex-col max-w-none mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 min-h-0">
         <div className="flex-1 min-h-0">
           <BaseList
             data={students}

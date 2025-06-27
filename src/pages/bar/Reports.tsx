@@ -1,4 +1,3 @@
-import ExportButton from '@/components/ExportButton';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { ArrowLeft, BarChart3, Calendar as CalendarIcon, DollarSign, Package, ShoppingCart, TrendingUp } from 'lucide-react';
+import { BarChart3, Calendar as CalendarIcon, DollarSign, Package, ShoppingCart, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -61,7 +60,7 @@ const BarRelatorios = () => {
         backLabel="Bar"
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-none mx-auto px-6 py-8">
         {/* Filtros */}
         <Card className="mb-8 border">
           <CardHeader>

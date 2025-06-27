@@ -87,7 +87,7 @@ const StudentHistory = () => {
     <div className="min-h-screen bg-background text-gray-600 dark:text-gray-300">
       {/* Header */}
       <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-16">
             <Button
               variant="ghost"
@@ -106,7 +106,7 @@ const StudentHistory = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Student Info */}
         <Card className="border mb-6">
           <CardHeader>

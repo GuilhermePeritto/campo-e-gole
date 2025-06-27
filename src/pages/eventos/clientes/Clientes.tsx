@@ -109,7 +109,7 @@ const Clientes = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
         <BaseList
           data={clientes}
           columns={columns}

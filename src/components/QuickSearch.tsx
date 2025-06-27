@@ -158,7 +158,7 @@ const QuickSearch: React.FC<QuickSearchProps> = ({ isOpen, onClose }) => {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="top" 
-        className="max-h-[80vh] bg-background/95 backdrop-blur-sm border-b border-border/50 rounded-none rounded-b-lg"
+        className="max-h-[80vh] bg-background/80 backdrop-blur-sm border-b border-border/50 rounded-none rounded-b-lg"
       >
         <SheetHeader className="pb-4 pt-2">
           <SheetTitle className="text-lg font-semibold text-foreground flex items-center gap-2">

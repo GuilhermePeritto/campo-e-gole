@@ -1,7 +1,7 @@
 
+import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import ModuleHeader from '@/components/ModuleHeader';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { BarChart3, Calendar, Download, PieChart, TrendingUp, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +65,7 @@ const FinanceiroRelatorios = () => {
         backLabel="Financeiro"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <h2 className="text-2xl font-bold mb-2">Relatórios Disponíveis</h2>
           <p className="text-muted-foreground">
