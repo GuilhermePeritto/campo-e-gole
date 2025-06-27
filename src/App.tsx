@@ -1,71 +1,71 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Index from './pages/Index';
-import Login from './pages/Login';
-import Inicio from './pages/Inicio';
-import Events from './pages/Events';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Bar from './pages/Bar';
-import School from './pages/School';
+import Events from './pages/Events';
 import Financial from './pages/Financial';
-import Settings from './pages/Settings';
+import Index from './pages/Index';
+import Inicio from './pages/Inicio';
+import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import School from './pages/School';
+import Settings from './pages/Settings';
 
 // Eventos
+import Cliente from './pages/eventos/clientes/Cliente';
+import Clientes from './pages/eventos/clientes/Clientes';
+import HistoricoCliente from './pages/eventos/clientes/HistoricoCliente';
 import Agenda from './pages/eventos/eventos/Agenda';
 import Reserva from './pages/eventos/eventos/Reserva';
-import Clientes from './pages/eventos/clientes/Clientes';
-import Cliente from './pages/eventos/clientes/Cliente';
-import HistoricoCliente from './pages/eventos/clientes/HistoricoCliente';
 import Locais from './pages/eventos/locais/Locais';
 import Local from './pages/eventos/locais/Local';
+import ReceberPagamento from './pages/eventos/recebiveis/ReceberPagamento';
 import Recebiveis from './pages/eventos/recebiveis/Recebiveis';
 import Recebivel from './pages/eventos/recebiveis/Recebivel';
-import ReceberPagamento from './pages/eventos/recebiveis/ReceberPagamento';
 import RelatoriosEventos from './pages/eventos/relatorios/Relatorios';
 
 // Bar
-import Products from './pages/bar/Products';
-import NewProduct from './pages/bar/NewProduct';
+import Checkout from './pages/bar/Checkout';
+import Comanda from './pages/bar/Comanda';
+import Comandas from './pages/bar/Comandas';
 import EditProduct from './pages/bar/EditProduct';
 import Inventory from './pages/bar/Inventory';
-import Comandas from './pages/bar/Comandas';
-import Comanda from './pages/bar/Comanda';
+import NewProduct from './pages/bar/NewProduct';
 import NewSale from './pages/bar/NewSale';
-import UnifiedSale from './pages/bar/UnifiedSale';
-import Checkout from './pages/bar/Checkout';
+import Products from './pages/bar/Products';
 import ReportsBar from './pages/bar/Reports';
+import UnifiedSale from './pages/bar/UnifiedSale';
 
 // Escolinha
-import Students from './pages/escolinha/Students';
-import NewStudent from './pages/escolinha/NewStudent';
-import EditStudent from './pages/escolinha/EditStudent';
-import StudentHistory from './pages/escolinha/StudentHistory';
-import Teachers from './pages/escolinha/Teachers';
-import NewTeacher from './pages/escolinha/NewTeacher';
-import EditTeacher from './pages/escolinha/EditTeacher';
-import TeacherReport from './pages/escolinha/TeacherReport';
-import Classes from './pages/escolinha/Classes';
-import NewClass from './pages/escolinha/NewClass';
-import EditClass from './pages/escolinha/EditClass';
-import ClassStudents from './pages/escolinha/ClassStudents';
 import AttendanceCall from './pages/escolinha/AttendanceCall';
-import PublicAttendanceCall from './pages/escolinha/PublicAttendanceCall';
+import ClassStudents from './pages/escolinha/ClassStudents';
+import Classes from './pages/escolinha/Classes';
+import EditClass from './pages/escolinha/EditClass';
+import EditStudent from './pages/escolinha/EditStudent';
+import EditTeacher from './pages/escolinha/EditTeacher';
+import NewClass from './pages/escolinha/NewClass';
+import NewStudent from './pages/escolinha/NewStudent';
+import NewTeacher from './pages/escolinha/NewTeacher';
 import Payments from './pages/escolinha/Payments';
+import PublicAttendanceCall from './pages/escolinha/PublicAttendanceCall';
 import ReceivePayment from './pages/escolinha/ReceivePayment';
 import ReportsSchool from './pages/escolinha/Reports';
+import StudentHistory from './pages/escolinha/StudentHistory';
+import Students from './pages/escolinha/Students';
+import TeacherReport from './pages/escolinha/TeacherReport';
+import Teachers from './pages/escolinha/Teachers';
 
 // Financeiro
-import AccountsReceivable from './pages/financeiro/AccountsReceivable';
-import NewReceivable from './pages/financeiro/NewReceivable';
 import AccountsPayable from './pages/financeiro/AccountsPayable';
-import NewPayable from './pages/financeiro/NewPayable';
-import Revenues from './pages/financeiro/Revenues';
-import NewRevenue from './pages/financeiro/NewRevenue';
+import AccountsReceivable from './pages/financeiro/AccountsReceivable';
+import CashFlow from './pages/financeiro/CashFlow';
+import CustomReport from './pages/financeiro/CustomReport';
 import Expenses from './pages/financeiro/Expenses';
 import NewExpense from './pages/financeiro/NewExpense';
-import CashFlow from './pages/financeiro/CashFlow';
-import Reports from './pages/financeiro/Reports';
-import CustomReport from './pages/financeiro/CustomReport';
+import NewPayable from './pages/financeiro/NewPayable';
+import NewReceivable from './pages/financeiro/NewReceivable';
+import NewRevenue from './pages/financeiro/NewRevenue';
 import ReceivePaymentFinancial from './pages/financeiro/ReceivePayment';
+import Reports from './pages/financeiro/Reports';
+import Revenues from './pages/financeiro/Revenues';
 import TeacherPaymentReport from './pages/financeiro/TeacherPaymentReport';
 
 // Sistema Interno
@@ -77,21 +77,20 @@ import ContasReceber from './pages/sistema-interno/contas/ContasReceber';
 import ConfigurarModulos from './pages/sistema-interno/modulos/ConfigurarModulos';
 
 // Configurações
+import Auditoria from './pages/configuracoes/Auditoria';
+import EditGroup from './pages/configuracoes/EditGroup';
 import Empresa from './pages/configuracoes/Empresa';
 import Filiais from './pages/configuracoes/Filiais';
-import NovaFilial from './pages/configuracoes/NovaFilial';
-import Usuarios from './pages/configuracoes/Usuarios';
-import FormUsuario from './pages/configuracoes/FormUsuario';
-import PermissoesUsuario from './pages/configuracoes/PermissoesUsuario';
-import Grupos from './pages/configuracoes/Grupos';
-import NovoGrupo from './pages/configuracoes/NovoGrupo';
-import EditGroup from './pages/configuracoes/EditGroup';
-import ParametrosPorFilial from './pages/configuracoes/ParametrosPorFilial';
-import Parametros from './pages/configuracoes/Parametros';
-import Tema from './pages/configuracoes/Tema';
-import Integracoes from './pages/configuracoes/Integracoes';
 import FinanceiroGlobal from './pages/configuracoes/FinanceiroGlobal';
-import Auditoria from './pages/configuracoes/Auditoria';
+import FormUsuario from './pages/configuracoes/FormUsuario';
+import Grupos from './pages/configuracoes/Grupos';
+import Integracoes from './pages/configuracoes/Integracoes';
+import NovaFilial from './pages/configuracoes/NovaFilial';
+import NovoGrupo from './pages/configuracoes/NovoGrupo';
+import Parametros from './pages/configuracoes/Parametros';
+import ParametrosPorFilial from './pages/configuracoes/ParametrosPorFilial';
+import PermissoesUsuario from './pages/configuracoes/PermissoesUsuario';
+import Usuarios from './pages/configuracoes/Usuarios';
 
 import UniversalReceivePayment from './pages/UniversalReceivePayment';
 
@@ -109,7 +108,7 @@ function App() {
           {/* Eventos */}
           <Route path="/eventos" element={<Events />} />
           <Route path="/eventos/agenda" element={<Agenda />} />
-          <Route path="/eventos/agenda/nova-reserva" element={<Reserva />} />
+          <Route path="/eventos/reserva" element={<Reserva />} />
           <Route path="/eventos/clientes" element={<Clientes />} />
           <Route path="/eventos/clientes/:id" element={<Cliente />} />
           <Route path="/eventos/clientes/:id/historico" element={<HistoricoCliente />} />
