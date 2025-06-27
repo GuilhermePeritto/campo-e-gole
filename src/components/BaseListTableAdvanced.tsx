@@ -66,6 +66,14 @@ interface BaseListTableAdvancedProps<T> {
   getItemId: (item: T) => string | number;
 }
 
+// Helper function to safely get nested property value
+const getNestedValue = (obj: any, path: string | keyof any): any => {
+  if (typeof path === 'string' && path.includes('.')) {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  }
+  return obj?.[path];
+};
+
 // Helper function to compute pinning styles for columns
 const getPinningStyles = <T,>(column: Column<T>): CSSProperties => {
   const isPinned = column.getIsPinned();
@@ -87,18 +95,26 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
 
-  // Convert BaseListColumn to TanStack ColumnDef
+  // Convert BaseListColumn to TanStack ColumnDef with improved data access
   const tanStackColumns: ColumnDef<T>[] = React.useMemo(() => {
-    const baseColumns: ColumnDef<T>[] = columns.map((col, index) => ({
+    const baseColumns: ColumnDef<T>[] = columns.map((col) => ({
       id: String(col.key),
       header: col.label,
       accessorKey: col.key as keyof T,
-      cell: col.render ? ({ row }) => col.render!(row.original) : undefined,
+      cell: ({ row, getValue }) => {
+        if (col.render) {
+          return col.render(row.original);
+        }
+        // Safely get the value using both getValue and direct access
+        const value = getValue() ?? getNestedValue(row.original, col.key);
+        return value !== undefined && value !== null ? String(value) : '';
+      },
       enableSorting: col.sortable ?? true,
       enableResizing: true,
       enablePinning: true,
-      minSize: 100,
-      maxSize: 500,
+      minSize: 150, // Increased minimum size to ensure space for controls
+      maxSize: 800,
+      size: 200, // Default size
     }));
 
     // Add actions column if there are actions
@@ -123,9 +139,10 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
           </div>
         ),
         enableSorting: false,
-        enableResizing: false,
+        enableResizing: true,
         enablePinning: true,
-        size: actions.length * 100,
+        minSize: Math.max(actions.length * 80 + 40, 150),
+        size: Math.max(actions.length * 100, 200),
       });
     }
 
@@ -197,10 +214,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
           sensors={sensors}
         >
           <Table
-            className="table-fixed border-separate border-spacing-0 [&_td]:border-border [&_th]:border-border [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
-            style={{
-              width: table.getTotalSize(),
-            }}
+            className="w-full border-separate border-spacing-0 [&_td]:border-border [&_th]:border-border [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
           >
             <TableHeader className="sticky top-0 bg-background border-b z-10">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -285,7 +299,7 @@ const DraggableTableHeader = <T,>({
     <TableHead
       ref={setNodeRef}
       className={cn(
-        "relative h-12 truncate border-t data-pinned:bg-muted/90 data-pinned:backdrop-blur-sm",
+        "relative h-12 px-4 truncate border-t data-pinned:bg-muted/90 data-pinned:backdrop-blur-sm",
         "[&[data-pinned=left][data-last-col=left]]:border-r [&[data-pinned=right][data-last-col=right]]:border-l",
         "[&:not([data-pinned]):has(+[data-pinned])_div.cursor-col-resize:last-child]:opacity-0",
         "[&[data-last-col=left]_div.cursor-col-resize:last-child]:opacity-0",
@@ -304,26 +318,26 @@ const DraggableTableHeader = <T,>({
           : 'none'
       }
     >
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-1 min-w-0">
           <Button
             size="icon"
             variant="ghost"
-            className="-ml-2 size-7 shadow-none"
+            className="-ml-2 size-7 shadow-none flex-shrink-0"
             {...attributes}
             {...listeners}
             aria-label="Arrastar para reordenar"
           >
             <GripVertical className="opacity-60" size={16} aria-hidden="true" />
           </Button>
-          <span className="truncate">
+          <span className="truncate min-w-0">
             {header.isPlaceholder
               ? null
               : flexRender(header.column.columnDef.header, header.getContext())}
           </span>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-shrink-0">
           {/* Sorting Button */}
           {header.column.getCanSort() && (
             <Button
@@ -390,7 +404,7 @@ const DraggableTableHeader = <T,>({
               onMouseDown: header.getResizeHandler(),
               onTouchStart: header.getResizeHandler(),
               className:
-                'absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:-translate-x-px',
+                'absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:-translate-x-px hover:before:bg-primary',
             }}
           />
         )}
@@ -422,7 +436,7 @@ const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
     <TableCell
       ref={setNodeRef}
       className={cn(
-        "truncate data-pinned:bg-background/90 data-pinned:backdrop-blur-sm",
+        "px-4 truncate data-pinned:bg-background/90 data-pinned:backdrop-blur-sm",
         "[&[data-pinned=left][data-last-col=left]]:border-r [&[data-pinned=right][data-last-col=right]]:border-l"
       )}
       style={style}
