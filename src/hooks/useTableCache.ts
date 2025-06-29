@@ -57,11 +57,15 @@ export const useTableCache = (entityName: string) => {
     if (immediate) {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = undefined;
       }
       doSave();
     } else {
       if (!saveTimeoutRef.current) {
-        saveTimeoutRef.current = setTimeout(doSave, 500);
+        saveTimeoutRef.current = setTimeout(() => {
+          doSave();
+          saveTimeoutRef.current = undefined;
+        }, 500);
       }
     }
   }, [entityName, cachedData]);
