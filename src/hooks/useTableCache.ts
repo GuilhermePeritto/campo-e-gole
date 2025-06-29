@@ -41,6 +41,12 @@ export const useTableCache = (entityName: string) => {
   
   const lastSavedRef = useRef<string>('');
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const cachedDataRef = useRef<Partial<TableCache>>(cachedData);
+
+  // Update ref when cachedData changes
+  useEffect(() => {
+    cachedDataRef.current = cachedData;
+  }, [cachedData]);
 
   const saveToCache = useCallback((data: Partial<TableCache>, immediate = false) => {
     const dataString = JSON.stringify(data);
@@ -48,7 +54,7 @@ export const useTableCache = (entityName: string) => {
     if (dataString === lastSavedRef.current) return;
     
     const doSave = () => {
-      const fullData = { ...cachedData, ...data };
+      const fullData = { ...cachedDataRef.current, ...data };
       saveTableCache(entityName, fullData);
       setCachedData(fullData);
       lastSavedRef.current = dataString;
@@ -69,7 +75,7 @@ export const useTableCache = (entityName: string) => {
         saveTimeoutRef.current = undefined;
       }, 500);
     }
-  }, [entityName, cachedData]);
+  }, [entityName]); // Removed cachedData dependency to prevent infinite loop
 
   const forceSave = useCallback((data: Partial<TableCache>) => {
     saveToCache(data, true);
