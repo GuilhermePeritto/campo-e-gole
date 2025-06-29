@@ -41,7 +41,7 @@ export const useTableCache = (entityName: string) => {
   );
   
   const lastSavedRef = useRef<string>('');
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const cachedDataRef = useRef<Partial<TableCache>>(cachedData);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export const useTableCache = (entityName: string) => {
     if (immediate) {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
-        saveTimeoutRef.current = undefined;
+        saveTimeoutRef.current = null;
       }
       doSave();
     } else {
@@ -72,7 +72,7 @@ export const useTableCache = (entityName: string) => {
       }
       saveTimeoutRef.current = setTimeout(() => {
         doSave();
-        saveTimeoutRef.current = undefined;
+        saveTimeoutRef.current = null;
       }, 500);
     }
   }, [entityName]);

@@ -41,7 +41,7 @@ export const useCacheTabela = (nomeEntidade: string) => {
   );
   
   const ultimoSalvoRef = useRef<string>('');
-  const timeoutSalvamentoRef = useRef<NodeJS.Timeout>();
+  const timeoutSalvamentoRef = useRef<NodeJS.Timeout | null>(null);
   const dadosCacheRef = useRef<Partial<CacheTabela>>(dadosCache);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export const useCacheTabela = (nomeEntidade: string) => {
     if (imediato) {
       if (timeoutSalvamentoRef.current) {
         clearTimeout(timeoutSalvamentoRef.current);
-        timeoutSalvamentoRef.current = undefined;
+        timeoutSalvamentoRef.current = null;
       }
       executarSalvamento();
     } else {
@@ -72,7 +72,7 @@ export const useCacheTabela = (nomeEntidade: string) => {
       }
       timeoutSalvamentoRef.current = setTimeout(() => {
         executarSalvamento();
-        timeoutSalvamentoRef.current = undefined;
+        timeoutSalvamentoRef.current = null;
       }, 500);
     }
   }, [nomeEntidade]);
