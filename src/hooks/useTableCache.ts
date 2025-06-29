@@ -75,7 +75,7 @@ export const useTableCache = (entityName: string) => {
         saveTimeoutRef.current = undefined;
       }, 500);
     }
-  }, [entityName]); // Removed cachedData dependency to prevent infinite loop
+  }, [entityName]);
 
   const forceSave = useCallback((data: Partial<TableCache>) => {
     saveToCache(data, true);

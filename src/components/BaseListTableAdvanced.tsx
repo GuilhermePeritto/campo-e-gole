@@ -23,7 +23,7 @@ import {
   VisibilityState,
   flexRender,
 } from '@tanstack/react-table';
-import { useId, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import DragAlongCell from '@/components/table/DragAlongCell';
@@ -221,10 +221,12 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     return <TableEmptyState />;
   }
 
+  const dndContextId = `table-dnd-${finalEntityName}`;
+
   return (
     <div ref={containerRef} className="flex-1 overflow-x-auto h-full">
       <DndContext
-        id={useId()}
+        id={dndContextId}
         collisionDetection={closestCenter}
         modifiers={[restrictToHorizontalAxis]}
         onDragEnd={handleDragEnd}
