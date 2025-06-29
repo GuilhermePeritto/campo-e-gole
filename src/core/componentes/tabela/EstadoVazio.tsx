@@ -2,7 +2,7 @@
 import { Card } from '@/components/ui/card';
 import { FileText } from 'lucide-react';
 
-const TableEmptyState = () => {
+const EstadoVazio = () => {
   return (
     <Card className="h-full flex items-center justify-center">
       <div className="text-center py-12">
@@ -16,4 +16,4 @@ const TableEmptyState = () => {
   );
 };
 
-export default TableEmptyState;
+export default EstadoVazio;

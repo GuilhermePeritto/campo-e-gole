@@ -8,6 +8,7 @@ interface TableCache {
   columnVisibility: VisibilityState;
   sorting: SortingState;
   columnPinning: Record<string, 'left' | 'right' | false>;
+  advancedFilters: Record<string, string[]>;
 }
 
 const CACHE_PREFIX = 'baselist_table_';

@@ -1,13 +1,15 @@
+
 import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import PaginationControls from '@/components/PaginationControls';
 import BaseListHeader from '@/components/BaseListHeader';
 import BaseListSearchControls, { AdvancedFilter } from '@/components/BaseListSearchControls';
-import BaseListTableAdvanced from '@/components/BaseListTableAdvanced';
+import TabelaAvancada from '@/core/componentes/tabela/TabelaAvancada';
 import BaseListGrid from '@/components/BaseListGrid';
 import BaseListEmptyState from '@/components/BaseListEmptyState';
 import { usePagination } from '@/hooks/usePagination';
 import { VisibilityState } from '@tanstack/react-table';
+import { useCacheTabela } from '@/core/hooks/useCacheTabela';
 
 export interface BaseListColumn<T> {
   key: keyof T | string;
@@ -74,6 +76,17 @@ const BaseList = <T extends Record<string, any>>({
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [advancedFilters, setAdvancedFilters] = useState<Record<string, string[]>>({});
+
+  // Use cache for advanced filters
+  const nomeEntidadeCache = entityName || 'default';
+  const { dadosCache, salvarNoCache } = useCacheTabela(nomeEntidadeCache);
+
+  // Initialize advanced filters from cache
+  React.useEffect(() => {
+    if (dadosCache.filtrosAvancados) {
+      setAdvancedFilters(dadosCache.filtrosAvancados);
+    }
+  }, [dadosCache.filtrosAvancados]);
 
   // Generate advanced filters based on filterable columns
   const availableAdvancedFilters = useMemo((): AdvancedFilter[] => {
@@ -184,15 +197,22 @@ const BaseList = <T extends Record<string, any>>({
   };
 
   const handleAdvancedFilterChange = (filterId: string, values: string[]) => {
-    setAdvancedFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...advancedFilters,
       [filterId]: values
-    }));
+    };
+    setAdvancedFilters(newFilters);
+    
+    // Save to cache
+    salvarNoCache({ filtrosAvancados: newFilters });
   };
 
   const handleClearAllFilters = () => {
     setAdvancedFilters({});
     setSearchTerm('');
+    
+    // Clear from cache
+    salvarNoCache({ filtrosAvancados: {} });
   };
 
   return (
@@ -228,16 +248,16 @@ const BaseList = <T extends Record<string, any>>({
               createButton={createButton}
             />
           ) : viewMode === 'table' ? (
-            <BaseListTableAdvanced
-              data={paginatedData}
-              columns={columns}
-              actions={actions}
-              getItemId={getItemId}
-              columnVisibility={columnVisibility}
-              entityName={entityName}
-              loading={loading}
-              searchTerm={searchTerm}
-              advancedFilters={advancedFilters}
+            <TabelaAvancada
+              dados={paginatedData}
+              colunas={columns}
+              acoes={actions}
+              obterIdItem={getItemId}
+              visibilidadeColunas={columnVisibility}
+              nomeEntidade={entityName}
+              carregando={loading}
+              termosBusca={searchTerm}
+              filtrosAvancados={advancedFilters}
             />
           ) : (
             <BaseListGrid
