@@ -43,7 +43,6 @@ export const useTableCache = (entityName: string) => {
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const cachedDataRef = useRef<Partial<TableCache>>(cachedData);
 
-  // Update ref when cachedData changes
   useEffect(() => {
     cachedDataRef.current = cachedData;
   }, [cachedData]);
