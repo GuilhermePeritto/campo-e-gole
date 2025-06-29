@@ -60,10 +60,9 @@ export const useTableCache = (entityName: string) => {
       }
       doSave();
     } else {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+      if (!saveTimeoutRef.current) {
+        saveTimeoutRef.current = setTimeout(doSave, 500);
       }
-      saveTimeoutRef.current = setTimeout(doSave, 500);
     }
   }, [entityName, cachedData]);
 

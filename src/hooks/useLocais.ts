@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { mockLocais } from '@/data/mockLocais';
 
 export const useLocais = () => {
@@ -14,6 +14,26 @@ export const useLocais = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const getLocalById = useCallback((id: string) => {
+    return locais.find(local => local.id === id);
+  }, [locais]);
+
+  const getLocalByName = useCallback((name: string) => {
+    return locais.find(local => local.name === name);
+  }, [locais]);
+
+  const getLocalByVenueId = useCallback((venueId: string) => {
+    return locais.find(local => local.id === venueId);
+  }, [locais]);
+
+  const getVenuesForCalendar = useCallback(() => {
+    return locais.map(local => ({
+      id: local.id,
+      name: local.name,
+      color: local.color || '#6b7280'
+    }));
+  }, [locais]);
 
   const createLocal = (localData: any) => {
     const newLocal = {
@@ -37,6 +57,10 @@ export const useLocais = () => {
   return {
     locais,
     loading,
+    getLocalById,
+    getLocalByName,
+    getLocalByVenueId,
+    getVenuesForCalendar,
     createLocal,
     updateLocal,
     deleteLocal,

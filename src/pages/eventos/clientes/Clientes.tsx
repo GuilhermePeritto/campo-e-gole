@@ -194,7 +194,6 @@ const Clientes = () => {
             }}
             showExport={true}
             exportFilename="clientes-eventos"
-            entityName="clientes"
             loading={loading}
           />
         </div>

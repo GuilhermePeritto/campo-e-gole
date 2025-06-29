@@ -71,7 +71,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     if (!enableSmartCells || !data.length) return {};
     
     return columns.reduce((acc, col) => {
-      acc[String(col.key)] = inferColumnType(data, col.key);
+      acc[String(col.key)] = inferColumnType(data, String(col.key));
       return acc;
     }, {} as Record<string, string>);
   }, [columns, data, enableSmartCells]);
