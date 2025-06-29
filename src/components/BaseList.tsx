@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import PaginationControls from '@/components/PaginationControls';
@@ -49,6 +48,8 @@ interface BaseListProps<T> {
   className?: string;
   showExport?: boolean;
   exportFilename?: string;
+  loading?: boolean;
+  entityName?: string;
 }
 
 const BaseList = <T extends Record<string, any>>({
@@ -66,6 +67,8 @@ const BaseList = <T extends Record<string, any>>({
   className,
   showExport = false,
   exportFilename,
+  loading = false,
+  entityName,
 }: BaseListProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
@@ -231,6 +234,8 @@ const BaseList = <T extends Record<string, any>>({
               actions={actions}
               getItemId={getItemId}
               columnVisibility={columnVisibility}
+              entityName={entityName}
+              loading={loading}
             />
           ) : (
             <BaseListGrid
