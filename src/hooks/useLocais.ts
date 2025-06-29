@@ -1,83 +1,44 @@
 
-import { useState, useCallback } from 'react';
-import { mockLocais, MockLocal } from '@/data/mockLocais';
+import { useState, useEffect } from 'react';
+import { mockLocais } from '@/data/mockLocais';
 
 export const useLocais = () => {
-  const [locais, setLocais] = useState<MockLocal[]>(mockLocais);
-  const [loading, setLoading] = useState(false);
+  const [locais, setLocais] = useState(mockLocais);
+  const [loading, setLoading] = useState(true);
 
-  const getLocalById = useCallback((id: string) => {
-    return locais.find(l => l.id === id);
-  }, [locais]);
+  // Simulate API call
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
 
-  const getLocalByName = useCallback((name: string) => {
-    return locais.find(l => l.name === name || l.label === name);
-  }, [locais]);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const getActiveLocais = useCallback(() => {
-    return locais.filter(l => l.status === 'active');
-  }, [locais]);
-
-  const createLocal = useCallback((data: Omit<MockLocal, 'id'>) => {
-    setLoading(true);
-    const newLocal: MockLocal = {
-      ...data,
-      id: (parseInt(locais[locais.length - 1]?.id || '0') + 1).toString()
+  const createLocal = (localData: any) => {
+    const newLocal = {
+      ...localData,
+      id: Date.now().toString(),
     };
     setLocais(prev => [...prev, newLocal]);
-    setLoading(false);
     return newLocal;
-  }, [locais]);
+  };
 
-  const updateLocal = useCallback((id: string, data: Partial<MockLocal>) => {
-    setLoading(true);
-    setLocais(prev => prev.map(l => l.id === id ? { ...l, ...data } : l));
-    setLoading(false);
-  }, []);
+  const updateLocal = (id: string, localData: any) => {
+    setLocais(prev => prev.map(local => 
+      local.id === id ? { ...local, ...localData } : local
+    ));
+  };
 
-  const deleteLocal = useCallback((id: string) => {
-    setLoading(true);
-    setLocais(prev => prev.filter(l => l.id !== id));
-    setLoading(false);
-  }, []);
-
-  // Para o seletor de venues no calendário
-  const getVenuesForCalendar = useCallback(() => {
-    return [
-      { id: 'all', name: 'Todos os locais', color: '#6b7280' },
-      ...locais.map(local => ({
-        id: local.id,
-        name: local.name,
-        color: local.color
-      }))
-    ];
-  }, [locais]);
-
-  // Para campos de busca - sempre retornar todos os locais
-  const getLocaisForSearch = useCallback(() => {
-    return locais.map(local => ({
-      id: local.id,
-      label: local.label,
-      subtitle: local.subtitle
-    }));
-  }, [locais]);
-
-  // Função para buscar local por venueId das reservas
-  const getLocalByVenueId = useCallback((venueId: string) => {
-    return locais.find(l => l.id === venueId);
-  }, [locais]);
+  const deleteLocal = (id: string) => {
+    setLocais(prev => prev.filter(local => local.id !== id));
+  };
 
   return {
     locais,
     loading,
-    getLocalById,
-    getLocalByName,
-    getLocalByVenueId,
-    getActiveLocais,
     createLocal,
     updateLocal,
     deleteLocal,
-    getVenuesForCalendar,
-    getLocaisForSearch
   };
 };

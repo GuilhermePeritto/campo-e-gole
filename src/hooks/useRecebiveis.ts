@@ -1,65 +1,44 @@
 
-import { useState, useCallback } from 'react';
-import { mockRecebiveis, MockRecebivel } from '@/data/mockRecebiveis';
+import { useState, useEffect } from 'react';
+import { mockRecebiveis } from '@/data/mockRecebiveis';
 
 export const useRecebiveis = () => {
-  const [recebiveis, setRecebiveis] = useState<MockRecebivel[]>(mockRecebiveis);
-  const [loading, setLoading] = useState(false);
+  const [recebiveis, setRecebiveis] = useState(mockRecebiveis);
+  const [loading, setLoading] = useState(true);
 
-  const getRecebivelById = useCallback((id: string) => {
-    return recebiveis.find(r => r.id === id);
-  }, [recebiveis]);
+  // Simulate API call
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800);
 
-  const getRecebiveisByClient = useCallback((clientId: string) => {
-    return recebiveis.filter(r => r.clientId === clientId);
-  }, [recebiveis]);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const getRecebiveisByStatus = useCallback((status: 'pending' | 'paid' | 'overdue') => {
-    return recebiveis.filter(r => r.status === status);
-  }, [recebiveis]);
-
-  const createRecebivel = useCallback((data: Omit<MockRecebivel, 'id' | 'createdAt'>) => {
-    setLoading(true);
-    const newRecebivel: MockRecebivel = {
-      ...data,
-      id: (parseInt(recebiveis[recebiveis.length - 1]?.id || '0') + 1).toString(),
-      createdAt: new Date().toISOString().split('T')[0]
+  const createRecebivel = (recebivelData: any) => {
+    const newRecebivel = {
+      ...recebivelData,
+      id: Date.now().toString(),
     };
     setRecebiveis(prev => [...prev, newRecebivel]);
-    setLoading(false);
     return newRecebivel;
-  }, [recebiveis]);
+  };
 
-  const updateRecebivel = useCallback((id: string, data: Partial<MockRecebivel>) => {
-    setLoading(true);
-    setRecebiveis(prev => prev.map(r => r.id === id ? { ...r, ...data } : r));
-    setLoading(false);
-  }, []);
+  const updateRecebivel = (id: string, recebivelData: any) => {
+    setRecebiveis(prev => prev.map(recebivel => 
+      recebivel.id === id ? { ...recebivel, ...recebivelData } : recebivel
+    ));
+  };
 
-  const deleteRecebivel = useCallback((id: string) => {
-    setLoading(true);
-    setRecebiveis(prev => prev.filter(r => r.id !== id));
-    setLoading(false);
-  }, []);
-
-  // Para campos de busca - sempre retornar todos os recebíveis
-  const getRecebiveisForSearch = useCallback(() => {
-    return recebiveis.map(recebivel => ({
-      id: recebivel.id,
-      label: `Recebível #${recebivel.id}`,
-      subtitle: `R$ ${recebivel.amount.toFixed(2)} - ${recebivel.description}`
-    }));
-  }, [recebiveis]);
+  const deleteRecebivel = (id: string) => {
+    setRecebiveis(prev => prev.filter(recebivel => recebivel.id !== id));
+  };
 
   return {
     recebiveis,
     loading,
-    getRecebivelById,
-    getRecebiveisByClient,
-    getRecebiveisByStatus,
     createRecebivel,
     updateRecebivel,
     deleteRecebivel,
-    getRecebiveisForSearch
   };
 };

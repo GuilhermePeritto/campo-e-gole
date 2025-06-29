@@ -21,6 +21,7 @@ import {
   getSortedRowModel,
   useReactTable,
   VisibilityState,
+  flexRender,
 } from '@tanstack/react-table';
 import { useId, useMemo } from 'react';
 
@@ -28,6 +29,8 @@ import { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import DragAlongCell from '@/components/table/DragAlongCell';
 import DraggableTableHeader from '@/components/table/DraggableTableHeader';
 import TableEmptyState from '@/components/table/TableEmptyState';
+import TableSkeleton from '@/components/table/TableSkeleton';
+import SmartCell from '@/components/table/SmartCell';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -37,7 +40,7 @@ import {
 } from '@/components/ui/table';
 import { useTableState } from '@/hooks/useTableState';
 import { cn } from '@/lib/utils';
-import { generateEntityName, getNestedValue, useContainerSize } from '@/utils/tableUtils';
+import { generateEntityName, getNestedValue, useContainerSize, inferColumnType } from '@/utils/tableUtils';
 
 interface BaseListTableAdvancedProps<T> {
   data: T[];
@@ -46,6 +49,8 @@ interface BaseListTableAdvancedProps<T> {
   getItemId: (item: T) => string | number;
   columnVisibility?: VisibilityState;
   entityName?: string;
+  loading?: boolean;
+  enableSmartCells?: boolean;
 }
 
 const BaseListTableAdvanced = <T extends Record<string, any>>({
@@ -55,11 +60,23 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   getItemId,
   columnVisibility = {},
   entityName,
+  loading = false,
+  enableSmartCells = true,
 }: BaseListTableAdvancedProps<T>) => {
   const { containerRef, containerWidth } = useContainerSize();
   const finalEntityName = useMemo(() => generateEntityName(entityName, columns), [entityName, columns]);
   
-  // Convert BaseListColumn to TanStack ColumnDef first
+  // Infer column types for smart rendering
+  const columnTypes = useMemo(() => {
+    if (!enableSmartCells || !data.length) return {};
+    
+    return columns.reduce((acc, col) => {
+      acc[String(col.key)] = inferColumnType(data, col.key);
+      return acc;
+    }, {} as Record<string, string>);
+  }, [columns, data, enableSmartCells]);
+
+  // Convert BaseListColumn to TanStack ColumnDef
   const tanStackColumns: ColumnDef<T>[] = useMemo(() => {
     const baseColumns: ColumnDef<T>[] = columns.map((col) => ({
       id: String(col.key),
@@ -72,7 +89,20 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
         if (col.render) {
           return col.render(row.original);
         }
+        
         const value = getValue();
+        
+        // Use SmartCell if enabled and no custom render function
+        if (enableSmartCells && !col.render) {
+          return (
+            <SmartCell 
+              value={value}
+              type={columnTypes[String(col.key)]}
+              columnKey={String(col.key)}
+            />
+          );
+        }
+        
         return value !== undefined && value !== null ? String(value) : '';
       },
       enableSorting: col.sortable ?? true,
@@ -112,7 +142,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     }
 
     return baseColumns;
-  }, [columns, actions]);
+  }, [columns, actions, enableSmartCells, columnTypes]);
 
   const {
     sorting,
@@ -178,6 +208,14 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
+
+  if (loading) {
+    return (
+      <div ref={containerRef} className="flex-1 overflow-x-auto h-full">
+        <TableSkeleton columns={columns.length + (actions.length > 0 ? 1 : 0)} />
+      </div>
+    );
+  }
 
   if (data.length === 0) {
     return <TableEmptyState />;

@@ -42,7 +42,7 @@ export const useTableState = ({
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [columnSizes, setColumnSizes] = useState<Record<string, number>>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    cachedData.columnVisibility || initialVisibility
+    { ...initialVisibility, ...cachedData.columnVisibility }
   );
   const [columnPinning, setColumnPinning] = useState<Record<string, 'left' | 'right' | false>>(
     cachedData.columnPinning || {}
@@ -52,7 +52,7 @@ export const useTableState = ({
   useEffect(() => {
     const columnIds = columns.map(col => col.id as string);
     
-    if (columnOrder.length === 0) {
+    if (columnOrder.length === 0 || !columnIds.every(id => columnOrder.includes(id))) {
       const cachedOrder = cachedData.columnOrder?.filter(id => columnIds.includes(id)) || [];
       const newColumns = columnIds.filter(id => !cachedOrder.includes(id));
       const finalOrder = [...cachedOrder, ...newColumns];
@@ -68,54 +68,61 @@ export const useTableState = ({
     }, {} as Record<string, number>);
     
     setColumnSizes(finalSizes);
-  }, [columns, cachedData, containerWidth, columnOrder.length]);
+  }, [columns, cachedData, containerWidth]);
 
   // Handle sorting changes
   const handleSortingChange = useCallback((updater: any) => {
-    setSorting(updater);
     const newSorting = typeof updater === 'function' ? updater(sorting) : updater;
+    setSorting(newSorting);
     forceSave({ sorting: newSorting });
   }, [sorting, forceSave]);
 
   // Handle column order changes
   const handleColumnOrderChange = useCallback((updater: any) => {
-    setColumnOrder(updater);
     const newOrder = typeof updater === 'function' ? updater(columnOrder) : updater;
+    setColumnOrder(newOrder);
     forceSave({ columnOrder: newOrder });
   }, [columnOrder, forceSave]);
 
   // Handle column visibility changes
   const handleColumnVisibilityChange = useCallback((updater: any) => {
-    setColumnVisibility(updater);
     const newVisibility = typeof updater === 'function' ? updater(columnVisibility) : updater;
+    setColumnVisibility(newVisibility);
     forceSave({ columnVisibility: newVisibility });
   }, [columnVisibility, forceSave]);
 
-  // Handle column pinning changes
+  // Handle column pinning changes - FIXED for TanStack format
   const handleColumnPinningChange = useCallback((updater: any) => {
     if (typeof updater === 'function') {
-      const currentPinning = Object.entries(columnPinning).reduce((acc, [key, value]) => {
-        if (value && value !== false) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as Record<string, 'left' | 'right'>);
+      // Convert current pinning to TanStack format for the updater
+      const currentTanStackPinning = {
+        left: Object.entries(columnPinning).filter(([_, value]) => value === 'left').map(([key]) => key),
+        right: Object.entries(columnPinning).filter(([_, value]) => value === 'right').map(([key]) => key)
+      };
       
-      const newPinning = updater(currentPinning);
+      // Get new pinning from updater
+      const newTanStackPinning = updater(currentTanStackPinning);
       
-      const updatedColumnPinning = { ...columnPinning };
-      Object.keys(updatedColumnPinning).forEach(key => {
-        updatedColumnPinning[key] = false;
+      // Convert back to our format
+      const newColumnPinning: Record<string, 'left' | 'right' | false> = {};
+      
+      // Reset all columns to false first
+      columns.forEach(col => {
+        newColumnPinning[col.id as string] = false;
       });
       
-      Object.entries(newPinning).forEach(([key, value]) => {
-        updatedColumnPinning[key] = value;
+      // Apply new pinning states
+      newTanStackPinning.left?.forEach((key: string) => {
+        newColumnPinning[key] = 'left';
+      });
+      newTanStackPinning.right?.forEach((key: string) => {
+        newColumnPinning[key] = 'right';
       });
       
-      setColumnPinning(updatedColumnPinning);
-      forceSave({ columnPinning: updatedColumnPinning });
+      setColumnPinning(newColumnPinning);
+      forceSave({ columnPinning: newColumnPinning });
     }
-  }, [columnPinning, forceSave]);
+  }, [columnPinning, forceSave, columns]);
 
   // Handle column resize
   const handleColumnResize = useCallback((columnId: string, size: number) => {
@@ -126,7 +133,7 @@ export const useTableState = ({
     });
   }, [saveToCache]);
 
-  // Handle column pinning
+  // Handle column pinning - FIXED
   const handleColumnPin = useCallback((columnId: string, pinning: 'left' | 'right' | false) => {
     setColumnPinning(prev => {
       const newPinning = { ...prev, [columnId]: pinning };
@@ -135,14 +142,20 @@ export const useTableState = ({
     });
   }, [forceSave]);
 
-  // Generate table pinning state for TanStack Table
+  // Generate table pinning state for TanStack Table - FIXED FORMAT
   const tablePinningState = useMemo(() => {
-    return Object.entries(columnPinning).reduce((acc, [key, value]) => {
-      if (value && value !== false) {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as Record<string, 'left' | 'right'>);
+    const result: { left?: string[], right?: string[] } = {};
+    const leftPinned = Object.entries(columnPinning).filter(([_, value]) => value === 'left').map(([key]) => key);
+    const rightPinned = Object.entries(columnPinning).filter(([_, value]) => value === 'right').map(([key]) => key);
+    
+    if (leftPinned.length > 0) {
+      result.left = leftPinned;
+    }
+    if (rightPinned.length > 0) {
+      result.right = rightPinned;
+    }
+    
+    return result;
   }, [columnPinning]);
 
   return {

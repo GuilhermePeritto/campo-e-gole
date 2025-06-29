@@ -1,9 +1,11 @@
 
 import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
+import SummaryCards from '@/components/table/SummaryCards';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Edit, Plus, Users } from 'lucide-react';
+import { Edit, Plus, Users, UserCheck, UserPlus, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
 
 interface Cliente {
   id: string;
@@ -17,6 +19,7 @@ interface Cliente {
 
 const Clientes = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const clientes: Cliente[] = [
     {
@@ -48,6 +51,78 @@ const Clientes = () => {
     }
   ];
 
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Calculate summary metrics
+  const summaryData = useMemo(() => {
+    if (!clientes.length) return [];
+
+    const totalClients = clientes.length;
+    const activeClients = clientes.filter(c => c.situacao === 'Ativo').length;
+    const thisMonth = new Date().getMonth();
+    const newThisMonth = clientes.filter(c => 
+      new Date(c.dataCadastro).getMonth() === thisMonth
+    ).length;
+    const corporateClients = clientes.filter(c => c.tipo === 'Pessoa Jurídica').length;
+
+    return [
+      {
+        title: 'Total de Clientes',
+        value: totalClients,
+        description: 'Clientes cadastrados',
+        icon: Users,
+        trend: {
+          value: 15,
+          label: 'vs mês anterior',
+          type: 'positive' as const
+        },
+        color: 'bg-blue-500'
+      },
+      {
+        title: 'Clientes Ativos',
+        value: activeClients,
+        description: `${Math.round((activeClients / totalClients) * 100)}% do total`,
+        icon: UserCheck,
+        trend: {
+          value: 8,
+          label: 'este mês',
+          type: 'positive' as const
+        },
+        color: 'bg-green-500'
+      },
+      {
+        title: 'Novos Este Mês',
+        value: newThisMonth,
+        description: 'Cadastros recentes',
+        icon: UserPlus,
+        trend: {
+          value: 25,
+          label: 'vs mês anterior',
+          type: 'positive' as const
+        },
+        color: 'bg-emerald-500'
+      },
+      {
+        title: 'Pessoa Jurídica',
+        value: corporateClients,
+        description: `${Math.round((corporateClients / totalClients) * 100)}% do total`,
+        icon: Calendar,
+        trend: {
+          value: 0,
+          label: 'sem alteração',
+          type: 'neutral' as const
+        },
+        color: 'bg-purple-500'
+      }
+    ];
+  }, [clientes]);
+
   const columns: BaseListColumn<Cliente>[] = [
     {
       key: 'nome',
@@ -71,21 +146,11 @@ const Clientes = () => {
     {
       key: 'situacao',
       label: 'Situação',
-      render: (cliente) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          cliente.situacao === 'Ativo' ? 'bg-green-100 text-green-800' :
-          cliente.situacao === 'Inativo' ? 'bg-red-100 text-red-800' :
-          'bg-yellow-100 text-yellow-800'
-        }`}>
-          {cliente.situacao}
-        </span>
-      ),
       sortable: true
     },
     {
       key: 'dataCadastro',
       label: 'Data Cadastro',
-      render: (cliente) => new Date(cliente.dataCadastro).toLocaleDateString('pt-BR'),
       sortable: true
     }
   ];
@@ -110,23 +175,29 @@ const Clientes = () => {
       />
 
       <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
-        <BaseList
-          data={clientes}
-          columns={columns}
-          actions={actions}
-          title="Gerenciar Clientes"
-          description="Visualize e gerencie todos os clientes do módulo de eventos"
-          searchPlaceholder="Buscar clientes..."
-          searchFields={['nome', 'email', 'tipo']}
-          getItemId={(cliente) => cliente.id}
-          createButton={{
-            label: 'Novo Cliente',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/eventos/clientes/novo')
-          }}
-          showExport={true}
-          exportFilename="clientes-eventos"
-        />
+        <div className="space-y-6">
+          <SummaryCards cards={summaryData} loading={loading} />
+          
+          <BaseList
+            data={clientes}
+            columns={columns}
+            actions={actions}
+            title="Gerenciar Clientes"
+            description="Visualize e gerencie todos os clientes do módulo de eventos"
+            searchPlaceholder="Buscar clientes..."
+            searchFields={['nome', 'email', 'tipo']}
+            getItemId={(cliente) => cliente.id}
+            createButton={{
+              label: 'Novo Cliente',
+              icon: <Plus className="h-4 w-4" />,
+              onClick: () => navigate('/eventos/clientes/novo')
+            }}
+            showExport={true}
+            exportFilename="clientes-eventos"
+            entityName="clientes"
+            loading={loading}
+          />
+        </div>
       </main>
     </div>
   );
