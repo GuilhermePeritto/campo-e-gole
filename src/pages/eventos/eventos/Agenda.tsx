@@ -7,7 +7,7 @@ import SidebarCalendario from '@/core/componentes/agenda/SidebarCalendario';
 import VisualizacaoAgenda from '@/core/componentes/agenda/VisualizacaoAgenda';
 import VisualizacaoMes from '@/core/componentes/agenda/VisualizacaoMes';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { useAgenda } from '@/core/hooks/useAgenda';
+import { useAgenda, EventoAgenda } from '@/core/hooks/useAgenda';
 import { useDragAndDrop } from '@/core/hooks/useDragAndDrop';
 import { useSkeletonPorDia } from '@/core/hooks/useSkeletonPorDia';
 import { getDateTitle, getWeekDays } from '@/utils/calendarUtils';
@@ -38,7 +38,7 @@ const Agenda = () => {
     carregarMultiplosDias 
   } = useSkeletonPorDia();
 
-  const [eventoArrastando, setEventoArrastando] = useState<any>(null);
+  const [eventoArrastando, setEventoArrastando] = useState<EventoAgenda | null>(null);
 
   const weekDays = getWeekDays(dataAtual);
   const dateTitle = getDateTitle(tipoVisualizacao, dataAtual, weekDays);
@@ -84,6 +84,25 @@ const Agenda = () => {
     alternarLocal('all');
   };
 
+  // Transform EventoAgenda to the format expected by CalendarViews
+  const transformToReservationFormat = (eventos: EventoAgenda[]) => {
+    return eventos.map(evento => ({
+      id: evento.id,
+      title: evento.titulo,
+      start: evento.inicio,
+      end: evento.fim,
+      venueId: evento.localId,
+      clientName: evento.nomeCliente,
+      status: evento.status,
+      color: evento.cor,
+      client: evento.cliente,
+      venue: evento.local,
+      startTime: evento.horaInicio,
+      endTime: evento.horaFim,
+      day: evento.dia
+    }));
+  };
+
   const renderizarConteudo = () => {
     switch (tipoVisualizacao) {
       case 'agenda':
@@ -113,9 +132,15 @@ const Agenda = () => {
             viewType={tipoVisualizacao}
             currentDate={dataAtual}
             selectedVenue={locaisSelecionados.includes('all') ? 'all' : locaisSelecionados[0]}
-            mockReservations={eventosFiltrados}
+            mockReservations={transformToReservationFormat(eventosFiltrados)}
             handleDateClick={manipularCliqueDia}
-            handleEventClick={manipularCliqueEvento}
+            handleEventClick={(event) => {
+              // Transform back to EventoAgenda format for the handler
+              const eventoAgenda = eventosFiltrados.find(e => e.id === event.id);
+              if (eventoAgenda) {
+                manipularCliqueEvento(eventoAgenda);
+              }
+            }}
             handleDayFilterClick={(day: Date) => {
               setDataAtual(day);
               setTipoVisualizacao('dia');

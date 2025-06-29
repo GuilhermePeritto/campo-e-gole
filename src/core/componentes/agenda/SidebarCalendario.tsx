@@ -44,7 +44,7 @@ const SidebarCalendario = ({
   onLimparFiltros,
   onNavegarData
 }: SidebarCalendarioProps) => {
-  const { collapsed } = useSidebar();
+  const { open } = useSidebar();
 
   const obterTituloData = () => {
     switch (tipoVisualizacao) {
@@ -74,19 +74,19 @@ const SidebarCalendario = ({
   };
 
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-80"} collapsible>
+    <Sidebar className={open ? "w-80" : "w-16"} collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CalendarIcon className="h-5 w-5" />
-            {!collapsed && <span className="font-semibold">Agenda</span>}
+            {open && <span className="font-semibold">Agenda</span>}
           </div>
           <SidebarTrigger />
         </div>
       </SidebarHeader>
 
       <SidebarContent className="p-4 space-y-4">
-        {!collapsed && (
+        {open && (
           <>
             {/* Navegação de Data */}
             <Card>

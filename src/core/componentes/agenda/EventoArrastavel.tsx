@@ -57,18 +57,17 @@ const EventoArrastavel = ({
     return (
       <div
         ref={setNodeRef}
-        style={style}
+        style={{
+          ...style,
+          borderLeftColor: evento.cor,
+          backgroundColor: `${evento.cor}20`
+        }}
         {...attributes}
         {...listeners}
         className={`
           text-xs p-1 rounded border-l-2 cursor-move hover:bg-muted/50 transition-colors
           ${isDragging ? 'z-50 shadow-lg' : ''}
         `}
-        style={{
-          ...style,
-          borderLeftColor: evento.cor,
-          backgroundColor: `${evento.cor}20`
-        }}
         onClick={() => onClick?.(evento)}
       >
         <div className="truncate font-medium">{evento.cliente}</div>
@@ -150,18 +149,17 @@ const EventoArrastavel = ({
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        borderLeftColor: evento.cor,
+        backgroundColor: `${evento.cor}15`
+      }}
       {...attributes}
       {...listeners}
       className={`
         p-2 rounded border-l-4 cursor-move hover:bg-muted/50 transition-colors mb-1
         ${isDragging ? 'z-50 shadow-lg' : ''}
       `}
-      style={{
-        ...style,
-        borderLeftColor: evento.cor,
-        backgroundColor: `${evento.cor}15`
-      }}
       onClick={() => onClick?.(evento)}
     >
       <div className="font-medium text-sm truncate">{evento.cliente}</div>

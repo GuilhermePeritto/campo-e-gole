@@ -36,7 +36,28 @@ export const useAgenda = () => {
   const [loadingPorDia, setLoadingPorDia] = useState<Record<string, boolean>>({});
 
   const locaisDisponiveis = getVenuesForCalendar();
-  const eventosCompletos = getCalendarReservations;
+  const reservasOriginais = getCalendarReservations;
+
+  // Transform calendar reservations to EventoAgenda format
+  const eventosCompletos: EventoAgenda[] = useMemo(() => {
+    return reservasOriginais.map(reservation => ({
+      id: reservation.id,
+      titulo: reservation.title,
+      inicio: reservation.start,
+      fim: reservation.end,
+      localId: reservation.venueId,
+      nomeCliente: reservation.clientName,
+      status: reservation.status,
+      cor: reservation.color,
+      cliente: reservation.client,
+      local: reservation.venue,
+      horaInicio: reservation.startTime,
+      horaFim: reservation.endTime,
+      dia: reservation.day,
+      esporte: undefined, // Add if available in your data
+      observacoes: undefined // Add if available in your data
+    }));
+  }, [reservasOriginais]);
 
   const navegarData = useCallback((direcao: 'anterior' | 'proximo') => {
     setDataAtual(prev => {
@@ -84,7 +105,7 @@ export const useAgenda = () => {
       return eventosCompletos;
     }
     return eventosCompletos.filter(evento => 
-      locaisSelecionados.includes(evento.venueId)
+      locaisSelecionados.includes(evento.localId)
     );
   }, [eventosCompletos, locaisSelecionados]);
 
