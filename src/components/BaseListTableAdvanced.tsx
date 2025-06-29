@@ -51,6 +51,9 @@ interface BaseListTableAdvancedProps<T> {
   entityName?: string;
   loading?: boolean;
   enableSmartCells?: boolean;
+  // Advanced filters props
+  searchTerm?: string;
+  advancedFilters?: Record<string, string[]>;
 }
 
 const BaseListTableAdvanced = <T extends Record<string, any>>({
@@ -62,19 +65,47 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   entityName,
   loading = false,
   enableSmartCells = true,
+  searchTerm = '',
+  advancedFilters = {},
 }: BaseListTableAdvancedProps<T>) => {
   const { containerRef, containerWidth } = useContainerSize();
   const finalEntityName = useMemo(() => generateEntityName(entityName, columns), [entityName, columns]);
   
+  // Apply search and advanced filters to data
+  const filteredData = useMemo(() => {
+    let filtered = data;
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(item => {
+        return Object.values(item).some(value => 
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+    }
+
+    // Apply advanced filters
+    Object.entries(advancedFilters).forEach(([fieldKey, selectedValues]) => {
+      if (selectedValues.length > 0) {
+        filtered = filtered.filter(item => {
+          const itemValue = String(item[fieldKey as keyof T] || '');
+          return selectedValues.includes(itemValue);
+        });
+      }
+    });
+
+    return filtered;
+  }, [data, searchTerm, advancedFilters]);
+  
   // Infer column types for smart rendering
   const columnTypes = useMemo(() => {
-    if (!enableSmartCells || !data.length) return {};
+    if (!enableSmartCells || !filteredData.length) return {};
     
     return columns.reduce((acc, col) => {
-      acc[String(col.key)] = inferColumnType(data, String(col.key));
+      acc[String(col.key)] = inferColumnType(filteredData, String(col.key));
       return acc;
     }, {} as Record<string, string>);
-  }, [columns, data, enableSmartCells]);
+  }, [columns, filteredData, enableSmartCells]);
 
   // Convert BaseListColumn to TanStack ColumnDef
   const tanStackColumns: ColumnDef<T>[] = useMemo(() => {
@@ -172,7 +203,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
   }, [tanStackColumns, columnSizes]);
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns: columnsWithSizes,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
@@ -217,7 +248,7 @@ const BaseListTableAdvanced = <T extends Record<string, any>>({
     );
   }
 
-  if (data.length === 0) {
+  if (filteredData.length === 0) {
     return <TableEmptyState />;
   }
 

@@ -65,7 +65,7 @@ export const useCalendar = () => {
   }, [navigate]);
 
   const handleEventClick = useCallback((event: Reservation) => {
-    navigate(`/eventos/reserva/${event.id}`);
+    navigate(`/eventos/reserva/${event.id}/editar`);
   }, [navigate]);
 
   const handleDayFilterClick = useCallback((day: Date) => {

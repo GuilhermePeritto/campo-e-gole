@@ -38,6 +38,7 @@ interface EventTimelineProps {
   onEventSelect?: (event: Event) => void;
   onCancelEdit?: () => void;
   onDeleteEvent?: (eventId: number) => void;
+  loading?: boolean;
 }
 
 const EventTimeline = ({ 
@@ -49,7 +50,8 @@ const EventTimeline = ({
   editingEventId,
   onEventSelect,
   onCancelEdit,
-  onDeleteEvent
+  onDeleteEvent,
+  loading = false
 }: EventTimelineProps) => {
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
@@ -145,6 +147,35 @@ const EventTimeline = ({
   };
 
   const isEditingMode = editingEventId !== null;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col h-full max-h-[calc(100vh-110px)] overflow-hidden">
+        <div className="flex-shrink-0 bg-background border-b p-4">
+          <div className="flex items-center justify-between">
+            <div className="h-6 bg-gray-200 rounded animate-pulse w-48"></div>
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto relative">
+          <div className="relative">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <div 
+                key={index}
+                className="border-b border-gray-100 flex items-center p-3 animate-pulse"
+                style={{ height: `${slotHeight}px` }}
+              >
+                <div className="w-16 h-4 bg-gray-200 rounded flex-shrink-0"></div>
+                <div className="flex-1 ml-4">
+                  <div className="h-4 bg-gray-200 rounded w-32"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

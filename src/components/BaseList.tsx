@@ -236,6 +236,8 @@ const BaseList = <T extends Record<string, any>>({
               columnVisibility={columnVisibility}
               entityName={entityName}
               loading={loading}
+              searchTerm={searchTerm}
+              advancedFilters={advancedFilters}
             />
           ) : (
             <BaseListGrid

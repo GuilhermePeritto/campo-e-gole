@@ -45,6 +45,7 @@ const Reserva = () => {
   // Estado único para controlar edição
   const [isEdit, setIsEdit] = useState(false);
   const [editingEventId, setEditingEventId] = useState<number | null>(null);
+  const [timelineLoading, setTimelineLoading] = useState(false);
 
   const [formData, setFormData] = useState<ReservationFormData>({
     client: '',
@@ -275,6 +276,30 @@ const Reserva = () => {
     return selectedVenue?.label || '';
   };
 
+  const handleVenueChange = (value: string, item: any) => {
+    setTimelineLoading(true);
+    setFormData(prev => ({ 
+      ...prev, 
+      venue: item?.id || value,
+      startTime: '', // Reset horários quando trocar local
+      endTime: ''
+    }));
+    // Simulate loading delay
+    setTimeout(() => setTimelineLoading(false), 800);
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setTimelineLoading(true);
+    setFormData(prev => ({ 
+      ...prev, 
+      date,
+      startTime: '', // Reset horários quando trocar data
+      endTime: ''
+    }));
+    // Simulate loading delay
+    setTimeout(() => setTimelineLoading(false), 800);
+  };
+
   const tourSteps: TourStep[] = [
     {
       target: '#client',
@@ -465,14 +490,7 @@ const Reserva = () => {
                   id="venue"
                   label="Local"
                   value={formData.venue}
-                  onChange={(value, item) => {
-                    setFormData(prev => ({ 
-                      ...prev, 
-                      venue: item?.id || value,
-                      startTime: '', // Reset horários quando trocar local
-                      endTime: ''
-                    }));
-                  }}
+                  onChange={handleVenueChange}
                   items={locaisExemplo}
                   displayField="label"
                   placeholder="Selecione o local..."
@@ -483,12 +501,7 @@ const Reserva = () => {
                   id="date"
                   label="Data"
                   value={formData.date}
-                  onChange={(date) => setFormData(prev => ({ 
-                    ...prev, 
-                    date,
-                    startTime: '', // Reset horários quando trocar data
-                    endTime: ''
-                  }))}
+                  onChange={handleDateChange}
                   required
                 />
 
@@ -677,6 +690,7 @@ const Reserva = () => {
                   selectedDate={selectedDateStr}
                   events={mockEvents}
                   selectedVenue={getSelectedVenueName()}
+                  loading={timelineLoading}
                   onTimeSlotClick={(time) => {
                     if (!isEdit && formData.venue) {
                       const endTime = calculateEndTime(time, formData.venue);
