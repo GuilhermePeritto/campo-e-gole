@@ -1,10 +1,9 @@
 
 import ModuleHeader from '@/components/ModuleHeader';
-import CalendarControls from '@/components/calendar/CalendarControls';
 import CalendarViews from '@/components/calendar/CalendarViews';
+import AgendaLayout from '@/core/componentes/agenda/AgendaLayout';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useCalendar } from '@/hooks/useCalendar';
-import { getDateTitle, getWeekDays } from '@/utils/calendarUtils';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 const Agenda = () => {
@@ -23,9 +22,6 @@ const Agenda = () => {
     handleDayFilterClick
   } = useCalendar();
 
-  const weekDays = getWeekDays(currentDate);
-  const dateTitle = getDateTitle(viewType, currentDate, weekDays);
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
@@ -36,28 +32,28 @@ const Agenda = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-none mx-auto px-6 py-6">
-        <CalendarControls
-          viewType={viewType}
-          setViewType={setViewType}
-          selectedVenue={selectedVenue}
-          setSelectedVenue={setSelectedVenue}
-          venues={venues}
-          navigateDate={navigateDate}
-          currentDate={currentDate}
-          setCurrentDate={setCurrentDate}
-          dateTitle={dateTitle}
-        />
-
-        <CalendarViews
+      <main className="max-w-none mx-auto">
+        <AgendaLayout
           viewType={viewType}
           currentDate={currentDate}
           selectedVenue={selectedVenue}
           mockReservations={mockReservations}
-          handleDateClick={handleDateClick}
-          handleEventClick={handleEventClick}
-          handleDayFilterClick={handleDayFilterClick}
-        />
+          onViewTypeChange={setViewType}
+          onNavigateDate={navigateDate}
+          onSetCurrentDate={setCurrentDate}
+          onEventClick={handleEventClick}
+        >
+          {/* Renderizar as visualizações existentes quando não for tipo 'agenda' */}
+          <CalendarViews
+            viewType={viewType}
+            currentDate={currentDate}
+            selectedVenue={selectedVenue}
+            mockReservations={mockReservations}
+            handleDateClick={handleDateClick}
+            handleEventClick={handleEventClick}
+            handleDayFilterClick={handleDayFilterClick}
+          />
+        </AgendaLayout>
       </main>
     </div>
   );
