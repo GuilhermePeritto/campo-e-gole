@@ -1,11 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar-rac';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import FiltroLocais from './FiltroLocais';
-import type { DateValue } from "react-aria-components";
 import type { MockLocal } from '@/data/mockLocais';
+import { cn } from '@/lib/utils';
+import { ChevronLeft, FilterIcon } from 'lucide-react';
+import { Separator, type DateValue } from "react-aria-components";
+import FiltroLocais from './FiltroLocais';
 
 interface SidebarAgendaProps {
   isExpanded: boolean;
@@ -32,14 +32,14 @@ const SidebarAgenda = ({
     <>
       {/* Sidebar */}
       <div className={cn(
-        "bg-background border-r transition-all duration-300 flex flex-col",
+        "bg-muted/30 border-r transition-all duration-300 flex flex-col",
         isExpanded ? "w-80" : "w-12"
       )}>
         {/* Header da Sidebar */}
-        <div className="p-4 border-b flex items-center justify-between">
-          {isExpanded && (
+        <div className="p-4 flex items-center justify-between">
+          {/* {isExpanded && (
             <h2 className="text-lg font-semibold">Agenda</h2>
-          )}
+          )} */}
           <Button
             variant="ghost"
             size="icon"
@@ -49,10 +49,12 @@ const SidebarAgenda = ({
             {isExpanded ? (
               <ChevronLeft className="h-4 w-4" />
             ) : (
-              <ChevronRight className="h-4 w-4" />
+              <FilterIcon className="h-4 w-4" />
             )}
           </Button>
         </div>
+
+        <Separator className='mx-4'/>
 
         {/* Conteúdo da Sidebar */}
         {isExpanded && (
@@ -62,9 +64,11 @@ const SidebarAgenda = ({
               <Calendar
                 value={selectedDate}
                 onChange={onDateChange}
-                className="w-full"
+                className="w-full bg-transparent border-none p-0 shadow-none"
               />
             </div>
+
+            <Separator/>
 
             {/* Filtro de Locais */}
             <FiltroLocais

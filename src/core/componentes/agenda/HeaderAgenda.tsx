@@ -1,9 +1,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, Plus, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Calendar, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 
 interface HeaderAgendaProps {
   currentDate: Date;
@@ -48,33 +48,35 @@ const HeaderAgenda = ({
   };
 
   return (
-    <div className="bg-background border-b px-6 py-4">
+    <div className="bg-background px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Lado Esquerdo - Navegação de Data */}
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onNavigateDate('prev')}
-              className="h-8 w-8"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            
             <h1 className="text-xl font-semibold text-foreground min-w-[200px]">
               {getDateTitle()}
             </h1>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onNavigateDate('next')}
-              className="h-8 w-8"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
           </div>
+        </div>
+
+        {/* Lado Direito - Ações */}
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onNavigateDate('prev')}
+            className="h-8 w-8"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onNavigateDate('next')}
+            className="h-8 w-8"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
 
           <Button
             variant="outline"
@@ -84,10 +86,7 @@ const HeaderAgenda = ({
             <Calendar className="h-4 w-4 mr-2" />
             Hoje
           </Button>
-        </div>
 
-        {/* Lado Direito - Ações */}
-        <div className="flex items-center space-x-3">
           <Button
             onClick={onNewEventClick}
             className="h-8"

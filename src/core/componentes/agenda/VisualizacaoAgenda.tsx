@@ -1,10 +1,10 @@
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, MapPin, User } from 'lucide-react';
-import { format, parseISO, isSameDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { Card, CardContent } from '@/components/ui/card';
 import type { Reservation } from '@/hooks/useCalendar';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Clock, MapPin } from 'lucide-react';
 import EventoArrastavel from './EventoArrastavel';
 import SkeletonDiaAgenda from './SkeletonDiaAgenda';
 
@@ -82,7 +82,7 @@ const VisualizacaoAgenda = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-6">
       {datasOrdenadas.map(data => {
         const dataObj = parseISO(data);
         const eventosData = eventosAgrupados[data].sort((a, b) => 

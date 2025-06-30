@@ -1,12 +1,11 @@
 
-import { useNavigate } from 'react-router-dom';
-import SidebarAgenda from './SidebarAgenda';
-import HeaderAgenda from './HeaderAgenda';
-import VisualizacaoAgenda from './VisualizacaoAgenda';
 import { useAgendaSidebar } from '@/core/hooks/useAgendaSidebar';
 import { useDragAndDropAgenda } from '@/core/hooks/useDragAndDropAgenda';
-import { cn } from '@/lib/utils';
 import type { Reservation } from '@/hooks/useCalendar';
+import { useNavigate } from 'react-router-dom';
+import HeaderAgenda from './HeaderAgenda';
+import SidebarAgenda from './SidebarAgenda';
+import VisualizacaoAgenda from './VisualizacaoAgenda';
 
 interface AgendaLayoutProps {
   viewType: 'month' | 'week' | 'day' | 'agenda';
@@ -61,46 +60,47 @@ const AgendaLayout = ({
   };
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Header */}
-      <HeaderAgenda
-        currentDate={currentDate}
-        viewType={viewType}
-        onNavigateDate={onNavigateDate}
-        onTodayClick={handleTodayClick}
-        onNewEventClick={handleNewEventClick}
-        onViewTypeChange={onViewTypeChange}
+    <div className="h-screen flex bg-background">
+      {/* Sidebar */}
+      <SidebarAgenda
+        isExpanded={isExpanded}
+        selectedDate={selectedDate}
+        selectedLocais={selectedLocais}
+        locais={locais}
+        onToggle={toggleSidebar}
+        onDateChange={handleDateChange}
+        onLocalToggle={handleLocalToggle}
+        isLocalSelected={isLocalSelected}
       />
-
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <SidebarAgenda
-          isExpanded={isExpanded}
-          selectedDate={selectedDate}
-          selectedLocais={selectedLocais}
-          locais={locais}
-          onToggle={toggleSidebar}
-          onDateChange={handleDateChange}
-          onLocalToggle={handleLocalToggle}
-          isLocalSelected={isLocalSelected}
+      <div className='flex-1 flex-col flex'>
+        {/* Header */}
+        <HeaderAgenda
+          currentDate={currentDate}
+          viewType={viewType}
+          onNavigateDate={onNavigateDate}
+          onTodayClick={handleTodayClick}
+          onNewEventClick={handleNewEventClick}
+          onViewTypeChange={onViewTypeChange}
         />
 
-        {/* Main Area */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-6">
-            {viewType === 'agenda' ? (
-              <VisualizacaoAgenda
-                eventos={mockReservations}
-                currentDate={currentDate}
-                selectedVenue={selectedVenue}
-                onEventClick={onEventClick}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              />
-            ) : (
-              children
-            )}
+        {/* Main Content */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Main Area */}
+          <div className="flex-1 overflow-auto">
+            <div className="">
+              {viewType === 'agenda' ? (
+                <VisualizacaoAgenda
+                  eventos={mockReservations}
+                  currentDate={currentDate}
+                  selectedVenue={selectedVenue}
+                  onEventClick={onEventClick}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                />
+              ) : (
+                children
+              )}
+            </div>
           </div>
         </div>
       </div>
