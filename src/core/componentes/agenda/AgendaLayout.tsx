@@ -32,7 +32,6 @@ const AgendaLayout = ({
   children
 }: AgendaLayoutProps) => {
   const navigate = useNavigate();
-  
   const {
     isExpanded,
     selectedDate,
@@ -42,7 +41,7 @@ const AgendaLayout = ({
     handleDateChange,
     handleLocalToggle,
     isLocalSelected
-  } = useAgendaSidebar({ currentDate, onSetCurrentDate });
+  } = useAgendaSidebar();
 
   const {
     handleDragStart,
