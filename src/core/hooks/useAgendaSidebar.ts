@@ -4,19 +4,42 @@ import { useLocais } from '@/hooks/useLocais';
 import { getLocalTimeZone, today } from "@internationalized/date";
 import type { DateValue } from "react-aria-components";
 
-export const useAgendaSidebar = () => {
+interface UseAgendaSidebarProps {
+  currentDate: Date;
+  onSetCurrentDate: (date: Date) => void;
+}
+
+export const useAgendaSidebar = ({ currentDate, onSetCurrentDate }: UseAgendaSidebarProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<DateValue | null>(today(getLocalTimeZone()));
   const [selectedLocais, setSelectedLocais] = useState<string[]>(['all']);
   const { locais } = useLocais();
+
+  // Converter a data atual para DateValue do React Aria
+  const dateToDateValue = useCallback((date: Date): DateValue => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return { calendar: getLocalTimeZone().calendar, era: 'CE', year, month, day };
+  }, []);
+
+  // Converter DateValue para Date
+  const dateValueToDate = useCallback((dateValue: DateValue | null): Date => {
+    if (!dateValue) return new Date();
+    return new Date(dateValue.year, dateValue.month - 1, dateValue.day);
+  }, []);
+
+  const selectedDate = dateToDateValue(currentDate);
 
   const toggleSidebar = useCallback(() => {
     setIsExpanded(prev => !prev);
   }, []);
 
   const handleDateChange = useCallback((date: DateValue | null) => {
-    setSelectedDate(date);
-  }, []);
+    if (date) {
+      const newDate = dateValueToDate(date);
+      onSetCurrentDate(newDate);
+    }
+  }, [dateValueToDate, onSetCurrentDate]);
 
   const handleLocalToggle = useCallback((localId: string) => {
     setSelectedLocais(prev => {
