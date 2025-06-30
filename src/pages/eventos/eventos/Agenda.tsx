@@ -1,31 +1,11 @@
 
+import React from 'react';
 import ModuleHeader from '@/components/ModuleHeader';
-import CalendarControls from '@/components/calendar/CalendarControls';
-import CalendarViews from '@/components/calendar/CalendarViews';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { useCalendar } from '@/hooks/useCalendar';
-import { getDateTitle, getWeekDays } from '@/utils/calendarUtils';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import AgendaLayout from '@/core/componentes/agenda/AgendaLayout';
 
 const Agenda = () => {
-  const {
-    viewType,
-    setViewType,
-    selectedVenue,
-    setSelectedVenue,
-    currentDate,
-    setCurrentDate,
-    venues,
-    mockReservations,
-    navigateDate,
-    handleDateClick,
-    handleEventClick,
-    handleDayFilterClick
-  } = useCalendar();
-
-  const weekDays = getWeekDays(currentDate);
-  const dateTitle = getDateTitle(viewType, currentDate, weekDays);
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <ModuleHeader
@@ -36,28 +16,8 @@ const Agenda = () => {
         backLabel="Eventos"
       />
 
-      <main className="max-w-none mx-auto px-6 py-6">
-        <CalendarControls
-          viewType={viewType}
-          setViewType={setViewType}
-          selectedVenue={selectedVenue}
-          setSelectedVenue={setSelectedVenue}
-          venues={venues}
-          navigateDate={navigateDate}
-          currentDate={currentDate}
-          setCurrentDate={setCurrentDate}
-          dateTitle={dateTitle}
-        />
-
-        <CalendarViews
-          viewType={viewType}
-          currentDate={currentDate}
-          selectedVenue={selectedVenue}
-          mockReservations={mockReservations}
-          handleDateClick={handleDateClick}
-          handleEventClick={handleEventClick}
-          handleDayFilterClick={handleDayFilterClick}
-        />
+      <main className="h-[calc(100vh-80px)]">
+        <AgendaLayout />
       </main>
     </div>
   );
