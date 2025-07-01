@@ -3,6 +3,7 @@ import { useAgendaSidebar } from '@/core/hooks/useAgendaSidebar';
 import { useDragAndDropAgenda } from '@/core/hooks/useDragAndDropAgenda';
 import type { Reservation } from '@/hooks/useCalendar';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import HeaderAgenda from './HeaderAgenda';
 import SidebarAgenda from './SidebarAgenda';
 import VisualizacaoAgenda from './VisualizacaoAgenda';
@@ -35,17 +36,35 @@ const AgendaLayout = ({
     isExpanded,
     selectedDate,
     selectedLocais,
+    searchQuery,
     locais,
+    allLocais,
     toggleSidebar,
     handleDateChange,
     handleLocalToggle,
-    isLocalSelected
+    isLocalSelected,
+    handleSearchChange,
+    syncDateWithAgenda,
+    getSelectedDateAsDate
   } = useAgendaSidebar();
 
   const {
     handleDragStart,
     handleDragEnd
   } = useDragAndDropAgenda();
+
+  // Sincronizar data da sidebar com a agenda
+  useEffect(() => {
+    syncDateWithAgenda(currentDate);
+  }, [currentDate, syncDateWithAgenda]);
+
+  // Quando a data é alterada no calendário da sidebar, atualizar a agenda
+  useEffect(() => {
+    const newDate = getSelectedDateAsDate();
+    if (newDate.getTime() !== currentDate.getTime()) {
+      onSetCurrentDate(newDate);
+    }
+  }, [selectedDate, getSelectedDateAsDate, currentDate, onSetCurrentDate]);
 
   const handleTodayClick = () => {
     onSetCurrentDate(new Date());
@@ -60,19 +79,24 @@ const AgendaLayout = ({
   };
 
   return (
-    <div className="h-screen flex bg-background">
+    <div className="h-screen flex bg-background overflow-hidden">
       {/* Sidebar */}
       <SidebarAgenda
         isExpanded={isExpanded}
         selectedDate={selectedDate}
         selectedLocais={selectedLocais}
+        searchQuery={searchQuery}
         locais={locais}
+        allLocais={allLocais}
         onToggle={toggleSidebar}
         onDateChange={handleDateChange}
         onLocalToggle={handleLocalToggle}
         isLocalSelected={isLocalSelected}
+        onSearchChange={handleSearchChange}
       />
-      <div className='flex-1 flex-col flex'>
+      
+      {/* Área Principal */}
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <HeaderAgenda
           currentDate={currentDate}
@@ -83,24 +107,24 @@ const AgendaLayout = ({
           onViewTypeChange={onViewTypeChange}
         />
 
-        {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Main Area */}
-          <div className="flex-1 overflow-auto">
-            <div className="">
-              {viewType === 'agenda' ? (
-                <VisualizacaoAgenda
-                  eventos={mockReservations}
-                  currentDate={currentDate}
-                  selectedVenue={selectedVenue}
-                  onEventClick={onEventClick}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                />
-              ) : (
-                children
-              )}
-            </div>
+        {/* Conteúdo Principal */}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full overflow-auto">
+            {viewType === 'agenda' ? (
+              <VisualizacaoAgenda
+                eventos={mockReservations}
+                currentDate={currentDate}
+                selectedVenue={selectedVenue}
+                selectedLocais={selectedLocais}
+                onEventClick={onEventClick}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              />
+            ) : (
+              <div className="h-full">
+                {children}
+              </div>
+            )}
           </div>
         </div>
       </div>
