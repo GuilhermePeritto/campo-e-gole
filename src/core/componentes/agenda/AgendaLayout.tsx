@@ -1,9 +1,9 @@
 
-import { useAgendaSidebar } from '@/core/hooks/useAgendaSidebar';
+import { useBarraLateralAgenda } from '@/core/hooks/useBarraLateralAgenda';
 import { useDragAndDropAgenda } from '@/core/hooks/useDragAndDropAgenda';
 import type { Reservation } from '@/hooks/useCalendar';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import HeaderAgenda from './HeaderAgenda';
 import SidebarAgenda from './SidebarAgenda';
 import VisualizacaoAgenda from './VisualizacaoAgenda';
@@ -20,7 +20,7 @@ interface AgendaLayoutProps {
   children?: React.ReactNode;
 }
 
-const AgendaLayout = ({
+const AgendaLayout = memo(({
   viewType,
   currentDate,
   selectedVenue,
@@ -33,20 +33,20 @@ const AgendaLayout = ({
 }: AgendaLayoutProps) => {
   const navigate = useNavigate();
   const {
-    isExpanded,
-    selectedDate,
-    selectedLocais,
-    searchQuery,
+    expandida,
+    dataSelecionada,
+    locaisSelecionados,
+    consulta,
     locais,
-    allLocais,
-    toggleSidebar,
-    handleDateChange,
-    handleLocalToggle,
-    isLocalSelected,
-    handleSearchChange,
-    syncDateWithAgenda,
-    getSelectedDateAsDate
-  } = useAgendaSidebar();
+    todosLocais,
+    alternarBarra,
+    manipularMudancaData,
+    manipularAlternarLocal,
+    isLocalSelecionado,
+    manipularMudancaConsulta,
+    sincronizarDataComAgenda,
+    obterDataSelecionadaComoDate
+  } = useBarraLateralAgenda();
 
   const {
     handleDragStart,
@@ -55,55 +55,55 @@ const AgendaLayout = ({
 
   // Sincronizar data da sidebar com a agenda
   useEffect(() => {
-    syncDateWithAgenda(currentDate);
-  }, [currentDate, syncDateWithAgenda]);
+    sincronizarDataComAgenda(currentDate);
+  }, [currentDate, sincronizarDataComAgenda]);
 
   // Quando a data é alterada no calendário da sidebar, atualizar a agenda
   useEffect(() => {
-    const newDate = getSelectedDateAsDate();
-    if (newDate.getTime() !== currentDate.getTime()) {
-      onSetCurrentDate(newDate);
+    const novaData = obterDataSelecionadaComoDate();
+    if (novaData.getTime() !== currentDate.getTime()) {
+      onSetCurrentDate(novaData);
     }
-  }, [selectedDate, getSelectedDateAsDate, currentDate, onSetCurrentDate]);
+  }, [dataSelecionada, obterDataSelecionadaComoDate, currentDate, onSetCurrentDate]);
 
-  const handleTodayClick = () => {
+  const manipularCliqueHoje = () => {
     onSetCurrentDate(new Date());
   };
 
-  const handleNewEventClick = () => {
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-    navigate(`/eventos/reserva?date=${dateStr}`);
+  const manipularNovoEvento = () => {
+    const ano = currentDate.getFullYear();
+    const mes = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const dia = currentDate.getDate().toString().padStart(2, '0');
+    const dataStr = `${ano}-${mes}-${dia}`;
+    navigate(`/eventos/reserva?date=${dataStr}`);
   };
 
   return (
-    <div className="h-screen flex bg-background overflow-hidden">
-      {/* Sidebar */}
+    <div className="h-screen flex fundo-fundo overflow-hidden">
+      {/* Barra Lateral */}
       <SidebarAgenda
-        isExpanded={isExpanded}
-        selectedDate={selectedDate}
-        selectedLocais={selectedLocais}
-        searchQuery={searchQuery}
+        isExpanded={expandida}
+        selectedDate={dataSelecionada}
+        selectedLocais={locaisSelecionados}
+        searchQuery={consulta}
         locais={locais}
-        allLocais={allLocais}
-        onToggle={toggleSidebar}
-        onDateChange={handleDateChange}
-        onLocalToggle={handleLocalToggle}
-        isLocalSelected={isLocalSelected}
-        onSearchChange={handleSearchChange}
+        allLocais={todosLocais}
+        onToggle={alternarBarra}
+        onDateChange={manipularMudancaData}
+        onLocalToggle={manipularAlternarLocal}
+        isLocalSelected={isLocalSelecionado}
+        onSearchChange={manipularMudancaConsulta}
       />
       
       {/* Área Principal */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
+        {/* Cabeçalho */}
         <HeaderAgenda
           currentDate={currentDate}
           viewType={viewType}
           onNavigateDate={onNavigateDate}
-          onTodayClick={handleTodayClick}
-          onNewEventClick={handleNewEventClick}
+          onTodayClick={manipularCliqueHoje}
+          onNewEventClick={manipularNovoEvento}
           onViewTypeChange={onViewTypeChange}
         />
 
@@ -115,7 +115,7 @@ const AgendaLayout = ({
                 eventos={mockReservations}
                 currentDate={currentDate}
                 selectedVenue={selectedVenue}
-                selectedLocais={selectedLocais}
+                selectedLocais={locaisSelecionados}
                 onEventClick={onEventClick}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
@@ -130,6 +130,8 @@ const AgendaLayout = ({
       </div>
     </div>
   );
-};
+});
+
+AgendaLayout.displayName = 'AgendaLayout';
 
 export default AgendaLayout;

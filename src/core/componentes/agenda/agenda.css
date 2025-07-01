@@ -1,0 +1,125 @@
+
+/* Classes customizadas para a agenda em português */
+.espaco-y-3 {
+  @apply space-y-3;
+}
+
+.espaco-y-4 {
+  @apply space-y-4;
+}
+
+.espaco-y-6 {
+  @apply space-y-6;
+}
+
+.espaco-x-2 {
+  @apply space-x-2;
+}
+
+.espaco-x-3 {
+  @apply space-x-3;
+}
+
+.espaco-x-4 {
+  @apply space-x-4;
+}
+
+.espaco-x-6 {
+  @apply space-x-6;
+}
+
+.texto-sm {
+  @apply text-sm;
+}
+
+.texto-lg {
+  @apply text-lg;
+}
+
+.texto-xl {
+  @apply text-xl;
+}
+
+.texto-xs {
+  @apply text-xs;
+}
+
+.fonte-semibold {
+  @apply font-semibold;
+}
+
+.fonte-bold {
+  @apply font-bold;
+}
+
+.fonte-medio {
+  @apply font-medium;
+}
+
+.texto-principal {
+  @apply text-foreground;
+}
+
+.texto-primario {
+  @apply text-primary;
+}
+
+.texto-mutado {
+  @apply text-muted-foreground;
+}
+
+.texto-primario-primeiro {
+  @apply text-primary-foreground;
+}
+
+.fundo-cartao {
+  @apply bg-card;
+}
+
+.fundo-fundo {
+  @apply bg-background;
+}
+
+.fundo-mutado {
+  @apply bg-muted;
+}
+
+.fundo-primario {
+  @apply bg-primary;
+}
+
+.fundo-gradiente-para-b {
+  @apply bg-gradient-to-b;
+}
+
+.fundo-gradiente-para-r {
+  @apply bg-gradient-to-r;
+}
+
+.borda {
+  @apply border;
+}
+
+.borda-b {
+  @apply border-b;
+}
+
+.borda-r {
+  @apply border-r;
+}
+
+.borda-divisor {
+  @apply border-border;
+}
+
+.sombra-sm {
+  @apply shadow-sm;
+}
+
+.grupo:hover .grupo-hover\:scale-110 {
+  @apply scale-110;
+}
+
+.grupo:hover .grupo-hover\:texto-primario {
+  @apply text-primary;
+}

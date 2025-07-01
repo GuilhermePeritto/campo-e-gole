@@ -1,46 +1,30 @@
 
-import { Skeleton } from '@/components/ui/skeleton';
+import SkeletonDiaIndividual from './skeletons/SkeletonDiaIndividual';
 import { Card, CardContent } from '@/components/ui/card';
+import { memo } from 'react';
 
 interface SkeletonDiaAgendaProps {
   tipo?: 'month' | 'week' | 'day' | 'agenda';
 }
 
-const SkeletonDiaAgenda = ({ tipo = 'month' }: SkeletonDiaAgendaProps) => {
+const SkeletonDiaAgenda = memo(({ tipo = 'month' }: SkeletonDiaAgendaProps) => {
   if (tipo === 'agenda') {
     return (
-      <div className="space-y-6 px-6">
+      <div className="espaco-y-6 px-6">
         {Array.from({ length: 4 }).map((_, dayIndex) => (
-          <div key={dayIndex} className="space-y-3">
+          <div key={dayIndex} className="espaco-y-3">
             {/* Header do dia */}
-            <div className="flex items-center space-x-2 border-b pb-2">
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-5 w-16 rounded-full" />
+            <div className="flex items-center espaco-x-2 borda-b pb-2">
+              <div className="h-6 w-32 fundo-mutado rounded animate-pulse" />
+              <div className="h-4 w-20 fundo-mutado rounded animate-pulse" />
+              <div className="h-5 w-16 fundo-mutado rounded-full animate-pulse" />
             </div>
             
             {/* Eventos do dia */}
-            <div className="space-y-2">
-              {Array.from({ length: Math.floor(Math.random() * 3) + 1 }).map((_, eventIndex) => (
-                <Card key={eventIndex} className="animate-pulse">
-                  <CardContent className="p-4">
-                    <div className="flex items-start space-x-3">
-                      <Skeleton className="h-3 w-3 rounded-full" />
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Skeleton className="h-4 w-24" />
-                          <Skeleton className="h-5 w-16 rounded-full" />
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <Skeleton className="h-3 w-20" />
-                          <Skeleton className="h-3 w-16" />
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <SkeletonDiaIndividual 
+              tipo="agenda" 
+              quantidadeEventos={Math.floor(Math.random() * 3) + 1} 
+            />
           </div>
         ))}
       </div>
@@ -49,13 +33,13 @@ const SkeletonDiaAgenda = ({ tipo = 'month' }: SkeletonDiaAgendaProps) => {
 
   if (tipo === 'day') {
     return (
-      <div className="space-y-1 p-4">
+      <div className="espaco-y-1 p-4">
         {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="flex items-start space-x-3 py-2">
-            <Skeleton className="h-4 w-12 flex-shrink-0" />
-            <div className="flex-1 space-y-1">
+          <div key={i} className="flex items-start espaco-x-3 py-2">
+            <div className="h-4 w-12 fundo-mutado rounded animate-pulse flex-shrink-0" />
+            <div className="flex-1 espaco-y-1">
               {Math.random() > 0.7 && (
-                <Skeleton className="h-12 w-full rounded-md" />
+                <SkeletonDiaIndividual tipo="day" quantidadeEventos={1} />
               )}
             </div>
           </div>
@@ -70,17 +54,17 @@ const SkeletonDiaAgenda = ({ tipo = 'month' }: SkeletonDiaAgendaProps) => {
         {/* Header dos dias */}
         <div></div>
         {Array.from({ length: 7 }).map((_, i) => (
-          <Skeleton key={`header-${i}`} className="h-8 w-full" />
+          <div key={`header-${i}`} className="h-8 w-full fundo-mutado rounded animate-pulse" />
         ))}
         
         {/* Linhas de horário */}
         {Array.from({ length: 12 }).map((_, hour) => (
           <div key={hour} className="contents">
-            <Skeleton className="h-8 w-12" />
+            <div className="h-8 w-12 fundo-mutado rounded animate-pulse" />
             {Array.from({ length: 7 }).map((_, day) => (
-              <div key={`${hour}-${day}`} className="space-y-1">
+              <div key={`${hour}-${day}`} className="min-h-[2rem] p-1">
                 {Math.random() > 0.8 && (
-                  <Skeleton className="h-6 w-full rounded-sm" />
+                  <SkeletonDiaIndividual tipo="week" quantidadeEventos={1} />
                 )}
               </div>
             ))}
@@ -90,30 +74,29 @@ const SkeletonDiaAgenda = ({ tipo = 'month' }: SkeletonDiaAgendaProps) => {
     );
   }
 
-  // Para visualização mensal
+  // Para visualização mensal - skeleton individual em cada célula
   return (
     <div className="grid grid-cols-7 gap-1 p-4">
       {/* Header dos dias da semana */}
       {Array.from({ length: 7 }).map((_, i) => (
-        <Skeleton key={`weekday-${i}`} className="h-8 w-full" />
+        <div key={`weekday-${i}`} className="h-8 w-full fundo-mutado rounded animate-pulse" />
       ))}
       
-      {/* Células do calendário */}
+      {/* Células do calendário com skeleton individual */}
       {Array.from({ length: 42 }).map((_, i) => (
-        <div key={i} className="aspect-square p-1">
-          <div className="w-full h-full border rounded-md p-2 space-y-1">
-            <Skeleton className="h-4 w-6" />
+        <Card key={i} className="aspect-square p-1 borda-divisor/30">
+          <CardContent className="p-2 h-full">
+            <div className="h-4 w-6 fundo-mutado rounded animate-pulse mb-2" />
             {Math.random() > 0.7 && (
-              <Skeleton className="h-2 w-full rounded-sm" />
+              <SkeletonDiaIndividual tipo="month" quantidadeEventos={Math.floor(Math.random() * 2) + 1} />
             )}
-            {Math.random() > 0.8 && (
-              <Skeleton className="h-2 w-3/4 rounded-sm" />
-            )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );
-};
+});
+
+SkeletonDiaAgenda.displayName = 'SkeletonDiaAgenda';
 
 export default SkeletonDiaAgenda;
