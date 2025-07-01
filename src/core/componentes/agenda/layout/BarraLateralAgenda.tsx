@@ -38,16 +38,16 @@ const BarraLateralAgenda = memo(({
 }: BarraLateralAgendaProps) => {
   return (
     <div className={cn(
-      "bg-gradient-to-b from-background to-muted/20 border-r border-border/50 transition-all duration-300 flex flex-col shadow-sm",
+      "fundo-gradiente-para-b from-background to-muted/20 borda-r borda-divisor/50 transition-all duration-300 flex flex-col sombra-sm",
       expandida ? "w-80" : "w-16"
     )}>
       {/* Cabeçalho da Barra Lateral */}
-      <div className="p-4 border-b border-border/50 flex-shrink-0">
+      <div className="p-4 borda-b borda-divisor/50">
         <div className="flex items-center justify-between">
           {expandida && (
-            <div className="flex items-center space-x-2">
-              <CalendarDays className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Filtros</h2>
+            <div className="flex items-center espaco-x-2">
+              <CalendarDays className="h-5 w-5 texto-primario" />
+              <h2 className="texto-lg fonte-semibold texto-principal">Filtros</h2>
             </div>
           )}
           <Button
@@ -70,19 +70,17 @@ const BarraLateralAgenda = memo(({
 
       {/* Conteúdo da Barra Lateral - SEM scroll geral */}
       {expandida && (
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <div className="p-4 space-y-6 flex-shrink-0">
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="p-4 espaco-y-6">
             {/* Calendário */}
             <CalendarioSidebar
               dataSelecionada={dataSelecionada}
               onMudancaData={onMudancaData}
             />
 
-            <Separator className="bg-border/50" />
-          </div>
+            <Separator className="fundo-divisor/50" />
 
-          {/* Lista de Locais - com scroll próprio */}
-          <div className="flex-1 px-4 pb-4 overflow-hidden">
+            {/* Lista de Locais - com scroll próprio */}
             <ListaLocaisAgenda
               locais={locais}
               todosLocais={todosLocais}
