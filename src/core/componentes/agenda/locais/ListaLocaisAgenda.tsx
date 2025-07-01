@@ -34,13 +34,13 @@ const ListaLocaisAgenda = memo(({
   }, [locaisSelecionados, todosLocais.length]);
 
   return (
-    <div className="espaco-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="texto-sm fonte-semibold texto-principal flex items-center espaco-x-2">
+        <h3 className="text-sm font-semibold text-foreground flex items-center space-x-2">
           <MapPin className="h-4 w-4" />
           <span>Locais</span>
         </h3>
-        <Badge variant="secondary" className="texto-xs">
+        <Badge variant="secondary" className="text-xs">
           {contadorSelecionados} selecionado{contadorSelecionados !== 1 ? 's' : ''}
         </Badge>
       </div>
@@ -52,39 +52,45 @@ const ListaLocaisAgenda = memo(({
           placeholder="Buscar locais..."
           value={consulta}
           onChange={(e) => onMudancaConsulta(e.target.value)}
-          className="pl-10 h-9 fundo-fundo/50 borda borda-divisor/30 foco:borda-primario/50"
+          className="pl-10 h-9 bg-background/50 border border-border/30 focus:border-primary/50"
         />
       </div>
 
-      {/* Lista de locais com scroll próprio */}
-      <div className="fundo-cartao/30 rounded-lg borda borda-divisor/30 p-2">
+      {/* Container da lista com scroll próprio */}
+      <div className="bg-card/30 rounded-lg border border-border/30 overflow-hidden">
         {/* Opção "Todos os locais" */}
-        <div className="flex items-center espaco-x-3 p-3 rounded-lg hover:bg-accent/60 transition-all duration-200 cursor-pointer">
-          <Checkbox
-            id="todos-locais"
-            checked={isLocalSelecionado('all')}
-            onCheckedChange={() => onAlternarLocal('all')}
-            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-          />
-          <Label htmlFor="todos-locais" className="texto-sm fonte-medio cursor-pointer flex-1">
-            Todos os locais
-          </Label>
+        <div className="p-3 border-b border-border/20">
+          <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent/60 transition-all duration-200 cursor-pointer group">
+            <Checkbox
+              id="todos-locais"
+              checked={isLocalSelecionado('all')}
+              onCheckedChange={() => onAlternarLocal('all')}
+              className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+            />
+            <Label htmlFor="todos-locais" className="text-sm font-medium cursor-pointer flex-1 group-hover:text-primary transition-colors">
+              Todos os locais
+            </Label>
+            <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+              {todosLocais.length}
+            </div>
+          </div>
         </div>
 
         {/* Lista scrollável de locais */}
-        <ScrollArea className="h-64 pr-2">
-          <div className="espaco-y-1">
+        <ScrollArea className="max-h-64">
+          <div className="p-2 space-y-1">
             {locais.length === 0 ? (
-              <div className="text-center py-8 texto-mutado">
+              <div className="text-center py-8 text-muted-foreground">
                 <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="texto-sm">Nenhum local encontrado</p>
-                <p className="texto-xs opacity-70">Tente ajustar sua busca</p>
+                <p className="text-sm">Nenhum local encontrado</p>
+                <p className="text-xs opacity-70">Tente ajustar sua busca</p>
               </div>
             ) : (
               locais.map((local) => (
                 <div 
                   key={local.id} 
-                  className="flex items-center espaco-x-3 p-3 rounded-lg hover:bg-accent/60 transition-all duration-200 cursor-pointer grupo"
+                  className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/60 transition-all duration-200 cursor-pointer group"
+                  onClick={() => onAlternarLocal(local.id)}
                 >
                   <Checkbox
                     id={`local-${local.id}`}
@@ -92,23 +98,23 @@ const ListaLocaisAgenda = memo(({
                     onCheckedChange={() => onAlternarLocal(local.id)}
                     className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                   />
-                  <div className="flex items-center espaco-x-3 flex-1 cursor-pointer">
+                  <div className="flex items-center space-x-3 flex-1 cursor-pointer">
                     <div 
-                      className="w-3 h-3 rounded-full flex-shrink-0 grupo-hover:scale-110 transition-transform duration-200 shadow-sm"
+                      className="w-3 h-3 rounded-full flex-shrink-0 group-hover:scale-110 transition-transform duration-200 shadow-sm ring-1 ring-black/10"
                       style={{ backgroundColor: local.color }}
                     />
                     <div className="flex-1 min-w-0">
                       <Label 
                         htmlFor={`local-${local.id}`} 
-                        className="texto-sm fonte-medio cursor-pointer block truncate grupo-hover:texto-primario transition-colors"
+                        className="text-sm font-medium cursor-pointer block truncate group-hover:text-primary transition-colors"
                       >
                         {local.name}
                       </Label>
-                      <p className="texto-xs texto-mutado truncate flex items-center espaco-x-2">
-                        <span>{local.type}</span>
-                        <span>•</span>
-                        <span>R$ {local.hourlyRate}/h</span>
-                      </p>
+                      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                        <span className="truncate">{local.type}</span>
+                        <span className="text-muted-foreground/60">•</span>
+                        <span className="font-medium text-primary/80">R$ {local.hourlyRate}/h</span>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -1,12 +1,12 @@
 
-import { useBarraLateralAgenda } from '@/core/hooks/useBarraLateralAgenda';
 import { useDragAndDropAgenda } from '@/core/hooks/useDragAndDropAgenda';
 import type { Reservation } from '@/hooks/useCalendar';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, memo } from 'react';
+import { useEffect, memo, useCallback } from 'react';
 import HeaderAgenda from './HeaderAgenda';
 import SidebarAgenda from './SidebarAgenda';
 import VisualizacaoAgenda from './VisualizacaoAgenda';
+import { useBarraLateralAgenda } from '@/core/hooks/useBarraLateralAgenda';
 
 interface AgendaLayoutProps {
   viewType: 'month' | 'week' | 'day' | 'agenda';
@@ -46,7 +46,7 @@ const AgendaLayout = memo(({
     manipularMudancaConsulta,
     sincronizarDataComAgenda,
     obterDataSelecionadaComoDate
-  } = useBarraLateralAgenda();
+  } = useBarraLateralAgenda({ currentDate, viewType });
 
   const {
     handleDragStart,
@@ -61,25 +61,32 @@ const AgendaLayout = memo(({
   // Quando a data é alterada no calendário da sidebar, atualizar a agenda
   useEffect(() => {
     const novaData = obterDataSelecionadaComoDate();
-    if (novaData.getTime() !== currentDate.getTime()) {
+    const tempoAtual = currentDate.getTime();
+    const tempoNovo = novaData.getTime();
+    
+    // Só atualizar se a diferença for significativa (mais de 1 segundo)
+    if (Math.abs(tempoNovo - tempoAtual) > 1000) {
+      console.log('Atualizando data da agenda:', { novaData, currentDate });
       onSetCurrentDate(novaData);
     }
   }, [dataSelecionada, obterDataSelecionadaComoDate, currentDate, onSetCurrentDate]);
 
-  const manipularCliqueHoje = () => {
-    onSetCurrentDate(new Date());
-  };
+  const manipularCliqueHoje = useCallback(() => {
+    const hoje = new Date();
+    console.log('Clique no botão Hoje:', { hoje, currentDate });
+    onSetCurrentDate(hoje);
+  }, [onSetCurrentDate]);
 
-  const manipularNovoEvento = () => {
+  const manipularNovoEvento = useCallback(() => {
     const ano = currentDate.getFullYear();
     const mes = (currentDate.getMonth() + 1).toString().padStart(2, '0');
     const dia = currentDate.getDate().toString().padStart(2, '0');
     const dataStr = `${ano}-${mes}-${dia}`;
     navigate(`/eventos/reserva?date=${dataStr}`);
-  };
+  }, [currentDate, navigate]);
 
   return (
-    <div className="h-screen flex fundo-fundo overflow-hidden">
+    <div className="h-screen flex bg-background overflow-hidden">
       {/* Barra Lateral */}
       <SidebarAgenda
         isExpanded={expandida}
