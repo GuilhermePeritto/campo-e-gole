@@ -1,7 +1,7 @@
 
 import { useBarraLateralAgenda } from './useBarraLateralAgenda';
 
-export const useAgendaSidebar = () => {
+export const useAgendaSidebar = (viewType: 'month' | 'week' | 'day' | 'agenda', currentDate: Date) => {
   const {
     expandida: isExpanded,
     dataSelecionada: selectedDate,
@@ -16,7 +16,7 @@ export const useAgendaSidebar = () => {
     manipularMudancaConsulta: handleSearchChange,
     sincronizarDataComAgenda: syncDateWithAgenda,
     obterDataSelecionadaComoDate: getSelectedDateAsDate
-  } = useBarraLateralAgenda();
+  } = useBarraLateralAgenda({ viewType, currentDate });
 
   return {
     isExpanded,

@@ -7,7 +7,7 @@ import { ChevronLeft, FilterIcon, CalendarDays } from 'lucide-react';
 import type { DateValue } from "react-aria-components";
 import { memo } from 'react';
 import CalendarioSidebar from '../calendario/CalendarioSidebar';
-import ListaLocaisAgenda from '../locais/ListaLocaisAgenda';
+import ListaLocaisAvancada from '../filtros/ListaLocaisAvancada';
 
 interface BarraLateralAgendaProps {
   expandida: boolean;
@@ -16,6 +16,7 @@ interface BarraLateralAgendaProps {
   consulta: string;
   locais: MockLocal[];
   todosLocais: MockLocal[];
+  eventCountByVenue?: Record<string, number>;
   onAlternar: () => void;
   onMudancaData: (data: DateValue | null) => void;
   onAlternarLocal: (localId: string) => void;
@@ -30,6 +31,7 @@ const BarraLateralAgenda = memo(({
   consulta,
   locais,
   todosLocais,
+  eventCountByVenue = {},
   onAlternar,
   onMudancaData,
   onAlternarLocal,
@@ -38,7 +40,7 @@ const BarraLateralAgenda = memo(({
 }: BarraLateralAgendaProps) => {
   return (
     <div className={cn(
-      "fundo-gradiente-para-b from-background to-muted/20 borda-r borda-divisor/50 transition-all duration-300 flex flex-col sombra-sm",
+      "bg-gradient-to-b from-background to-muted/20 border-r border-border/50 transition-all duration-300 flex flex-col shadow-sm h-full",
       expandida ? "w-80" : "w-16"
     )}>
       {/* Cabeçalho da Barra Lateral */}
@@ -68,28 +70,34 @@ const BarraLateralAgenda = memo(({
         </div>
       </div>
 
-      {/* Conteúdo da Barra Lateral - SEM scroll geral */}
+      {/* Conteúdo da Barra Lateral - Layout otimizado */}
       {expandida && (
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="p-4 espaco-y-6">
-            {/* Calendário */}
-            <CalendarioSidebar
-              dataSelecionada={dataSelecionada}
-              onMudancaData={onMudancaData}
-            />
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 flex flex-col p-4 space-y-4 min-h-0">
+            {/* Calendário - Tamanho fixo */}
+            <div className="flex-shrink-0">
+              <CalendarioSidebar
+                dataSelecionada={dataSelecionada}
+                onMudancaData={onMudancaData}
+              />
+            </div>
 
-            <Separator className="fundo-divisor/50" />
+            <Separator className="bg-border/50" />
 
-            {/* Lista de Locais - com scroll próprio */}
-            <ListaLocaisAgenda
-              locais={locais}
-              todosLocais={todosLocais}
-              locaisSelecionados={locaisSelecionados}
-              consulta={consulta}
-              onAlternarLocal={onAlternarLocal}
-              isLocalSelecionado={isLocalSelecionado}
-              onMudancaConsulta={onMudancaConsulta}
-            />
+            {/* Lista de Locais - Ocupa espaço restante */}
+            <div className="flex-1 min-h-0">
+              <ListaLocaisAvancada
+                locais={locais}
+                todosLocais={todosLocais}
+                locaisSelecionados={locaisSelecionados}
+                consulta={consulta}
+                eventCountByVenue={eventCountByVenue}
+                onAlternarLocal={onAlternarLocal}
+                isLocalSelecionado={isLocalSelecionado}
+                onMudancaConsulta={onMudancaConsulta}
+                className="h-full"
+              />
+            </div>
           </div>
         </div>
       )}

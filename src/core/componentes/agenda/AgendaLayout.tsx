@@ -39,6 +39,10 @@ const AgendaLayout = memo(({
     consulta,
     locais,
     todosLocais,
+    eventCountByVenue,
+    shouldFilter,
+    selectedDateAsDate,
+    ultimaAtualizacao,
     alternarBarra,
     manipularMudancaData,
     manipularAlternarLocal,
@@ -46,7 +50,7 @@ const AgendaLayout = memo(({
     manipularMudancaConsulta,
     sincronizarDataComAgenda,
     obterDataSelecionadaComoDate
-  } = useBarraLateralAgenda();
+  } = useBarraLateralAgenda({ viewType, currentDate });
 
   const {
     handleDragStart,
@@ -58,13 +62,12 @@ const AgendaLayout = memo(({
     sincronizarDataComAgenda(currentDate);
   }, [currentDate, sincronizarDataComAgenda]);
 
-  // Quando a data é alterada no calendário da sidebar, atualizar a agenda
+  // Quando a data é alterada no calendário da sidebar, atualizar a agenda (apenas se necessário)
   useEffect(() => {
-    const novaData = obterDataSelecionadaComoDate();
-    if (novaData.getTime() !== currentDate.getTime()) {
-      onSetCurrentDate(novaData);
+    if (shouldFilter && selectedDateAsDate) {
+      onSetCurrentDate(selectedDateAsDate);
     }
-  }, [dataSelecionada, obterDataSelecionadaComoDate, currentDate, onSetCurrentDate]);
+  }, [shouldFilter, selectedDateAsDate, onSetCurrentDate]);
 
   const manipularCliqueHoje = () => {
     onSetCurrentDate(new Date());
@@ -88,6 +91,7 @@ const AgendaLayout = memo(({
         searchQuery={consulta}
         locais={locais}
         allLocais={todosLocais}
+        eventCountByVenue={eventCountByVenue}
         onToggle={alternarBarra}
         onDateChange={manipularMudancaData}
         onLocalToggle={manipularAlternarLocal}

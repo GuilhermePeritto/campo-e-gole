@@ -10,6 +10,7 @@ interface SidebarAgendaProps {
   searchQuery: string;
   locais: MockLocal[];
   allLocais: MockLocal[];
+  eventCountByVenue?: Record<string, number>;
   onToggle: () => void;
   onDateChange: (date: DateValue | null) => void;
   onLocalToggle: (localId: string) => void;
@@ -26,6 +27,7 @@ const SidebarAgenda = (props: SidebarAgendaProps) => {
       consulta={props.searchQuery}
       locais={props.locais}
       todosLocais={props.allLocais}
+      eventCountByVenue={props.eventCountByVenue}
       onAlternar={props.onToggle}
       onMudancaData={props.onDateChange}
       onAlternarLocal={props.onLocalToggle}

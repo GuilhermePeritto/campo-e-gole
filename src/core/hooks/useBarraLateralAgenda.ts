@@ -3,13 +3,27 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useLocais } from '@/hooks/useLocais';
 import { getLocalTimeZone, today, fromDate } from "@internationalized/date";
 import type { DateValue } from "react-aria-components";
+import { useInteligentDateFilter } from './useInteligentDateFilter';
 
-export const useBarraLateralAgenda = () => {
+interface UseBarraLateralAgendaProps {
+  viewType: 'month' | 'week' | 'day' | 'agenda';
+  currentDate: Date;
+}
+
+export const useBarraLateralAgenda = ({ viewType, currentDate }: UseBarraLateralAgendaProps) => {
   const [expandida, setExpandida] = useState(true);
   const [dataSelecionada, setDataSelecionada] = useState<DateValue | null>(today(getLocalTimeZone()));
   const [locaisSelecionados, setLocaisSelecionados] = useState<string[]>(['all']);
   const [consulta, setConsulta] = useState('');
+  const [ultimaAtualizacao, setUltimaAtualizacao] = useState(Date.now());
   const { locais } = useLocais();
+
+  // Hook para filtragem inteligente
+  const { shouldFilter, selectedDateAsDate, getCurrentPeriod } = useInteligentDateFilter({
+    viewType,
+    currentDate,
+    selectedDate: dataSelecionada
+  });
 
   const alternarBarra = useCallback(() => {
     setExpandida(prev => !prev);
@@ -17,11 +31,17 @@ export const useBarraLateralAgenda = () => {
 
   const manipularMudancaData = useCallback((data: DateValue | null) => {
     setDataSelecionada(data);
-  }, []);
+    
+    // Só atualizar se realmente precisar filtrar
+    if (shouldFilter) {
+      setUltimaAtualizacao(Date.now());
+    }
+  }, [shouldFilter]);
 
   const manipularAlternarLocal = useCallback((localId: string) => {
     setLocaisSelecionados(prev => {
       if (localId === 'all') {
+        setUltimaAtualizacao(Date.now());
         return ['all'];
       }
       
@@ -29,7 +49,9 @@ export const useBarraLateralAgenda = () => {
         ? prev.filter(id => id !== localId)
         : [...prev.filter(id => id !== 'all'), localId];
       
-      return novaSelecao.length === 0 ? ['all'] : novaSelecao;
+      const resultado = novaSelecao.length === 0 ? ['all'] : novaSelecao;
+      setUltimaAtualizacao(Date.now());
+      return resultado;
     });
   }, []);
 
@@ -60,6 +82,15 @@ export const useBarraLateralAgenda = () => {
     return new Date(dataSelecionada.year, dataSelecionada.month - 1, dataSelecionada.day);
   }, [dataSelecionada]);
 
+  // Contar eventos por local (será usado pela lista de locais)
+  const eventCountByVenue = useMemo(() => {
+    // Por enquanto retorna mock, depois será conectado aos dados reais
+    return locais.reduce((acc, local) => {
+      acc[local.id] = Math.floor(Math.random() * 5);
+      return acc;
+    }, {} as Record<string, number>);
+  }, [locais, ultimaAtualizacao]);
+
   return {
     expandida,
     dataSelecionada,
@@ -67,6 +98,11 @@ export const useBarraLateralAgenda = () => {
     consulta,
     locais: locaisFiltrados,
     todosLocais: locais,
+    eventCountByVenue,
+    shouldFilter,
+    selectedDateAsDate,
+    getCurrentPeriod,
+    ultimaAtualizacao,
     alternarBarra,
     manipularMudancaData,
     manipularAlternarLocal,
