@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { addDays, startOfMonth, endOfMonth, eachDayOfInterval, format, startOfWeek, endOfWeek } from 'date-fns';
 
@@ -43,8 +44,8 @@ export const useSkeletonLoading = ({
 
   // Simular carregamento para cada dia
   const simulateLoading = useCallback(async (dayKey: string) => {
-    // Delay aleatório entre 300ms e 1.5s para simular requests reais
-    const delay = Math.random() * 1200 + 300;
+    // Delay mínimo de 800ms e aleatório até 2s para simular requests reais
+    const delay = Math.random() * 1200 + 800;
     
     await new Promise(resolve => setTimeout(resolve, delay));
     

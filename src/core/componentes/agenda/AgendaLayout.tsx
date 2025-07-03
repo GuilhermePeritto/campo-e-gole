@@ -1,6 +1,7 @@
 
 import { useBarraLateralAgenda } from '@/core/hooks/useBarraLateralAgenda';
-import { useDragAndDropAgenda } from '@/core/hooks/useDragAndDropAgenda';
+import { DndContext } from '@dnd-kit/core';
+import { useDragAndDropAvancado } from '@/core/hooks/useDragAndDropAvancado';
 import type { Reservation } from '@/hooks/useCalendar';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, memo } from 'react';
@@ -32,6 +33,7 @@ const AgendaLayout = memo(({
   children
 }: AgendaLayoutProps) => {
   const navigate = useNavigate();
+  
   const {
     expandida,
     dataSelecionada,
@@ -40,6 +42,8 @@ const AgendaLayout = memo(({
     locais,
     todosLocais,
     eventCountByVenue,
+    filteredEvents,
+    eventsByDay,
     shouldFilter,
     selectedDateAsDate,
     ultimaAtualizacao,
@@ -50,12 +54,18 @@ const AgendaLayout = memo(({
     manipularMudancaConsulta,
     sincronizarDataComAgenda,
     obterDataSelecionadaComoDate
-  } = useBarraLateralAgenda({ viewType, currentDate });
+  } = useBarraLateralAgenda({ 
+    viewType, 
+    currentDate, 
+    allEvents: mockReservations 
+  });
 
   const {
+    isDragging,
     handleDragStart,
+    handleDragOver,
     handleDragEnd
-  } = useDragAndDropAgenda();
+  } = useDragAndDropAvancado();
 
   // Sincronizar data da sidebar com a agenda
   useEffect(() => {
@@ -82,57 +92,63 @@ const AgendaLayout = memo(({
   };
 
   return (
-    <div className="h-screen flex fundo-fundo overflow-hidden">
-      {/* Barra Lateral */}
-      <SidebarAgenda
-        isExpanded={expandida}
-        selectedDate={dataSelecionada}
-        selectedLocais={locaisSelecionados}
-        searchQuery={consulta}
-        locais={locais}
-        allLocais={todosLocais}
-        eventCountByVenue={eventCountByVenue}
-        onToggle={alternarBarra}
-        onDateChange={manipularMudancaData}
-        onLocalToggle={manipularAlternarLocal}
-        isLocalSelected={isLocalSelecionado}
-        onSearchChange={manipularMudancaConsulta}
-      />
-      
-      {/* Área Principal */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Cabeçalho */}
-        <HeaderAgenda
-          currentDate={currentDate}
-          viewType={viewType}
-          onNavigateDate={onNavigateDate}
-          onTodayClick={manipularCliqueHoje}
-          onNewEventClick={manipularNovoEvento}
-          onViewTypeChange={onViewTypeChange}
+    <DndContext
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="h-screen flex bg-background overflow-hidden">
+        {/* Barra Lateral */}
+        <SidebarAgenda
+          isExpanded={expandida}
+          selectedDate={dataSelecionada}
+          selectedLocais={locaisSelecionados}
+          searchQuery={consulta}
+          locais={locais}
+          allLocais={todosLocais}
+          eventCountByVenue={eventCountByVenue}
+          onToggle={alternarBarra}
+          onDateChange={manipularMudancaData}
+          onLocalToggle={manipularAlternarLocal}
+          isLocalSelected={isLocalSelecionado}
+          onSearchChange={manipularMudancaConsulta}
         />
+        
+        {/* Área Principal */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Cabeçalho */}
+          <HeaderAgenda
+            currentDate={currentDate}
+            viewType={viewType}
+            onNavigateDate={onNavigateDate}
+            onTodayClick={manipularCliqueHoje}
+            onNewEventClick={manipularNovoEvento}
+            onViewTypeChange={onViewTypeChange}
+          />
 
-        {/* Conteúdo Principal */}
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-auto">
-            {viewType === 'agenda' ? (
-              <VisualizacaoAgenda
-                eventos={mockReservations}
-                currentDate={currentDate}
-                selectedVenue={selectedVenue}
-                selectedLocais={locaisSelecionados}
-                onEventClick={onEventClick}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              />
-            ) : (
-              <div className="h-full">
-                {children}
-              </div>
-            )}
+          {/* Conteúdo Principal */}
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full overflow-auto">
+              {viewType === 'agenda' ? (
+                <VisualizacaoAgenda
+                  eventos={filteredEvents}
+                  currentDate={currentDate}
+                  selectedVenue={selectedVenue}
+                  selectedLocais={locaisSelecionados}
+                  onEventClick={onEventClick}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                />
+              ) : (
+                <div className="h-full">
+                  {children}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </DndContext>
   );
 });
 

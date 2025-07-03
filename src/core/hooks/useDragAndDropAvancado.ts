@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useDndMonitor, DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import { format, parseISO, addMinutes } from 'date-fns';
@@ -36,6 +37,7 @@ export const useDragAndDropAvancado = () => {
       }
     });
     setIsDragging(true);
+    console.log('Drag started:', eventData);
   }, []);
 
   const handleDragOver = useCallback((event: DragOverEvent) => {
@@ -97,8 +99,8 @@ export const useDragAndDropAvancado = () => {
       day: newStart
     };
 
-    // Callback para atualizar o evento (será implementado pelo componente pai)
-    console.log('Evento movido:', {
+    // Log para debug - em produção seria feita a chamada à API
+    console.log('Evento movido com sucesso:', {
       originalEvent,
       updatedEvent,
       changes: {
@@ -112,6 +114,9 @@ export const useDragAndDropAvancado = () => {
         }
       }
     });
+
+    // TODO: Implementar callback para atualizar o estado dos eventos
+    // onEventUpdate?.(updatedEvent);
 
     setDraggedEvent(null);
   }, [draggedEvent]);

@@ -1,16 +1,23 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useLocais } from '@/hooks/useLocais';
+import { useEventFiltering } from './useEventFiltering';
 import { getLocalTimeZone, today, fromDate } from "@internationalized/date";
 import type { DateValue } from "react-aria-components";
+import type { Reservation } from '@/hooks/useCalendar';
 import { useInteligentDateFilter } from './useInteligentDateFilter';
 
 interface UseBarraLateralAgendaProps {
   viewType: 'month' | 'week' | 'day' | 'agenda';
   currentDate: Date;
+  allEvents?: Reservation[];
 }
 
-export const useBarraLateralAgenda = ({ viewType, currentDate }: UseBarraLateralAgendaProps) => {
+export const useBarraLateralAgenda = ({ 
+  viewType, 
+  currentDate, 
+  allEvents = [] 
+}: UseBarraLateralAgendaProps) => {
   const [expandida, setExpandida] = useState(true);
   const [dataSelecionada, setDataSelecionada] = useState<DateValue | null>(today(getLocalTimeZone()));
   const [locaisSelecionados, setLocaisSelecionados] = useState<string[]>(['all']);
@@ -23,6 +30,13 @@ export const useBarraLateralAgenda = ({ viewType, currentDate }: UseBarraLateral
     viewType,
     currentDate,
     selectedDate: dataSelecionada
+  });
+
+  // Hook para filtrar eventos
+  const { filteredEvents, eventsByDay, eventCountByVenue } = useEventFiltering({
+    eventos: allEvents,
+    selectedLocais: locaisSelecionados,
+    searchQuery: consulta
   });
 
   const alternarBarra = useCallback(() => {
@@ -82,15 +96,6 @@ export const useBarraLateralAgenda = ({ viewType, currentDate }: UseBarraLateral
     return new Date(dataSelecionada.year, dataSelecionada.month - 1, dataSelecionada.day);
   }, [dataSelecionada]);
 
-  // Contar eventos por local (será usado pela lista de locais)
-  const eventCountByVenue = useMemo(() => {
-    // Por enquanto retorna mock, depois será conectado aos dados reais
-    return locais.reduce((acc, local) => {
-      acc[local.id] = Math.floor(Math.random() * 5);
-      return acc;
-    }, {} as Record<string, number>);
-  }, [locais, ultimaAtualizacao]);
-
   return {
     expandida,
     dataSelecionada,
@@ -99,6 +104,8 @@ export const useBarraLateralAgenda = ({ viewType, currentDate }: UseBarraLateral
     locais: locaisFiltrados,
     todosLocais: locais,
     eventCountByVenue,
+    filteredEvents,
+    eventsByDay,
     shouldFilter,
     selectedDateAsDate,
     getCurrentPeriod,
