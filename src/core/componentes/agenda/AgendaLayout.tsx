@@ -4,7 +4,7 @@ import { DndContext } from '@dnd-kit/core';
 import { useDragAndDropAvancado } from '@/core/hooks/useDragAndDropAvancado';
 import type { Reservation } from '@/hooks/useCalendar';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, memo } from 'react';
+import { useEffect, memo, useCallback } from 'react';
 import HeaderAgenda from './HeaderAgenda';
 import SidebarAgenda from './SidebarAgenda';
 import VisualizacaoAgenda from './VisualizacaoAgenda';
@@ -91,6 +91,17 @@ const AgendaLayout = memo(({
     navigate(`/eventos/reserva?date=${dataStr}`);
   };
 
+  // Wrapper functions para compatibilidade de tipos
+  const handleEventDragStart = useCallback((evento: Reservation) => {
+    console.log('Wrapper: Iniciando drag do evento:', evento);
+    // O evento real será capturado pelo DndContext
+  }, []);
+
+  const handleEventDragEnd = useCallback((newDate?: Date, newTime?: string) => {
+    console.log('Wrapper: Finalizando drag:', { newDate, newTime });
+    // A lógica real está no useDragAndDropAvancado
+  }, []);
+
   return (
     <DndContext
       onDragStart={handleDragStart}
@@ -136,8 +147,8 @@ const AgendaLayout = memo(({
                   selectedVenue={selectedVenue}
                   selectedLocais={locaisSelecionados}
                   onEventClick={onEventClick}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
+                  onDragStart={handleEventDragStart}
+                  onDragEnd={handleEventDragEnd}
                 />
               ) : (
                 <div className="h-full">
