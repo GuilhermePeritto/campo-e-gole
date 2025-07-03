@@ -1,9 +1,10 @@
 
 import ModuleHeader from '@/components/ModuleHeader';
 import CalendarViews from '@/components/calendar/CalendarViews';
-import ModernAgendaLayout from '@/core/componentes/agenda/ModernAgendaLayout';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import ModernAgendaLayout from '@/core/componentes/agenda/ModernAgendaLayout';
 import { useCalendar } from '@/hooks/useCalendar';
+import { DndContext } from '@dnd-kit/core';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 const Agenda = () => {
@@ -33,27 +34,29 @@ const Agenda = () => {
       />
 
       <main className="max-w-none mx-auto">
-        <ModernAgendaLayout
-          viewType={viewType}
-          currentDate={currentDate}
-          selectedVenue={selectedVenue}
-          mockReservations={mockReservations}
-          onViewTypeChange={setViewType}
-          onNavigateDate={navigateDate}
-          onSetCurrentDate={setCurrentDate}
-          onEventClick={handleEventClick}
-        >
-          {/* Renderizar as visualizações existentes quando não for tipo 'agenda' */}
-          <CalendarViews
+        <DndContext>
+          <ModernAgendaLayout
             viewType={viewType}
             currentDate={currentDate}
             selectedVenue={selectedVenue}
             mockReservations={mockReservations}
-            handleDateClick={handleDateClick}
-            handleEventClick={handleEventClick}
-            handleDayFilterClick={handleDayFilterClick}
-          />
-        </ModernAgendaLayout>
+            onViewTypeChange={setViewType}
+            onNavigateDate={navigateDate}
+            onSetCurrentDate={setCurrentDate}
+            onEventClick={handleEventClick}
+          >
+            {/* Renderizar as visualizações existentes quando não for tipo 'agenda' */}
+            <CalendarViews
+              viewType={viewType}
+              currentDate={currentDate}
+              selectedVenue={selectedVenue}
+              mockReservations={mockReservations}
+              handleDateClick={handleDateClick}
+              handleEventClick={handleEventClick}
+              handleDayFilterClick={handleDayFilterClick}
+            />
+          </ModernAgendaLayout>
+        </DndContext>
       </main>
     </div>
   );
