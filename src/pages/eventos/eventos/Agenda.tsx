@@ -1,7 +1,7 @@
 
 import ModuleHeader from '@/components/ModuleHeader';
 import CalendarViews from '@/components/calendar/CalendarViews';
-import AgendaLayout from '@/core/componentes/agenda/AgendaLayout';
+import ModernAgendaLayout from '@/core/componentes/agenda/ModernAgendaLayout';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useCalendar } from '@/hooks/useCalendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -33,7 +33,7 @@ const Agenda = () => {
       />
 
       <main className="max-w-none mx-auto">
-        <AgendaLayout
+        <ModernAgendaLayout
           viewType={viewType}
           currentDate={currentDate}
           selectedVenue={selectedVenue}
@@ -53,7 +53,7 @@ const Agenda = () => {
             handleEventClick={handleEventClick}
             handleDayFilterClick={handleDayFilterClick}
           />
-        </AgendaLayout>
+        </ModernAgendaLayout>
       </main>
     </div>
   );
