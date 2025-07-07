@@ -29,21 +29,23 @@ const ModernHeader = memo(({
   const titleFormat = useMemo(() => {
     switch (viewType) {
       case 'month':
-        return format(currentDate, 'MMM - MMM yyyy', { locale: ptBR });
+        return format(currentDate, 'MMMM yyyy', { locale: ptBR });
       case 'week':
-        return format(currentDate, 'MMM - MMM yyyy', { locale: ptBR });
+        return format(currentDate, "'Semana de' dd 'de' MMMM yyyy", { locale: ptBR });
       case 'day':
-        return format(currentDate, 'MMM - MMM yyyy', { locale: ptBR });
+        return format(currentDate, "dd 'de' MMMM yyyy", { locale: ptBR });
+      case 'agenda':
+        return format(currentDate, 'MMMM yyyy', { locale: ptBR });
       default:
-        return format(currentDate, 'MMM - MMM yyyy', { locale: ptBR });
+        return format(currentDate, 'MMMM yyyy', { locale: ptBR });
     }
   }, [currentDate, viewType]);
 
   const viewLabels = {
-    'month': 'month',
-    'week': 'week', 
-    'day': 'day',
-    'agenda': 'agenda'
+    'month': 'Mês',
+    'week': 'Semana', 
+    'day': 'Dia',
+    'agenda': 'Lista'
   };
 
   return (
@@ -93,7 +95,7 @@ const ModernHeader = memo(({
               onClick={onTodayClick}
               className="h-9 px-3"
             >
-              Today
+              Hoje
             </Button>
             <Button
               variant="outline"
@@ -111,7 +113,7 @@ const ModernHeader = memo(({
             className="h-9 px-4"
           >
             <Plus className="h-4 w-4 mr-2" />
-            New Event
+            Novo Evento
           </Button>
 
           {/* View Selector */}
@@ -120,10 +122,10 @@ const ModernHeader = memo(({
               <SelectValue>{viewLabels[viewType]}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="month">month</SelectItem>
-              <SelectItem value="week">week</SelectItem>
-              <SelectItem value="day">day</SelectItem>
-              <SelectItem value="agenda">agenda</SelectItem>
+              <SelectItem value="month">Mês</SelectItem>
+              <SelectItem value="week">Semana</SelectItem>
+              <SelectItem value="day">Dia</SelectItem>
+              <SelectItem value="agenda">Lista</SelectItem>
             </SelectContent>
           </Select>
 

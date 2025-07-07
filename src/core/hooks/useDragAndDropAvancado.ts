@@ -116,6 +116,7 @@ export const useDragAndDropAvancado = () => {
     });
 
     // TODO: Implementar callback para atualizar o estado dos eventos
+    // Em produção, fazer chamada à API para atualizar o evento
     // onEventUpdate?.(updatedEvent);
 
     setDraggedEvent(null);

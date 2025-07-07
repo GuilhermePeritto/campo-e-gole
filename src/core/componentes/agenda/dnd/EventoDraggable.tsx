@@ -24,7 +24,8 @@ const EventoDraggable = memo(({
     attributes,
     listeners,
     setNodeRef,
-    transform
+    transform,
+    isDragging: isBeingDragged
   } = useDraggable({
     id: `event-${evento.id}`,
     data: evento
@@ -75,19 +76,16 @@ const EventoDraggable = memo(({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "cursor-move hover:shadow-md hover:shadow-primary/10 transition-all duration-200 group border-border/50",
-        isDragging && "opacity-50 scale-95 rotate-2",
+        "relative hover:shadow-md hover:shadow-primary/10 transition-all duration-200 group border-border/50",
+        (isDragging || isBeingDragged) && "opacity-50 scale-95",
         className
       )}
-      {...listeners}
-      {...attributes}
     >
       <CardContent className="p-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 space-y-2">
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
-                <GripVertical className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div 
                   className="w-3 h-3 rounded-full flex-shrink-0 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: evento.color }}
@@ -117,6 +115,15 @@ const EventoDraggable = memo(({
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* Drag handle only visible on hover */}
+        <div 
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+          {...listeners}
+          {...attributes}
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
       </CardContent>
     </Card>

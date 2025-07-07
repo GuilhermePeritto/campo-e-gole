@@ -31,7 +31,7 @@ export const useCalendar = () => {
   const { getVenuesForCalendar } = useLocais();
   const { getCalendarReservations } = useReservas();
   
-  const [viewType, setViewType] = useState<'month' | 'week' | 'day'>('month');
+  const [viewType, setViewType] = useState<'month' | 'week' | 'day' | 'agenda'>('month');
   const [selectedVenue, setSelectedVenue] = useState<string>('all');
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -73,7 +73,7 @@ export const useCalendar = () => {
     setViewType('day');
   }, []);
 
-  const handleViewTypeChange = useCallback((view: 'month' | 'week' | 'day') => {
+  const handleViewTypeChange = useCallback((view: 'month' | 'week' | 'day' | 'agenda') => {
     setViewType(view);
   }, []);
 
