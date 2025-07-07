@@ -104,6 +104,7 @@ const LayoutAgenda = memo(({
     const dataStr = `${ano}-${mes}-${dia}`;
     console.log('LayoutAgenda - navegando para nova reserva:', dataStr);
     navigate(`/eventos/reserva?date=${dataStr}`);
+    console.log('LayoutAgenda - handleNovoEvento finalizado');
   };
 
   const handleCliqueData = (data: Date) => {
@@ -123,7 +124,9 @@ const LayoutAgenda = memo(({
 
   const handleHoje = () => {
     console.log('LayoutAgenda - handleHoje chamado - definindo data atual:', new Date());
+    console.log('LayoutAgenda - onSetCurrentDate é uma função?', typeof onSetCurrentDate);
     onSetCurrentDate(new Date());
+    console.log('LayoutAgenda - handleHoje finalizado');
   };
 
   console.log('LayoutAgenda - renderizando com:', {
@@ -177,13 +180,25 @@ const LayoutAgenda = memo(({
             tipoVisualizacao={tipoVisualizacao}
             aoNavegarData={(direcao) => {
               console.log('LayoutAgenda - aoNavegarData chamado:', direcao);
+              console.log('LayoutAgenda - onNavigateDate é uma função?', typeof onNavigateDate);
               onNavigateDate(direcao);
+              console.log('LayoutAgenda - aoNavegarData finalizado');
             }}
-            aoClicarHoje={handleHoje}
-            aoClicarNovoEvento={handleNovoEvento}
+            aoClicarHoje={() => {
+              console.log('LayoutAgenda - aoClicarHoje chamado');
+              handleHoje();
+              console.log('LayoutAgenda - aoClicarHoje finalizado');
+            }}
+            aoClicarNovoEvento={() => {
+              console.log('LayoutAgenda - aoClicarNovoEvento chamado');
+              handleNovoEvento();
+              console.log('LayoutAgenda - aoClicarNovoEvento finalizado');
+            }}
             aoMudarTipoVisualizacao={(tipo) => {
               console.log('LayoutAgenda - aoMudarTipoVisualizacao chamado:', tipo);
+              console.log('LayoutAgenda - onViewTypeChange é uma função?', typeof onViewTypeChange);
               onViewTypeChange(tipo);
+              console.log('LayoutAgenda - aoMudarTipoVisualizacao finalizado');
             }}
           />
 

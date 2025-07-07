@@ -37,6 +37,8 @@ export const useAgenda = () => {
   const [localSelecionado, setLocalSelecionado] = useState<string>('all');
   const [dataAtual, setDataAtual] = useState(new Date());
 
+  console.log('useAgenda - estado atual:', { tipoVisualizacao, dataAtual });
+
   const locais = getVenuesForCalendar();
   // Adaptar eventos para o tipo EventoAgenda
   const eventos: EventoAgenda[] = mockReservations.map(ev => {
@@ -65,6 +67,7 @@ export const useAgenda = () => {
   const navegarData = useCallback((direcao: 'anterior' | 'proxima') => {
     console.log('NavegarData chamado:', { direcao, tipoVisualizacao, dataAtual });
     setDataAtual(prev => {
+      console.log('setDataAtual callback - data anterior:', prev);
       const novaData = new Date(prev);
       const incremento = direcao === 'proxima' ? 1 : -1;
       
@@ -73,24 +76,29 @@ export const useAgenda = () => {
           // Navegar por mês - usar setDate(1) para evitar problemas com dias inexistentes
           novaData.setDate(1);
           novaData.setMonth(prev.getMonth() + incremento);
+          console.log('Navegação por mês:', { prevMonth: prev.getMonth(), incremento, novaMonth: novaData.getMonth() });
           break;
         case 'semana':
           // Navegar por semana - somar 7 dias
           novaData.setDate(prev.getDate() + (7 * incremento));
+          console.log('Navegação por semana:', { prevDate: prev.getDate(), incremento, novaDate: novaData.getDate() });
           break;
         case 'dia':
           // Navegar por dia - somar 1 dia
           novaData.setDate(prev.getDate() + incremento);
+          console.log('Navegação por dia:', { prevDate: prev.getDate(), incremento, novaDate: novaData.getDate() });
           break;
         case 'lista':
           // Para lista, navegar por mês (mesmo comportamento do mês)
           novaData.setDate(1);
           novaData.setMonth(prev.getMonth() + incremento);
+          console.log('Navegação por lista (mês):', { prevMonth: prev.getMonth(), incremento, novaMonth: novaData.getMonth() });
           break;
         default:
           // Fallback para navegação por mês
           novaData.setDate(1);
           novaData.setMonth(prev.getMonth() + incremento);
+          console.log('Navegação por default (mês):', { prevMonth: prev.getMonth(), incremento, novaMonth: novaData.getMonth() });
           break;
       }
       console.log('Nova data calculada:', novaData);
