@@ -86,6 +86,18 @@ const ModernAgendaLayout = memo(({
     navigate(`/eventos/reserva?date=${dataStr}`);
   };
 
+  const handleDateClick = (date: Date) => {
+    const ano = date.getFullYear();
+    const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dia = date.getDate().toString().padStart(2, '0');
+    const dataStr = `${ano}-${mes}-${dia}`;
+    navigate(`/eventos/reserva?date=${dataStr}`);
+  };
+
+  const handleEventClick = (evento: any) => {
+    navigate(`/eventos/reserva/${evento.id}/editar`);
+  };
+
   const handleToday = () => {
     onSetCurrentDate(new Date());
   };
@@ -133,8 +145,8 @@ const ModernAgendaLayout = memo(({
                 currentDate={currentDate}
                 eventos={filteredEvents}
                 selectedLocais={locaisSelecionados}
-                onEventClick={onEventClick}
-                onDateClick={onSetCurrentDate}
+                onEventClick={handleEventClick}
+                onDateClick={handleDateClick}
               />
             </div>
           </div>

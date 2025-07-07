@@ -2,9 +2,8 @@ import { memo, useMemo } from 'react';
 import { format, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { Reservation } from '@/hooks/useCalendar';
-import { useSkeletonLoading } from '@/core/hooks/useSkeletonLoading';
-import DropZone from '../dnd/DropZone';
-import EventoDraggable from '../dnd/EventoDraggable';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Plus, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ModernDayViewProps {
@@ -20,18 +19,16 @@ const ModernDayView = memo(({
   eventos,
   selectedLocais,
   onEventClick,
+  onDateClick,
 }: ModernDayViewProps) => {
-  const { isDayLoading } = useSkeletonLoading({
-    viewType: 'day',
-    currentDate,
-    shouldReload: false
-  });
-
-  // Generate time slots (6 AM to 11 PM)
+  // Generate time slots from 7 AM to 11 PM
   const timeSlots = useMemo(() => {
     const slots = [];
-    for (let hour = 6; hour <= 23; hour++) {
-      slots.push(hour);
+    for (let hour = 7; hour <= 23; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        slots.push(time);
+      }
     }
     return slots;
   }, []);
@@ -48,31 +45,34 @@ const ModernDayView = memo(({
     );
   }, [eventos, selectedLocais, currentDate]);
 
-  const getEventPosition = (evento: Reservation) => {
-    const startHour = parseInt(evento.startTime.split(':')[0]);
-    const startMinute = parseInt(evento.startTime.split(':')[1]);
-    const endHour = parseInt(evento.endTime.split(':')[0]);
-    const endMinute = parseInt(evento.endTime.split(':')[1]);
-    
-    const startPosition = ((startHour - 6) * 60 + startMinute) / 60; // Convert to hours from 6 AM
-    const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 60; // Duration in hours
-    
-    return {
-      top: `${startPosition * 80}px`, // 80px per hour
-      height: `${Math.max(duration * 80, 40)}px` // Minimum 40px height
-    };
+  // Convert time to minutes for calculations
+  const timeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
   };
 
-  const formatTimeSlot = (hour: number) => {
-    if (hour === 0) return '12 AM';
-    if (hour === 12) return '12 PM';
-    if (hour > 12) return `${hour - 12} PM`;
-    return `${hour} AM`;
+  // Check slot availability
+  const getSlotAvailability = (slotTime: string) => {
+    const slotStart = timeToMinutes(slotTime);
+    const slotEnd = slotStart + 30; // 30-minute slots
+    
+    const overlappingEvents = dayEvents.filter(event => {
+      const eventStart = timeToMinutes(event.startTime);
+      const eventEnd = timeToMinutes(event.endTime);
+      
+      return !(eventEnd <= slotStart || eventStart >= slotEnd);
+    });
+
+    return overlappingEvents.length === 0;
+  };
+
+  const handleNewReservation = (time: string) => {
+    onDateClick(currentDate);
   };
 
   const dayKey = format(currentDate, 'yyyy-MM-dd');
   const isToday = isSameDay(currentDate, new Date());
-  const isLoading = isDayLoading(currentDate);
+  const slotHeight = 48;
 
   return (
     <div className="h-full flex flex-col bg-background">
@@ -96,77 +96,105 @@ const ModernDayView = memo(({
         <span className="text-sm text-muted-foreground">GMT-3</span>
       </div>
 
-      {/* Time grid */}
-      <div className="flex-1 overflow-auto">
-        <div className="flex relative">
-          {/* Time column */}
-          <div className="w-20 border-r border-border bg-background">
-            {timeSlots.map(hour => (
-              <div key={hour} className="h-[80px] border-b border-border flex items-start justify-end pr-3 pt-2">
-                <span className="text-sm text-muted-foreground font-medium">
-                  {formatTimeSlot(hour)}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Day column */}
-          <div className="flex-1 relative">
-            {/* Time slots for drop zones */}
-            {timeSlots.map(hour => (
-              <DropZone
-                key={`${dayKey}-${hour}`}
-                id={`day-slot-${dayKey}-${hour}`}
-                data={{
-                  date: dayKey,
-                  time: `${hour.toString().padStart(2, '0')}:00`,
-                  type: 'timeSlot'
-                }}
-                className="h-[80px] border-b border-border hover:bg-accent/20 transition-colors"
-              />
-            ))}
-
-            {/* Events */}
-            {!isLoading && dayEvents.map(evento => {
-              const position = getEventPosition(evento);
-              
-              return (
-                <div 
-                  key={evento.id}
-                  className="absolute left-2 right-2 z-10"
-                  style={position}
-                >
-                  <EventoDraggable
-                    evento={evento}
-                  >
+      {/* Time grid - using the original agenda layout */}
+      <div className="h-[calc(100vh-200px)] overflow-y-auto">
+        <Card className="">
+          <CardContent className="p-0 flex-1 relative">
+            {/* Time slots grid */}
+            <div className="relative">
+              {timeSlots.map((time, index) => {
+                const isAvailable = getSlotAvailability(time);
+                
+                return (
                   <div 
-                    className="w-full h-full rounded-lg p-3 cursor-pointer hover:shadow-lg transition-shadow border"
-                    style={{ 
-                      backgroundColor: `${evento.color}20`, 
-                      borderLeft: `4px solid ${evento.color}`,
-                      borderColor: `${evento.color}40`
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEventClick(evento);
-                    }}
+                    key={time} 
+                    className={`border-b border-border flex items-center p-3 transition-colors relative ${
+                      isAvailable ? 'cursor-pointer hover:bg-accent/20' : ''
+                    }`}
+                    style={{ height: `${slotHeight}px` }}
+                    onClick={() => isAvailable && handleNewReservation(time)}
                   >
-                    <div className="font-semibold text-foreground text-sm mb-1">
-                      {evento.client}
+                    <div className="w-16 text-sm font-medium text-muted-foreground flex-shrink-0">
+                      {time}
                     </div>
-                    <div className="text-muted-foreground text-xs mb-1">
-                      {evento.startTime} - {evento.endTime}
+                    
+                    <div className="flex-1 ml-4 relative">
+                      {isAvailable && (
+                        <div className="text-primary text-sm font-medium flex items-center gap-1">
+                          <Plus className="h-4 w-4" />
+                          Disponível - clique para reservar
+                        </div>
+                      )}
                     </div>
-                    <div className="text-muted-foreground text-xs">
-                      {evento.venue}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Events overlay */}
+            <div className="absolute top-0 left-0 right-0 pointer-events-none">
+              {dayEvents.map((event) => {
+                const startMinutes = timeToMinutes(event.startTime);
+                const endMinutes = timeToMinutes(event.endTime);
+                const duration = endMinutes - startMinutes;
+                
+                // Calculate position based on dynamic slots
+                const baseHour = 7 * 60; // 7am in minutes
+                const topOffset = ((startMinutes - baseHour) / 30) * slotHeight;
+                const height = (duration / 30) * slotHeight;
+
+                return (
+                  <div
+                    key={event.id}
+                    className="absolute left-20 right-4 rounded-lg shadow-sm border-l-4 z-10 cursor-pointer pointer-events-auto hover:shadow-md transition-all border-border"
+                    style={{
+                      top: `${topOffset}px`,
+                      height: `${Math.max(height - 4, 32)}px`,
+                      borderLeftColor: event.color,
+                      backgroundColor: `${event.color}15`
+                    }}
+                    onClick={() => onEventClick(event)}
+                  >
+                    <div className="p-2 h-full overflow-hidden">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1">
+                          <User className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                          <span className="font-semibold text-xs truncate text-foreground">{event.client}</span>
+                        </div>
+                        {height > 60 && (
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                            <span className="text-xs text-muted-foreground truncate">{event.venue}</span>
+                          </div>
+                        )}
+                        <div className="text-xs text-muted-foreground font-medium">
+                          {event.startTime} - {event.endTime}
+                        </div>
+                        {height > 80 && (
+                          <div className="text-xs text-muted-foreground truncate">
+                            {event.title?.split(' - ')[1] || 'Reserva'}
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1">
+                          <div className={`h-1.5 w-1.5 rounded-full ${
+                            event.status === 'confirmed' ? 'bg-green-500' :
+                            event.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                          }`} />
+                          {height > 60 && (
+                            <span className="text-xs text-muted-foreground">
+                              {event.status === 'confirmed' ? 'Confirmado' :
+                               event.status === 'pending' ? 'Pendente' : 'Cancelado'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    </div>
-                  </EventoDraggable>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
