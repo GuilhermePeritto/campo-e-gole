@@ -1,21 +1,19 @@
-
 "use client"
 
-import * as React from "react"
-import {
-  Calendar as AriaCalendar,
-  CalendarGrid,
-  CalendarGridHeader,
-  CalendarHeaderCell,
-  CalendarGridBody,
-  CalendarCell,
-  Heading,
-  Button,
-  type CalendarProps,
-  type DateValue
-} from "react-aria-components"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import {
+    Calendar as AriaCalendar,
+    Button,
+    CalendarCell,
+    CalendarGrid,
+    CalendarGridBody,
+    CalendarGridHeader,
+    CalendarHeaderCell,
+    Heading,
+    type CalendarProps,
+    type DateValue
+} from "react-aria-components"
 
 function Calendar({ className, ...props }: CalendarProps<DateValue>) {
   return (
@@ -53,13 +51,16 @@ function Calendar({ className, ...props }: CalendarProps<DateValue>) {
           {(date) => (
             <CalendarCell
               date={date}
-              className={cn(
-                "w-8 h-8 text-sm rounded-md flex items-center justify-center",
-                "hover:bg-accent hover:text-accent-foreground cursor-pointer",
-                "selected:bg-primary selected:text-primary-foreground",
-                "unavailable:text-muted-foreground unavailable:cursor-not-allowed",
-                "outside-month:text-muted-foreground/50"
-              )}
+              className={({ isSelected, isOutsideMonth, isUnavailable }) =>
+                cn(
+                  "w-8 h-8 text-sm rounded-md flex items-center justify-center font-medium transition-colors",
+                  isSelected && "bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/60",
+                  !isSelected && !isOutsideMonth && "bg-background text-foreground",
+                  isOutsideMonth && "bg-background text-muted-foreground/40 opacity-60",
+                  isUnavailable && "text-muted-foreground/60 cursor-not-allowed",
+                  "hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                )
+              }
             />
           )}
         </CalendarGridBody>

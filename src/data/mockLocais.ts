@@ -1,4 +1,3 @@
-
 export interface MockLocal {
   id: string;
   label: string;
@@ -29,7 +28,7 @@ export const mockLocais: MockLocal[] = [
     description: 'Quadra principal com grama sintética',
     amenities: ['Vestiário', 'Iluminação', 'Arquibancada'],
     status: 'active',
-    color: '#10b981',
+    color: '#A7F3D0',
     openTime: '07:00',
     closeTime: '21:00'
   },
@@ -45,7 +44,7 @@ export const mockLocais: MockLocal[] = [
     description: 'Quadra coberta para basquete e vôlei',
     amenities: ['Vestiário', 'Ar condicionado', 'Som'],
     status: 'active',
-    color: '#3b82f6',
+    color: '#BFDBFE',
     openTime: '08:00',
     closeTime: '22:00'
   },
@@ -61,7 +60,7 @@ export const mockLocais: MockLocal[] = [
     description: 'Campo oficial de futebol',
     amenities: ['Vestiário', 'Iluminação', 'Estacionamento'],
     status: 'active',
-    color: '#f59e0b',
+    color: '#FDE68A',
     openTime: '06:00',
     closeTime: '20:00'
   }

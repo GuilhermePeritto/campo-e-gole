@@ -131,6 +131,15 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			backgroundImage: {
+				'gradient-day-selected': 'linear-gradient(135deg, hsl(var(--day-selector-selected)), hsl(var(--day-selector-selected-glow)))',
+				'gradient-day-hover': 'linear-gradient(135deg, hsl(var(--day-selector-primary)), hsl(var(--day-selector-primary-hover)))',
+			},
+			boxShadow: {
+				'day-card': 'var(--shadow-day-card)',
+				'day-selected': 'var(--shadow-day-selected)',
+				'day-hover': 'var(--shadow-day-hover)',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -148,20 +157,41 @@ export default {
 						height: '0'
 					}
 				},
-				'fade-in': {
-					'0%': { opacity: '0', transform: 'translateY(10px)' },
-					'100%': { opacity: '1', transform: 'translateY(0)' }
+				'day-expand': {
+					'0%': {
+						transform: 'translateY(0) scale(1)',
+						zIndex: '1'
+					},
+					'100%': {
+						transform: 'translateY(-8px) scale(1.05)',
+						zIndex: '10'
+					}
 				},
-				'slide-in': {
-					'0%': { transform: 'translateX(-100%)' },
-					'100%': { transform: 'translateX(0)' }
+				'day-contract': {
+					'0%': {
+						transform: 'translateY(-8px) scale(1.05)',
+						zIndex: '10'
+					},
+					'100%': {
+						transform: 'translateY(0) scale(1)',
+						zIndex: '1'
+					}
+				},
+				'semicircle-expand': {
+					'0%': {
+						transform: 'translateY(0) rotate(0deg) translateX(0)',
+					},
+					'100%': {
+						transform: 'translateY(-20px) rotate(var(--rotation)) translateX(var(--offset))',
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.5s ease-out',
-				'slide-in': 'slide-in 0.3s ease-out'
+				'day-expand': 'day-expand 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'day-contract': 'day-contract 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'semicircle-expand': 'semicircle-expand 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards',
 			}
 		}
 	},
