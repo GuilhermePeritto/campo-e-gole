@@ -121,6 +121,10 @@ export default {
 				'128': '32rem',
 				'144': '36rem'
 			},
+			scale: {
+				'102': '1.02',
+				'105': '1.05',
+			},
 			maxWidth: {
 				'8xl': '88rem',
 				'9xl': '96rem',

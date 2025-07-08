@@ -1,7 +1,7 @@
 
 import { TableCell } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
 import { obterEstilosFixacao } from '@/core/hooks/useUtilsTabela';
+import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Cell, flexRender } from '@tanstack/react-table';

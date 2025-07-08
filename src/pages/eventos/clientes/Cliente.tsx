@@ -10,37 +10,69 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoDocumento from '@/core/componentes/CampoDocumento';
 import CampoEmail from '@/core/componentes/CampoEmail';
 import CampoTelefone from '@/core/componentes/CampoTelefone';
+import { useClientes } from '@/hooks/useClientes';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { User } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+interface ClienteFormData {
+  nome: string;
+  email: string;
+  telefone: string;
+  documento: string;
+  tipoDocumento: 'cpf' | 'cnpj';
+  endereco: string;
+  cidade: string;
+  estado: string;
+  cep: string;
+  observacoes: string;
+  status: 'ativo' | 'inativo';
+}
 
 const Cliente = () => {
   const navigate = useNavigate();
+  const { goBack } = useNavigationHistory();
   const { id } = useParams();
   const isEdit = !!id;
 
-  const [formData, setFormData] = useState({
-    name: isEdit ? 'João Silva' : '',
-    email: isEdit ? 'joao@email.com' : '',
-    phone: isEdit ? '(11) 99999-9999' : '',
-    document: isEdit ? '123.456.789-00' : '',
-    documentType: isEdit ? 'cpf' : 'cpf',
-    address: isEdit ? 'Rua das Flores, 123' : '',
-    city: isEdit ? 'São Paulo' : '',
-    state: isEdit ? 'SP' : '',
-    zipCode: isEdit ? '01234-567' : '',
-    notes: isEdit ? 'Cliente frequente, prefere horários noturnos' : '',
-    isRecurring: isEdit ? true : false
+  const { getClienteById, createCliente, updateCliente } = useClientes();
+
+  const [formData, setFormData] = useState<ClienteFormData>({
+    nome: '',
+    email: '',
+    telefone: '',
+    documento: '',
+    tipoDocumento: 'cpf',
+    endereco: '',
+    cidade: '',
+    estado: '',
+    cep: '',
+    observacoes: '',
+    status: 'ativo'
   });
 
+  // Carregar dados do cliente se for edição
   useEffect(() => {
-    // Verificar se existe URL de retorno no sessionStorage
-    const returnUrl = sessionStorage.getItem('returnUrl');
-    if (returnUrl && !isEdit) {
-      // Se estamos criando um novo cliente e existe URL de retorno, usar ela
-      return;
+    if (isEdit && id) {
+      const cliente = getClienteById(id);
+      if (cliente) {
+        setFormData({
+          nome: cliente.name || '',
+          email: cliente.email || '',
+          telefone: cliente.phone || '',
+          documento: cliente.document || '',
+          tipoDocumento: cliente.document.includes('/') ? 'cnpj' : 'cpf',
+          endereco: cliente.address || '',
+          cidade: '',
+          estado: '',
+          cep: '',
+          observacoes: cliente.notes || '',
+          status: cliente.status === 'active' ? 'ativo' : 'inativo'
+        });
+      }
     }
-  }, [isEdit]);
+  }, [isEdit, id, getClienteById]);
 
   const tourSteps: TourStep[] = [
     {
@@ -50,7 +82,7 @@ const Cliente = () => {
       placement: 'bottom'
     },
     {
-      target: '#name',
+      target: '#nome',
       title: 'Nome Completo',
       content: 'Digite o nome completo do cliente.',
       placement: 'bottom'
@@ -65,19 +97,41 @@ const Cliente = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isEdit ? 'Editando cliente:' : 'Criando cliente:', formData);
     
+    if (!formData.nome || !formData.documento) {
+      alert('Por favor, preencha os campos obrigatórios');
+      return;
+    }
+
+    const clienteData = {
+      name: formData.nome,
+      label: formData.nome,
+      subtitle: `${formData.tipoDocumento.toUpperCase()}: ${formData.documento}`,
+      email: formData.email,
+      phone: formData.telefone,
+      document: formData.documento,
+      address: formData.endereco,
+      notes: formData.observacoes,
+      status: formData.status === 'ativo' ? 'active' as const : 'inactive' as const
+    };
+
+    if (isEdit && id) {
+      updateCliente(id, clienteData);
+    } else {
+      createCliente(clienteData);
+    }
+
     // Verificar se existe URL de retorno
     const returnUrl = sessionStorage.getItem('returnUrl');
     if (returnUrl && !isEdit) {
       sessionStorage.removeItem('returnUrl');
       navigate(returnUrl);
     } else {
-      navigate('/eventos/clientes');
+      goBack();
     }
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
+  const handleChange = (field: keyof ClienteFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -89,11 +143,11 @@ const Cliente = () => {
       content: (
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome Completo *</Label>
+            <Label htmlFor="nome">Nome Completo *</Label>
             <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => handleChange('name', e.target.value)}
+              id="nome"
+              value={formData.nome}
+              onChange={(e) => handleChange('nome', e.target.value)}
               placeholder="Ex: João Silva"
               required
               className="h-11"
@@ -102,9 +156,9 @@ const Cliente = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="documentType">Tipo de Documento</Label>
-              <Select value={formData.documentType} onValueChange={(value) => handleChange('documentType', value)}>
-                <SelectTrigger id="documentType" className="h-11">
+              <Label htmlFor="tipoDocumento">Tipo de Documento</Label>
+              <Select value={formData.tipoDocumento} onValueChange={(value) => handleChange('tipoDocumento', value as 'cpf' | 'cnpj')}>
+                <SelectTrigger id="tipoDocumento" className="h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -115,11 +169,11 @@ const Cliente = () => {
             </div>
 
             <CampoDocumento
-              id="document"
-              label={formData.documentType === 'cpf' ? 'CPF' : 'CNPJ'}
-              value={formData.document}
-              onChange={(value) => handleChange('document', value)}
-              tipo={formData.documentType as 'cpf' | 'cnpj'}
+              id="documento"
+              label={formData.tipoDocumento === 'cpf' ? 'CPF' : 'CNPJ'}
+              value={formData.documento}
+              onChange={(value) => handleChange('documento', value)}
+              tipo={formData.tipoDocumento}
               required
             />
           </div>
@@ -141,10 +195,10 @@ const Cliente = () => {
           />
 
           <CampoTelefone
-            id="phone"
+            id="telefone"
             label="Telefone"
-            value={formData.phone}
-            onChange={(value) => handleChange('phone', value)}
+            value={formData.telefone}
+            onChange={(value) => handleChange('telefone', value)}
           />
         </div>
       )
@@ -156,11 +210,11 @@ const Cliente = () => {
       content: (
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="address">Endereço</Label>
+            <Label htmlFor="endereco">Endereço</Label>
             <Input
-              id="address"
-              value={formData.address}
-              onChange={(e) => handleChange('address', e.target.value)}
+              id="endereco"
+              value={formData.endereco}
+              onChange={(e) => handleChange('endereco', e.target.value)}
               placeholder="Ex: Rua das Flores, 123"
               className="h-11"
             />
@@ -168,33 +222,33 @@ const Cliente = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="city">Cidade</Label>
+              <Label htmlFor="cidade">Cidade</Label>
               <Input
-                id="city"
-                value={formData.city}
-                onChange={(e) => handleChange('city', e.target.value)}
+                id="cidade"
+                value={formData.cidade}
+                onChange={(e) => handleChange('cidade', e.target.value)}
                 placeholder="Ex: São Paulo"
                 className="h-11"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="state">Estado</Label>
+              <Label htmlFor="estado">Estado</Label>
               <Input
-                id="state"
-                value={formData.state}
-                onChange={(e) => handleChange('state', e.target.value)}
+                id="estado"
+                value={formData.estado}
+                onChange={(e) => handleChange('estado', e.target.value)}
                 placeholder="Ex: SP"
                 className="h-11"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="zipCode">CEP</Label>
+              <Label htmlFor="cep">CEP</Label>
               <Input
-                id="zipCode"
-                value={formData.zipCode}
-                onChange={(e) => handleChange('zipCode', e.target.value)}
+                id="cep"
+                value={formData.cep}
+                onChange={(e) => handleChange('cep', e.target.value)}
                 placeholder="12345-678"
                 className="h-11"
               />
@@ -208,32 +262,25 @@ const Cliente = () => {
       title: 'Observações',
       defaultOpen: false,
       content: (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="notes">Observações</Label>
+            <Label htmlFor="observacoes">Observações</Label>
             <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => handleChange('notes', e.target.value)}
-              placeholder="Informações adicionais sobre o cliente..."
+              id="observacoes"
+              value={formData.observacoes}
+              onChange={(e) => handleChange('observacoes', e.target.value)}
+              placeholder="Observações adicionais sobre o cliente..."
               rows={4}
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/30">
-            <div className="space-y-1">
-              <Label htmlFor="isRecurring" className="text-sm font-medium">
-                Cliente Recorrente
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                Marque se este cliente faz reservas com frequência
-              </p>
-            </div>
+          <div className="flex items-center space-x-2">
             <Switch
-              id="isRecurring"
-              checked={formData.isRecurring}
-              onCheckedChange={(checked) => handleChange('isRecurring', checked)}
+              id="status"
+              checked={formData.status === 'ativo'}
+              onCheckedChange={(checked) => handleChange('status', checked ? 'ativo' : 'inativo')}
             />
+            <Label htmlFor="status">Cliente Ativo</Label>
           </div>
         </div>
       )
@@ -242,17 +289,16 @@ const Cliente = () => {
 
   return (
     <BaseFormPage
-      title={isEdit ? 'Editar Cliente' : 'Novo Cliente'}
-      description={isEdit ? 'Edite as informações do cliente' : 'Cadastre um novo cliente'}
-      icon={<User className="h-5 w-5" />}
+      title={isEdit ? "Editar Cliente" : "Novo Cliente"}
+      icon={<User className="h-6 w-6" />}
       moduleColor={MODULE_COLORS.events}
-      backTo="/eventos/clientes"
-      backLabel="Clientes"
-      onSubmit={handleSubmit}
-      submitLabel={isEdit ? 'Salvar Alterações' : 'Cadastrar Cliente'}
-      tourSteps={tourSteps}
-      tourTitle={isEdit ? "Edição de Cliente" : "Cadastro de Cliente"}
+      
+      
       formSections={formSections}
+      onSubmit={handleSubmit}
+      tourSteps={tourSteps}
+      submitLabel={isEdit ? "Atualizar Cliente" : "Criar Cliente"}
+      description={isEdit ? "Edite as informações do cliente existente." : "Preencha os campos para criar um novo cliente."}
     />
   );
 };

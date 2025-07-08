@@ -2,13 +2,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { ArrowLeft, LogOut, Search, Settings, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +20,7 @@ interface ModuleHeaderProps {
   icon: React.ReactNode;
   moduleColor: string;
   mustReturn?: boolean;
-  backTo?: string;
+  backTo?: string; // Mantido para compatibilidade, mas não será usado
   backLabel?: string;
 }
 
@@ -28,11 +29,12 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   icon,
   moduleColor,
   mustReturn = true,
-  backTo = '/inicio',
-  backLabel = 'Inicio'
+  backTo, // Não será usado, mas mantido para compatibilidade
+  backLabel = 'Voltar'
 }) => {
   const navigate = useNavigate();
   const { user, company, currentBranch } = useAuth();
+  const { goBack } = useNavigationHistory();
   const [isQuickSearchOpen, setIsQuickSearchOpen] = useState(false);
 
   // Verificar se é o inicio para usar cores diferentes
@@ -55,6 +57,10 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
     };
   }, []);
 
+  const handleBackClick = () => {
+    goBack();
+  };
+
   return (
     <>
       <header
@@ -67,7 +73,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
               {mustReturn && <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate(backTo)}
+                onClick={handleBackClick}
                 className={`gap-2 ${textColor} ${buttonHoverColor}`}
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -140,7 +146,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                       </p>
                     </div>
                     <Avatar className="w-8 h-8">
-                      <AvatarImage src={user?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"} />
+                      <AvatarImage src={user?.avatar || "/placeholder.svg"} />
                       <AvatarFallback>
                         <User className="h-4 w-4" />
                       </AvatarFallback>

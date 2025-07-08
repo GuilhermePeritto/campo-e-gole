@@ -14,7 +14,7 @@ import Cliente from './pages/eventos/clientes/Cliente';
 import Clientes from './pages/eventos/clientes/Clientes';
 import HistoricoCliente from './pages/eventos/clientes/HistoricoCliente';
 import Agenda from './pages/eventos/eventos/Agenda';
-import Reserva from './pages/eventos/eventos/Reserva';
+import Evento from './pages/eventos/eventos/Evento';
 import Locais from './pages/eventos/locais/Locais';
 import Local from './pages/eventos/locais/Local';
 import ReceberPagamento from './pages/eventos/recebiveis/ReceberPagamento';
@@ -105,11 +105,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/inicio" element={<Inicio />} />
           
-          {/* Eventos */}
+          {/* Rotas de Eventos */}
           <Route path="/eventos" element={<Events />} />
           <Route path="/eventos/agenda" element={<Agenda />} />
-          <Route path="/eventos/reserva" element={<Reserva />} />
-          <Route path="/eventos/reserva/:id/editar" element={<Reserva />} />
+          <Route path="/eventos/evento" element={<Evento />} />
+          <Route path="/eventos/evento/:id/editar" element={<Evento />} />
           <Route path="/eventos/clientes" element={<Clientes />} />
           <Route path="/eventos/clientes/:id" element={<Cliente />} />
           <Route path="/eventos/clientes/:id/historico" element={<HistoricoCliente />} />

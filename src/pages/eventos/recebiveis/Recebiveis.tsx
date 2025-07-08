@@ -4,23 +4,28 @@ import ModuleHeader from '@/components/ModuleHeader';
 import SummaryCards from '@/components/table/SummaryCards';
 import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { CreditCard, DollarSign, Edit, Plus, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useRecebiveis } from '@/hooks/useRecebiveis';
+import { AlertTriangle, CheckCircle, CreditCard, DollarSign, Edit, Plus, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Recebiveis = () => {
   const navigate = useNavigate();
   const { recebiveis, loading } = useRecebiveis();
 
+  // Debug: verificar se os dados estão chegando
+  console.log('Recebiveis - dados recebidos:', recebiveis);
+  console.log('Recebiveis - quantidade:', recebiveis.length);
+  console.log('Recebiveis - loading:', loading);
+
   // Calculate summary metrics
   const summaryData = useMemo(() => {
     if (!recebiveis.length) return [];
 
-    const totalAmount = recebiveis.reduce((sum, r) => sum + r.amount, 0);
-    const pendingAmount = recebiveis.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.amount, 0);
-    const overdueAmount = recebiveis.filter(r => r.status === 'overdue').reduce((sum, r) => sum + r.amount, 0);
-    const paidAmount = recebiveis.filter(r => r.status === 'paid').reduce((sum, r) => sum + r.amount, 0);
+    const totalAmount = recebiveis.reduce((sum, r) => sum + r.valor, 0);
+    const pendingAmount = recebiveis.filter(r => r.status === 'pendente').reduce((sum, r) => sum + r.valor, 0);
+    const paidAmount = recebiveis.filter(r => r.status === 'pago').reduce((sum, r) => sum + r.valor, 0);
+    const overdueAmount = recebiveis.filter(r => r.status === 'vencido').reduce((sum, r) => sum + r.valor, 0);
 
     return [
       {
@@ -38,7 +43,7 @@ const Recebiveis = () => {
       {
         title: 'Pendentes',
         value: `R$ ${pendingAmount.toFixed(2)}`,
-        description: 'Aguardando recebimento',
+        description: 'Aguardando pagamento',
         icon: TrendingUp,
         trend: {
           value: -5,
@@ -48,21 +53,9 @@ const Recebiveis = () => {
         color: 'bg-yellow-500'
       },
       {
-        title: 'Vencidos',
-        value: `R$ ${overdueAmount.toFixed(2)}`,
-        description: 'Valores em atraso',
-        icon: AlertTriangle,
-        trend: {
-          value: -15,
-          label: 'vs mês anterior',
-          type: 'positive' as const
-        },
-        color: 'bg-red-500'
-      },
-      {
-        title: 'Recebidos',
+        title: 'Pagos',
         value: `R$ ${paidAmount.toFixed(2)}`,
-        description: 'Valores quitados',
+        description: 'Recebimentos confirmados',
         icon: CheckCircle,
         trend: {
           value: 20,
@@ -70,29 +63,48 @@ const Recebiveis = () => {
           type: 'positive' as const
         },
         color: 'bg-green-500'
+      },
+      {
+        title: 'Vencidos',
+        value: `R$ ${overdueAmount.toFixed(2)}`,
+        description: 'Contas em atraso',
+        icon: AlertTriangle,
+        trend: {
+          value: -15,
+          label: 'vs mês anterior',
+          type: 'positive' as const
+        },
+        color: 'bg-red-500'
       }
     ];
   }, [recebiveis]);
 
   const columns = [
     {
-      key: 'client',
+      key: 'cliente',
       label: 'Cliente',
       sortable: true,
       filterable: true,
       filterType: 'select' as const
     },
     {
-      key: 'description',
-      label: 'Descrição'
+      key: 'descricao',
+      label: 'Descrição',
+      sortable: true,
+      filterable: true,
+      filterType: 'text' as const
     },
     {
-      key: 'dueDate',
-      label: 'Vencimento'
+      key: 'valor',
+      label: 'Valor',
+      sortable: true,
+      render: (item: any) => `R$ ${item.valor.toFixed(2)}`
     },
     {
-      key: 'amount',
-      label: 'Valor'
+      key: 'dataVencimento',
+      label: 'Vencimento',
+      sortable: true,
+      render: (item: any) => new Date(item.dataVencimento).toLocaleDateString('pt-BR')
     },
     {
       key: 'status',
@@ -100,31 +112,27 @@ const Recebiveis = () => {
       filterable: true,
       filterType: 'select' as const,
       render: (item: any) => {
-        const variants = {
-          pending: 'default',
-          overdue: 'destructive',
-          paid: 'default'
-        } as const;
-        
-        const labels = {
-          pending: 'Pendente',
-          overdue: 'Vencido',
-          paid: 'Pago'
+        const statusConfig = {
+          pendente: { variant: 'secondary' as const, label: 'Pendente' },
+          pago: { variant: 'default' as const, label: 'Pago' },
+          vencido: { variant: 'destructive' as const, label: 'Vencido' }
         };
-        
-        return (
-          <Badge variant={variants[item.status as keyof typeof variants]}>
-            {labels[item.status as keyof typeof labels]}
-          </Badge>
-        );
+        const config = statusConfig[item.status] || statusConfig.pendente;
+        return <Badge variant={config.variant}>{config.label}</Badge>;
       }
+    },
+    {
+      key: 'criadoEm',
+      label: 'Data Criação',
+      sortable: true,
+      render: (item: any) => new Date(item.criadoEm).toLocaleDateString('pt-BR')
     }
   ];
 
   const actions = [
     {
       label: 'Editar',
-      onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}/editar`),
+      onClick: (item: any) => navigate(`/eventos/recebiveis/${item.id}`),
       variant: 'outline' as const,
       icon: <Edit className="h-4 w-4" />
     },
@@ -139,37 +147,45 @@ const Recebiveis = () => {
   const createButton = {
     label: 'Novo Recebível',
     icon: <Plus className="h-4 w-4" />,
-    onClick: () => navigate('/eventos/recebiveis/novo')
+    onClick: () => {
+      sessionStorage.setItem('returnUrl', window.location.pathname);
+      navigate('/eventos/recebiveis/novo');
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen bg-background flex flex-col">
       <ModuleHeader
         title="Recebíveis"
-        icon={<DollarSign className="h-5 w-5" />}
+        icon={<DollarSign className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos"
-        backLabel="Módulo Eventos"
+
+        
       />
 
-      <main className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8 h-[calc(100vh-80px)]">
-        <div className="space-y-6">
-          <SummaryCards cards={summaryData} loading={loading} />
+      <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 xl:px-12 py-6 overflow-hidden">
+        <div className="flex flex-col h-full space-y-6">
+          <div className="flex-shrink-0">
+            <SummaryCards cards={summaryData} loading={loading} />
+          </div>
           
-          <BaseList
-            title="Recebíveis"
-            description="Gerencie as contas pendentes e recebimentos"
-            data={recebiveis}
-            columns={columns}
-            actions={actions}
-            createButton={createButton}
-            searchPlaceholder="Buscar contas..."
-            searchFields={['client', 'description']}
-            getItemId={(item) => item.id}
-            pageSize={10}
-            entityName="recebiveis"
-            loading={loading}
-          />
+          <div className="flex-1 min-h-0">
+            <BaseList
+              title="Recebíveis"
+              description="Gerencie as contas a receber e recebimentos"
+              data={recebiveis}
+              columns={columns}
+              actions={actions}
+              createButton={createButton}
+              searchPlaceholder="Buscar recebíveis..."
+              searchFields={['cliente', 'descricao']}
+              getItemId={(item) => item.id}
+              pageSize={10}
+              entityName="recebiveis"
+              loading={loading}
+              className="h-full"
+            />
+          </div>
         </div>
       </main>
     </div>

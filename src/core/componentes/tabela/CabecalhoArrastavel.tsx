@@ -1,25 +1,25 @@
 
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableHead } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
 import { obterEstilosFixacao } from '@/core/hooks/useUtilsTabela';
+import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Header, flexRender } from '@tanstack/react-table';
 import {
-  ArrowLeftToLine,
-  ArrowRightToLine,
-  ChevronDown,
-  ChevronUp,
-  Ellipsis,
-  GripVertical,
-  PinOff
+    ArrowLeftToLine,
+    ArrowRightToLine,
+    ChevronDown,
+    ChevronUp,
+    Ellipsis,
+    GripVertical,
+    PinOff
 } from 'lucide-react';
 import { CSSProperties, useCallback } from 'react';
 

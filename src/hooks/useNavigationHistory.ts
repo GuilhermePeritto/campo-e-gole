@@ -31,6 +31,14 @@ export const useNavigationHistory = () => {
   }, [location.pathname]);
 
   const goBack = () => {
+    // Primeiro, verificar se existe um returnUrl no sessionStorage
+    const returnUrl = sessionStorage.getItem('returnUrl');
+    if (returnUrl) {
+      sessionStorage.removeItem('returnUrl');
+      navigate(returnUrl);
+      return true;
+    }
+
     const history = historyRef.current;
     
     if (history.length > 1) {

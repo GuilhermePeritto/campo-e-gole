@@ -1,68 +1,95 @@
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
 import { mockLocais } from '@/data/mockLocais';
+import type { Local } from '@/types/eventos';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useLocais = () => {
-  const [locais, setLocais] = useState(mockLocais);
+export function useLocais() {
   const [loading, setLoading] = useState(true);
 
-  // Simulate API call
+  // Debug: verificar dados mockados
+  // console.log('useLocais - mockLocais:', mockLocais);
+  // console.log('useLocais - mockLocais length:', mockLocais.length);
+
+  // Simular carregamento
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
-
     return () => clearTimeout(timer);
   }, []);
 
-  const getLocalById = useCallback((id: string) => {
-    return locais.find(local => local.id === id);
-  }, [locais]);
+  const locais: Local[] = useMemo(() => mockLocais.map(local => ({
+    id: String(local.id),
+    nome: local.name,
+    rotulo: local.name,
+    subtitulo: local.type,
+    tipo: local.type,
+    intervalo: local.interval || 60,
+    valorHora: local.hourlyRate || 0,
+    capacidade: local.capacity,
+    descricao: local.description,
+    comodidades: local.amenities,
+    status: local.status === 'active' ? 'ativo' : local.status === 'maintenance' ? 'manutencao' : 'inativo',
+    cor: local.color,
+    horarioAbertura: local.openTime || '08:00',
+    horarioFechamento: local.closeTime || '22:00'
+  })), []);
 
-  const getLocalByName = useCallback((name: string) => {
-    return locais.find(local => local.name === name);
-  }, [locais]);
+  // Debug: verificar locais processados
+  // console.log('useLocais - locais processados:', locais);
+  // console.log('useLocais - locais length:', locais.length);
 
-  const getLocalByVenueId = useCallback((venueId: string) => {
-    return locais.find(local => local.id === venueId);
-  }, [locais]);
+  const listar = () => locais;
+  const buscarPorId = (id: string) => locais.find(l => l.id === id);
+  const filtrar = (filtros: Partial<Pick<Local, 'status' | 'tipo'>>) => {
+    return locais.filter(l => {
+      if (filtros.status && l.status !== filtros.status) return false;
+      if (filtros.tipo && l.tipo !== filtros.tipo) return false;
+      return true;
+    });
+  };
 
-  const getVenuesForCalendar = useCallback(() => {
-    return locais.map(local => ({
+  // Função para carregar local por ID (simula chamada para backend)
+  const loadLocalById = useCallback(async (id: string): Promise<any> => {
+    // Simular delay de rede
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const local = locais.find(l => l.id === id);
+    if (!local) {
+      throw new Error('Local não encontrado');
+    }
+    
+    // Retornar no formato esperado pelo CampoBusca
+    return {
       id: local.id,
-      name: local.name,
-      color: local.color || '#6b7280'
-    }));
+      label: local.nome,
+      subtitle: local.tipo,
+      tipo: local.tipo,
+      valorHora: local.valorHora,
+      capacidade: local.capacidade,
+      descricao: local.descricao,
+      comodidades: local.comodidades,
+      status: local.status,
+      cor: local.cor,
+      intervalo: local.intervalo,
+      horarioAbertura: local.horarioAbertura,
+      horarioFechamento: local.horarioFechamento
+    };
   }, [locais]);
 
-  const createLocal = (localData: any) => {
-    const newLocal = {
-      ...localData,
-      id: Date.now().toString(),
-    };
-    setLocais(prev => [...prev, newLocal]);
-    return newLocal;
-  };
+  const criar = (local: Omit<Local, 'id'>) => ({ ...local, id: crypto.randomUUID() });
+  const editar = (id: string, dados: Partial<Local>) => ({ ...buscarPorId(id), ...dados });
+  const deletar = (id: string) => true;
 
-  const updateLocal = (id: string, localData: any) => {
-    setLocais(prev => prev.map(local => 
-      local.id === id ? { ...local, ...localData } : local
-    ));
+  return { 
+    locais, 
+    loading, 
+    listar, 
+    buscarPorId, 
+    filtrar, 
+    criar, 
+    editar, 
+    deletar,
+    loadLocalById
   };
-
-  const deleteLocal = (id: string) => {
-    setLocais(prev => prev.filter(local => local.id !== id));
-  };
-
-  return {
-    locais,
-    loading,
-    getLocalById,
-    getLocalByName,
-    getLocalByVenueId,
-    getVenuesForCalendar,
-    createLocal,
-    updateLocal,
-    deleteLocal,
-  };
-};
+}

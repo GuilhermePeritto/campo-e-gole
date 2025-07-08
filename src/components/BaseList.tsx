@@ -1,15 +1,15 @@
 
-import React, { useState, useMemo } from 'react';
-import { cn } from '@/lib/utils';
-import PaginationControls from '@/components/PaginationControls';
+import BaseListEmptyState from '@/components/BaseListEmptyState';
+import BaseListGrid from '@/components/BaseListGrid';
 import BaseListHeader from '@/components/BaseListHeader';
 import BaseListSearchControls, { AdvancedFilter } from '@/components/BaseListSearchControls';
+import PaginationControls from '@/components/PaginationControls';
 import TabelaAvancada from '@/core/componentes/tabela/TabelaAvancada';
-import BaseListGrid from '@/components/BaseListGrid';
-import BaseListEmptyState from '@/components/BaseListEmptyState';
-import { usePagination } from '@/hooks/usePagination';
-import { VisibilityState } from '@tanstack/react-table';
 import { useCacheTabela } from '@/core/hooks/useCacheTabela';
+import { usePagination } from '@/hooks/usePagination';
+import { cn } from '@/lib/utils';
+import { VisibilityState } from '@tanstack/react-table';
+import React, { useMemo, useState } from 'react';
 
 export interface BaseListColumn<T> {
   key: keyof T | string;
@@ -19,6 +19,7 @@ export interface BaseListColumn<T> {
   className?: string;
   filterable?: boolean;
   filterType?: 'text' | 'select' | 'multiselect';
+  canHide?: boolean;
 }
 
 export interface BaseListAction<T> {
@@ -52,6 +53,7 @@ interface BaseListProps<T> {
   exportFilename?: string;
   loading?: boolean;
   entityName?: string;
+  showDebugInfo?: boolean; // Nova prop para mostrar informações de debug da paginação
 }
 
 const BaseList = <T extends Record<string, any>>({
@@ -71,6 +73,7 @@ const BaseList = <T extends Record<string, any>>({
   exportFilename,
   loading = false,
   entityName,
+  showDebugInfo = false,
 }: BaseListProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
@@ -81,12 +84,15 @@ const BaseList = <T extends Record<string, any>>({
   const nomeEntidadeCache = entityName || 'default';
   const { dadosCache, salvarNoCache } = useCacheTabela(nomeEntidadeCache);
 
-  // Initialize advanced filters from cache
+  // Initialize advanced filters and column visibility from cache
   React.useEffect(() => {
     if (dadosCache.filtrosAvancados) {
       setAdvancedFilters(dadosCache.filtrosAvancados);
     }
-  }, [dadosCache.filtrosAvancados]);
+    if (dadosCache.visibilidadeColunas) {
+      setColumnVisibility(dadosCache.visibilidadeColunas);
+    }
+  }, [dadosCache.filtrosAvancados, dadosCache.visibilidadeColunas]);
 
   // Generate advanced filters based on filterable columns
   const availableAdvancedFilters = useMemo((): AdvancedFilter[] => {
@@ -162,18 +168,33 @@ const BaseList = <T extends Record<string, any>>({
     hasPreviousPage,
     goToPage,
     setPageSize,
-    pageSize: currentPageSize
+    pageSize: currentPageSize,
+    getPageInfo,
+    isLoading: paginationLoading
   } = usePagination(filteredData, {
     pageSize,
-    totalItems: filteredData.length
+    totalItems: filteredData.length,
+    simulateApiDelay: true
   });
+
+  // Informações de paginação para debug/logs
+  React.useEffect(() => {
+    const pageInfo = getPageInfo();
+    console.log(`📊 BaseList - ${title}:`, {
+      ...pageInfo,
+      totalItems: filteredData.length,
+      totalPages,
+      currentPage,
+      itemsInPage: paginatedData.length
+    });
+  }, [currentPage, pageSize, filteredData.length, getPageInfo, title, totalPages, paginatedData.length]);
 
   // Prepare columns for visibility control
   const columnsForVisibility = useMemo(() => {
     const baseColumns = columns.map(col => ({
       id: String(col.key),
       label: col.label,
-      canHide: true,
+      canHide: col.canHide !== false, // Default to true unless explicitly set to false
       isVisible: columnVisibility[String(col.key)] !== false
     }));
 
@@ -190,10 +211,14 @@ const BaseList = <T extends Record<string, any>>({
   }, [columns, actions, columnVisibility]);
 
   const handleColumnVisibilityChange = (columnId: string, visible: boolean) => {
-    setColumnVisibility(prev => ({
-      ...prev,
+    const newVisibility = {
+      ...columnVisibility,
       [columnId]: visible
-    }));
+    };
+    setColumnVisibility(newVisibility);
+    
+    // Salvar no cache para persistir a configuração
+    salvarNoCache({ visibilidadeColunas: newVisibility });
   };
 
   const handleAdvancedFilterChange = (filterId: string, values: string[]) => {
@@ -240,8 +265,8 @@ const BaseList = <T extends Record<string, any>>({
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-[400px]">
-        <div className="flex-1 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 overflow-hidden min-h-0">
           {paginatedData.length === 0 ? (
             <BaseListEmptyState
               searchTerm={searchTerm}
@@ -284,6 +309,7 @@ const BaseList = <T extends Record<string, any>>({
               hasPreviousPage={hasPreviousPage}
               onPageChange={goToPage}
               onPageSizeChange={setPageSize}
+              showDebugInfo={showDebugInfo}
             />
           </div>
         )}

@@ -5,37 +5,83 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Clock, MapPin, Palette } from 'lucide-react';
-import { useState } from 'react';
+import { useLocais } from '@/hooks/useLocais';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory';
+import { MapPin } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+interface LocalFormData {
+  nome: string;
+  tipo: string;
+  cor: string;
+  valorHora: string;
+  capacidade: string;
+  descricao: string;
+  comodidades: string[];
+  status: 'ativo' | 'inativo' | 'manutencao';
+  intervalo: string;
+  horarioAbertura: string;
+  horarioFechamento: string;
+}
 
 const Local = () => {
   const navigate = useNavigate();
+  const { goBack } = useNavigationHistory();
   const { id } = useParams();
   const isEdit = !!id;
 
-  const [formData, setFormData] = useState({
-    name: isEdit ? 'Quadra Principal' : '',
-    type: isEdit ? 'Futebol Society' : '',
-    color: isEdit ? '#10B981' : '#ffffff',
-    hasPeakHours: isEdit ? true : true,
-    peakHourStart: isEdit ? '18:00' : '',
-    peakHourEnd: isEdit ? '20:00' : '',
-    peakHourRate: isEdit ? '120.00' : '',
-    active: isEdit ? true : false,
-    capacity: isEdit ? '22' : '',
-    hourlyRate: isEdit ? '80.00' : '',
-    status: isEdit ? 'ativo' : 'ativo',
-    description: isEdit ? 'Quadra com grama sintética e iluminação completa' : '',
-    characteristics: isEdit ? ['Grama sintética', 'Iluminação', 'Vestiário'] : [],
-    eventInterval: isEdit ? '30' : '30',
-    customInterval: isEdit ? '' : ''
+  const { buscarPorId, criar, editar } = useLocais();
+
+  const [formData, setFormData] = useState<LocalFormData>({
+    nome: '',
+    tipo: '',
+    cor: '#10B981',
+    valorHora: '',
+    capacidade: '',
+    descricao: '',
+    comodidades: [],
+    status: 'ativo',
+    intervalo: '60',
+    horarioAbertura: '08:00',
+    horarioFechamento: '22:00'
   });
 
-  const availableCharacteristics = [
+  // Carregar dados do local se for edição
+  useEffect(() => {
+    if (isEdit && id) {
+      const local = buscarPorId(id);
+      if (local) {
+        setFormData({
+          nome: local.nome || '',
+          tipo: local.tipo || '',
+          cor: local.cor || '#10B981',
+          valorHora: local.valorHora?.toString() || '',
+          capacidade: local.capacidade?.toString() || '',
+          descricao: local.descricao || '',
+          comodidades: local.comodidades || [],
+          status: local.status || 'ativo',
+          intervalo: local.intervalo?.toString() || '60',
+          horarioAbertura: local.horarioAbertura || '08:00',
+          horarioFechamento: local.horarioFechamento || '22:00'
+        });
+      }
+    }
+  }, [isEdit, id, buscarPorId]);
+
+  const opcoesTipo = [
+    'Futebol',
+    'Futebol Society',
+    'Futsal',
+    'Vôlei',
+    'Basquete',
+    'Tênis',
+    'Poliesportiva'
+  ];
+
+  const opcoesComodidades = [
     'Grama sintética',
     'Grama natural',
     'Piso de madeira',
@@ -52,11 +98,12 @@ const Local = () => {
     'Climatização'
   ];
 
-  const eventIntervalOptions = [
+  const opcoesIntervalo = [
     { value: '15', label: '15 minutos' },
     { value: '30', label: '30 minutos' },
     { value: '60', label: '1 hora' },
-    { value: 'custom', label: 'Personalizado' }
+    { value: '90', label: '1 hora e 30 minutos' },
+    { value: '120', label: '2 horas' }
   ];
 
   const tourSteps: TourStep[] = [
@@ -67,39 +114,62 @@ const Local = () => {
       placement: 'bottom'
     },
     {
-      target: '#name',
+      target: '#nome',
       title: 'Nome do Local',
       content: 'Digite o nome do local que será exibido nas reservas.',
       placement: 'bottom'
     },
     {
-      target: '[data-card="caracteristicas"]',
-      title: 'Características',
-      content: 'Selecione as características disponíveis no local.',
+      target: '[data-card="comodidades"]',
+      title: 'Comodidades',
+      content: 'Selecione as comodidades disponíveis no local.',
       placement: 'top'
     }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(isEdit ? 'Editando local:' : 'Criando local:', formData);
-    navigate('/eventos/locais');
+    
+    if (!formData.nome || !formData.tipo || !formData.valorHora) {
+      alert('Por favor, preencha os campos obrigatórios');
+      return;
+    }
+
+    const localData = {
+      nome: formData.nome,
+      rotulo: formData.nome,
+      subtitulo: formData.tipo,
+      tipo: formData.tipo,
+      valorHora: parseFloat(formData.valorHora),
+      capacidade: formData.capacidade ? parseInt(formData.capacidade) : undefined,
+      descricao: formData.descricao,
+      comodidades: formData.comodidades,
+      status: formData.status,
+      cor: formData.cor,
+      intervalo: parseInt(formData.intervalo),
+      horarioAbertura: formData.horarioAbertura,
+      horarioFechamento: formData.horarioFechamento
+    };
+
+    if (isEdit && id) {
+      editar(id, localData);
+    } else {
+      criar(localData);
+    }
+
+    goBack();
   };
 
-  const handleChange = (field: string, value: string | string[]) => {
+  const handleChange = (field: keyof LocalFormData, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleCharacteristicToggle = (characteristic: string) => {
+  const handleComodidadeToggle = (comodidade: string) => {
     setFormData(prev => ({
       ...prev,
-      characteristics: prev.characteristics.includes(characteristic)
-        ? prev.characteristics.filter(c => c !== characteristic)
-        : [...prev.characteristics, characteristic]
+      comodidades: prev.comodidades.includes(comodidade)
+        ? prev.comodidades.filter(c => c !== comodidade)
+        : [...prev.comodidades, comodidade]
     }));
   };
 
@@ -112,11 +182,11 @@ const Local = () => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Nome do Local *</Label>
+              <Label htmlFor="nome">Nome do Local *</Label>
               <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                id="nome"
+                value={formData.nome}
+                onChange={(e) => handleChange('nome', e.target.value)}
                 placeholder="Ex: Quadra Principal"
                 required
                 className="h-11"
@@ -124,130 +194,73 @@ const Local = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type">Tipo *</Label>
-              <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
-                <SelectTrigger id="type" className="h-11">
+              <Label htmlFor="tipo">Tipo *</Label>
+              <Select value={formData.tipo} onValueChange={(value) => handleChange('tipo', value)}>
+                <SelectTrigger id="tipo" className="h-11">
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Futebol">Futebol</SelectItem>
-                  <SelectItem value="Futebol Society">Futebol Society</SelectItem>
-                  <SelectItem value="Futsal">Futsal</SelectItem>
-                  <SelectItem value="Vôlei">Vôlei</SelectItem>
-                  <SelectItem value="Basquete">Basquete</SelectItem>
-                  <SelectItem value="Tênis">Tênis</SelectItem>
-                  <SelectItem value="Poliesportiva">Poliesportiva</SelectItem>
+                  {opcoesTipo.map(tipo => (
+                    <SelectItem key={tipo} value={tipo}>
+                      {tipo}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
+            <Label htmlFor="descricao">Descrição</Label>
             <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
+              id="descricao"
+              value={formData.descricao}
+              onChange={(e) => handleChange('descricao', e.target.value)}
               placeholder="Descrição detalhada do local..."
               rows={3}
             />
           </div>
-          <div className="space-y-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="hourlyRate">Valor por Hora (R$) *</Label>
+              <Label htmlFor="valorHora">Valor por Hora (R$) *</Label>
               <Input
-                id="hourlyRate"
+                id="valorHora"
                 type="number"
                 step="0.01"
-                value={formData.hourlyRate}
-                onChange={(e) => handleChange('hourlyRate', e.target.value)}
+                value={formData.valorHora}
+                onChange={(e) => handleChange('valorHora', e.target.value)}
                 placeholder="Ex: 80.00"
                 required
                 className="h-11"
               />
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/20">
-                <div className="space-y-1">
-                  <div className="font-medium">Horário Nobre</div>
-                  <div className="text-sm text-muted-foreground">
-                    Ativar preços diferenciados para horários de maior demanda
-                  </div>
-                </div>
-                <Switch
-                  checked={formData.hasPeakHours}
-                  onCheckedChange={(checked) => handleInputChange('hasPeakHours', checked)}
-                />
-              </div>
-
-              {formData.hasPeakHours && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg border">
-                  <div className="space-y-2">
-                    <Label htmlFor="peakHourStart" className="text-sm font-medium">Início do Horário Nobre</Label>
-                    <Input
-                      id="peakHourStart"
-                      type="time"
-                      value={formData.peakHourStart}
-                      onChange={(e) => handleInputChange('peakHourStart', e.target.value)}
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="peakHourEnd" className="text-sm font-medium">Fim do Horário Nobre</Label>
-                    <Input
-                      id="peakHourEnd"
-                      type="time"
-                      value={formData.peakHourEnd}
-                      onChange={(e) => handleInputChange('peakHourEnd', e.target.value)}
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="peakHourRate" className="text-sm font-medium">Valor Horário Nobre (R$) *</Label>
-                    <Input
-                      id="peakHourRate"
-                      type="number"
-                      step="0.01"
-                      value={formData.peakHourRate}
-                      onChange={(e) => handleInputChange('peakHourRate', e.target.value)}
-                      placeholder="Ex: 120.00"
-                      className="h-11"
-                      required={formData.hasPeakHours}
-                    />
-                    {formData.hourlyRate && formData.peakHourRate && (
-                      <p className="text-xs text-green-600 font-medium">
-                        {(((parseFloat(formData.peakHourRate) / parseFloat(formData.hourlyRate)) - 1) * 100).toFixed(0)}% mais caro
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
+            <div className="space-y-2">
+              <Label htmlFor="capacidade">Capacidade</Label>
+              <Input
+                id="capacidade"
+                type="number"
+                value={formData.capacidade}
+                onChange={(e) => handleChange('capacidade', e.target.value)}
+                placeholder="Ex: 22"
+                className="h-11"
+              />
             </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'caracteristicas',
-      title: 'Características',
-      defaultOpen: false,
-      content: (
-        <div className="space-y-2">
-          <Label>Selecione as características disponíveis</Label>
-          <div className="border rounded-lg p-4 max-h-60 overflow-y-auto space-y-3">
-            {availableCharacteristics.map((characteristic) => (
-              <div key={characteristic} className="flex items-center space-x-2">
-                <Checkbox
-                  id={characteristic}
-                  checked={formData.characteristics.includes(characteristic)}
-                  onCheckedChange={() => handleCharacteristicToggle(characteristic)}
-                />
-                <Label htmlFor={characteristic} className="cursor-pointer">
-                  {characteristic}
-                </Label>
-              </div>
-            ))}
+
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select value={formData.status} onValueChange={(value) => handleChange('status', value as 'ativo' | 'inativo' | 'manutencao')}>
+                <SelectTrigger id="status" className="h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ativo">Ativo</SelectItem>
+                  <SelectItem value="inativo">Inativo</SelectItem>
+                  <SelectItem value="manutencao">Em Manutenção</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       )
@@ -258,85 +271,86 @@ const Local = () => {
       defaultOpen: false,
       content: (
         <div className="space-y-6">
-          <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" />
-              <Label className="text-sm font-medium">Intervalo de Eventos</Label>
-            </div>
-            <div className="space-y-3">
-              <Select value={formData.eventInterval} onValueChange={(value) => handleInputChange('eventInterval', value)}>
-                <SelectTrigger className="h-11">
-                  <SelectValue placeholder="Selecione o intervalo" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="intervalo">Intervalo de Reserva</Label>
+              <Select value={formData.intervalo} onValueChange={(value) => handleChange('intervalo', value)}>
+                <SelectTrigger id="intervalo" className="h-11">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {eventIntervalOptions.map((option) => (
+                  {opcoesIntervalo.map(option => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {formData.eventInterval === 'custom' && (
-                <div className="space-y-2">
-                  <Label htmlFor="customInterval" className="text-sm">Intervalo personalizado (minutos)</Label>
-                  <Input
-                    id="customInterval"
-                    type="number"
-                    min="5"
-                    max="240"
-                    value={formData.customInterval}
-                    onChange={(e) => handleInputChange('customInterval', e.target.value)}
-                    placeholder="Ex: 45"
-                    className="h-11"
-                  />
-                </div>
-              )}
-              <p className="text-xs text-muted-foreground">
-                Define o intervalo de tempo entre os horários disponíveis na timeline de reservas
-              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="horarioAbertura">Horário de Abertura</Label>
+              <Input
+                id="horarioAbertura"
+                type="time"
+                value={formData.horarioAbertura}
+                onChange={(e) => handleChange('horarioAbertura', e.target.value)}
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="horarioFechamento">Horário de Fechamento</Label>
+              <Input
+                id="horarioFechamento"
+                type="time"
+                value={formData.horarioFechamento}
+                onChange={(e) => handleChange('horarioFechamento', e.target.value)}
+                className="h-11"
+              />
             </div>
           </div>
 
-          <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
-            <div className="flex items-center gap-2">
-              <Palette className="h-4 w-4 text-primary" />
-              <Label htmlFor="color" className="text-sm font-medium">Cor de Identificação</Label>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Input
-                  id="color"
-                  type="color"
-                  value={formData.color}
-                  onChange={(e) => handleInputChange('color', e.target.value)}
-                  className="w-16 h-10 p-1 rounded-lg border cursor-pointer"
-                />
-                <Input
-                  type="text"
-                  value={formData.color}
-                  onChange={(e) => handleInputChange('color', e.target.value)}
-                  placeholder="#10B981"
-                  className="font-mono text-sm w-32"
-                />
-              </div>
-              <div
-                className="w-12 h-10 rounded-lg border-2 border-gray-300 shadow-sm"
-                style={{ backgroundColor: formData.color }}
+          <div className="space-y-2">
+            <Label htmlFor="cor">Cor do Local</Label>
+            <div className="flex items-center space-x-3">
+              <Input
+                id="cor"
+                type="color"
+                value={formData.cor}
+                onChange={(e) => handleChange('cor', e.target.value)}
+                className="w-16 h-11 p-1"
               />
+              <span className="text-sm text-muted-foreground">
+                Cor para identificação visual do local
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              A cor será usada para identificar visualmente o local na agenda
-            </p>
           </div>
-          <div className="flex items-center gap-3 p-4 border rounded-lg bg-muted/20">
-            <Switch
-              checked={formData.active}
-              onCheckedChange={(checked) => handleInputChange('active', checked)}
-            />
-            <Label className="font-medium">Local ativo</Label>
-            <span className="text-sm text-muted-foreground">
-              {formData.active ? 'O local estará disponível para reservas' : 'O local não aparecerá na lista de disponíveis'}
-            </span>
+        </div>
+      )
+    },
+    {
+      id: 'comodidades',
+      title: 'Comodidades',
+      defaultOpen: false,
+      content: (
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Selecione as comodidades disponíveis neste local:
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {opcoesComodidades.map(comodidade => (
+              <div key={comodidade} className="flex items-center space-x-2">
+                <Checkbox
+                  id={comodidade}
+                  checked={formData.comodidades.includes(comodidade)}
+                  onCheckedChange={() => handleComodidadeToggle(comodidade)}
+                />
+                <Label htmlFor={comodidade} className="text-sm">
+                  {comodidade}
+                </Label>
+              </div>
+            ))}
           </div>
         </div>
       )
@@ -345,17 +359,16 @@ const Local = () => {
 
   return (
     <BaseFormPage
-      title={isEdit ? 'Editar Local' : 'Novo Local'}
-      description={isEdit ? 'Edite as informações do local' : 'Registre um novo local para reservas'}
-      icon={<MapPin className="h-5 w-5" />}
+      title={isEdit ? "Editar Local" : "Novo Local"}
+      icon={<MapPin className="h-6 w-6" />}
       moduleColor={MODULE_COLORS.events}
-      backTo="/eventos/locais"
-      backLabel="Locais"
-      onSubmit={handleSubmit}
-      submitLabel={isEdit ? 'Salvar Alterações' : 'Cadastrar Local'}
-      tourSteps={tourSteps}
-      tourTitle={isEdit ? "Edição de Local" : "Cadastro de Local"}
+      
+      
       formSections={formSections}
+      onSubmit={handleSubmit}
+      tourSteps={tourSteps}
+      submitLabel={isEdit ? "Atualizar Local" : "Criar Local"}
+      description={isEdit ? "Edite as informações do local existente." : "Preencha os campos para criar um novo local."}
     />
   );
 };

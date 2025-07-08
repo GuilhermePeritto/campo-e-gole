@@ -1,21 +1,20 @@
 
-import { Button } from '@/components/ui/button';
-import { useVenueSettings } from '@/hooks/useVenueSettings';
-import { Clock, MapPin, Plus, User, X, Trash } from 'lucide-react';
-import { useLocais } from '@/hooks/useLocais';
-import EmptyTimelineState from './EmptyTimelineState';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { useLocais } from '@/hooks/useLocais';
+import { useVenueSettings } from '@/hooks/useVenueSettings';
+import { Clock, MapPin, Plus, Trash, User, X } from 'lucide-react';
 import { useState } from 'react';
+import EmptyTimelineState from './EmptyTimelineState';
 
 interface Event {
   id: number;
@@ -39,6 +38,7 @@ interface EventTimelineProps {
   onCancelEdit?: () => void;
   onDeleteEvent?: (eventId: number) => void;
   loading?: boolean;
+  getLocalByName?: (venueName: string) => any;
 }
 
 const EventTimeline = ({ 
@@ -51,11 +51,12 @@ const EventTimeline = ({
   onEventSelect,
   onCancelEdit,
   onDeleteEvent,
-  loading = false
+  loading = false,
+  getLocalByName: propGetLocalByName
 }: EventTimelineProps) => {
   
   const { generateTimeSlots, getVenueInterval } = useVenueSettings();
-  const { getLocalByName, getLocalById } = useLocais();
+  const { locais } = useLocais();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<number | null>(null);
   
@@ -65,7 +66,7 @@ const EventTimeline = ({
   }
   
   // Buscar o local pelo nome para obter o ID
-  const venue = getLocalByName(selectedVenue);
+  const venue = propGetLocalByName ? propGetLocalByName(selectedVenue) : locais.find(l => l.nome === selectedVenue);
   const venueId = venue?.id || 'all';
   
   // Gerar slots baseados no local selecionado
@@ -79,11 +80,7 @@ const EventTimeline = ({
     return event.venue === selectedVenue;
   });
 
-  console.log('EventTimeline - selectedVenue:', selectedVenue);
-  console.log('EventTimeline - venue found:', venue);
-  console.log('EventTimeline - all events:', events);
-  console.log('EventTimeline - filteredEvents:', filteredEvents);
-  console.log('EventTimeline - editingEventId:', editingEventId);
+  
 
   // Converter horário para minutos para cálculos
   const timeToMinutes = (time: string) => {
@@ -114,7 +111,7 @@ const EventTimeline = ({
 
   // Função para obter a cor do local baseado no nome do venue
   const getVenueColor = (venueName: string) => {
-    const local = getLocalByName(venueName);
+    const local = propGetLocalByName ? propGetLocalByName(venueName) : locais.find(l => l.nome === venueName);
     return local?.color || '#6b7280';
   };
 

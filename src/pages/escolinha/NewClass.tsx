@@ -1,4 +1,5 @@
 
+import PageHeader from '@/components/PageHeader';
 import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Clock, DollarSign, GraduationCap, Users } from 'lucide-react';
+import { Clock, DollarSign, GraduationCap, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -149,25 +150,10 @@ const NewClass = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-sm border-b">
-        <div className="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/escolinha/turmas')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Nova Turma</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="Nova Turma"
+        icon={<GraduationCap className="h-5 w-5 text-primary" />}
+      />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="relative">

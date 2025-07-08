@@ -117,8 +117,8 @@ const Relatorios = () => {
         title="Relatórios e Análises"
         icon={<BarChart3 className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos"
-        backLabel="Eventos"
+
+        
       />
 
       <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">

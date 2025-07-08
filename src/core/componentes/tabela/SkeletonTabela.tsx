@@ -9,13 +9,13 @@ interface PropsSkeletonTabela {
 
 const SkeletonTabela = ({ colunas, linhas = 5 }: PropsSkeletonTabela) => {
   return (
-    <div className="rounded-md border">
-      <Table>
+    <div className="rounded-md border h-full">
+      <Table className="h-full">
         <TableHeader>
           <TableRow>
             {Array.from({ length: colunas }).map((_, i) => (
               <TableHead key={i}>
-                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-5 w-full" />
               </TableHead>
             ))}
           </TableRow>
@@ -25,7 +25,7 @@ const SkeletonTabela = ({ colunas, linhas = 5 }: PropsSkeletonTabela) => {
             <TableRow key={rowIndex}>
               {Array.from({ length: colunas }).map((_, colIndex) => (
                 <TableCell key={colIndex}>
-                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-5 w-full" />
                 </TableCell>
               ))}
             </TableRow>

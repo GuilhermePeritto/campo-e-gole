@@ -1,172 +1,313 @@
-import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useContextoAgenda } from '@/contexts/AgendaContext';
+import { useLocais } from '@/hooks/useLocais';
+import type { Evento } from '@/types/eventos';
 import { eachDayOfInterval, endOfWeek, format, startOfWeek } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { memo, useMemo } from 'react';
-import type { EventoAgenda } from '../hooks/useCalendar';
-import { useSkeletonLoading } from '../hooks/useSkeletonLoading';
 
-interface VisaoSemanalProps {
-  dataAtual: Date;
-  eventos: EventoAgenda[];
-  locaisSelecionados: string[];
-  aoClicarEvento: (evento: EventoAgenda) => void;
-  aoClicarData: (data: Date) => void;
-}
+// Timeline semanal com horas no eixo Y e dias no eixo X
+const VisaoSemanal = memo(() => {
+  const { buscarPorId, locais } = useLocais();
+  const {
+    dataAtual,
+    eventosPorDiaELocal,
+    handleEventClick,
+    loading,
+    locaisSelecionados
+  } = useContextoAgenda();
 
-function AgendaGrid({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="h-full flex flex-col bg-background min-h-0">
-      <div className="grid grid-cols-7 border-b border-border bg-muted/30 sticky top-0 z-10">
-        {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(dia => (
-          <div key={dia} className="border-r border-border last:border-r-0 p-4 text-center text-xs text-muted-foreground font-medium">
-            {dia}
-          </div>
-        ))}
-      </div>
-      <div className="flex-1 min-h-0">
-        <div className="grid grid-cols-7 relative h-full min-h-0 gap-2 p-2 bg-muted/10">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+  // Filtrar locais selecionados
+  const locaisFiltrados = useMemo(() => {
+    if (!locaisSelecionados || locaisSelecionados.includes('all')) return locais;
+    return locais.filter(l => locaisSelecionados.includes(l.id));
+  }, [locais, locaisSelecionados]);
 
-function AgendaCell({
-  children,
-  className
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("border-r border-border last:border-r-0 relative min-h-0 rounded-xl bg-white/80 shadow-sm border p-2 transition-all duration-200 overflow-auto", className)}>
-      {children}
-    </div>
-  );
-}
+  // Calcular menor horário de abertura e maior de fechamento
+  const [horaMin, horaMax] = useMemo(() => {
+    let min = 23;
+    let max = 0;
+    locaisFiltrados.forEach(local => {
+      const [hAbertura] = local.horarioAbertura.split(':').map(Number);
+      const [hFechamento] = local.horarioFechamento.split(':').map(Number);
+      if (hAbertura < min) min = hAbertura;
+      if (hFechamento > max) max = hFechamento;
+    });
+    // Limites de segurança
+    min = Math.max(0, min);
+    max = Math.min(23, max);
+    return [min, max];
+  }, [locaisFiltrados]);
 
-function AgendaEvent({ evento, style, onClick }: { evento: EventoAgenda; style?: React.CSSProperties; onClick: (e: React.MouseEvent) => void }) {
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'Confirmado';
-      case 'pending': return 'Pendente';
-      case 'cancelled': return 'Cancelado';
-      default: return status;
+  // Calcular menor intervalo entre os locais
+  const menorIntervalo = useMemo(() => {
+    if (locaisFiltrados.length === 0) return 60; // Padrão 1 hora
+    return Math.min(...locaisFiltrados.map(local => local.intervalo || 60));
+  }, [locaisFiltrados]);
+
+  // Gerar slots de tempo baseado no menor intervalo
+  const timeSlots = useMemo(() => {
+    const slots = [];
+    for (let hour = horaMin; hour <= horaMax; hour++) {
+      for (let minute = 0; minute < 60; minute += menorIntervalo) {
+        slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
+      }
     }
-  };
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-  return (
-    <div
-      className="absolute left-1 right-1 z-10 w-auto h-auto rounded-xl p-3 shadow-sm hover:shadow-md transition cursor-pointer group min-h-[40px] flex items-center gap-3"
-      style={{ background: evento.cor, opacity: 0.85, ...style }}
-      onClick={onClick}
-      tabIndex={0}
-      role="button"
-      aria-label={`Evento de ${evento.cliente} às ${evento.horaInicio}`}
-    >
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold truncate text-base group-hover:underline" style={{ color: evento.cor && evento.cor !== '#fff' ? '#047857' : undefined }}>
-          {evento.cliente}
-        </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-          <span>{evento.horaInicio} - {evento.horaFim}</span>
-          <span>•</span>
-          <span className="truncate">{evento.local}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+    return slots;
+  }, [horaMin, horaMax, menorIntervalo]);
 
-const VisaoSemanal = memo(({
-  dataAtual,
-  eventos,
-  locaisSelecionados,
-  aoClicarEvento,
-  aoClicarData
-}: VisaoSemanalProps) => {
-  const { isDayLoading } = useSkeletonLoading({
-    viewType: 'week',
-    currentDate: dataAtual,
-    shouldReload: false
-  });
+  // Horários da timeline (para exibição no cabeçalho)
+  const horarios = useMemo(() => {
+    const horas = [];
+    for (let i = horaMin; i <= horaMax; i++) {
+      horas.push(i);
+    }
+    return horas;
+  }, [horaMin, horaMax]);
 
   // Dias da semana
-  const weekDays = useMemo(() => {
+  const diasSemana = useMemo(() => {
     const weekStart = startOfWeek(dataAtual, { weekStartsOn: 0 });
     const weekEnd = endOfWeek(dataAtual, { weekStartsOn: 0 });
     return eachDayOfInterval({ start: weekStart, end: weekEnd });
   }, [dataAtual]);
 
-  // Horários (6h às 23h)
-  const timeSlots = useMemo(() => {
-    const slots = [];
-    for (let hour = 6; hour <= 23; hour++) {
-      slots.push(hour);
-    }
-    return slots;
-  }, []);
-
-  // Eventos agrupados por dia
-  const eventosPorDia = useMemo(() => {
-    const filteredEvents = eventos.filter(evento => {
-      if (locaisSelecionados.includes('all')) return true;
-      return locaisSelecionados.includes(evento.localId);
+  // Função para calcular posição e altura do evento
+  const getEventPosition = (evento: Evento) => {
+    const [startHour, startMinute] = evento.horaInicio.split(':').map(Number);
+    const [endHour, endMinute] = evento.horaFim.split(':').map(Number);
+    
+    // Encontrar o índice do slot de início
+    const startTime = startHour + startMinute / 60;
+    const endTime = endHour + endMinute / 60;
+    const duration = endTime - startTime;
+    
+    // Calcular posição baseada no slot
+    const startSlotIndex = timeSlots.findIndex(slot => {
+      const [slotHour, slotMinute] = slot.split(':').map(Number);
+      const slotTime = slotHour + slotMinute / 60;
+      return slotTime >= startTime;
     });
-    return filteredEvents.reduce((acc, evento) => {
-      const eventDate = format(evento.dia, 'yyyy-MM-dd');
-      if (!acc[eventDate]) acc[eventDate] = [];
-      acc[eventDate].push(evento);
-      return acc;
-    }, {} as Record<string, EventoAgenda[]>);
-  }, [eventos, locaisSelecionados]);
-
-  // Posição do evento na célula
-  const getEventPosition = (evento: EventoAgenda) => {
-    const startHour = parseInt(evento.horaInicio.split(':')[0]);
-    const startMinute = parseInt(evento.horaInicio.split(':')[1]);
-    const endHour = parseInt(evento.horaFim.split(':')[0]);
-    const endMinute = parseInt(evento.horaFim.split(':')[1]);
-    const startPosition = ((startHour - 6) * 60 + startMinute) / 60; // em horas desde 6h
-    const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 60;
-    return {
-      top: `${startPosition * 60}px`,
-      height: `${Math.max(duration * 60, 30)}px`
-    };
+    
+    const top = startSlotIndex * 60; // Cada slot tem 60px de altura
+    const height = Math.max(duration * 60, 30); // Mínimo 30px
+    
+    return { top, height };
   };
 
-  return (
-    <AgendaGrid>
-      {/* Colunas dos dias */}
-      {weekDays.map(day => {
-        const dayKey = format(day, 'yyyy-MM-dd');
-        const dayEvents = eventosPorDia[dayKey] || [];
-        const isLoading = isDayLoading(day);
-        return (
-          <AgendaCell key={dayKey}>
-            {/* Eventos posicionados */}
-            {!isLoading && dayEvents.map(evento => (
-              <AgendaEvent
-                key={evento.id}
-                evento={evento}
-                style={getEventPosition(evento)}
-                onClick={e => {
-                  e.stopPropagation();
-                  aoClicarEvento(evento);
-                }}
-              />
+  // Função para verificar se evento está no horário
+  const isEventInTimeSlot = (evento: Evento, slot: string) => {
+    const [startHour] = evento.horaInicio.split(':').map(Number);
+    const [endHour] = evento.horaFim.split(':').map(Number);
+    const [slotHour] = slot.split(':').map(Number);
+    return startHour <= slotHour && endHour > slotHour;
+  };
+
+  // Hora atual para indicador
+  const horaAtual = useMemo(() => {
+    const agora = new Date();
+    return agora.getHours();
+  }, []);
+
+  // Função para calcular posição da linha do tempo atual
+  const getCurrentTimePosition = () => {
+    const agora = new Date();
+    const hora = agora.getHours();
+    const minuto = agora.getMinutes();
+    const currentTime = hora + minuto / 60;
+    
+    // Encontrar o slot mais próximo
+    const slotIndex = timeSlots.findIndex(slot => {
+      const [slotHour, slotMinute] = slot.split(':').map(Number);
+      const slotTime = slotHour + slotMinute / 60;
+      return slotTime >= currentTime;
+    });
+    
+    return Math.max(0, slotIndex * 60);
+  };
+
+  // Se está carregando, mostrar skeleton
+  if (loading) {
+    return (
+      <div className="h-full flex flex-col bg-background min-h-0">
+        {/* Cabeçalho dos dias */}
+        <div className="grid grid-cols-8 border-b border-border bg-muted/30">
+          <div className="p-2 text-center text-sm font-medium text-muted-foreground border-r border-border/30">
+            Horário
+          </div>
+          {diasSemana.map(dia => (
+            <div key={dia.toISOString()} className="p-2 text-center text-sm font-medium text-muted-foreground border-r border-border/30 last:border-r-0">
+              {format(dia, 'EEE dd/MM', { locale: ptBR })}
+            </div>
+          ))}
+        </div>
+        
+        {/* Timeline com skeletons */}
+        <div className="flex-1 min-h-0 overflow-auto">
+          <div className="grid grid-cols-8 relative min-h-[960px]">
+            {/* Coluna de horários */}
+            <div className="border-r border-border/30">
+              {timeSlots.map(slot => (
+                <div key={slot} className="h-[60px] border-b border-border/20 flex items-center justify-center text-xs text-muted-foreground">
+                  {slot}
+                </div>
+              ))}
+            </div>
+            
+            {/* Colunas dos dias com skeletons */}
+            {diasSemana.map((dia, diaIndex) => (
+              <div key={dia.toISOString()} className="border-r border-border/30 last:border-r-0 relative">
+                {timeSlots.map(slot => (
+                  <div key={slot} className="h-[60px] border-b border-border/20 relative">
+                    <Skeleton className="h-4 w-full mx-1 my-2" />
+                  </div>
+                ))}
+              </div>
             ))}
-          </AgendaCell>
-        );
-      })}
-    </AgendaGrid>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col bg-background min-h-0">
+      {/* Cabeçalho dos dias */}
+      <div className="grid grid-cols-8 border-b border-border bg-muted/30 sticky top-0 z-10">
+        <div className="p-2 text-center text-sm font-medium text-muted-foreground border-r border-border/30">
+          Horário
+        </div>
+        {diasSemana.map(dia => (
+          <div key={dia.toISOString()} className="p-2 text-center text-sm font-medium text-muted-foreground border-r border-border/30 last:border-r-0">
+            {format(dia, 'EEE dd/MM', { locale: ptBR })}
+          </div>
+        ))}
+      </div>
+      
+      {/* Timeline principal */}
+      <div className="flex-1 min-h-0 overflow-auto">
+        <div className="grid grid-cols-8 relative min-h-[960px]">
+          {/* Coluna de horários */}
+          <div className="border-r border-border/30 bg-muted/10">
+            {timeSlots.map(slot => (
+              <div key={slot} className="h-[60px] border-b border-border/20 flex items-center justify-center text-xs text-muted-foreground font-medium">
+                {slot}
+              </div>
+            ))}
+          </div>
+          
+          {/* Colunas dos dias */}
+          {diasSemana.map(dia => {
+            const dayKey = dia.toISOString();
+            const dayEvents = eventosPorDiaELocal[dayKey] || [];
+            const isToday = new Date().toDateString() === dia.toDateString();
+            
+            return (
+              <div key={dayKey} className="border-r border-border/30 last:border-r-0 relative">
+                {/* Linha do tempo atual (apenas para hoje) */}
+                {isToday && (
+                  <div 
+                    className="absolute left-0 right-0 z-20 pointer-events-none"
+                    style={{ 
+                      top: `${getCurrentTimePosition()}px`,
+                      height: '2px',
+                      background: 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)',
+                      boxShadow: '0 0 4px rgba(239, 68, 68, 0.5)'
+                    }}
+                  >
+                    <div className="absolute -left-1 -top-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
+                  </div>
+                )}
+                
+                {/* Grade de horários */}
+                {timeSlots.map(slot => (
+                  <div key={slot} className="h-[60px] border-b border-border/20 relative">
+                    {/* Eventos que estão ativos neste horário */}
+                    {dayEvents
+                      .filter(evento => {
+                        const [startHour, startMinute] = evento.horaInicio.split(':').map(Number);
+                        const [endHour, endMinute] = evento.horaFim.split(':').map(Number);
+                        const [slotHour, slotMinute] = slot.split(':').map(Number);
+                        
+                        const startTime = startHour + startMinute / 60;
+                        const endTime = endHour + endMinute / 60;
+                        const slotTime = slotHour + slotMinute / 60;
+                        
+                        // Mostrar evento se ele começa neste slot OU se está ativo neste slot
+                        return startTime === slotTime || (startTime < slotTime && endTime > slotTime);
+                      })
+                      .map(evento => {
+                        const { top, height } = getEventPosition(evento);
+                        const local = buscarPorId(evento.localId);
+                        const [startHour, startMinute] = evento.horaInicio.split(':').map(Number);
+                        const startTime = startHour + startMinute / 60;
+                        const [slotHour, slotMinute] = slot.split(':').map(Number);
+                        const slotTime = slotHour + slotMinute / 60;
+                        
+                        // Se o evento começa neste slot, mostrar normalmente
+                        if (startTime === slotTime) {
+                          return (
+                            <div
+                              key={evento.id}
+                              className="absolute left-0 right-0 mx-1 rounded-md p-1 text-xs shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow z-10"
+                              style={{
+                                top: `${top}px`,
+                                height: `${height}px`,
+                                backgroundColor: local?.cor || evento.cor,
+                                color: '#fff',
+                                fontSize: '10px',
+                                lineHeight: '1.2',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                              }}
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleEventClick(evento);
+                              }}
+                            >
+                              <div className="font-medium truncate">{evento.cliente}</div>
+                              <div className="truncate text-[9px]">{evento.horaInicio} - {evento.horaFim}</div>
+                              {evento.modalidade && (
+                                <div className="truncate text-[8px] opacity-90">{evento.modalidade}</div>
+                              )}
+                            </div>
+                          );
+                        }
+                        
+                        // Se o evento está ativo mas não começa neste slot, mostrar apenas uma continuação
+                        return (
+                          <div
+                            key={`${evento.id}-${slot}`}
+                            className="absolute left-0 right-0 mx-1 border-l-4 cursor-pointer hover:opacity-80 transition-opacity z-5"
+                            style={{
+                              top: '0px',
+                              height: '60px',
+                              backgroundColor: local?.cor || evento.cor,
+                              borderLeftColor: local?.cor || evento.cor,
+                            }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleEventClick(evento);
+                            }}
+                          >
+                            <div className="h-full flex items-center justify-center">
+                              <div className="text-[8px] text-white font-medium truncate px-1 text-shadow-sm">
+                                {evento.cliente}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 });
 

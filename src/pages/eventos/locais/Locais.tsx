@@ -4,23 +4,29 @@ import ModuleHeader from '@/components/ModuleHeader';
 import SummaryCards from '@/components/table/SummaryCards';
 import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { MapPin, Plus, Building, Clock, DollarSign, Activity } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useLocais } from '@/hooks/useLocais';
+import { Activity, Building, Clock, DollarSign, MapPin, Plus } from 'lucide-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Locais = () => {
   const navigate = useNavigate();
   const { locais, loading } = useLocais();
+
+  // Debug: verificar se os dados estão chegando
+  console.log('Locais - dados recebidos:', locais);
+  console.log('Locais - quantidade:', locais.length);
+  console.log('Locais - loading:', loading);
 
   // Calculate summary metrics
   const summaryData = useMemo(() => {
     if (!locais.length) return [];
 
     const totalLocals = locais.length;
-    const activeLocals = locais.filter(local => local.status === 'active').length;
-    const averageHourlyRate = locais.reduce((sum, local) => sum + local.hourlyRate, 0) / locais.length;
-    const maintenanceLocals = locais.filter(local => local.status === 'maintenance').length;
+    const activeLocals = locais.filter(local => local.status === 'ativo').length;
+    const averageHourlyRate = locais.reduce((sum, local) => sum + local.valorHora, 0) / locais.length;
+    const maintenanceLocals = locais.filter(local => local.status === 'manutencao').length;
+    const inactiveLocals = locais.filter(local => local.status === 'inativo').length;
 
     return [
       {
@@ -76,45 +82,54 @@ const Locais = () => {
 
   const columns = [
     {
-      key: 'name',
+      key: 'nome',
       label: 'Nome',
       sortable: true,
       filterable: true,
       filterType: 'text' as const
     },
     {
-      key: 'type',
+      key: 'tipo',
       label: 'Tipo',
       filterable: true,
       filterType: 'select' as const
     },
     {
-      key: 'interval',
+      key: 'intervalo',
       label: 'Intervalo',
-      render: (item: any) => `${item.interval} min`
+      render: (item: any) => `${item.intervalo} min`
     },
     {
-      key: 'hourlyRate',
-      label: 'Valor/Hora'
+      key: 'valorHora',
+      label: 'Valor/Hora',
+      render: (item: any) => `R$ ${item.valorHora.toFixed(2)}`
+    },
+    {
+      key: 'capacidade',
+      label: 'Capacidade',
+      render: (item: any) => item.capacidade ? `${item.capacidade} pessoas` : 'N/A'
     },
     {
       key: 'status',
       label: 'Situação',
       filterable: true,
       filterType: 'select' as const,
-      render: (item: any) => (
-        <Badge variant={item.status === 'active' ? 'default' : 'destructive'}>
-          {item.status === 'active' ? 'Ativo' : 
-           item.status === 'maintenance' ? 'Manutenção' : 'Inativo'}
-        </Badge>
-      )
+      render: (item: any) => {
+        const statusConfig = {
+          ativo: { variant: 'default' as const, label: 'Ativo' },
+          inativo: { variant: 'destructive' as const, label: 'Inativo' },
+          manutencao: { variant: 'secondary' as const, label: 'Manutenção' }
+        };
+        const config = statusConfig[item.status] || statusConfig.inativo;
+        return <Badge variant={config.variant}>{config.label}</Badge>;
+      }
     }
   ];
 
   const actions = [
     {
       label: 'Editar',
-      onClick: (item: any) => navigate(`/eventos/locais/${item.id}/editar`),
+      onClick: (item: any) => navigate(`/eventos/locais/${item.id}`),
       variant: 'outline' as const
     }
   ];
@@ -122,37 +137,45 @@ const Locais = () => {
   const createButton = {
     label: 'Novo Local',
     icon: <Plus className="h-4 w-4" />,
-    onClick: () => navigate('/eventos/locais/novo')
+    onClick: () => {
+      sessionStorage.setItem('returnUrl', window.location.pathname);
+      navigate('/eventos/locais/novo');
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen bg-background flex flex-col">
       <ModuleHeader
         title="Locais"
-        icon={<MapPin className="h-5 w-5" />}
+        icon={<MapPin className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos"
-        backLabel="Módulo Eventos"
+
+        
       />
 
-      <main className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 py-8 h-[calc(100vh-80px)]">
-        <div className="space-y-6">
-          <SummaryCards cards={summaryData} loading={loading} />
+      <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 xl:px-12 py-6 overflow-hidden">
+        <div className="flex flex-col h-full space-y-6">
+          <div className="flex-shrink-0">
+            <SummaryCards cards={summaryData} loading={loading} />
+          </div>
           
-          <BaseList
-            title="Gerenciar Locais"
-            description="Cadastre e gerencie os locais disponíveis para reserva"
-            data={locais}
-            columns={columns}
-            actions={actions}
-            createButton={createButton}
-            searchPlaceholder="Buscar locais..."
-            searchFields={['name', 'type']}
-            getItemId={(item) => item.id}
-            pageSize={10}
-            entityName="locais"
-            loading={loading}
-          />
+          <div className="flex-1 min-h-0">
+            <BaseList
+              title="Gerenciar Locais"
+              description="Cadastre e gerencie os locais disponíveis para reserva"
+              data={locais}
+              columns={columns}
+              actions={actions}
+              createButton={createButton}
+              searchPlaceholder="Buscar locais..."
+              searchFields={['nome', 'tipo']}
+              getItemId={(item) => item.id}
+              pageSize={10}
+              entityName="locais"
+              loading={loading}
+              className="h-full"
+            />
+          </div>
         </div>
       </main>
     </div>

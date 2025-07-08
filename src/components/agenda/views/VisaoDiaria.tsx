@@ -1,33 +1,42 @@
+import { Skeleton } from '@/components/ui/skeleton';
+import { useContextoAgenda } from '@/contexts/AgendaContext';
+import { useLocais } from '@/hooks/useLocais';
 import { cn } from '@/lib/utils';
-import { format, isSameDay, isSameHour } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import type { Evento } from '@/types/eventos';
+import { format, isSameDay, isSameHour, parseISO } from 'date-fns';
 import { memo, useEffect, useMemo, useState } from 'react';
-import type { EventoAgenda } from '../hooks/useCalendar';
-import { useLocais } from '../hooks/useLocais';
-
-interface VisaoDiariaProps {
-  dataAtual: Date;
-  eventos: EventoAgenda[];
-  locaisSelecionados: string[];
-  aoClicarEvento: (evento: EventoAgenda) => void;
-  aoClicarData: (data: Date) => void;
-}
 
 function AgendaGrid({ children }: { children: React.ReactNode }) {
-  return <div className="h-full flex flex-col bg-background min-h-0">{children}</div>;
+  return <div className="h-full flex flex-col bg-background min-h-0 overflow-hidden max-h-full">{children}</div>;
 }
 
-function TimelineHeader({ locais }: { locais: string[] }) {
+// Skeleton para célula da timeline
+function TimelineCellSkeleton({ isCurrentTime = false }: { isCurrentTime?: boolean }) {
   return (
-    <div className="grid grid-cols-[80px_repeat(auto-fit,minmax(200px,1fr))] border-b border-border bg-muted/30 sticky top-0 z-20">
-      <div className="p-3 border-r border-border bg-background">
-        <span className="text-sm font-medium text-muted-foreground">Horário</span>
-      </div>
-      {locais.map(local => (
-        <div key={local} className="p-3 border-r border-border last:border-r-0 text-center">
-          <span className="text-sm font-medium text-foreground">{local}</span>
+    <div className={cn(
+      "border-b border-border/50 relative h-12 p-2 transition-all duration-200 flex-shrink-0",
+      isCurrentTime && "bg-blue-50/50 border-blue-200"
+    )}>
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-4 w-12" />
+        <div className="flex-1 ml-4">
+          <Skeleton className="h-3 w-full rounded" />
         </div>
-      ))}
+      </div>
+    </div>
+  );
+}
+
+// Skeleton para evento da timeline
+function AgendaEventSkeleton({ style }: { style?: React.CSSProperties }) {
+  return (
+    <div
+      className="absolute left-0 right-0 mx-1 rounded-md bg-white p-2 text-xs shadow-sm border border-gray-200"
+      style={style}
+    >
+      <Skeleton className="h-3 w-full mb-1" />
+      <Skeleton className="h-2 w-2/3 mb-1" />
+      <Skeleton className="h-2 w-1/2" />
     </div>
   );
 }
@@ -39,7 +48,7 @@ function TimelineCell({ children, className, isCurrentTime = false }: {
 }) {
   return (
     <div className={cn(
-      "border-b border-border/50 relative min-h-[60px] p-2 transition-all duration-200",
+      "border-b border-border/50 relative h-12 p-2 transition-all duration-200 flex-shrink-0",
       isCurrentTime && "bg-blue-50/50 border-blue-200",
       className
     )}>
@@ -72,7 +81,7 @@ function CurrentTimeIndicator({ currentTime, timeSlots }: { currentTime: Date; t
     });
     
     const slotIndex = timeSlots.indexOf(closestSlot);
-    return slotIndex * 60; // 60px por slot
+    return slotIndex * 48; // 48px por slot (h-12)
   };
 
   const position = getCurrentTimePosition();
@@ -94,37 +103,82 @@ function CurrentTimeIndicator({ currentTime, timeSlots }: { currentTime: Date; t
   );
 }
 
-function AgendaEvent({ evento, style, onClick }: { evento: EventoAgenda; style?: React.CSSProperties; onClick: (e: React.MouseEvent) => void }) {
+function AgendaEvent({ evento, style, onClick }: { evento: Evento; style?: React.CSSProperties; onClick: (e: React.MouseEvent) => void }) {
+  const { buscarPorId } = useLocais();
+  const local = buscarPorId(evento.localId);
+  
   return (
     <div
-      className="absolute left-1 right-1 top-1 bottom-1 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer group flex items-center gap-2 p-2 min-h-[40px]"
-      style={{ background: evento.cor, opacity: 0.85, ...style }}
+      className="absolute left-0 right-0 mx-1 rounded-md p-2 text-xs shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+      style={{
+        ...style,
+        backgroundColor: local?.cor || evento.cor,
+        color: '#fff',
+        fontSize: '11px',
+        lineHeight: '1.3',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+      }}
       onClick={onClick}
-      tabIndex={0}
-      role="button"
-      aria-label={`Evento de ${evento.cliente} às ${evento.horaInicio}`}
     >
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold truncate text-sm group-hover:underline" style={{ color: evento.cor && evento.cor !== '#fff' ? '#047857' : undefined }}>
-          {evento.cliente}
-        </div>
-        <div className="text-xs text-muted-foreground truncate">
-          {evento.horaInicio} - {evento.horaFim}
-        </div>
-      </div>
+      <div className="font-medium truncate">{evento.cliente}</div>
+      <div className="truncate">{evento.horaInicio} - {evento.horaFim}</div>
+      {evento.modalidade && <div className="truncate text-xs opacity-90">{evento.modalidade}</div>}
     </div>
   );
 }
 
-const VisaoDiaria = memo(({
-  dataAtual,
-  eventos,
-  locaisSelecionados,
-  aoClicarEvento,
-  aoClicarData
-}: VisaoDiariaProps) => {
+const VisaoDiaria = memo(() => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const { getLocalById } = useLocais();
+  const { buscarPorId, locais } = useLocais();
+  const {
+    dataAtual,
+    eventos,
+    handleEventClick,
+    loading,
+    locaisSelecionados
+  } = useContextoAgenda();
+
+  // Filtrar locais selecionados
+  const locaisFiltrados = useMemo(() => {
+    if (!locaisSelecionados || locaisSelecionados.includes('all')) return locais;
+    return locais.filter(l => locaisSelecionados.includes(l.id));
+  }, [locais, locaisSelecionados]);
+
+  // Calcular menor horário de abertura e maior de fechamento
+  const [horaMin, horaMax] = useMemo(() => {
+    let min = 23;
+    let max = 0;
+    locaisFiltrados.forEach(local => {
+      const [hAbertura] = local.horarioAbertura.split(':').map(Number);
+      const [hFechamento] = local.horarioFechamento.split(':').map(Number);
+      if (hAbertura < min) min = hAbertura;
+      if (hFechamento > max) max = hFechamento;
+    });
+    // Limites de segurança
+    min = Math.max(0, min);
+    max = Math.min(23, max);
+    return [min, max];
+  }, [locaisFiltrados]);
+
+  // Calcular menor intervalo entre os locais
+  const menorIntervalo = useMemo(() => {
+    if (locaisFiltrados.length === 0) return 60; // Padrão 1 hora
+    return Math.min(...locaisFiltrados.map(local => local.intervalo || 60));
+  }, [locaisFiltrados]);
+
+  // Gerar timeSlots baseado no menor intervalo
+  const timeSlots = useMemo(() => {
+    const slots = [];
+    for (let hour = horaMin; hour <= horaMax; hour++) {
+      for (let minute = 0; minute < 60; minute += menorIntervalo) {
+        slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
+      }
+    }
+    return slots;
+  }, [horaMin, horaMax, menorIntervalo]);
 
   // Atualizar hora atual a cada minuto
   useEffect(() => {
@@ -136,49 +190,8 @@ const VisaoDiaria = memo(({
 
   // Filtrar eventos do dia
   const dayEvents = useMemo(() => {
-    return eventos.filter(evento => isSameDay(evento.dia, dataAtual));
+    return eventos.filter(evento => isSameDay(parseISO(evento.data), dataAtual));
   }, [eventos, dataAtual]);
-
-  // Gerar timeSlots baseado nos eventos (com margem de 1h antes e depois)
-  const timeSlots = useMemo(() => {
-    if (dayEvents.length === 0) {
-      // Slots padrão se não há eventos
-      const slots = [];
-      for (let hour = 6; hour <= 22; hour++) {
-        for (let minute = 0; minute < 60; minute += 30) {
-          slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
-        }
-      }
-      return slots;
-    }
-
-    // Encontrar horário mais cedo e mais tarde dos eventos
-    let earliestTime = '23:59';
-    let latestTime = '00:00';
-
-    dayEvents.forEach(evento => {
-      if (evento.horaInicio < earliestTime) earliestTime = evento.horaInicio;
-      if (evento.horaFim > latestTime) latestTime = evento.horaFim;
-    });
-
-    // Converter para minutos
-    const timeToMinutes = (time: string) => {
-      const [hours, minutes] = time.split(':').map(Number);
-      return hours * 60 + minutes;
-    };
-
-    const startMinutes = Math.max(0, timeToMinutes(earliestTime) - 60); // 1h antes
-    const endMinutes = Math.min(1440, timeToMinutes(latestTime) + 60); // 1h depois
-
-    const slots = [];
-    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 30) {
-      const hour = Math.floor(minutes / 60);
-      const minute = minutes % 60;
-      slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
-    }
-
-    return slots;
-  }, [dayEvents]);
 
   // Utilitário para converter hora em minutos
   const timeToMinutes = (time: string) => {
@@ -187,14 +200,14 @@ const VisaoDiaria = memo(({
   };
 
   // Posição do evento
-  const getEventPosition = (event: EventoAgenda) => {
+  const getEventPosition = (event: Evento) => {
     const startMinutes = timeToMinutes(event.horaInicio);
     const endMinutes = timeToMinutes(event.horaFim);
     const duration = endMinutes - startMinutes;
     
     const firstSlotMinutes = timeToMinutes(timeSlots[0]);
-    const topOffset = ((startMinutes - firstSlotMinutes) / 30) * 60;
-    const height = (duration / 30) * 60;
+    const topOffset = ((startMinutes - firstSlotMinutes) / menorIntervalo) * 48; // 48px por slot
+    const height = (duration / menorIntervalo) * 48;
     
     return {
       top: `${topOffset}px`,
@@ -205,70 +218,70 @@ const VisaoDiaria = memo(({
   // Verificar se é hora atual
   const isCurrentTimeSlot = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
-    return isSameHour(currentTime, new Date().setHours(hours, minutes)) && 
+    const timeDate = new Date();
+    timeDate.setHours(hours, minutes, 0, 0);
+    return isSameHour(currentTime, timeDate) && 
            Math.abs(currentTime.getMinutes() - minutes) <= 15;
   };
-
-  // Organizar eventos por local com nomes dos locais
-  const eventosPorLocal = useMemo(() => {
-    const eventosFiltrados = dayEvents.filter(evento => {
-      if (locaisSelecionados.includes('all')) return true;
-      return locaisSelecionados.includes(evento.localId);
-    });
-
-    const organizados: Record<string, EventoAgenda[]> = {};
-    
-    if (locaisSelecionados.includes('all')) {
-      // Para 'all', agrupar por local usando o nome do local
-      eventosFiltrados.forEach(evento => {
-        if (!organizados[evento.local]) {
-          organizados[evento.local] = [];
-        }
-        organizados[evento.local].push(evento);
-      });
-    } else {
-      // Para locais específicos, usar o nome do local
-      locaisSelecionados.forEach(localId => {
-        const local = getLocalById(localId);
-        const nomeLocal = local?.name || localId;
-        organizados[nomeLocal] = eventosFiltrados.filter(evento => evento.localId === localId);
-      });
-    }
-
-    return organizados;
-  }, [dayEvents, locaisSelecionados, getLocalById]);
 
   const dayKey = format(dataAtual, 'yyyy-MM-dd');
   const isToday = isSameDay(dataAtual, new Date());
 
-  return (
-    <AgendaGrid>
-      {/* Cabeçalho do dia */}
-      <div className="px-6 py-4 border-b border-border bg-background sticky top-0 z-30">
-        <div className="text-center">
-          <div className="text-sm text-muted-foreground font-medium mb-1">
-            {format(dataAtual, 'EEEE', { locale: ptBR }).toUpperCase()}
-          </div>
-          <div className={cn(
-            "text-2xl font-semibold",
-            isToday ? "bg-primary text-primary-foreground rounded-full w-12 h-12 flex items-center justify-center mx-auto" : "text-foreground"
-          )}>
-            {format(dataAtual, 'dd')}
+  // Se está carregando, mostrar skeletons
+  if (loading) {
+    return (
+      <AgendaGrid>
+        {/* Timeline com scroll controlado */}
+        <div className="flex-1 min-h-0 overflow-auto">
+          <div className="relative max-h-[calc(100vh-200px)]" style={{ 
+            minWidth: '280px',
+            height: `${timeSlots.length * 48}px`
+          }}>
+            {/* Grid da timeline */}
+            <div className="grid grid-cols-[80px_1fr] h-full">
+              {/* Coluna de horários */}
+              <div className="border-r border-border">
+                {timeSlots.map((time, idx) => (
+                  <TimelineCellSkeleton 
+                    key={time} 
+                    isCurrentTime={isCurrentTimeSlot(time)}
+                  />
+                ))}
+              </div>
+
+              {/* Coluna de eventos */}
+              <div className="relative">
+                {timeSlots.map((time, idx) => (
+                  <TimelineCell key={time} className="relative">
+                    <></>
+                  </TimelineCell>
+                ))}
+                
+                {/* Skeletons dos eventos */}
+                <AgendaEventSkeleton style={{ top: '60px', height: '60px' }} />
+                <AgendaEventSkeleton style={{ top: '180px', height: '90px' }} />
+                <AgendaEventSkeleton style={{ top: '300px', height: '45px' }} />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </AgendaGrid>
+    );
+  }
 
-      {/* Cabeçalho da timeline */}
-      <TimelineHeader locais={Object.keys(eventosPorLocal)} />
-
-      {/* Timeline com scroll horizontal */}
+  return (
+    <AgendaGrid>
+      {/* Timeline com scroll controlado */}
       <div className="flex-1 min-h-0 overflow-auto">
-        <div className="relative" style={{ minWidth: `${80 + Object.keys(eventosPorLocal).length * 200}px` }}>
+        <div className="relative max-h-[calc(100vh-200px)]" style={{ 
+          minWidth: '280px',
+          height: `${timeSlots.length * 48}px`
+        }}>
           {/* Indicador de hora atual */}
           {isToday && <CurrentTimeIndicator currentTime={currentTime} timeSlots={timeSlots} />}
           
           {/* Grid da timeline */}
-          <div className="grid grid-cols-[80px_repeat(auto-fit,minmax(200px,1fr))]">
+          <div className="grid grid-cols-[80px_1fr] h-full">
             {/* Coluna de horários */}
             <div className="border-r border-border">
               {timeSlots.map((time, idx) => (
@@ -284,29 +297,27 @@ const VisaoDiaria = memo(({
               ))}
             </div>
 
-            {/* Colunas dos locais */}
-            {Object.keys(eventosPorLocal).map(local => (
-              <div key={local} className="border-r border-border last:border-r-0 relative">
-                {timeSlots.map((time, idx) => (
-                  <TimelineCell key={time} className="relative">
-                    <></>
-                  </TimelineCell>
-                ))}
-                
-                {/* Eventos deste local */}
-                {eventosPorLocal[local].map(evento => (
-                  <AgendaEvent
-                    key={evento.id}
-                    evento={evento}
-                    style={getEventPosition(evento)}
-                    onClick={e => {
-                      e.stopPropagation();
-                      aoClicarEvento(evento);
-                    }}
-                  />
-                ))}
-              </div>
-            ))}
+            {/* Coluna de eventos */}
+            <div className="relative">
+              {timeSlots.map((time, idx) => (
+                <TimelineCell key={time} className="relative">
+                  <></>
+                </TimelineCell>
+              ))}
+              
+              {/* Eventos */}
+              {dayEvents.map(evento => (
+                <AgendaEvent
+                  key={evento.id}
+                  evento={evento}
+                  style={getEventPosition(evento)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleEventClick(evento);
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

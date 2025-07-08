@@ -31,8 +31,8 @@ const TableSkeleton = ({ columns = 5, rows = 8, showHeader = true }: TableSkelet
           {Array.from({ length: rows }).map((_, rowIndex) => (
             <TableRow key={rowIndex} className="hover:bg-muted/50">
               {Array.from({ length: columns }).map((_, colIndex) => (
-                <TableCell key={colIndex} className="h-12">
-                  <Skeleton className="h-4 w-full max-w-[120px]" />
+                <TableCell key={colIndex} className="h-10">
+                  <Skeleton className="h-5 w-full max-w-[120px]" />
                 </TableCell>
               ))}
             </TableRow>

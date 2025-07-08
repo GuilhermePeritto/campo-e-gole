@@ -1,121 +1,146 @@
-
-import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import type { MockLocal } from '@/data/mockLocais';
-import { Search, MapPin } from 'lucide-react';
-import { memo, useMemo } from 'react';
+import { cn } from '@/lib/utils';
+import type { Local } from '@/types/eventos';
+import { Search } from 'lucide-react';
+import { memo, useMemo, useState } from 'react';
 
 interface ListaLocaisAgendaProps {
-  locais: MockLocal[];
-  todosLocais: MockLocal[];
   locaisSelecionados: string[];
-  consulta: string;
-  onAlternarLocal: (localId: string) => void;
-  isLocalSelecionado: (localId: string) => boolean;
-  onMudancaConsulta: (consulta: string) => void;
+  locais: Local[];
+  todosLocais: Local[];
+  eventCountByVenue?: Record<string, number>;
+  aoAlternarLocal: (localId: string) => void;
+  estaLocalSelecionado: (localId: string) => boolean;
+  modoCompacto?: boolean;
 }
 
-const ListaLocaisAgenda = memo(({ 
-  locais, 
-  todosLocais, 
-  locaisSelecionados, 
-  consulta, 
-  onAlternarLocal, 
-  isLocalSelecionado, 
-  onMudancaConsulta 
+const ListaLocaisAgenda = memo(({
+  locaisSelecionados,
+  locais,
+  todosLocais,
+  eventCountByVenue = {},
+  aoAlternarLocal,
+  estaLocalSelecionado,
+  modoCompacto = false,
 }: ListaLocaisAgendaProps) => {
-  const contadorSelecionados = useMemo(() => {
-    return locaisSelecionados.includes('all') 
-      ? todosLocais.length 
-      : locaisSelecionados.length;
-  }, [locaisSelecionados, todosLocais.length]);
+  const [consulta, setConsulta] = useState('');
 
-  return (
-    <div className="espaco-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="texto-sm fonte-semibold texto-principal flex items-center espaco-x-2">
-          <MapPin className="h-4 w-4" />
-          <span>Locais</span>
-        </h3>
-        <Badge variant="secondary" className="texto-xs">
-          {contadorSelecionados} selecionado{contadorSelecionados !== 1 ? 's' : ''}
-        </Badge>
+  const locaisFiltrados = useMemo(() => {
+    if (!consulta.trim()) return todosLocais;
+    return todosLocais.filter(local =>
+      local.nome.toLowerCase().includes(consulta.toLowerCase()) ||
+      local.tipo.toLowerCase().includes(consulta.toLowerCase())
+    );
+  }, [todosLocais, consulta]);
+
+  const todosSelecionados = todosLocais.length > 0 && todosLocais.every(local => estaLocalSelecionado(local.id));
+
+  const handleAlternarTodos = () => {
+    if (todosSelecionados) {
+      todosLocais.forEach(local => {
+        if (estaLocalSelecionado(local.id)) aoAlternarLocal(local.id);
+      });
+    } else {
+      todosLocais.forEach(local => {
+        if (!estaLocalSelecionado(local.id)) aoAlternarLocal(local.id);
+      });
+    }
+  };
+
+  if (modoCompacto) {
+    // Versão compacta (apenas ícones)
+    return (
+      <div className="flex flex-col items-center gap-3 py-4">
+        <button
+          type="button"
+          title={todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos'}
+          onClick={handleAlternarTodos}
+          className={cn(
+            'w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/60 mb-1 bg-white',
+            todosSelecionados ? 'ring-2 ring-primary scale-110' : 'opacity-60 hover:opacity-100'
+          )}
+        />
+        {todosLocais.map((local) => {
+          const selecionado = estaLocalSelecionado(local.id);
+          return (
+            <button
+              key={local.id}
+              type="button"
+              title={local.nome}
+              onClick={() => aoAlternarLocal(local.id)}
+              className={cn(
+                'w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/60 mb-1',
+                selecionado ? 'ring-2 ring-primary scale-110' : 'opacity-60 hover:opacity-100'
+              )}
+              style={{ backgroundColor: local.cor }}
+            />
+          );
+        })}
       </div>
+    );
+  }
 
-      {/* Campo de busca */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+  // Versão expandida (com busca e nomes)
+  return (
+    <div className="flex-1 space-y-3 min-h-0 flex flex-col">
+      <div className="relative p-2">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar locais..."
+          placeholder="Filtrar locais..."
           value={consulta}
-          onChange={(e) => onMudancaConsulta(e.target.value)}
-          className="pl-10 h-9 fundo-fundo/50 borda borda-divisor/30 foco:borda-primario/50"
+          onChange={(e) => setConsulta(e.target.value)}
+          className="pl-9 h-9 text-sm border-border/50 bg-white/80"
         />
       </div>
-
-      {/* Lista de locais com scroll próprio */}
-      <div className="fundo-cartao/30 rounded-lg borda borda-divisor/30 p-2">
-        {/* Opção "Todos os locais" */}
-        <div className="flex items-center espaco-x-3 p-3 rounded-lg hover:bg-accent/60 transition-all duration-200 cursor-pointer">
-          <Checkbox
-            id="todos-locais"
-            checked={isLocalSelecionado('all')}
-            onCheckedChange={() => onAlternarLocal('all')}
-            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-          />
-          <Label htmlFor="todos-locais" className="texto-sm fonte-medio cursor-pointer flex-1">
-            Todos os locais
-          </Label>
+      {consulta.trim() && (
+        <div className="mt-2 text-xs text-muted-foreground">
+          {locaisFiltrados.length} de {todosLocais.length} locais
         </div>
-
-        {/* Lista scrollável de locais */}
-        <ScrollArea className="h-64 pr-2">
-          <div className="espaco-y-1">
-            {locais.length === 0 ? (
-              <div className="text-center py-8 texto-mutado">
-                <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="texto-sm">Nenhum local encontrado</p>
-                <p className="texto-xs opacity-70">Tente ajustar sua busca</p>
-              </div>
-            ) : (
-              locais.map((local) => (
-                <div 
-                  key={local.id} 
-                  className="flex items-center espaco-x-3 p-3 rounded-lg hover:bg-accent/60 transition-all duration-200 cursor-pointer grupo"
-                >
-                  <Checkbox
-                    id={`local-${local.id}`}
-                    checked={isLocalSelecionado(local.id)}
-                    onCheckedChange={() => onAlternarLocal(local.id)}
-                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <div className="flex items-center espaco-x-3 flex-1 cursor-pointer">
-                    <div 
-                      className="w-3 h-3 rounded-full flex-shrink-0 grupo-hover:scale-110 transition-transform duration-200 shadow-sm"
-                      style={{ backgroundColor: local.color }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <Label 
-                        htmlFor={`local-${local.id}`} 
-                        className="texto-sm fonte-medio cursor-pointer block truncate grupo-hover:texto-primario transition-colors"
-                      >
-                        {local.name}
-                      </Label>
-                      <p className="texto-xs texto-mutado truncate flex items-center espaco-x-2">
-                        <span>{local.type}</span>
-                        <span>•</span>
-                        <span>R$ {local.hourlyRate}/h</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </ScrollArea>
+      )}
+      <div className="p-2 space-y-2 flex-1 min-h-0 overflow-y-auto">
+        <div
+          className={cn(
+            'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-gray-200 cursor-pointer bg-white',
+            todosSelecionados ? 'ring-2 ring-primary/40' : 'hover:bg-accent/40'
+          )}
+          onClick={handleAlternarTodos}
+        >
+          <Checkbox
+            checked={todosSelecionados}
+            onCheckedChange={handleAlternarTodos}
+            className="mr-2 flex-shrink-0 border-gray-300 bg-white"
+            tabIndex={-1}
+            onClick={e => e.stopPropagation()}
+          />
+          <span className="font-medium text-sm truncate text-gray-700">
+            {todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos'}
+          </span>
+        </div>
+        {locaisFiltrados.map((local) => {
+          const selecionado = estaLocalSelecionado(local.id);
+          return (
+            <div
+              key={local.id}
+              className={cn(
+                'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-transparent cursor-pointer',
+                selecionado ? 'ring-2 ring-primary/40 bg-white/90' : 'hover:bg-accent/40 bg-white/80'
+              )}
+              style={{ backgroundColor: local.cor }}
+              onClick={() => aoAlternarLocal(local.id)}
+            >
+              <Checkbox
+                checked={selecionado}
+                onCheckedChange={() => aoAlternarLocal(local.id)}
+                className="mr-2 flex-shrink-0 border-white/60 bg-white/80"
+                style={{ accentColor: local.cor }}
+                tabIndex={-1}
+                onClick={e => e.stopPropagation()}
+              />
+              <span className="font-medium text-sm truncate" style={{ color: '#222' }}>{local.nome}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -123,4 +148,4 @@ const ListaLocaisAgenda = memo(({
 
 ListaLocaisAgenda.displayName = 'ListaLocaisAgenda';
 
-export default ListaLocaisAgenda;
+export default ListaLocaisAgenda; 

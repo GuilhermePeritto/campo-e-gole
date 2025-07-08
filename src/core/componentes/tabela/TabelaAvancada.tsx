@@ -1,46 +1,45 @@
 
 import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
+    closestCenter,
+    DndContext,
+    KeyboardSensor,
+    MouseSensor,
+    TouchSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
 } from '@dnd-kit/core';
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
+    arrayMove,
+    horizontalListSortingStrategy,
+    SortableContext,
 } from '@dnd-kit/sortable';
 import {
-  ColumnDef,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  VisibilityState,
-  flexRender,
+    ColumnDef,
+    getCoreRowModel,
+    getSortedRowModel,
+    useReactTable,
+    VisibilityState
 } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 import { BaseListAction, BaseListColumn } from '@/components/BaseList';
-import CelulaArrastavel from './CelulaArrastavel';
-import CabecalhoArrastavel from './CabecalhoArrastavel';
-import EstadoVazio from './EstadoVazio';
-import SkeletonTabela from './SkeletonTabela';
-import CelulaInteligente from './CelulaInteligente';
 import { Button } from '@/components/ui/button';
 import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableHeader,
+    TableRow,
 } from '@/components/ui/table';
 import { useEstadoTabela } from '@/core/hooks/useEstadoTabela';
+import { gerarNomeEntidade, inferirTipoColuna, obterValorAninhado, useTamanhoContainer } from '@/core/hooks/useUtilsTabela';
 import { cn } from '@/lib/utils';
-import { gerarNomeEntidade, obterValorAninhado, useTamanhoContainer, inferirTipoColuna } from '@/core/hooks/useUtilsTabela';
+import CabecalhoArrastavel from './CabecalhoArrastavel';
+import CelulaArrastavel from './CelulaArrastavel';
+import CelulaInteligente from './CelulaInteligente';
+import EstadoVazio from './EstadoVazio';
+import SkeletonTabela from './SkeletonTabela';
 
 interface PropsTabelaAvancada<T> {
   dados: T[];
@@ -241,7 +240,7 @@ const TabelaAvancada = <T extends Record<string, any>>({
 
   if (carregando) {
     return (
-      <div ref={containerRef} className="flex-1 overflow-x-auto h-full">
+      <div ref={containerRef} className="flex-1 overflow-x-auto overflow-y-auto h-full">
         <SkeletonTabela colunas={colunas.length + (acoes.length > 0 ? 1 : 0)} />
       </div>
     );
@@ -254,7 +253,7 @@ const TabelaAvancada = <T extends Record<string, any>>({
   const idContextoDnd = `tabela-dnd-${nomeEntidadeFinal}`;
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-x-auto h-full">
+    <div ref={containerRef} className="flex-1 overflow-x-auto overflow-y-auto h-full min-w-0">
       <DndContext
         id={idContextoDnd}
         collisionDetection={closestCenter}
@@ -265,7 +264,8 @@ const TabelaAvancada = <T extends Record<string, any>>({
         <Table
           className="[&_td]:border-border [&_th]:border-border table-fixed border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
           style={{
-            width: tabela.getTotalSize(),
+            width: Math.max(tabela.getTotalSize(), larguraContainer),
+            minWidth: '100%'
           }}
         >
           <TableHeader className="bg-background/90 sticky top-0 z-10 backdrop-blur-xs">

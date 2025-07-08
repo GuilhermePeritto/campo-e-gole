@@ -3,8 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Moon, Plus, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { ChevronLeft, ChevronRight, Plus, RefreshCw } from 'lucide-react';
 import { memo, useMemo } from 'react';
 
 interface CabecalhoAgendaProps {
@@ -14,6 +13,8 @@ interface CabecalhoAgendaProps {
   aoClicarHoje: () => void;
   aoClicarNovoEvento: () => void;
   aoMudarTipoVisualizacao: (tipo: 'mes' | 'semana' | 'dia' | 'lista') => void;
+  aoSincronizar?: () => void;
+  sincronizando?: boolean;
 }
 
 const CabecalhoAgenda = memo(({
@@ -22,9 +23,10 @@ const CabecalhoAgenda = memo(({
   aoNavegarData,
   aoClicarHoje,
   aoClicarNovoEvento,
-  aoMudarTipoVisualizacao
+  aoMudarTipoVisualizacao,
+  aoSincronizar,
+  sincronizando = false
 }: CabecalhoAgendaProps) => {
-  const { theme, setTheme } = useTheme();
 
   const titulo = useMemo(() => {
     switch (tipoVisualizacao) {
@@ -77,7 +79,7 @@ const CabecalhoAgenda = memo(({
           </div>
         </div>
         {/* Lado direito - Controles */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
           {/* Navegação */}
           <div className="flex items-center space-x-1">
             <Button
@@ -133,18 +135,17 @@ const CabecalhoAgenda = memo(({
               <SelectItem value="lista">Lista</SelectItem>
             </SelectContent>
           </Select>
-          {/* Tema */}
+          
+          {/* Botão de Sincronizar */}
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={aoSincronizar}
+            disabled={sincronizando}
             className="h-9 w-9"
+            title="Sincronizar dados"
           >
-            {theme === 'dark' ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
+            <RefreshCw className={`h-4 w-4 ${sincronizando ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </div>

@@ -1,17 +1,14 @@
-import React from 'react';
+import { Button } from '@/components/ui/button';
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink
 } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
+import React from 'react';
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -27,6 +24,7 @@ interface PaginationControlsProps {
   pageSizeOptions?: number[];
   showPageSizeSelector?: boolean;
   showInfo?: boolean;
+  showDebugInfo?: boolean; // Nova prop para mostrar informações de debug
 }
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({
@@ -43,6 +41,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   pageSizeOptions = [5, 10, 25, 50, 100, 200],
   showPageSizeSelector = true,
   showInfo = true,
+  showDebugInfo = false,
 }) => {
   // Generate page numbers to show
   const getVisiblePages = () => {
@@ -89,6 +88,11 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         {showInfo && (
           <div className="text-xs text-muted-foreground">
             {startIndex}-{endIndex} de {totalItems}
+            {showDebugInfo && (
+              <div className="text-[10px] text-muted-foreground/70 mt-1">
+                page: {currentPage} | limit: {pageSize} | start: {startIndex - 1}
+              </div>
+            )}
           </div>
         )}
       </div>

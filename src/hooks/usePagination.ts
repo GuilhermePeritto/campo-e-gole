@@ -1,10 +1,11 @@
 
-import { useState, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 interface PaginationOptions {
   initialPage?: number;
   pageSize?: number;
   totalItems: number;
+  simulateApiDelay?: boolean;
 }
 
 interface PaginationResult<T> {
@@ -21,48 +22,77 @@ interface PaginationResult<T> {
   nextPage: () => void;
   previousPage: () => void;
   setPageSize: (size: number) => void;
+  // Novos métodos para simular API
+  getPageInfo: () => { page: number; limit: number; start: number };
+  isLoading: boolean;
 }
 
 export function usePagination<T>(
   data: T[],
   options: PaginationOptions
 ): PaginationResult<T> {
-  const { initialPage = 1, pageSize: initialPageSize = 10, totalItems } = options;
+  const { 
+    initialPage = 1, 
+    pageSize: initialPageSize = 10, 
+    totalItems,
+    simulateApiDelay = true
+  } = options;
   
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [pageSize, setPageSizeState] = useState(initialPageSize);
+  const [isLoading, setIsLoading] = useState(false);
 
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalItems);
 
   const paginatedData = useMemo(() => {
-    // Simula delay de servidor
-    return data.slice(startIndex, endIndex);
-  }, [data, startIndex, endIndex]);
+    if (simulateApiDelay) {
+      // Simula delay de API
+      setIsLoading(true);
+      setTimeout(() => setIsLoading(false), 300);
+    }
+    
+    // Simula paginação de API com page, limit, start
+    const start = startIndex;
+    const limit = pageSize;
+    const page = currentPage;
+    
+    console.log(`📄 Paginação: page=${page}, limit=${limit}, start=${start}`);
+    
+    return data.slice(start, start + limit);
+  }, [data, startIndex, pageSize, currentPage, simulateApiDelay]);
 
-  const goToPage = (page: number) => {
+  const goToPage = useCallback((page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
-  };
+  }, [totalPages]);
 
-  const nextPage = () => {
+  const nextPage = useCallback(() => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
-  };
+  }, [currentPage, totalPages]);
 
-  const previousPage = () => {
+  const previousPage = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
+  }, [currentPage]);
 
-  const setPageSize = (size: number) => {
+  const setPageSize = useCallback((size: number) => {
     setPageSizeState(size);
     setCurrentPage(1); // Reset to first page when changing page size
-  };
+  }, []);
+
+  const getPageInfo = useCallback(() => {
+    return {
+      page: currentPage,
+      limit: pageSize,
+      start: startIndex
+    };
+  }, [currentPage, pageSize, startIndex]);
 
   return {
     currentPage,
@@ -78,5 +108,7 @@ export function usePagination<T>(
     nextPage,
     previousPage,
     setPageSize,
+    getPageInfo,
+    isLoading,
   };
 }

@@ -1,46 +1,24 @@
+import { useContextoAgenda } from '@/contexts/AgendaContext';
 import { memo } from 'react';
-import type { EventoAgenda } from '../hooks/useCalendar';
 import VisaoDiaria from './VisaoDiaria';
 import VisaoLista from './VisaoLista';
 import VisaoMensal from './VisaoMensal';
 import VisaoSemanal from './VisaoSemanal';
 
-interface VisualizacoesAgendaProps {
-  tipoVisualizacao: 'mes' | 'semana' | 'dia' | 'lista';
-  dataAtual: Date;
-  eventos: EventoAgenda[];
-  locaisSelecionados: string[];
-  aoClicarEvento: (evento: EventoAgenda) => void;
-  aoClicarData: (data: Date) => void;
-}
-
-const VisualizacoesAgenda = memo(({
-  tipoVisualizacao,
-  dataAtual,
-  eventos,
-  locaisSelecionados,
-  aoClicarEvento,
-  aoClicarData
-}: VisualizacoesAgendaProps) => {
-  const propsComuns = {
-    dataAtual,
-    eventos,
-    locaisSelecionados,
-    aoClicarEvento,
-    aoClicarData
-  };
+const VisualizacoesAgenda = memo(() => {
+  const { tipoVisualizacao } = useContextoAgenda();
 
   switch (tipoVisualizacao) {
-    case 'semana':
-      return <VisaoSemanal {...propsComuns} />;
     case 'mes':
-      return <VisaoMensal {...propsComuns} />;
+      return <VisaoMensal />;
+    case 'semana':
+      return <VisaoSemanal />;
     case 'dia':
-      return <VisaoDiaria {...propsComuns} />;
+      return <VisaoDiaria />;
     case 'lista':
-      return <VisaoLista {...propsComuns} />;
+      return <VisaoLista />;
     default:
-      return <VisaoSemanal {...propsComuns} />;
+      return <VisaoMensal />;
   }
 });
 

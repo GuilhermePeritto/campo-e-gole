@@ -1,6 +1,6 @@
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnDef, SortingState, VisibilityState } from '@tanstack/react-table';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCacheTabela } from './useCacheTabela';
 
 interface PropsEstadoTabela {
@@ -69,6 +69,14 @@ export const useEstadoTabela = ({
     
     setTamanhosColunas(tamanhosFinais);
   }, [colunas, dadosCache, larguraContainer]);
+
+  // Sync visibility when it changes externally
+  useEffect(() => {
+    setVisibilidadeColunas(prev => ({
+      ...prev,
+      ...visibilidadeInicial
+    }));
+  }, [visibilidadeInicial]);
 
   const manipularMudancaOrdenacao = useCallback((atualizador: any) => {
     const novaOrdenacao = typeof atualizador === 'function' ? atualizador(ordenacao) : atualizador;

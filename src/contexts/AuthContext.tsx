@@ -212,7 +212,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         permissions: [],
         userGroupId: '1',
         useGroupPermissions: true,
-        avatar: 'https://via.placeholder.com/150'
+        avatar: '/placeholder.svg'
       };
 
       const mockCompany: Company = {

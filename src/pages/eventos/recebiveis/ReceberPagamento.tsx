@@ -2,6 +2,7 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { useUniversalPayment } from '@/hooks/useUniversalPayment';
 import { ArrowLeft, CreditCard } from 'lucide-react';
 import { useEffect } from 'react';
@@ -9,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const ReceberPagamento = () => {
   const navigate = useNavigate();
+  const { goBack } = useNavigationHistory();
   const { id } = useParams();
   const { navigateToPayment } = useUniversalPayment();
 
@@ -20,7 +22,7 @@ const ReceberPagamento = () => {
         id: id
       });
     } else {
-      navigate('/eventos/recebiveis');
+      goBack();
     }
   }, [id, navigateToPayment, navigate]);
 
@@ -30,8 +32,6 @@ const ReceberPagamento = () => {
         title="Receber Pagamento"
         icon={<CreditCard className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-        backTo="/eventos/recebiveis"
-        backLabel="Contas a Receber"
       />
 
       <main className="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -41,7 +41,7 @@ const ReceberPagamento = () => {
             <p className="mt-2 text-muted-foreground">Redirecionando para o sistema de pagamento...</p>
             <Button
               variant="outline"
-              onClick={() => navigate('/eventos/recebiveis')}
+              onClick={goBack}
               className="mt-4 gap-2"
             >
               <ArrowLeft className="h-4 w-4" />

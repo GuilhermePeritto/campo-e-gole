@@ -1,9 +1,8 @@
 
-import React from 'react';
+import { BaseListAction, BaseListColumn } from '@/components/BaseList';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { BaseListColumn, BaseListAction } from '@/components/BaseList';
 import { FileText } from 'lucide-react';
 
 interface BaseListTableProps<T> {

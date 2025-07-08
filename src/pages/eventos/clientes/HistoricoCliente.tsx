@@ -1,19 +1,20 @@
 
+import PageHeader from '@/components/PageHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Calendar, Mail, MapPin, Phone, Users } from 'lucide-react';
+import { Calendar, Mail, MapPin, Phone, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const HistoricoCliente = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Mock data - em produção viria de uma API
+  // Dados mockados do cliente
   const client = {
-    id: 1,
+    id: id,
     name: 'João Silva',
-    email: 'joao@email.com',
+    email: 'joao.silva@email.com',
     phone: '(11) 99999-9999',
     type: 'Pessoa Física',
     totalReservations: 45,
@@ -67,25 +68,10 @@ const HistoricoCliente = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="shadow-sm border-b ">
-        <div className="max-w-none mx-auto px-6">
-          <div className="flex items-center gap-4 h-16">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/eventos/clientes')}
-              className="gap-2 text-gray-900 dark:text-gray-300"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-3">
-              <Users className="h-6 w-6 text-green-600" />
-              <h1 className="text-2xl font-medium text-gray-900 dark:text-gray-300">Histórico do Cliente</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="Histórico do Cliente"
+        icon={<Users className="h-6 w-6" />}
+      />
 
       <main className="max-w-none mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

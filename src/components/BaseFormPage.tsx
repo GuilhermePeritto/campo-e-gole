@@ -1,10 +1,11 @@
+import ModuleHeader from '@/components/ModuleHeader';
+import PageTour, { TourStep } from '@/components/PageTour';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import ModuleHeader from '@/components/ModuleHeader';
-import PageTour, { TourStep } from '@/components/PageTour';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface FormSection {
@@ -20,8 +21,8 @@ interface BaseFormPageProps {
   description: string;
   icon: React.ReactNode;
   moduleColor: string;
-  backTo: string;
-  backLabel: string;
+  backTo?: string;
+  backLabel?: string;
   children?: React.ReactNode;
   onSubmit: (e: React.FormEvent) => void;
   submitLabel: string;
@@ -45,6 +46,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
   formSections
 }) => {
   const navigate = useNavigate();
+  const { goBack } = useNavigationHistory();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(
     formSections?.reduce((acc, section) => ({
       ...acc,
@@ -85,8 +87,6 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
         title={title}
         icon={icon}
         moduleColor={moduleColor}
-        backTo={backTo}
-        backLabel={backLabel}
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
@@ -199,7 +199,7 @@ const BaseFormPage: React.FC<BaseFormPageProps> = ({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate(backTo)}
+                  onClick={goBack}
                   className="flex-1 h-11 font-medium"
                 >
                   Cancelar

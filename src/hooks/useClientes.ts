@@ -1,10 +1,27 @@
 
-import { useState, useCallback } from 'react';
-import { mockClientes, MockCliente } from '@/data/mockClientes';
+import { MockCliente, mockClientes } from '@/data/mockClientes';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useClientes = () => {
+  const [loading, setLoading] = useState(true);
+
+  // Debug: verificar dados mockados
+  // console.log('useClientes - mockClientes:', mockClientes);
+  // console.log('useClientes - mockClientes length:', mockClientes.length);
+
   const [clientes, setClientes] = useState<MockCliente[]>(mockClientes);
-  const [loading, setLoading] = useState(false);
+
+  // Simular carregamento
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Debug: verificar clientes no estado
+  // console.log('useClientes - clientes no estado:', clientes);
+  // console.log('useClientes - clientes length:', clientes.length);
 
   const getClienteById = useCallback((id: string) => {
     return clientes.find(c => c.id === id);
@@ -16,6 +33,29 @@ export const useClientes = () => {
 
   const getActiveClientes = useCallback(() => {
     return clientes.filter(c => c.status === 'active');
+  }, [clientes]);
+
+  // Função para carregar cliente por ID (simula chamada para backend)
+  const loadClienteById = useCallback(async (id: string): Promise<any> => {
+    // Simular delay de rede
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const cliente = clientes.find(c => c.id === id);
+    if (!cliente) {
+      throw new Error('Cliente não encontrado');
+    }
+    
+    // Retornar no formato esperado pelo CampoBusca
+    return {
+      id: cliente.id,
+      label: cliente.name,
+      subtitle: cliente.document,
+      email: cliente.email,
+      phone: cliente.phone,
+      address: cliente.address,
+      notes: cliente.notes,
+      status: cliente.status
+    };
   }, [clientes]);
 
   const createCliente = useCallback((data: Omit<MockCliente, 'id' | 'createdAt'>) => {
@@ -72,6 +112,7 @@ export const useClientes = () => {
     createCliente,
     updateCliente,
     deleteCliente,
-    getClientesForSearch
+    getClientesForSearch,
+    loadClienteById
   };
 };

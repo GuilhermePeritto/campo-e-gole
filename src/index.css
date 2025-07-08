@@ -54,24 +54,7 @@
     /* Gray */
 
 
-    /* Day Selector Design Tokens */
-    --day-selector-primary: 0 0% 20%;           /* preto escuro */
-    --day-selector-primary-hover: 0 0% 30%;     /* preto um pouco mais claro */
-    --day-selector-selected: 0 0% 10%;          /* preto ainda mais escuro */
-    --day-selector-selected-glow: 0 0% 40%;     /* cinza/preto claro para glow */
-    --day-selector-card: 0 0% 95%;              /* branco/cinza claro */
-    --day-selector-card-hover: 0 0% 90%;        /* cinza claro */
-    --day-selector-text: 0 0% 20%;              /* preto escuro */
-    --day-selector-text-light: 0 0% 50%;        /* cinza médio */
 
-    /* Gradients */
-    --gradient-day-selected: linear-gradient(135deg, hsl(var(--day-selector-selected)), hsl(var(--day-selector-selected-glow)));
-    --gradient-day-hover: linear-gradient(135deg, hsl(var(--day-selector-primary)), hsl(var(--day-selector-primary-hover)));
-
-    /* Shadows */
-    --shadow-day-card: 0 2px 8px hsl(var(--day-selector-primary) / 0.1);
-    --shadow-day-selected: 0 4px 20px hsl(var(--day-selector-selected) / 0.3);
-    --shadow-day-hover: 0 6px 25px hsl(var(--day-selector-primary) / 0.25);
   }
 
   .dark {
