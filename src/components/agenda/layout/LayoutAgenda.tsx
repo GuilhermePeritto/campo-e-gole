@@ -1,7 +1,7 @@
 import { useContextoAgenda } from '@/contexts/AgendaContext';
 import { useLocais } from '@/hooks/useLocais';
 import { parseDate } from '@internationalized/date';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useMemo } from 'react';
 import VisualizacoesAgenda from '../views/VisualizacoesAgenda';
 import BarraLateralAgenda from './BarraLateralAgenda';
 import CabecalhoAgenda from './CabecalhoAgenda';
@@ -28,20 +28,7 @@ const LayoutAgenda = memo(() => {
     loading
   } = useContextoAgenda();
 
-  // Estado de busca e debounce para locais
-  const [buscaLocal, setBuscaLocal] = useState('');
-  const { locais: allLocais, loading: locaisLoading, fetchLocais } = useLocais();
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchLocais({ search: buscaLocal });
-    }, 400);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [buscaLocal, fetchLocais]);
+  const { locais: allLocais, loading: locaisLoading } = useLocais();
 
   // Extrair datas únicas dos eventos para destacar no calendário
   const eventDates = useMemo(() => {

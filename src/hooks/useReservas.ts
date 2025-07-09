@@ -1,19 +1,17 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
 import { Reserva } from '../types/reservas';
 
 export const useReservas = (filtros?: {
-  pageNumber?: number;
-  pageSize?: number;
-  search?: string;
-  situacao?: string;
-  dataInicio?: string;
-  dataFim?: string;
+  Fields?: string;
+  Page?: number;
+  Start?: number;
+  Limit?: number;
+  Sort?: string;
+  Filter?: string;
   clienteId?: string;
   localId?: string;
-  ordenarPor?: string;
-  direcao?: 'asc' | 'desc';
 }) => {
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,22 +23,30 @@ export const useReservas = (filtros?: {
     totalPages: 0
   });
 
-  const fetchReservas = async (params = filtros) => {
+  const fetchReservas = useCallback(async (params?: {
+    Fields?: string;
+    Page?: number;
+    Start?: number;
+    Limit?: number;
+    Sort?: string;
+    Filter?: string;
+    clienteId?: string;
+    localId?: string;
+  }) => {
     setLoading(true);
     setError(null);
 
     try {
+      const finalParams = params || filtros;
       const response = await api.get<ApiPagedResponse<Reserva>>('/reservas', {
-        pageNumber: params?.pageNumber || 1,
-        pageSize: params?.pageSize || 10,
-        search: params?.search || '',
-        situacao: params?.situacao || '',
-        dataInicio: params?.dataInicio || '',
-        dataFim: params?.dataFim || '',
-        clienteId: params?.clienteId || '',
-        localId: params?.localId || '',
-        ordenarPor: params?.ordenarPor || 'dataInicio',
-        direcao: params?.direcao || 'desc'
+        Fields: finalParams?.Fields || '',
+        Page: finalParams?.Page || 1,
+        Start: finalParams?.Start || 0,
+        Limit: finalParams?.Limit || 10,
+        Sort: finalParams?.Sort || 'dataInicio',
+        Filter: finalParams?.Filter || '',
+        clienteId: finalParams?.clienteId || '',
+        localId: finalParams?.localId || ''
       });
 
       if (response.success) {
@@ -62,7 +68,7 @@ export const useReservas = (filtros?: {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Removido useEffect automático de busca
 

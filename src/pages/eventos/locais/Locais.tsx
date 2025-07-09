@@ -18,20 +18,29 @@ const Locais = () => {
 
   // Filtros para o hook
   const filtros = useMemo(() => {
-    const params: any = {
-      pageNumber: currentPage,
-      pageSize: pageSize
-    };
-
-    if (searchTerm) {
-      params.nome = searchTerm;
+    const filters = [];
+    
+    if (searchTerm.trim()) {
+      filters.push({
+        property: 'nome',
+        operator: 'contains',
+        value: searchTerm.trim()
+      });
     }
 
     if (statusFilter) {
-      params.situacao = statusFilter;
+      filters.push({
+        property: 'situacao',
+        operator: 'equals',
+        value: statusFilter
+      });
     }
 
-    return params;
+    return {
+      Page: currentPage,
+      Limit: pageSize,
+      Filter: filters.length > 0 ? JSON.stringify(filters) : ''
+    };
   }, [currentPage, pageSize, searchTerm, statusFilter]);
 
   const { locais, loading, pagination, fetchLocais } = useLocais(filtros);

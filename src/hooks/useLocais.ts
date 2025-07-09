@@ -5,12 +5,12 @@ import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
 import { Local } from '../types/reservas';
 
 export const useLocais = (filtros?: {
-  pageNumber?: number;
-  pageSize?: number;
-  search?: string;
-  situacao?: string;
-  ordenarPor?: string;
-  direcao?: 'asc' | 'desc';
+  Fields?: string;
+  Page?: number;
+  Start?: number;
+  Limit?: number;
+  Sort?: string;
+  Filter?: string;
 }) => {
   const [locais, setLocais] = useState<Local[]>([]);
   const [loading, setLoading] = useState(false);
@@ -22,18 +22,26 @@ export const useLocais = (filtros?: {
     totalPages: 0
   });
 
-  const fetchLocais = useCallback(async (params = filtros) => {
+  const fetchLocais = useCallback(async (params?: {
+    Fields?: string;
+    Page?: number;
+    Start?: number;
+    Limit?: number;
+    Sort?: string;
+    Filter?: string;
+  }) => {
     setLoading(true);
     setError(null);
 
     try {
+      const finalParams = params || filtros;
       const response = await api.get<ApiPagedResponse<Local>>('/locais', {
-        pageNumber: params?.pageNumber || 1,
-        pageSize: params?.pageSize || 10,
-        search: params?.search || '', // permite busca por nome
-        situacao: params?.situacao || '',
-        ordenarPor: params?.ordenarPor || 'nome',
-        direcao: params?.direcao || 'asc'
+        Fields: finalParams?.Fields || '',
+        Page: finalParams?.Page || 1,
+        Start: finalParams?.Start || 0,
+        Limit: finalParams?.Limit || 10,
+        Sort: finalParams?.Sort || 'nome',
+        Filter: finalParams?.Filter || ''
       });
 
       if (response.success) {
@@ -55,7 +63,7 @@ export const useLocais = (filtros?: {
     } finally {
       setLoading(false);
     }
-  }, [filtros]);
+  }, []);
 
   // Remover o useEffect automático de busca
 
@@ -149,6 +157,12 @@ export const useLocais = (filtros?: {
 
   const buscarPorId = (id: string) => locais.find(l => l.id === id);
 
+  // Método para listar todos os locais (compatibilidade)
+  const listar = async () => {
+    await fetchLocais({ Limit: 1000 }); // Buscar todos os locais
+    return locais;
+  };
+
   return {
     locais,
     loading,
@@ -159,6 +173,7 @@ export const useLocais = (filtros?: {
     updateLocal,
     deleteLocal,
     getLocal,
-    buscarPorId
+    buscarPorId,
+    listar
   };
 };

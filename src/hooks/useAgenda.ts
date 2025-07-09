@@ -201,7 +201,7 @@ export function useAgenda() {
 
     // Se mudaram os locais selecionados, fazer nova consulta
     const locaisAtuais = filtrosReservas.localIds?.sort().join(',') || 'all';
-    const locaisAnteriores = ultLocalIds?.[0] || 'all';
+    const locaisAnteriores = ultLocalIds?.sort().join(',') || 'all';
     if (locaisAtuais !== locaisAnteriores) {
       console.log('🔄 Nova consulta: locais selecionados mudaram');
       return true;
@@ -248,13 +248,36 @@ export function useAgenda() {
 
   // Função para buscar reservas só quando necessário
   const buscarReservasAgenda = useCallback(async () => {
+    // Construir o filtro como array com property, operator e value
+    const filters = [];
+    
+    if (filtrosReservas.dataInicio && filtrosReservas.dataFim) {
+      const dataInicio = filtrosReservas.dataInicio.toISOString().split('T')[0];
+      const dataFim = filtrosReservas.dataFim.toISOString().split('T')[0];
+      
+      filters.push({
+        property: 'data',
+        operator: 'between',
+        value: `${dataInicio}:${dataFim}`
+      });
+    }
+    
+    // Adicionar filtro de local se especificado
+    if (filtrosReservas.localIds && filtrosReservas.localIds.length === 1) {
+      filters.push({
+        property: 'localId',
+        operator: 'equals',
+        value: filtrosReservas.localIds[0]
+      });
+    }
+
     const filtros = {
-      pageNumber: 1,
-      pageSize: 1000,
-      dataInicio: filtrosReservas.dataInicio?.toISOString(),
-      dataFim: filtrosReservas.dataFim?.toISOString(),
-      localId: filtrosReservas.localIds?.length === 1 ? filtrosReservas.localIds[0] : undefined,
+      Page: 1,
+      Limit: 1000,
+      Filter: JSON.stringify(filters)
     };
+    
+    console.log('🔄 Filtros para busca de reservas:', filtros);
     await fetchReservas(filtros);
     setUltimaConsulta({
       tipoVisualizacao,
@@ -262,14 +285,24 @@ export function useAgenda() {
       dataFim: filtrosReservas.dataFim!,
       localIds: filtrosReservas.localIds
     });
-    setReservasAgenda(reservas); // Atualiza o estado local
-  }, [fetchReservas, filtrosReservas, tipoVisualizacao, reservas]);
+  }, [fetchReservas, filtrosReservas, tipoVisualizacao]);
 
   useEffect(() => {
     if (deveFazerConsulta) {
+      console.log('🔄 Fazendo consulta de reservas:', {
+        tipoVisualizacao,
+        dataInicio: filtrosReservas.dataInicio?.toISOString(),
+        dataFim: filtrosReservas.dataFim?.toISOString(),
+        localIds: filtrosReservas.localIds
+      });
       buscarReservasAgenda();
     }
   }, [deveFazerConsulta, buscarReservasAgenda]);
+
+  // Sincronizar reservasAgenda com reservas do hook useReservas
+  useEffect(() => {
+    setReservasAgenda(reservas);
+  }, [reservas]);
 
   // Estado de loading combinado
   const loading = reservasLoading || locaisLoading;
@@ -282,6 +315,7 @@ export function useAgenda() {
 
   // Navegação entre datas
   const navegarData = useCallback((direcao: 'anterior' | 'proxima') => {
+    console.log('🔄 Navegando data:', { direcao, tipoVisualizacao, dataAtual: dataAtual.toISOString() });
     setDataAtual(prev => {
       const novaData = new Date(prev);
       const incremento = direcao === 'proxima' ? 1 : -1;
@@ -305,9 +339,10 @@ export function useAgenda() {
           novaData.setDate(1);
           break;
       }
+      console.log('🔄 Nova data calculada:', novaData.toISOString());
       return novaData;
     });
-  }, [tipoVisualizacao]);
+  }, [tipoVisualizacao, dataAtual]);
 
   const irParaHoje = useCallback(() => {
     setDataAtual(new Date());

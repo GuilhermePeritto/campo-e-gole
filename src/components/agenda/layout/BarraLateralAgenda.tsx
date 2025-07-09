@@ -3,10 +3,9 @@ import ListaLocaisAgenda from '@/components/agenda/locais/ListaLocaisAgenda';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useLocais } from '@/hooks/useLocais';
 import type { Local } from '@/types/reservas';
 import { ChevronLeft, FilterIcon } from 'lucide-react';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo } from 'react';
 import type { DateValue } from "react-aria-components";
 
 interface BarraLateralAgendaProps {
@@ -41,30 +40,6 @@ const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
     tipoVisualizacao,
     eventDates = []
   } = props;
-
-  // Estado de busca e debounce
-  const [buscaLocal, setBuscaLocal] = useState('');
-  const [locaisFiltrados, setLocaisFiltrados] = useState<any[]>([]);
-  const { locais: fetchedLocais, loading, fetchLocais } = useLocais();
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Buscar locais ao montar e ao filtrar
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchLocais({ search: buscaLocal });
-    }, 400);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [buscaLocal, fetchLocais]);
-
-  useEffect(() => {
-    setLocaisFiltrados(locais);
-  }, [locais]);
-
-  // Gera um Date para o mês/ano/dia selecionado
-  const selectedDateAsDate = selectedDate ? new Date(selectedDate.year, selectedDate.month - 1, selectedDate.day) : new Date();
 
   return (
     <div className={

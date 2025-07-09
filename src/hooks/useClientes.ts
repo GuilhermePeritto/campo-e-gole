@@ -5,12 +5,12 @@ import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
 import { Cliente } from '../types/reservas';
 
 export const useClientes = (filtros?: {
-  pageNumber?: number;
-  pageSize?: number;
-  search?: string;
-  situacao?: string;
-  ordenarPor?: string;
-  direcao?: 'asc' | 'desc';
+  Fields?: string;
+  Page?: number;
+  Start?: number;
+  Limit?: number;
+  Sort?: string;
+  Filter?: string;
 }) => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,12 +28,12 @@ export const useClientes = (filtros?: {
 
     try {
       const response = await api.get<ApiPagedResponse<Cliente>>('/clientes', {
-        pageNumber: params?.pageNumber || 1,
-        pageSize: params?.pageSize || 10,
-        search: params?.search || '',
-        situacao: params?.situacao || '',
-        ordenarPor: params?.ordenarPor || 'nome',
-        direcao: params?.direcao || 'asc'
+        Fields: params?.Fields || '',
+        Page: params?.Page || 1,
+        Start: params?.Start || 0,
+        Limit: params?.Limit || 10,
+        Sort: params?.Sort || 'nome',
+        Filter: params?.Filter || ''
       });
 
       if (response.success) {
@@ -150,6 +150,16 @@ export const useClientes = (filtros?: {
     }
   };
 
+  // Método para buscar clientes para select (compatibilidade)
+  const getClientesForSearch = async () => {
+    await fetchClientes({ Limit: 1000 }); // Buscar todos os clientes
+    return clientes.map(cliente => ({
+      id: cliente.id,
+      label: cliente.nome,
+      value: cliente.id
+    }));
+  };
+
   return {
     clientes,
     loading,
@@ -159,6 +169,7 @@ export const useClientes = (filtros?: {
     createCliente,
     updateCliente,
     deleteCliente,
-    getCliente
+    getCliente,
+    getClientesForSearch
   };
 };

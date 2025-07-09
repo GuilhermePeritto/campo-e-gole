@@ -17,7 +17,7 @@ export default function Reserva() {
   const navigate = useNavigate();
   const isEditing = !!id;
 
-  const { buscarReservaPorId, criarReserva, atualizarReserva } = useReservas();
+  const { getReserva, createReserva, updateReserva } = useReservas();
   const { getClientesForSearch } = useClientes();
   const { listar: listarLocais } = useLocais();
 
@@ -53,7 +53,7 @@ export default function Reserva() {
 
         // Se estiver editando, carregar dados da reserva
         if (isEditing && id) {
-          const reserva = await buscarReservaPorId(id);
+          const reserva = await getReserva(id);
           setFormData(reserva);
         }
       } catch (error) {
@@ -63,7 +63,7 @@ export default function Reserva() {
     };
 
     loadData();
-  }, [id, isEditing, buscarReservaPorId, getClientesForSearch, listarLocais]);
+  }, [id, isEditing, getReserva, getClientesForSearch, listarLocais]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,10 +71,10 @@ export default function Reserva() {
 
     try {
       if (isEditing && id) {
-        await atualizarReserva(id, formData);
+        await updateReserva(id, formData);
         toast.success('Reserva atualizada com sucesso!');
       } else {
-        await criarReserva(formData as Omit<Reserva, 'id' | 'dataCadastro'>);
+        await createReserva(formData as Omit<Reserva, 'id' | 'dataCadastro'>);
         toast.success('Reserva criada com sucesso!');
       }
       

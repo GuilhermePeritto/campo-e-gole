@@ -1,10 +1,11 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLocais } from '@/hooks/useLocais';
 import { cn } from '@/lib/utils';
 import type { Local } from '@/types/reservas';
 import { Search } from 'lucide-react';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 interface ListaLocaisAgendaProps {
   locaisSelecionados: string[];
@@ -28,43 +29,54 @@ const ListaLocaisAgenda = memo(({
   loading = false,
 }: ListaLocaisAgendaProps) => {
   const [consulta, setConsulta] = useState('');
-  const [debouncedConsulta, setDebouncedConsulta] = useState('');
+  const { locais: locaisFiltrados, loading: locaisLoading, fetchLocais } = useLocais();
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Debounce para buscar locais no servidor
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setDebouncedConsulta(consulta);
+      const filters = [];
+      
+      if (consulta.trim()) {
+        filters.push({
+          property: 'nome',
+          operator: 'contains',
+          value: consulta.trim()
+        });
+      }
+      
+      fetchLocais({ 
+        Filter: filters.length > 0 ? JSON.stringify(filters) : '',
+        Limit: 50
+      });
     }, 400);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [consulta]);
+  }, [consulta, fetchLocais]);
 
-  const locaisFiltrados = useMemo(() => {
-    if (!debouncedConsulta.trim()) return todosLocais;
-    return todosLocais.filter(local =>
-      local.nome.toLowerCase().includes(debouncedConsulta.toLowerCase()) ||
-      local.tipo.toLowerCase().includes(debouncedConsulta.toLowerCase())
-    );
-  }, [todosLocais, debouncedConsulta]);
+  // Buscar todos os locais na primeira renderização
+  useEffect(() => {
+    fetchLocais({ Limit: 50 });
+  }, [fetchLocais]);
 
-  const todosSelecionados = todosLocais.length > 0 && todosLocais.every(local => estaLocalSelecionado(local.id));
+  const todosSelecionados = locaisFiltrados.length > 0 && locaisFiltrados.every(local => estaLocalSelecionado(local.id));
 
   const handleAlternarTodos = () => {
     if (todosSelecionados) {
-      todosLocais.forEach(local => {
+      locaisFiltrados.forEach(local => {
         if (estaLocalSelecionado(local.id)) aoAlternarLocal(local.id);
       });
     } else {
-      todosLocais.forEach(local => {
+      locaisFiltrados.forEach(local => {
         if (!estaLocalSelecionado(local.id)) aoAlternarLocal(local.id);
       });
     }
   };
 
   // SKELETON
-  if (loading) {
+  if (loading || locaisLoading) {
     return (
       <div className="flex flex-col gap-2 p-4">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -87,7 +99,7 @@ const ListaLocaisAgenda = memo(({
             todosSelecionados ? 'ring-2 ring-primary scale-110' : 'opacity-60 hover:opacity-100'
           )}
         />
-        {todosLocais.map((local) => {
+        {locaisFiltrados.map((local) => {
           const selecionado = estaLocalSelecionado(local.id);
           return (
             <button
@@ -117,16 +129,16 @@ const ListaLocaisAgenda = memo(({
           value={consulta}
           onChange={(e) => setConsulta(e.target.value)}
           className="pl-9 h-9 text-sm border-border/50 bg-white/80"
-          disabled={loading}
+          disabled={loading || locaisLoading}
         />
       </div>
-      {debouncedConsulta.trim() && (
+      {consulta.trim() && (
         <div className="mt-2 text-xs text-muted-foreground">
-          {locaisFiltrados.length} de {todosLocais.length} locais
+          {locaisFiltrados.length} locais encontrados
         </div>
       )}
       <div className="p-2 space-y-2 flex-1 min-h-0 overflow-y-auto">
-        {loading ? (
+        {loading || locaisLoading ? (
           Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-8 w-full mb-2" />
           ))
@@ -136,7 +148,7 @@ const ListaLocaisAgenda = memo(({
               className={cn(
                 'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-gray-200 cursor-pointer bg-white',
                 todosSelecionados ? 'ring-2 ring-primary/40' : 'hover:bg-accent/40',
-                loading && 'opacity-60 pointer-events-none'
+                (loading || locaisLoading) && 'opacity-60 pointer-events-none'
               )}
               onClick={handleAlternarTodos}
             >
@@ -146,7 +158,7 @@ const ListaLocaisAgenda = memo(({
                 className="mr-2 flex-shrink-0 border-gray-300 bg-white"
                 tabIndex={-1}
                 onClick={e => e.stopPropagation()}
-                disabled={loading}
+                disabled={loading || locaisLoading}
               />
               <span className="font-medium text-sm truncate text-gray-700">
                 {todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos'}
@@ -160,7 +172,7 @@ const ListaLocaisAgenda = memo(({
                   className={cn(
                     'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-transparent cursor-pointer',
                     selecionado ? 'ring-2 ring-primary/40 bg-white/90' : 'hover:bg-accent/40 bg-white/80',
-                    loading && 'opacity-60 pointer-events-none'
+                    (loading || locaisLoading) && 'opacity-60 pointer-events-none'
                   )}
                   style={{ backgroundColor: local.cor }}
                   onClick={() => aoAlternarLocal(local.id)}
@@ -172,7 +184,7 @@ const ListaLocaisAgenda = memo(({
                     style={{ accentColor: local.cor }}
                     tabIndex={-1}
                     onClick={e => e.stopPropagation()}
-                    disabled={loading}
+                    disabled={loading || locaisLoading}
                   />
                   <span className="font-medium text-sm truncate" style={{ color: '#222' }}>{local.nome}</span>
                 </div>

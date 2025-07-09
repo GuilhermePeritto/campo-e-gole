@@ -21,10 +21,10 @@ interface LocalFormData {
   capacidade: string;
   descricao: string;
   comodidades: string[];
-  status: 'ativo' | 'inativo' | 'manutencao';
+  situacao: string;
   intervalo: string;
-  horarioAbertura: string;
-  horarioFechamento: string;
+  horaAbertura: string;
+  horaFechamento: string;
 }
 
 const Local = () => {
@@ -33,7 +33,7 @@ const Local = () => {
   const { id } = useParams();
   const isEdit = !!id;
 
-  const { buscarPorId, criar, editar } = useLocais();
+  const { buscarPorId, createLocal, updateLocal } = useLocais();
 
   const [formData, setFormData] = useState<LocalFormData>({
     nome: '',
@@ -43,10 +43,10 @@ const Local = () => {
     capacidade: '',
     descricao: '',
     comodidades: [],
-    status: 'ativo',
+    situacao: 'ativo',
     intervalo: '60',
-    horarioAbertura: '08:00',
-    horarioFechamento: '22:00'
+    horaAbertura: '08:00',
+    horaFechamento: '22:00'
   });
 
   // Carregar dados do local se for edição
@@ -62,10 +62,10 @@ const Local = () => {
           capacidade: local.capacidade?.toString() || '',
           descricao: local.descricao || '',
           comodidades: local.comodidades || [],
-          status: local.status || 'ativo',
+          situacao: local.situacao || 'ativo',
           intervalo: local.intervalo?.toString() || '60',
-          horarioAbertura: local.horarioAbertura || '08:00',
-          horarioFechamento: local.horarioFechamento || '22:00'
+          horaAbertura: local.horaAbertura || '08:00',
+          horaFechamento: local.horaFechamento || '22:00'
         });
       }
     }
@@ -144,17 +144,18 @@ const Local = () => {
       capacidade: formData.capacidade ? parseInt(formData.capacidade) : undefined,
       descricao: formData.descricao,
       comodidades: formData.comodidades,
-      status: formData.status,
+      situacao: formData.situacao,
       cor: formData.cor,
       intervalo: parseInt(formData.intervalo),
-      horarioAbertura: formData.horarioAbertura,
-      horarioFechamento: formData.horarioFechamento
+      horaAbertura: formData.horaAbertura,
+      horaFechamento: formData.horaFechamento,
+      filialId: '1' // TODO: Pegar da sessão do usuário
     };
 
     if (isEdit && id) {
-      editar(id, localData);
+      updateLocal(id, localData);
     } else {
-      criar(localData);
+      createLocal(localData);
     }
 
     goBack();
@@ -250,7 +251,7 @@ const Local = () => {
 
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select value={formData.status} onValueChange={(value) => handleChange('status', value as 'ativo' | 'inativo' | 'manutencao')}>
+              <Select value={formData.situacao} onValueChange={(value) => handleChange('situacao', value as 'ativo' | 'inativo' | 'manutencao')}>
                 <SelectTrigger id="status" className="h-11">
                   <SelectValue />
                 </SelectTrigger>
@@ -293,8 +294,8 @@ const Local = () => {
               <Input
                 id="horarioAbertura"
                 type="time"
-                value={formData.horarioAbertura}
-                onChange={(e) => handleChange('horarioAbertura', e.target.value)}
+                value={formData.horaAbertura}
+                onChange={(e) => handleChange('horaAbertura', e.target.value)}
                 className="h-11"
               />
             </div>
@@ -304,8 +305,8 @@ const Local = () => {
               <Input
                 id="horarioFechamento"
                 type="time"
-                value={formData.horarioFechamento}
-                onChange={(e) => handleChange('horarioFechamento', e.target.value)}
+                value={formData.horaFechamento}
+                onChange={(e) => handleChange('horaFechamento', e.target.value)}
                 className="h-11"
               />
             </div>
