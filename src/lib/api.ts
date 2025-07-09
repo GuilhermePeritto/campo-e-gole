@@ -198,11 +198,14 @@ class Api {
   // ============================================================================
 
   private buildUrl(endpoint: string, params?: Record<string, any>): string {
-    // Remover barra inicial do endpoint se existir para evitar duplicação
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    // Normalizar o endpoint removendo barras duplicadas
+    const cleanEndpoint = endpoint.replace(/^\/+/, ''); // Remove barras iniciais
     
-    // Construir URL completa
-    const fullUrl = `${this.baseURL}/${cleanEndpoint}`;
+    // Construir URL completa evitando barras duplicadas
+    const fullUrl = this.baseURL.endsWith('/') 
+      ? `${this.baseURL}${cleanEndpoint}`
+      : `${this.baseURL}/${cleanEndpoint}`;
+    
     const url = new URL(fullUrl);
     
     if (params) {
