@@ -267,7 +267,19 @@ const BaseList = <T extends Record<string, any>>({
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex-1 overflow-hidden min-h-0">
-          {paginatedData.length === 0 ? (
+          {loading ? (
+            <TabelaAvancada
+              dados={[]}
+              colunas={columns}
+              acoes={actions}
+              obterIdItem={getItemId}
+              visibilidadeColunas={columnVisibility}
+              nomeEntidade={entityName}
+              carregando={true}
+              termosBusca={searchTerm}
+              filtrosAvancados={advancedFilters}
+            />
+          ) : paginatedData.length === 0 ? (
             <BaseListEmptyState
               searchTerm={searchTerm}
               createButton={createButton}
@@ -280,7 +292,7 @@ const BaseList = <T extends Record<string, any>>({
               obterIdItem={getItemId}
               visibilidadeColunas={columnVisibility}
               nomeEntidade={entityName}
-              carregando={loading}
+              carregando={false}
               termosBusca={searchTerm}
               filtrosAvancados={advancedFilters}
             />

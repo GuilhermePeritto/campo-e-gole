@@ -1,4 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
 import Bar from './pages/Bar';
 import Events from './pages/Events';
 import Financial from './pages/Financial';
@@ -14,7 +15,7 @@ import Cliente from './pages/eventos/clientes/Cliente';
 import Clientes from './pages/eventos/clientes/Clientes';
 import HistoricoCliente from './pages/eventos/clientes/HistoricoCliente';
 import Agenda from './pages/eventos/eventos/Agenda';
-import Evento from './pages/eventos/eventos/Evento';
+import Reserva from './pages/eventos/eventos/Reserva';
 import Locais from './pages/eventos/locais/Locais';
 import Local from './pages/eventos/locais/Local';
 import ReceberPagamento from './pages/eventos/recebiveis/ReceberPagamento';
@@ -108,14 +109,17 @@ function App() {
           {/* Rotas de Eventos */}
           <Route path="/eventos" element={<Events />} />
           <Route path="/eventos/agenda" element={<Agenda />} />
-          <Route path="/eventos/evento" element={<Evento />} />
-          <Route path="/eventos/evento/:id/editar" element={<Evento />} />
+          <Route path="/eventos/reserva" element={<Reserva />} />
+          <Route path="/eventos/reserva/:id/editar" element={<Reserva />} />
           <Route path="/eventos/clientes" element={<Clientes />} />
+          <Route path="/eventos/clientes/novo" element={<Cliente />} />
           <Route path="/eventos/clientes/:id" element={<Cliente />} />
           <Route path="/eventos/clientes/:id/historico" element={<HistoricoCliente />} />
           <Route path="/eventos/locais" element={<Locais />} />
+          <Route path="/eventos/locais/novo" element={<Local />} />
           <Route path="/eventos/locais/:id" element={<Local />} />
           <Route path="/eventos/recebiveis" element={<Recebiveis />} />
+          <Route path="/eventos/recebiveis/novo" element={<Recebivel />} />
           <Route path="/eventos/recebiveis/:id" element={<Recebivel />} />
           <Route path="/eventos/recebiveis/:id/receber" element={<ReceberPagamento />} />
           <Route path="/eventos/relatorios" element={<RelatoriosEventos />} />
@@ -201,6 +205,7 @@ function App() {
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Toaster />
       </Router>
     </AuthProvider>
   );

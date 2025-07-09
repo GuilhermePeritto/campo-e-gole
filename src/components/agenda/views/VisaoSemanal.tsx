@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useContextoAgenda } from '@/contexts/AgendaContext';
 import { useLocais } from '@/hooks/useLocais';
-import type { Evento } from '@/types/eventos';
+import type { Reserva } from '@/types/reservas';
 import { eachDayOfInterval, endOfWeek, format, startOfWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { memo, useMemo } from 'react';
@@ -28,8 +28,8 @@ const VisaoSemanal = memo(() => {
     let min = 23;
     let max = 0;
     locaisFiltrados.forEach(local => {
-      const [hAbertura] = local.horarioAbertura.split(':').map(Number);
-      const [hFechamento] = local.horarioFechamento.split(':').map(Number);
+      const [hAbertura] = local.horaAbertura.split(':').map(Number);
+      const [hFechamento] = local.horaFechamento.split(':').map(Number);
       if (hAbertura < min) min = hAbertura;
       if (hFechamento > max) max = hFechamento;
     });
@@ -73,7 +73,7 @@ const VisaoSemanal = memo(() => {
   }, [dataAtual]);
 
   // Função para calcular posição e altura do evento
-  const getEventPosition = (evento: Evento) => {
+  const getEventPosition = (evento: Reserva) => {
     const [startHour, startMinute] = evento.horaInicio.split(':').map(Number);
     const [endHour, endMinute] = evento.horaFim.split(':').map(Number);
     
@@ -96,7 +96,7 @@ const VisaoSemanal = memo(() => {
   };
 
   // Função para verificar se evento está no horário
-  const isEventInTimeSlot = (evento: Evento, slot: string) => {
+  const isEventInTimeSlot = (evento: Reserva, slot: string) => {
     const [startHour] = evento.horaInicio.split(':').map(Number);
     const [endHour] = evento.horaFim.split(':').map(Number);
     const [slotHour] = slot.split(':').map(Number);
@@ -238,7 +238,6 @@ const VisaoSemanal = memo(() => {
                       })
                       .map(evento => {
                         const { top, height } = getEventPosition(evento);
-                        const local = buscarPorId(evento.localId);
                         const [startHour, startMinute] = evento.horaInicio.split(':').map(Number);
                         const startTime = startHour + startMinute / 60;
                         const [slotHour, slotMinute] = slot.split(':').map(Number);
@@ -253,7 +252,7 @@ const VisaoSemanal = memo(() => {
                               style={{
                                 top: `${top}px`,
                                 height: `${height}px`,
-                                backgroundColor: local?.cor || evento.cor,
+                                backgroundColor: evento.cor,
                                 color: '#fff',
                                 fontSize: '10px',
                                 lineHeight: '1.2',
@@ -269,8 +268,8 @@ const VisaoSemanal = memo(() => {
                             >
                               <div className="font-medium truncate">{evento.cliente}</div>
                               <div className="truncate text-[9px]">{evento.horaInicio} - {evento.horaFim}</div>
-                              {evento.modalidade && (
-                                <div className="truncate text-[8px] opacity-90">{evento.modalidade}</div>
+                              {evento.esporte && (
+                                <div className="truncate text-[8px] opacity-90">{evento.esporte}</div>
                               )}
                             </div>
                           );
@@ -284,8 +283,8 @@ const VisaoSemanal = memo(() => {
                             style={{
                               top: '0px',
                               height: '60px',
-                              backgroundColor: local?.cor || evento.cor,
-                              borderLeftColor: local?.cor || evento.cor,
+                              backgroundColor: evento.cor,
+                              borderLeftColor: evento.cor,
                             }}
                             onClick={e => {
                               e.stopPropagation();

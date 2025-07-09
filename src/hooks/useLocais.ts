@@ -1,95 +1,164 @@
 
-import { mockLocais } from '@/data/mockLocais';
-import type { Local } from '@/types/eventos';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
+import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
+import { Local } from '../types/reservas';
 
-export function useLocais() {
-  const [loading, setLoading] = useState(true);
+export const useLocais = (filtros?: {
+  pageNumber?: number;
+  pageSize?: number;
+  search?: string;
+  situacao?: string;
+  ordenarPor?: string;
+  direcao?: 'asc' | 'desc';
+}) => {
+  const [locais, setLocais] = useState<Local[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({
+    pageNumber: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0
+  });
 
-  // Debug: verificar dados mockados
-  // console.log('useLocais - mockLocais:', mockLocais);
-  // console.log('useLocais - mockLocais length:', mockLocais.length);
+  const fetchLocais = useCallback(async (params = filtros) => {
+    setLoading(true);
+    setError(null);
 
-  // Simular carregamento
-  useEffect(() => {
-    const timer = setTimeout(() => {
+    try {
+      const response = await api.get<ApiPagedResponse<Local>>('/locais', {
+        pageNumber: params?.pageNumber || 1,
+        pageSize: params?.pageSize || 10,
+        search: params?.search || '', // permite busca por nome
+        situacao: params?.situacao || '',
+        ordenarPor: params?.ordenarPor || 'nome',
+        direcao: params?.direcao || 'asc'
+      });
+
+      if (response.success) {
+        setLocais(response.data);
+        setPagination({
+          pageNumber: response.pageNumber,
+          pageSize: response.pageSize,
+          totalCount: response.totalCount,
+          totalPages: response.totalPages
+        });
+      } else {
+        setError(response.message || 'Erro ao carregar locais');
+        toast.error(response.message || 'Erro ao carregar locais');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar locais';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const locais: Local[] = useMemo(() => mockLocais.map(local => ({
-    id: String(local.id),
-    nome: local.name,
-    rotulo: local.name,
-    subtitulo: local.type,
-    tipo: local.type,
-    intervalo: local.interval || 60,
-    valorHora: local.hourlyRate || 0,
-    capacidade: local.capacity,
-    descricao: local.description,
-    comodidades: local.amenities,
-    status: local.status === 'active' ? 'ativo' : local.status === 'maintenance' ? 'manutencao' : 'inativo',
-    cor: local.color,
-    horarioAbertura: local.openTime || '08:00',
-    horarioFechamento: local.closeTime || '22:00'
-  })), []);
-
-  // Debug: verificar locais processados
-  // console.log('useLocais - locais processados:', locais);
-  // console.log('useLocais - locais length:', locais.length);
-
-  const listar = () => locais;
-  const buscarPorId = (id: string) => locais.find(l => l.id === id);
-  const filtrar = (filtros: Partial<Pick<Local, 'status' | 'tipo'>>) => {
-    return locais.filter(l => {
-      if (filtros.status && l.status !== filtros.status) return false;
-      if (filtros.tipo && l.tipo !== filtros.tipo) return false;
-      return true;
-    });
-  };
-
-  // Função para carregar local por ID (simula chamada para backend)
-  const loadLocalById = useCallback(async (id: string): Promise<any> => {
-    // Simular delay de rede
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const local = locais.find(l => l.id === id);
-    if (!local) {
-      throw new Error('Local não encontrado');
     }
-    
-    // Retornar no formato esperado pelo CampoBusca
-    return {
-      id: local.id,
-      label: local.nome,
-      subtitle: local.tipo,
-      tipo: local.tipo,
-      valorHora: local.valorHora,
-      capacidade: local.capacidade,
-      descricao: local.descricao,
-      comodidades: local.comodidades,
-      status: local.status,
-      cor: local.cor,
-      intervalo: local.intervalo,
-      horarioAbertura: local.horarioAbertura,
-      horarioFechamento: local.horarioFechamento
-    };
-  }, [locais]);
+  }, [filtros]);
 
-  const criar = (local: Omit<Local, 'id'>) => ({ ...local, id: crypto.randomUUID() });
-  const editar = (id: string, dados: Partial<Local>) => ({ ...buscarPorId(id), ...dados });
-  const deletar = (id: string) => true;
+  // Remover o useEffect automático de busca
 
-  return { 
-    locais, 
-    loading, 
-    listar, 
-    buscarPorId, 
-    filtrar, 
-    criar, 
-    editar, 
-    deletar,
-    loadLocalById
+  const createLocal = async (localData: Omit<Local, 'id' | 'dataCadastro'>) => {
+    try {
+      const loadingToast = toast.loading('Criando local...');
+      
+      const response = await api.post<ApiResponse<Local>>('/locais', localData);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        toast.success('Local criado com sucesso!');
+        // Recarregar a lista
+        await fetchLocais();
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao criar local');
+        throw new Error(response.message || 'Erro ao criar local');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar local';
+      toast.error(errorMessage);
+      throw error;
+    }
   };
-}
+
+  const updateLocal = async (id: string, localData: Partial<Local>) => {
+    try {
+      const loadingToast = toast.loading('Atualizando local...');
+      
+      const response = await api.put<ApiResponse<Local>>(`/locais/${id}`, localData);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        toast.success('Local atualizado com sucesso!');
+        // Recarregar a lista
+        await fetchLocais();
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao atualizar local');
+        throw new Error(response.message || 'Erro ao atualizar local');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar local';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const deleteLocal = async (id: string) => {
+    try {
+      const loadingToast = toast.loading('Excluindo local...');
+      
+      const response = await api.delete<ApiResponse<void>>(`/locais/${id}`);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success) {
+        toast.success('Local excluído com sucesso!');
+        // Recarregar a lista
+        await fetchLocais();
+      } else {
+        toast.error(response.message || 'Erro ao excluir local');
+        throw new Error(response.message || 'Erro ao excluir local');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir local';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const getLocal = async (id: string) => {
+    try {
+      const response = await api.get<ApiResponse<Local>>(`/locais/${id}`);
+      
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao carregar local');
+        throw new Error(response.message || 'Erro ao carregar local');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar local';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const buscarPorId = (id: string) => locais.find(l => l.id === id);
+
+  return {
+    locais,
+    loading,
+    error,
+    pagination,
+    fetchLocais,
+    createLocal,
+    updateLocal,
+    deleteLocal,
+    getLocal,
+    buscarPorId
+  };
+};

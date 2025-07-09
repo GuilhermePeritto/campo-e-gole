@@ -1,80 +1,198 @@
 
-import { mockRecebiveis } from '@/data/mockRecebiveis';
-import { Recebivel } from '@/types/eventos';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
+import { Recebivel } from '../types/reservas';
 
-export const useRecebiveis = () => {
-  const [loading, setLoading] = useState(true);
+export const useRecebiveis = (filtros?: {
+  pageNumber?: number;
+  pageSize?: number;
+  search?: string;
+  situacao?: string;
+  dataInicio?: string;
+  dataFim?: string;
+  ordenarPor?: string;
+  direcao?: 'asc' | 'desc';
+}) => {
+  const [recebiveis, setRecebiveis] = useState<Recebivel[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({
+    pageNumber: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0
+  });
 
-  // Debug: verificar dados mockados
-  console.log('useRecebiveis - mockRecebiveis:', mockRecebiveis);
-  console.log('useRecebiveis - mockRecebiveis length:', mockRecebiveis.length);
+  const fetchRecebiveis = async (params = filtros) => {
+    setLoading(true);
+    setError(null);
 
-  // Simular carregamento
-  useEffect(() => {
-    const timer = setTimeout(() => {
+    try {
+      const response = await api.get<ApiPagedResponse<Recebivel>>('/recebiveis', {
+        pageNumber: params?.pageNumber || 1,
+        pageSize: params?.pageSize || 10,
+        search: params?.search || '',
+        situacao: params?.situacao || '',
+        dataInicio: params?.dataInicio || '',
+        dataFim: params?.dataFim || '',
+        ordenarPor: params?.ordenarPor || 'dataVencimento',
+        direcao: params?.direcao || 'asc'
+      });
+
+      if (response.success) {
+        setRecebiveis(response.data);
+        setPagination({
+          pageNumber: response.pageNumber,
+          pageSize: response.pageSize,
+          totalCount: response.totalCount,
+          totalPages: response.totalPages
+        });
+      } else {
+        setError(response.message || 'Erro ao carregar recebíveis');
+        toast.error(response.message || 'Erro ao carregar recebíveis');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar recebíveis';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Mapear dados mockados para o tipo Recebivel
-  const recebiveis: Recebivel[] = useMemo(() => {
-    return mockRecebiveis.map(recebivel => ({
-      id: recebivel.id,
-      clienteId: recebivel.clientId,
-      cliente: recebivel.client,
-      descricao: recebivel.description,
-      valor: recebivel.amount,
-      dataVencimento: recebivel.dueDate,
-      status: recebivel.status === 'pending' ? 'pendente' : 
-              recebivel.status === 'paid' ? 'pago' : 'vencido',
-      eventoId: recebivel.reservationId ? String(recebivel.reservationId) : undefined,
-      criadoEm: recebivel.createdAt
-    }));
-  }, []);
-
-  // Debug: verificar recebíveis processados
-  console.log('useRecebiveis - recebiveis processados:', recebiveis);
-  console.log('useRecebiveis - recebiveis length:', recebiveis.length);
-
-  const createRecebivel = (recebivelData: Omit<Recebivel, 'id' | 'criadoEm'>) => {
-    const newRecebivel: Recebivel = {
-      ...recebivelData,
-      id: Date.now().toString(),
-      criadoEm: new Date().toISOString().split('T')[0]
-    };
-    return newRecebivel;
+    }
   };
 
-  const updateRecebivel = (id: string, recebivelData: Partial<Recebivel>) => {
-    // Em uma implementação real, isso atualizaria o estado
-    console.log('Atualizando recebível:', id, recebivelData);
+  useEffect(() => {
+    fetchRecebiveis(filtros);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filtros)]);
+
+  const createRecebivel = async (recebivelData: Omit<Recebivel, 'id' | 'dataCadastro'>) => {
+    try {
+      const loadingToast = toast.loading('Criando recebível...');
+      
+      const response = await api.post<ApiResponse<Recebivel>>('/recebiveis', recebivelData);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        toast.success('Recebível criado com sucesso!');
+        // Recarregar a lista
+        await fetchRecebiveis();
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao criar recebível');
+        throw new Error(response.message || 'Erro ao criar recebível');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar recebível';
+      toast.error(errorMessage);
+      throw error;
+    }
   };
 
-  const deleteRecebivel = (id: string) => {
-    // Em uma implementação real, isso removeria do estado
-    console.log('Deletando recebível:', id);
+  const updateRecebivel = async (id: string, recebivelData: Partial<Recebivel>) => {
+    try {
+      const loadingToast = toast.loading('Atualizando recebível...');
+      
+      const response = await api.put<ApiResponse<Recebivel>>(`/recebiveis/${id}`, recebivelData);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        toast.success('Recebível atualizado com sucesso!');
+        // Recarregar a lista
+        await fetchRecebiveis();
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao atualizar recebível');
+        throw new Error(response.message || 'Erro ao atualizar recebível');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar recebível';
+      toast.error(errorMessage);
+      throw error;
+    }
   };
 
-  const buscarPorId = (id: string) => recebiveis.find(r => r.id === id);
-  const listar = () => recebiveis;
-  const filtrar = (filtros: Partial<Pick<Recebivel, 'status' | 'clienteId'>>) => {
-    return recebiveis.filter(r => {
-      if (filtros.status && r.status !== filtros.status) return false;
-      if (filtros.clienteId && r.clienteId !== filtros.clienteId) return false;
-      return true;
-    });
+  const deleteRecebivel = async (id: string) => {
+    try {
+      const loadingToast = toast.loading('Excluindo recebível...');
+      
+      const response = await api.delete<ApiResponse<void>>(`/recebiveis/${id}`);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success) {
+        toast.success('Recebível excluído com sucesso!');
+        // Recarregar a lista
+        await fetchRecebiveis();
+      } else {
+        toast.error(response.message || 'Erro ao excluir recebível');
+        throw new Error(response.message || 'Erro ao excluir recebível');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir recebível';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const getRecebivel = async (id: string) => {
+    try {
+      const response = await api.get<ApiResponse<Recebivel>>(`/recebiveis/${id}`);
+      
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao carregar recebível');
+        throw new Error(response.message || 'Erro ao carregar recebível');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar recebível';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const receberPagamento = async (id: string, dadosPagamento: {
+    valorRecebido: number;
+    dataRecebimento: string;
+    formaPagamento: string;
+    observacoes?: string;
+  }) => {
+    try {
+      const loadingToast = toast.loading('Registrando pagamento...');
+      
+      const response = await api.post<ApiResponse<Recebivel>>(`/recebiveis/${id}/receber`, dadosPagamento);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        toast.success('Pagamento registrado com sucesso!');
+        // Recarregar a lista
+        await fetchRecebiveis();
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao registrar pagamento');
+        throw new Error(response.message || 'Erro ao registrar pagamento');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao registrar pagamento';
+      toast.error(errorMessage);
+      throw error;
+    }
   };
 
   return {
     recebiveis,
     loading,
+    error,
+    pagination,
+    fetchRecebiveis,
     createRecebivel,
     updateRecebivel,
     deleteRecebivel,
-    buscarPorId,
-    listar,
-    filtrar
+    getRecebivel,
+    receberPagamento
   };
 };

@@ -1,9 +1,10 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import type { Local } from '@/types/eventos';
+import type { Local } from '@/types/reservas';
 import { Search } from 'lucide-react';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
 interface ListaLocaisAgendaProps {
   locaisSelecionados: string[];
@@ -13,6 +14,7 @@ interface ListaLocaisAgendaProps {
   aoAlternarLocal: (localId: string) => void;
   estaLocalSelecionado: (localId: string) => boolean;
   modoCompacto?: boolean;
+  loading?: boolean; // nova prop
 }
 
 const ListaLocaisAgenda = memo(({
@@ -23,16 +25,29 @@ const ListaLocaisAgenda = memo(({
   aoAlternarLocal,
   estaLocalSelecionado,
   modoCompacto = false,
+  loading = false,
 }: ListaLocaisAgendaProps) => {
   const [consulta, setConsulta] = useState('');
+  const [debouncedConsulta, setDebouncedConsulta] = useState('');
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedConsulta(consulta);
+    }, 400);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [consulta]);
 
   const locaisFiltrados = useMemo(() => {
-    if (!consulta.trim()) return todosLocais;
+    if (!debouncedConsulta.trim()) return todosLocais;
     return todosLocais.filter(local =>
-      local.nome.toLowerCase().includes(consulta.toLowerCase()) ||
-      local.tipo.toLowerCase().includes(consulta.toLowerCase())
+      local.nome.toLowerCase().includes(debouncedConsulta.toLowerCase()) ||
+      local.tipo.toLowerCase().includes(debouncedConsulta.toLowerCase())
     );
-  }, [todosLocais, consulta]);
+  }, [todosLocais, debouncedConsulta]);
 
   const todosSelecionados = todosLocais.length > 0 && todosLocais.every(local => estaLocalSelecionado(local.id));
 
@@ -47,6 +62,17 @@ const ListaLocaisAgenda = memo(({
       });
     }
   };
+
+  // SKELETON
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-2 p-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-full mb-2" />
+        ))}
+      </div>
+    );
+  }
 
   if (modoCompacto) {
     // Versão compacta (apenas ícones)
@@ -91,56 +117,69 @@ const ListaLocaisAgenda = memo(({
           value={consulta}
           onChange={(e) => setConsulta(e.target.value)}
           className="pl-9 h-9 text-sm border-border/50 bg-white/80"
+          disabled={loading}
         />
       </div>
-      {consulta.trim() && (
+      {debouncedConsulta.trim() && (
         <div className="mt-2 text-xs text-muted-foreground">
           {locaisFiltrados.length} de {todosLocais.length} locais
         </div>
       )}
       <div className="p-2 space-y-2 flex-1 min-h-0 overflow-y-auto">
-        <div
-          className={cn(
-            'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-gray-200 cursor-pointer bg-white',
-            todosSelecionados ? 'ring-2 ring-primary/40' : 'hover:bg-accent/40'
-          )}
-          onClick={handleAlternarTodos}
-        >
-          <Checkbox
-            checked={todosSelecionados}
-            onCheckedChange={handleAlternarTodos}
-            className="mr-2 flex-shrink-0 border-gray-300 bg-white"
-            tabIndex={-1}
-            onClick={e => e.stopPropagation()}
-          />
-          <span className="font-medium text-sm truncate text-gray-700">
-            {todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos'}
-          </span>
-        </div>
-        {locaisFiltrados.map((local) => {
-          const selecionado = estaLocalSelecionado(local.id);
-          return (
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-full mb-2" />
+          ))
+        ) : (
+          <>
             <div
-              key={local.id}
               className={cn(
-                'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-transparent cursor-pointer',
-                selecionado ? 'ring-2 ring-primary/40 bg-white/90' : 'hover:bg-accent/40 bg-white/80'
+                'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-gray-200 cursor-pointer bg-white',
+                todosSelecionados ? 'ring-2 ring-primary/40' : 'hover:bg-accent/40',
+                loading && 'opacity-60 pointer-events-none'
               )}
-              style={{ backgroundColor: local.cor }}
-              onClick={() => aoAlternarLocal(local.id)}
+              onClick={handleAlternarTodos}
             >
               <Checkbox
-                checked={selecionado}
-                onCheckedChange={() => aoAlternarLocal(local.id)}
-                className="mr-2 flex-shrink-0 border-white/60 bg-white/80"
-                style={{ accentColor: local.cor }}
+                checked={todosSelecionados}
+                onCheckedChange={handleAlternarTodos}
+                className="mr-2 flex-shrink-0 border-gray-300 bg-white"
                 tabIndex={-1}
                 onClick={e => e.stopPropagation()}
+                disabled={loading}
               />
-              <span className="font-medium text-sm truncate" style={{ color: '#222' }}>{local.nome}</span>
+              <span className="font-medium text-sm truncate text-gray-700">
+                {todosSelecionados ? 'Desselecionar todos' : 'Selecionar todos'}
+              </span>
             </div>
-          );
-        })}
+            {locaisFiltrados.map((local) => {
+              const selecionado = estaLocalSelecionado(local.id);
+              return (
+                <div
+                  key={local.id}
+                  className={cn(
+                    'flex items-center gap-3 p-2 rounded-xl shadow-sm transition-colors border border-transparent cursor-pointer',
+                    selecionado ? 'ring-2 ring-primary/40 bg-white/90' : 'hover:bg-accent/40 bg-white/80',
+                    loading && 'opacity-60 pointer-events-none'
+                  )}
+                  style={{ backgroundColor: local.cor }}
+                  onClick={() => aoAlternarLocal(local.id)}
+                >
+                  <Checkbox
+                    checked={selecionado}
+                    onCheckedChange={() => aoAlternarLocal(local.id)}
+                    className="mr-2 flex-shrink-0 border-white/60 bg-white/80"
+                    style={{ accentColor: local.cor }}
+                    tabIndex={-1}
+                    onClick={e => e.stopPropagation()}
+                    disabled={loading}
+                  />
+                  <span className="font-medium text-sm truncate" style={{ color: '#222' }}>{local.nome}</span>
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );

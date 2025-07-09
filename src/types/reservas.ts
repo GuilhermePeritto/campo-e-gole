@@ -1,12 +1,12 @@
 // ============================================================================
-// TIPOS UNIFICADOS DO MÓDULO DE EVENTOS
+// TIPOS UNIFICADOS DO MÓDULO DE RESERVAS
 // ============================================================================
 
 // ============================================================================
 // TIPOS BASE
 // ============================================================================
 
-export type StatusEvento = 'confirmado' | 'pendente' | 'cancelado';
+export type StatusReserva = 'confirmado' | 'pendente' | 'cancelado';
 export type StatusLocal = 'ativo' | 'inativo' | 'manutencao';
 export type StatusCliente = 'ativo' | 'inativo';
 export type TipoVisualizacao = 'mes' | 'semana' | 'dia' | 'lista';
@@ -18,18 +18,18 @@ export type TipoVisualizacao = 'mes' | 'semana' | 'dia' | 'lista';
 export interface Local {
   id: string; // GUID
   nome: string;
-  rotulo: string;
   subtitulo: string;
   tipo: string;
   intervalo: number;
   valorHora: number;
-  capacidade?: number;
-  descricao?: string;
-  comodidades?: string[];
-  status: StatusLocal;
+  capacidade: number | null;
+  descricao: string;
+  comodidades: string[];
+  situacao: string; // Padronizado com backend
   cor: string;
-  horarioAbertura: string;
-  horarioFechamento: string;
+  horaAbertura: string; // Padronizado com backend
+  horaFechamento: string; // Padronizado com backend
+  filialId: string;
 }
 
 // ============================================================================
@@ -39,18 +39,14 @@ export interface Local {
 export interface Cliente {
   id: string; // GUID
   nome: string;
-  rotulo: string;
   subtitulo: string;
   documento: string;
   email: string;
   telefone: string;
-  endereco?: string;
-  cidade?: string;
-  estado?: string;
-  cep?: string;
-  observacoes?: string;
-  status: StatusCliente;
-  criadoEm: string;
+  endereco: string;
+  observacoes: string;
+  situacao: string; // Padronizado com backend
+  dataCadastro: string; // Padronizado com backend
 }
 
 // ============================================================================
@@ -61,33 +57,59 @@ export type StatusRecebivel = 'pendente' | 'pago' | 'vencido';
 
 export interface Recebivel {
   id: string; // GUID
-  clienteId: string; // GUID
   cliente: string;
+  clienteId: string;
   descricao: string;
   valor: number;
   dataVencimento: string;
-  status: StatusRecebivel;
-  eventoId?: string; // Referência opcional ao evento
-  criadoEm: string;
+  situacao: string; // Padronizado com backend
+  reservaId: string | null; // Padronizado com backend
+  dataCadastro: string; // Padronizado com backend
 }
 
 // ============================================================================
-// TIPOS DE EVENTO (UNIFICADO)
+// TIPOS DE RESERVA (UNIFICADO)
 // ============================================================================
 
-export interface Evento {
+export interface Reserva {
   id: string; // GUID
-  clienteId: string; // GUID
   cliente: string;
-  localId: string; // GUID
   local: string;
   data: string;
   horaInicio: string;
   horaFim: string;
-  status: StatusEvento;
+  situacao: string; // Padronizado com backend
   cor: string;
-  modalidade?: string;
-  observacoes?: string;
+  esporte: string; // Padronizado com backend
+  observacoes: string;
   valor: number;
-  criadoEm: string;
+  dataCadastro: string; // Padronizado com backend
+  clienteId: string;
+  localId: string;
 }
+
+// ============================================================================
+// TIPOS DE AUTENTICAÇÃO
+// ============================================================================
+
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiraEm: string;
+  user: User;
+}
+
+export interface User {
+  id: string;
+  nome: string;
+  email: string;
+  telefone: string;
+  cargo: string;
+  filialId: string;
+  grupoId: string;
+  ativo: boolean;
+  ultimoAcesso: string;
+  foto: string;
+  permissoesCustomizadas: number[];
+  dataCadastro: string;
+} 

@@ -3,26 +3,26 @@ import ListaLocaisAgenda from '@/components/agenda/locais/ListaLocaisAgenda';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import type { Local } from '@/types/eventos';
+import { useLocais } from '@/hooks/useLocais';
+import type { Local } from '@/types/reservas';
 import { ChevronLeft, FilterIcon } from 'lucide-react';
-import { memo } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import type { DateValue } from "react-aria-components";
 
 interface BarraLateralAgendaProps {
   isExpanded: boolean;
   selectedDate: DateValue | null;
   selectedLocais: string[];
-  searchQuery: string;
   locais: Local[];
   allLocais: Local[];
+  locaisLoading?: boolean;
   eventCountByVenue?: Record<string, number>;
   onToggle: () => void;
   onDateChange: (date: DateValue | null) => void;
   onLocalToggle: (localId: string) => void;
   isLocalSelected: (localId: string) => boolean;
-  onSearchChange: (query: string) => void;
   tipoVisualizacao: 'mes' | 'semana' | 'dia' | 'lista';
-  eventDates?: string[]; // Datas que têm eventos para destacar no calendário
+  eventDates?: string[];
 }
 
 const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
@@ -31,6 +31,7 @@ const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
     selectedDate,
     locais,
     allLocais,
+    locaisLoading = false,
     eventCountByVenue,
     onDateChange,
     selectedLocais,
@@ -40,6 +41,27 @@ const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
     tipoVisualizacao,
     eventDates = []
   } = props;
+
+  // Estado de busca e debounce
+  const [buscaLocal, setBuscaLocal] = useState('');
+  const [locaisFiltrados, setLocaisFiltrados] = useState<any[]>([]);
+  const { locais: fetchedLocais, loading, fetchLocais } = useLocais();
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Buscar locais ao montar e ao filtrar
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchLocais({ search: buscaLocal });
+    }, 400);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [buscaLocal, fetchLocais]);
+
+  useEffect(() => {
+    setLocaisFiltrados(locais);
+  }, [locais]);
 
   // Gera um Date para o mês/ano/dia selecionado
   const selectedDateAsDate = selectedDate ? new Date(selectedDate.year, selectedDate.month - 1, selectedDate.day) : new Date();
@@ -89,7 +111,7 @@ const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
         </div>
         
         {/* Calendário */}
-        <div className="px-3 py-2">
+        <div className="py-2">
           <CalendarioSidebar
             selectedDate={selectedDate}
             onDateChange={onDateChange}
@@ -97,7 +119,6 @@ const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
             eventDates={eventDates}
           />
         </div>
-        
         {/* Lista de Locais */}
         <ListaLocaisAgenda
           locaisSelecionados={selectedLocais}
@@ -107,6 +128,7 @@ const BarraLateralAgenda = memo((props: BarraLateralAgendaProps) => {
           aoAlternarLocal={onLocalToggle}
           estaLocalSelecionado={isLocalSelected}
           modoCompacto={!isExpanded}
+          loading={locaisLoading}
         />
       </div>
     </div>

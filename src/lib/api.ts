@@ -1,26 +1,38 @@
 // ============================================================================
-// ABSTRAÇÃO DA API - MÓDULO DE EVENTOS
+// ABSTRAÇÃO DA API - SISTEMA LUDUS GESTÃO
 // ============================================================================
+
+import { toast } from 'sonner';
 
 // ============================================================================
 // CONFIGURAÇÕES DA API
 // ============================================================================
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+/* const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'; */
+const API_BASE_URL = 'http://localhost:5000/api';
 const API_TIMEOUT = 10000; // 10 segundos
 
 // ============================================================================
 // TIPOS DE RESPOSTA DA API
 // ============================================================================
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
   success: boolean;
-  data?: T;
-  error?: string;
   message?: string;
+  data?: T;
 }
 
-interface ApiError {
+export interface ApiPagedResponse<T> {
+  success: boolean;
+  message?: string;
+  data: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface ApiError {
   message: string;
   status: number;
   code?: string;
@@ -33,10 +45,84 @@ interface ApiError {
 class Api {
   private baseURL: string;
   private timeout: number;
+  private accessToken: string | null = null;
+  private refreshToken: string | null = null;
+  private showNotifications: boolean = true;
 
   constructor(baseURL: string = API_BASE_URL, timeout: number = API_TIMEOUT) {
     this.baseURL = baseURL;
     this.timeout = timeout;
+    this.loadTokens();
+  }
+
+  // ============================================================================
+  // CONFIGURAÇÕES DE NOTIFICAÇÃO
+  // ============================================================================
+
+  setNotificationsEnabled(enabled: boolean) {
+    this.showNotifications = enabled;
+  }
+
+  private showErrorNotification(error: ApiError) {
+    if (!this.showNotifications) return;
+
+    let message = error.message;
+    let details = '';
+
+    switch (error.status) {
+      case 400:
+        details = 'Dados inválidos fornecidos';
+        break;
+      case 401:
+        message = 'Não autorizado. Faça login novamente.';
+        break;
+      case 403:
+        message = 'Acesso negado. Você não tem permissão para esta ação.';
+        break;
+      case 404:
+        message = 'Recurso não encontrado';
+        break;
+      case 409:
+        message = 'Conflito. O recurso já existe ou está em uso.';
+        break;
+      case 422:
+        message = 'Dados inválidos. Verifique as informações fornecidas.';
+        break;
+      case 500:
+        message = 'Erro interno do servidor. Tente novamente mais tarde.';
+        break;
+      case 0:
+        message = 'Erro de conexão. Verifique sua internet.';
+        break;
+      default:
+        details = `Erro ${error.status}`;
+    }
+
+    const fullMessage = details ? `${message}\n${details}` : message;
+    
+    toast.error(fullMessage, {
+      duration: 8000,
+      action: {
+        label: 'Fechar',
+        onClick: () => toast.dismiss(),
+      },
+    });
+  }
+
+  private showSuccessNotification(message: string) {
+    if (!this.showNotifications) return;
+    
+    toast.success(message, {
+      duration: 4000,
+    });
+  }
+
+  private showWarningNotification(message: string) {
+    if (!this.showNotifications) return;
+    
+    toast.warning(message, {
+      duration: 5000,
+    });
   }
 
   // ============================================================================
@@ -81,11 +167,44 @@ class Api {
   }
 
   // ============================================================================
+  // MÉTODOS DE AUTENTICAÇÃO
+  // ============================================================================
+
+  private loadTokens() {
+    this.accessToken = localStorage.getItem('accessToken');
+    this.refreshToken = localStorage.getItem('refreshToken');
+  }
+
+  setTokens(accessToken: string, refreshToken: string) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+  }
+
+  clearTokens() {
+    this.accessToken = null;
+    this.refreshToken = null;
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.accessToken;
+  }
+
+  // ============================================================================
   // MÉTODOS AUXILIARES
   // ============================================================================
 
   private buildUrl(endpoint: string, params?: Record<string, any>): string {
-    const url = new URL(endpoint, this.baseURL);
+    // Remover barra inicial do endpoint se existir para evitar duplicação
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    
+    // Construir URL completa
+    const fullUrl = `${this.baseURL}/${cleanEndpoint}`;
+    const url = new URL(fullUrl);
     
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -103,6 +222,14 @@ class Api {
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
     try {
+      // Adicionar token automaticamente
+      if (this.accessToken) {
+        options.headers = {
+          ...options.headers,
+          'Authorization': `Bearer ${this.accessToken}`
+        };
+      }
+
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
@@ -114,19 +241,91 @@ class Api {
 
       clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        throw await this.handleError(response);
+      if (response.status === 401) {
+        // Tentar refresh do token
+        const refreshed = await this.refreshAccessToken();
+        if (refreshed) {
+          // Reexecutar a requisição original
+          return this.request(url, options);
+        } else {
+          // Só retorna erro de sessão expirada se houver refreshToken
+          if (this.refreshToken) {
+            this.handleUnauthorized();
+            return {
+              success: false,
+              message: 'Sessão expirada. Faça login novamente.',
+              data: null
+            } as any;
+          }
+          // Se não houver token, deixa seguir o fluxo (não retorna nada aqui)
+        }
       }
 
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
-        return await response.json();
+        const json = await response.json();
+        // Se não for ok, mas o backend retornou um JSON, repasse para o frontend tratar
+        if (!response.ok) {
+          return json;
+        }
+        return json;
       }
 
-      return await response.text() as T;
+      // Se não for JSON, trate como texto
+      if (!response.ok) {
+        // Retorne um objeto de erro genérico
+        return {
+          success: false,
+          message: `HTTP ${response.status}: ${response.statusText}`,
+          data: null
+        } as any;
+      }
+      return (await response.text()) as T;
     } catch (error) {
       clearTimeout(timeoutId);
-      throw this.handleRequestError(error);
+      // Só lançar exceção para erros de rede ou abort
+      if (error && (error.name === 'AbortError' || error.name === 'TypeError')) {
+        throw {
+          success: false,
+          message: 'Erro de conexão. Verifique sua internet.',
+          data: null
+        };
+      }
+      throw error;
+    }
+  }
+
+  private async refreshAccessToken(): Promise<boolean> {
+    if (!this.refreshToken) return false;
+
+    try {
+      const url = this.buildUrl('autenticacao/refresh');
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: this.refreshToken })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          this.setTokens(data.data.accessToken, data.data.refreshToken);
+          return true;
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao renovar token:', error);
+    }
+
+    return false;
+  }
+
+  private handleUnauthorized() {
+    this.clearTokens();
+    this.showWarningNotification('Sessão expirada. Faça login novamente.');
+    // Redirecionar para login apenas se não estiver já na página de login
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login';
     }
   }
 
@@ -181,195 +380,4 @@ export const api = new Api();
 export default api;
 export { Api };
 
-// ============================================================================
-// FUNÇÕES DE EXEMPLO PARA INTEGRAÇÃO FUTURA COM BACKEND
-// ============================================================================
 
-// Função para carregar cliente por ID do backend
-export const loadClienteByIdFromAPI = async (id: string): Promise<any> => {
-  try {
-    const response = await fetch(`/api/clientes/${id}`);
-    if (!response.ok) {
-      throw new Error('Cliente não encontrado');
-    }
-    const cliente = await response.json();
-    
-    // Retornar no formato esperado pelo CampoBusca
-    return {
-      id: cliente.id,
-      label: cliente.name,
-      subtitle: cliente.document,
-      email: cliente.email,
-      phone: cliente.phone,
-      address: cliente.address,
-      notes: cliente.notes,
-      status: cliente.status
-    };
-  } catch (error) {
-    console.error('Erro ao carregar cliente:', error);
-    throw error;
-  }
-};
-
-// Função para carregar local por ID do backend
-export const loadLocalByIdFromAPI = async (id: string): Promise<any> => {
-  try {
-    const response = await fetch(`/api/locais/${id}`);
-    if (!response.ok) {
-      throw new Error('Local não encontrado');
-    }
-    const local = await response.json();
-    
-    // Retornar no formato esperado pelo CampoBusca
-    return {
-      id: local.id,
-      label: local.nome,
-      subtitle: local.tipo,
-      tipo: local.tipo,
-      valorHora: local.valorHora,
-      capacidade: local.capacidade,
-      descricao: local.descricao,
-      comodidades: local.comodidades,
-      status: local.status,
-      cor: local.cor,
-      intervalo: local.intervalo,
-      horarioAbertura: local.horarioAbertura,
-      horarioFechamento: local.horarioFechamento
-    };
-  } catch (error) {
-    console.error('Erro ao carregar local:', error);
-    throw error;
-  }
-};
-
-// Função para buscar clientes por termo no backend
-export const searchClientesFromAPI = async (termo: string): Promise<any[]> => {
-  try {
-    const response = await fetch(`/api/clientes/search?q=${encodeURIComponent(termo)}`);
-    if (!response.ok) {
-      throw new Error('Erro na busca');
-    }
-    const clientes = await response.json();
-    
-    return clientes.map((cliente: any) => ({
-      id: cliente.id,
-      label: cliente.name,
-      subtitle: cliente.document,
-      email: cliente.email
-    }));
-  } catch (error) {
-    console.error('Erro ao buscar clientes:', error);
-    return [];
-  }
-};
-
-// Função para buscar locais por termo no backend
-export const searchLocaisFromAPI = async (termo: string): Promise<any[]> => {
-  try {
-    const response = await fetch(`/api/locais/search?q=${encodeURIComponent(termo)}`);
-    if (!response.ok) {
-      throw new Error('Erro na busca');
-    }
-    const locais = await response.json();
-    
-    return locais.map((local: any) => ({
-      id: local.id,
-      label: local.nome,
-      subtitle: local.tipo,
-      cor: local.cor
-    }));
-  } catch (error) {
-    console.error('Erro ao buscar locais:', error);
-    return [];
-  }
-};
-
-// Funções para integração com API de eventos
-export const eventosAPI = {
-  // Buscar eventos por período
-  async buscarPorPeriodo(params: {
-    dataInicio: string;
-    dataFim: string;
-    localIds?: string[]; // Mudança: agora aceita array de locais
-    clienteId?: string;
-    status?: string;
-  }) {
-    const queryParams = new URLSearchParams();
-    queryParams.append('dataInicio', params.dataInicio);
-    queryParams.append('dataFim', params.dataFim);
-    if (params.localIds && params.localIds.length > 0) {
-      // Adicionar cada local como parâmetro separado
-      params.localIds.forEach(localId => {
-        queryParams.append('localIds', localId);
-      });
-    }
-    if (params.clienteId) queryParams.append('clienteId', params.clienteId);
-    if (params.status) queryParams.append('status', params.status);
-
-    const response = await fetch(`/api/eventos?${queryParams}`);
-    if (!response.ok) {
-      throw new Error('Erro ao buscar eventos');
-    }
-    return response.json();
-  },
-
-  // Buscar eventos por visualização
-  async buscarPorVisualizacao(params: {
-    tipoVisualizacao: 'mes' | 'semana' | 'dia' | 'lista';
-    dataAtual: string;
-    localIds?: string[]; // Mudança: agora aceita array de locais
-  }) {
-    const response = await fetch('/api/eventos/visualizacao', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(params),
-    });
-    if (!response.ok) {
-      throw new Error('Erro ao buscar eventos por visualização');
-    }
-    return response.json();
-  },
-
-  // Criar evento
-  async criar(evento: any) {
-    const response = await fetch('/api/eventos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(evento),
-    });
-    if (!response.ok) {
-      throw new Error('Erro ao criar evento');
-    }
-    return response.json();
-  },
-
-  // Atualizar evento
-  async atualizar(id: string, evento: any) {
-    const response = await fetch(`/api/eventos/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(evento),
-    });
-    if (!response.ok) {
-      throw new Error('Erro ao atualizar evento');
-    }
-    return response.json();
-  },
-
-  // Deletar evento
-  async deletar(id: string) {
-    const response = await fetch(`/api/eventos/${id}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) {
-      throw new Error('Erro ao deletar evento');
-    }
-    return response.json();
-  },
-};

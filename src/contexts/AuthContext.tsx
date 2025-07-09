@@ -1,16 +1,7 @@
+import { api, ApiResponse } from '@/lib/api';
+import type { LoginResponse, User } from '@/types/reservas';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'manager' | 'operator';
-  companyId: string;
-  permissions: string[];
-  userGroupId?: string;
-  useGroupPermissions: boolean;
-  avatar?: string;
-}
+import { toast } from 'sonner';
 
 interface UserGroup {
   id: string;
@@ -96,7 +87,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }
   return context;
 };
@@ -110,16 +101,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Simular verificação de token salvo
+    // Verificar se há tokens salvos
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
     const savedUser = localStorage.getItem('user');
     const savedCompany = localStorage.getItem('company');
     const savedUserGroups = localStorage.getItem('userGroups');
     const savedBranches = localStorage.getItem('branches');
     const savedCurrentBranch = localStorage.getItem('currentBranch');
 
-    if (savedUser && savedCompany) {
+    if (accessToken && refreshToken && savedUser) {
+      // Configurar tokens na API
+      api.setTokens(accessToken, refreshToken);
+      
+      // Restaurar dados do usuário
       setUser(JSON.parse(savedUser));
-      setCompany(JSON.parse(savedCompany));
+      setCompany(savedCompany ? JSON.parse(savedCompany) : null);
       setUserGroups(savedUserGroups ? JSON.parse(savedUserGroups) : getDefaultUserGroups());
       const branchesData = savedBranches ? JSON.parse(savedBranches) : getDefaultBranches();
       setBranches(branchesData);
@@ -201,105 +198,132 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ];
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulação de login - em produção seria uma chamada à API
-    if (email === 'admin@exemplo.com' && password === '123456') {
-      const mockUser: User = {
-        id: '1',
-        name: 'Administrador',
-        email: 'admin@exemplo.com',
-        role: 'admin',
-        companyId: '1',
-        permissions: [],
-        userGroupId: '1',
-        useGroupPermissions: true,
-        avatar: '/placeholder.svg'
-      };
+    let loadingToast: string | number | undefined;
+    
+    try {
+      loadingToast = toast.loading('Fazendo login...');
+      
+      const response = await api.post<ApiResponse<LoginResponse>>('/autenticacao/entrar', { 
+        email, 
+        senha: password 
+      });
 
-      const mockCompany: Company = {
-        id: '1',
-        name: 'Arena Sports Club',
-        document: '12.345.678/0001-90',
-        email: 'contato@arenasports.com',
-        phone: '(11) 3333-4444',
-        address: 'Av. Esportiva, 1000',
-        city: 'São Paulo',
-        state: 'SP',
-        zipCode: '01234-567',
-        website: 'https://www.arenasports.com',
-        description: 'Centro esportivo completo com quadras, bar e escolinha de esportes',
-        modules: ['events', 'bar', 'school', 'financial'],
-        settings: {
-          currency: 'BRL',
-          timezone: 'America/Sao_Paulo',
-          businessHours: {
-            start: '06:00',
-            end: '23:00'
-          },
-          eventsModule: true,
-          barModule: true,
-          schoolModule: true,
-          financialModule: true,
-          allowNegativeStock: false,
-          stockAlerts: true,
-          lowStockThreshold: 10,
-          enableComandas: true,
-          autoConfirmReservations: true,
-          allowRecurringReservations: true,
-          enablePeakHours: false,
-          peakHourStart: '18:00',
-          peakHourEnd: '22:00',
-          peakHourMultiplier: 1.5
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        const { accessToken, refreshToken, user } = response.data;
+        
+        // Configurar tokens na API
+        api.setTokens(accessToken, refreshToken);
+        
+        // Salvar dados no localStorage
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Atualizar estado
+        setUser(user);
+        setIsAuthenticated(true);
+        
+        // Carregar dados da empresa se necessário
+        if (!company) {
+          // Aqui você pode fazer uma chamada para buscar dados da empresa
+          // Por enquanto, vamos usar dados mockados
+          const mockCompany: Company = {
+            id: '1',
+            name: 'Empresa Exemplo',
+            document: '12.345.678/0001-90',
+            email: 'contato@empresa.com',
+            phone: '(11) 99999-9999',
+            address: 'Rua Principal, 123',
+            city: 'São Paulo',
+            state: 'SP',
+            zipCode: '01234-567',
+            modules: ['events', 'bar', 'school', 'financial'],
+            settings: {
+              currency: 'BRL',
+              timezone: 'America/Sao_Paulo',
+              businessHours: {
+                start: '08:00',
+                end: '22:00'
+              },
+              eventsModule: true,
+              barModule: true,
+              schoolModule: true,
+              financialModule: true,
+              allowNegativeStock: false,
+              stockAlerts: true,
+              lowStockThreshold: 5,
+              enableComandas: true,
+              autoConfirmReservations: false,
+              allowRecurringReservations: true,
+              enablePeakHours: true,
+              peakHourStart: '18:00',
+              peakHourEnd: '21:00',
+              peakHourMultiplier: 1.5
+            }
+          };
+          
+          setCompany(mockCompany);
+          localStorage.setItem('company', JSON.stringify(mockCompany));
         }
-      };
-
-      const defaultBranches = getDefaultBranches();
-
-      setUser(mockUser);
-      setCompany(mockCompany);
-      setBranches(defaultBranches);
-      setCurrentBranch(defaultBranches[0]);
-      setIsAuthenticated(true);
-
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      localStorage.setItem('company', JSON.stringify(mockCompany));
-      localStorage.setItem('userGroups', JSON.stringify(userGroups));
-      localStorage.setItem('branches', JSON.stringify(defaultBranches));
-      localStorage.setItem('currentBranch', JSON.stringify(defaultBranches[0]));
-
-      return true;
+        
+        toast.success('Login realizado com sucesso!');
+        return true;
+      } else {
+        toast.error(response.message || 'Erro no login');
+        return false;
+      }
+    } catch (error) {
+      // Sempre interromper o loading em caso de erro
+      if (loadingToast) {
+        toast.dismiss(loadingToast);
+      }
+      
+      console.error('Erro no login:', error);
+      // Removido toast.error duplicado aqui
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
+    // Limpar tokens da API
+    api.clearTokens();
+    
+    // Limpar estado
     setUser(null);
     setCompany(null);
-    setBranches([]);
-    setCurrentBranch(null);
     setIsAuthenticated(false);
+    
+    // Limpar localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     localStorage.removeItem('company');
     localStorage.removeItem('userGroups');
     localStorage.removeItem('branches');
     localStorage.removeItem('currentBranch');
+    
+    toast.success('Logout realizado com sucesso!');
   };
 
   const getUserEffectivePermissions = (userId: string): string[] => {
     if (!user) return [];
     
-    if (user.useGroupPermissions && user.userGroupId) {
-      const userGroup = userGroups.find(group => group.id === user.userGroupId);
-      return userGroup?.permissions || [];
+    const userGroup = userGroups.find(g => g.id === user.grupoId);
+    if (!userGroup) return [];
+    
+    // Se o usuário usa permissões customizadas, retornar elas
+    if (!user.permissoesCustomizadas || user.permissoesCustomizadas.length === 0) {
+      return userGroup.permissions;
     }
     
-    return user.permissions || [];
+    // Caso contrário, retornar permissões do grupo
+    return userGroup.permissions;
   };
 
   const hasPermission = (permission: string): boolean => {
-    if (!user || !company) return false;
-    
-    // Admin sempre tem todas as permissões
-    if (user.role === 'admin') return true;
+    if (!user) return false;
     
     const effectivePermissions = getUserEffectivePermissions(user.id);
     return effectivePermissions.includes(permission);
@@ -308,11 +332,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const hasModuleAccess = (module: 'events' | 'bar' | 'school' | 'financial'): boolean => {
     if (!company) return false;
     
-    // Verificar se o módulo está ativo nas configurações
-    const moduleKey = `${module}Module` as keyof Company['settings'];
-    const isModuleEnabled = company.settings[moduleKey];
-    
-    return isModuleEnabled && company.modules.includes(module);
+    return company.modules.includes(module);
   };
 
   const updateCompanySettings = (newSettings: Partial<Company['settings']>) => {
@@ -345,7 +365,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addBranch = (branchData: Omit<Branch, 'id'>) => {
     const newBranch: Branch = {
       ...branchData,
-      id: Date.now().toString()
+      id: (branches.length + 1).toString()
     };
     
     const updatedBranches = [...branches, newBranch];
@@ -361,11 +381,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setBranches(updatedBranches);
     localStorage.setItem('branches', JSON.stringify(updatedBranches));
     
-    // Atualizar filial atual se necessário
+    // Se a filial atual foi atualizada, atualizar também
     if (currentBranch?.id === id) {
-      const updatedCurrentBranch = { ...currentBranch, ...branchData };
-      setCurrentBranch(updatedCurrentBranch);
-      localStorage.setItem('currentBranch', JSON.stringify(updatedCurrentBranch));
+      const updatedCurrentBranch = updatedBranches.find(b => b.id === id);
+      if (updatedCurrentBranch) {
+        setCurrentBranch(updatedCurrentBranch);
+        localStorage.setItem('currentBranch', JSON.stringify(updatedCurrentBranch));
+      }
     }
   };
 
@@ -374,7 +396,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setBranches(updatedBranches);
     localStorage.setItem('branches', JSON.stringify(updatedBranches));
     
-    // Se a filial atual foi removida, definir uma nova
+    // Se a filial atual foi deletada, definir a primeira como atual
     if (currentBranch?.id === id) {
       const newCurrentBranch = updatedBranches[0] || null;
       setCurrentBranch(newCurrentBranch);
@@ -387,29 +409,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('currentBranch', JSON.stringify(branch));
   };
 
+  const value: AuthContextType = {
+    user,
+    company,
+    userGroups,
+    branches,
+    currentBranch,
+    login,
+    logout,
+    isAuthenticated,
+    hasPermission,
+    hasModuleAccess,
+    updateCompanySettings,
+    updateCompanyData,
+    getUserEffectivePermissions,
+    addBranch,
+    updateBranch,
+    deleteBranch,
+    setCurrentBranch: handleSetCurrentBranch
+  };
+
   return (
-    <AuthContext.Provider value={{
-      user,
-      company,
-      userGroups,
-      branches,
-      currentBranch,
-      login,
-      logout,
-      isAuthenticated,
-      hasPermission,
-      hasModuleAccess,
-      updateCompanySettings,
-      updateCompanyData,
-      getUserEffectivePermissions,
-      addBranch,
-      updateBranch,
-      deleteBranch,
-      setCurrentBranch: handleSetCurrentBranch
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export default AuthProvider;

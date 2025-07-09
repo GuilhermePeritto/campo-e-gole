@@ -6,26 +6,50 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useRecebiveis } from '@/hooks/useRecebiveis';
 import { AlertTriangle, CheckCircle, CreditCard, DollarSign, Edit, Plus, TrendingUp } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Recebiveis = () => {
   const navigate = useNavigate();
-  const { recebiveis, loading } = useRecebiveis();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+
+  // Filtros para o hook
+  const filtros = useMemo(() => {
+    const params: any = {
+      pageNumber: currentPage,
+      pageSize: pageSize
+    };
+
+    if (searchTerm) {
+      params.cliente = searchTerm;
+    }
+
+    if (statusFilter) {
+      params.situacao = statusFilter;
+    }
+
+    return params;
+  }, [currentPage, pageSize, searchTerm, statusFilter]);
+
+  const { recebiveis, loading, pagination } = useRecebiveis(filtros);
 
   // Debug: verificar se os dados estão chegando
   console.log('Recebiveis - dados recebidos:', recebiveis);
   console.log('Recebiveis - quantidade:', recebiveis.length);
   console.log('Recebiveis - loading:', loading);
+  console.log('Recebiveis - pagination:', pagination);
 
   // Calculate summary metrics
   const summaryData = useMemo(() => {
     if (!recebiveis.length) return [];
 
     const totalAmount = recebiveis.reduce((sum, r) => sum + r.valor, 0);
-    const pendingAmount = recebiveis.filter(r => r.status === 'pendente').reduce((sum, r) => sum + r.valor, 0);
-    const paidAmount = recebiveis.filter(r => r.status === 'pago').reduce((sum, r) => sum + r.valor, 0);
-    const overdueAmount = recebiveis.filter(r => r.status === 'vencido').reduce((sum, r) => sum + r.valor, 0);
+    const pendingAmount = recebiveis.filter(r => r.situacao === 'pendente').reduce((sum, r) => sum + r.valor, 0);
+    const paidAmount = recebiveis.filter(r => r.situacao === 'pago').reduce((sum, r) => sum + r.valor, 0);
+    const overdueAmount = recebiveis.filter(r => r.situacao === 'vencido').reduce((sum, r) => sum + r.valor, 0);
 
     return [
       {
@@ -107,7 +131,7 @@ const Recebiveis = () => {
       render: (item: any) => new Date(item.dataVencimento).toLocaleDateString('pt-BR')
     },
     {
-      key: 'status',
+      key: 'situacao',
       label: 'Situação',
       filterable: true,
       filterType: 'select' as const,
@@ -117,15 +141,15 @@ const Recebiveis = () => {
           pago: { variant: 'default' as const, label: 'Pago' },
           vencido: { variant: 'destructive' as const, label: 'Vencido' }
         };
-        const config = statusConfig[item.status] || statusConfig.pendente;
+        const config = statusConfig[item.situacao] || statusConfig.pendente;
         return <Badge variant={config.variant}>{config.label}</Badge>;
       }
     },
     {
-      key: 'criadoEm',
+      key: 'dataCadastro',
       label: 'Data Criação',
       sortable: true,
-      render: (item: any) => new Date(item.criadoEm).toLocaleDateString('pt-BR')
+      render: (item: any) => new Date(item.dataCadastro).toLocaleDateString('pt-BR')
     }
   ];
 
@@ -159,8 +183,6 @@ const Recebiveis = () => {
         title="Recebíveis"
         icon={<DollarSign className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-
-        
       />
 
       <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 xl:px-12 py-6 overflow-hidden">
@@ -180,10 +202,11 @@ const Recebiveis = () => {
               searchPlaceholder="Buscar recebíveis..."
               searchFields={['cliente', 'descricao']}
               getItemId={(item) => item.id}
-              pageSize={10}
+              pageSize={pageSize}
               entityName="recebiveis"
               loading={loading}
               className="h-full"
+              showDebugInfo={true}
             />
           </div>
         </div>

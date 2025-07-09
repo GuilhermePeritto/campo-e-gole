@@ -6,29 +6,53 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useClientes } from '@/hooks/useClientes';
 import { Calendar, Edit, Plus, UserCheck, UserPlus, Users } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Clientes = () => {
   const navigate = useNavigate();
-  const { clientes, loading } = useClientes();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+
+  // Filtros para o hook
+  const filtros = useMemo(() => {
+    const params: any = {
+      pageNumber: currentPage,
+      pageSize: pageSize
+    };
+
+    if (searchTerm) {
+      params.nome = searchTerm;
+    }
+
+    if (statusFilter) {
+      params.situacao = statusFilter;
+    }
+
+    return params;
+  }, [currentPage, pageSize, searchTerm, statusFilter]);
+
+  const { clientes, loading, pagination } = useClientes(filtros);
 
   // Debug: verificar se os dados estão chegando
   console.log('Clientes - dados recebidos:', clientes);
   console.log('Clientes - quantidade:', clientes.length);
   console.log('Clientes - loading:', loading);
+  console.log('Clientes - pagination:', pagination);
 
   // Calculate summary metrics
   const summaryData = useMemo(() => {
     if (!clientes.length) return [];
 
-    const totalClients = clientes.length;
-    const activeClients = clientes.filter(c => c.status === 'active').length;
+    const totalClients = pagination.totalCount;
+    const activeClients = clientes.filter(c => c.situacao === 'ativo').length;
     const thisMonth = new Date().getMonth();
     const newThisMonth = clientes.filter(c => 
-      new Date(c.createdAt).getMonth() === thisMonth
+      new Date(c.dataCadastro).getMonth() === thisMonth
     ).length;
-    const corporateClients = clientes.filter(c => c.document.includes('/')).length;
+    const corporateClients = clientes.filter(c => c.documento.includes('/')).length;
 
     return [
       {
@@ -80,11 +104,11 @@ const Clientes = () => {
         color: 'bg-purple-500'
       }
     ];
-  }, [clientes]);
+  }, [clientes, pagination.totalCount]);
 
   const columns: BaseListColumn<any>[] = [
     {
-      key: 'name',
+      key: 'nome',
       label: 'Nome',
       sortable: true
     },
@@ -94,17 +118,17 @@ const Clientes = () => {
       sortable: true
     },
     {
-      key: 'phone',
+      key: 'telefone',
       label: 'Telefone'
     },
     {
-      key: 'document',
+      key: 'documento',
       label: 'Documento',
       render: (cliente) => {
-        const isCNPJ = cliente.document.includes('/');
+        const isCNPJ = cliente.documento.includes('/');
         return (
           <div>
-            <div className="font-medium">{cliente.document}</div>
+            <div className="font-medium">{cliente.documento}</div>
             <div className="text-sm text-muted-foreground">
               {isCNPJ ? 'CNPJ' : 'CPF'}
             </div>
@@ -113,20 +137,20 @@ const Clientes = () => {
       }
     },
     {
-      key: 'status',
+      key: 'situacao',
       label: 'Situação',
       sortable: true,
       render: (cliente) => (
-        <Badge variant={cliente.status === 'active' ? 'default' : 'destructive'}>
-          {cliente.status === 'active' ? 'Ativo' : 'Inativo'}
+        <Badge variant={cliente.situacao === 'ativo' ? 'default' : 'destructive'}>
+          {cliente.situacao === 'ativo' ? 'Ativo' : 'Inativo'}
         </Badge>
       )
     },
     {
-      key: 'createdAt',
+      key: 'dataCadastro',
       label: 'Data Cadastro',
       sortable: true,
-      render: (cliente) => new Date(cliente.createdAt).toLocaleDateString('pt-BR')
+      render: (cliente) => new Date(cliente.dataCadastro).toLocaleDateString('pt-BR')
     }
   ];
 
@@ -145,8 +169,6 @@ const Clientes = () => {
         title="Clientes"
         icon={<Users className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-
-        
       />
 
       <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 py-6 overflow-hidden">
@@ -163,15 +185,15 @@ const Clientes = () => {
               title="Gerenciar Clientes"
               description="Visualize e gerencie todos os clientes do módulo de eventos"
               searchPlaceholder="Buscar clientes..."
-              searchFields={['name', 'email', 'document']}
+              searchFields={['nome', 'email', 'documento']}
               getItemId={(cliente) => cliente.id}
               createButton={{
                 label: 'Novo Cliente',
                 icon: <Plus className="h-4 w-4" />,
                 onClick: () => {
-      sessionStorage.setItem('returnUrl', window.location.pathname);
-      navigate('/eventos/clientes/novo');
-    }
+                  sessionStorage.setItem('returnUrl', window.location.pathname);
+                  navigate('/eventos/clientes/novo');
+                }
               }}
               showExport={true}
               exportFilename="clientes-eventos"
@@ -179,6 +201,7 @@ const Clientes = () => {
               entityName="clientes"
               showDebugInfo={true}
               className="h-full"
+              pageSize={pageSize}
             />
           </div>
         </div>

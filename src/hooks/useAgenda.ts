@@ -1,29 +1,85 @@
-import type { Evento } from '@/types/eventos';
+import type { Reserva } from '@/types/reservas';
 import { eachDayOfInterval, endOfMonth, endOfWeek, isSameDay, isSameMonth, isSameWeek, parseISO, startOfMonth, startOfWeek } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEventos } from './useEventos';
 import { useLocais } from './useLocais';
+import { useReservas } from './useReservas';
 
 export type TipoVisualizacao = 'mes' | 'semana' | 'dia' | 'lista';
+
+const STORAGE_KEY = 'agenda_view_state';
+
+function getInitialAgendaState() {
+  if (typeof window === 'undefined') return undefined;
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) return JSON.parse(data);
+  } catch {}
+  return undefined;
+}
+
+const initialState = getInitialAgendaState();
 
 export function useAgenda() {
   const navigate = useNavigate();
   const { locais, loading: locaisLoading } = useLocais();
-  
-  // Estado da agenda
-  const [tipoVisualizacao, setTipoVisualizacao] = useState<TipoVisualizacao>('mes');
-  const [dataAtual, setDataAtual] = useState(new Date());
-  const [locaisSelecionados, setLocaisSelecionados] = useState<string[]>(['all']);
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const {
+    reservas,
+    loading: reservasLoading,
+    fetchReservas,
+    createReserva,
+    updateReserva,
+    deleteReserva,
+    getReserva,
+    confirmarReserva,
+    cancelarReserva,
+    finalizarReserva
+  } = useReservas();
 
-  // Estado para controlar quando fazer nova consulta
+  // Estado de carregamento da restauração
+  const [restaurando, setRestaurando] = useState(true);
+
+  // Estado da agenda (inicial padrão)
+  const [tipoVisualizacao, setTipoVisualizacao] = useState<TipoVisualizacao>('mes');
+  const [dataAtual, setDataAtual] = useState<Date>(new Date());
+  const [locaisSelecionados, setLocaisSelecionados] = useState<string[]>(['all']);
+  const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
   const [ultimaConsulta, setUltimaConsulta] = useState<{
     tipoVisualizacao: TipoVisualizacao;
     dataInicio: Date;
     dataFim: Date;
     localIds: string[] | undefined;
   } | null>(null);
+  const [reservasAgenda, setReservasAgenda] = useState<Reserva[]>([]);
+
+  // Restaurar do localStorage no primeiro render
+  useEffect(() => {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (parsed.tipoVisualizacao) setTipoVisualizacao(parsed.tipoVisualizacao);
+        if (parsed.dataAtual) {
+          const d = new Date(parsed.dataAtual);
+          setDataAtual(isNaN(d.getTime()) ? new Date() : d);
+        }
+        if (parsed.locaisSelecionados) setLocaisSelecionados(parsed.locaisSelecionados);
+        if (typeof parsed.sidebarExpanded === 'boolean') setSidebarExpanded(parsed.sidebarExpanded);
+      }
+    } catch {}
+    setRestaurando(false);
+  }, []);
+
+  // Persistir no localStorage sempre que mudar
+  useEffect(() => {
+    if (restaurando) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      tipoVisualizacao,
+      dataAtual,
+      locaisSelecionados,
+      sidebarExpanded,
+    }));
+  }, [tipoVisualizacao, dataAtual, locaisSelecionados, sidebarExpanded, restaurando]);
 
   // Função para verificar se precisa fazer nova consulta
   const precisaNovaConsulta = useCallback((
@@ -93,7 +149,7 @@ export function useAgenda() {
   }, [ultimaConsulta]);
 
   // Calcular filtros baseados na visualização atual
-  const filtrosEventos = useMemo(() => {
+  const filtrosReservas = useMemo(() => {
     let dataInicio: Date;
     let dataFim: Date;
     
@@ -144,8 +200,8 @@ export function useAgenda() {
     }
 
     // Se mudaram os locais selecionados, fazer nova consulta
-    const locaisAtuais = filtrosEventos.localIds?.sort().join(',') || 'all';
-    const locaisAnteriores = ultLocalIds?.sort().join(',') || 'all';
+    const locaisAtuais = filtrosReservas.localIds?.sort().join(',') || 'all';
+    const locaisAnteriores = ultLocalIds?.[0] || 'all';
     if (locaisAtuais !== locaisAnteriores) {
       console.log('🔄 Nova consulta: locais selecionados mudaram');
       return true;
@@ -155,7 +211,7 @@ export function useAgenda() {
     switch (tipoVisualizacao) {
       case 'mes':
         // Se está no mesmo mês, não precisa nova consulta
-        if (isSameMonth(filtrosEventos.dataInicio!, ultDataInicio)) {
+        if (isSameMonth(filtrosReservas.dataInicio!, ultDataInicio)) {
           console.log('📦 Cache: mesmo mês, usando dados existentes');
           return false;
         }
@@ -163,7 +219,7 @@ export function useAgenda() {
       
       case 'semana':
         // Se está na mesma semana, não precisa nova consulta
-        if (isSameWeek(filtrosEventos.dataInicio!, ultDataInicio, { weekStartsOn: 0 })) {
+        if (isSameWeek(filtrosReservas.dataInicio!, ultDataInicio, { weekStartsOn: 0 })) {
           console.log('📦 Cache: mesma semana, usando dados existentes');
           return false;
         }
@@ -171,7 +227,7 @@ export function useAgenda() {
       
       case 'dia':
         // Se é o mesmo dia, não precisa nova consulta
-        if (isSameDay(filtrosEventos.dataInicio!, ultDataInicio)) {
+        if (isSameDay(filtrosReservas.dataInicio!, ultDataInicio)) {
           console.log('📦 Cache: mesmo dia, usando dados existentes');
           return false;
         }
@@ -179,7 +235,7 @@ export function useAgenda() {
       
       case 'lista':
         // Se está no mesmo mês, não precisa nova consulta
-        if (isSameMonth(filtrosEventos.dataInicio!, ultDataInicio)) {
+        if (isSameMonth(filtrosReservas.dataInicio!, ultDataInicio)) {
           console.log('📦 Cache: mesmo mês (lista), usando dados existentes');
           return false;
         }
@@ -188,34 +244,41 @@ export function useAgenda() {
 
     console.log('🔄 Nova consulta: período mudou');
     return true;
-  }, [ultimaConsulta, tipoVisualizacao, filtrosEventos, locaisSelecionados]);
+  }, [ultimaConsulta, tipoVisualizacao, filtrosReservas]);
 
-  // Usar o hook de eventos com filtros
-  const { eventos, loading: eventosLoading, buscarPorVisualizacao, limparCache } = useEventos(
-    filtrosEventos
-  );
+  // Função para buscar reservas só quando necessário
+  const buscarReservasAgenda = useCallback(async () => {
+    const filtros = {
+      pageNumber: 1,
+      pageSize: 1000,
+      dataInicio: filtrosReservas.dataInicio?.toISOString(),
+      dataFim: filtrosReservas.dataFim?.toISOString(),
+      localId: filtrosReservas.localIds?.length === 1 ? filtrosReservas.localIds[0] : undefined,
+    };
+    await fetchReservas(filtros);
+    setUltimaConsulta({
+      tipoVisualizacao,
+      dataInicio: filtrosReservas.dataInicio!,
+      dataFim: filtrosReservas.dataFim!,
+      localIds: filtrosReservas.localIds
+    });
+    setReservasAgenda(reservas); // Atualiza o estado local
+  }, [fetchReservas, filtrosReservas, tipoVisualizacao, reservas]);
 
-  // Atualizar última consulta quando necessário
   useEffect(() => {
     if (deveFazerConsulta) {
-      setUltimaConsulta({
-        tipoVisualizacao,
-        dataInicio: filtrosEventos.dataInicio!,
-        dataFim: filtrosEventos.dataFim!,
-        localIds: filtrosEventos.localIds
-      });
+      buscarReservasAgenda();
     }
-  }, [deveFazerConsulta, tipoVisualizacao, filtrosEventos]);
+  }, [deveFazerConsulta, buscarReservasAgenda]);
 
   // Estado de loading combinado
-  const loading = eventosLoading || locaisLoading;
+  const loading = reservasLoading || locaisLoading;
 
   // Função para sincronizar (limpar cache e forçar nova consulta)
   const sincronizar = useCallback(async () => {
     console.log('🔄 Sincronizando dados...');
-    limparCache();
     setUltimaConsulta(null); // Força nova consulta
-  }, [limparCache]);
+  }, []);
 
   // Navegação entre datas
   const navegarData = useCallback((direcao: 'anterior' | 'proxima') => {
@@ -274,9 +337,9 @@ export function useAgenda() {
     return locaisSelecionados.includes(localId);
   }, [locaisSelecionados]);
 
-  // Organizar eventos por dia para visualizações (já filtrados por período e local)
-  const eventosPorDiaELocal = useMemo(() => {
-    const organizados: Record<string, Evento[]> = {};
+  // Organizar reservas por dia para visualizações (já filtrados por período e local)
+  const reservasPorDiaELocal = useMemo(() => {
+    const organizados: Record<string, Reserva[]> = {};
     
     // Obter dias baseado na visualização
     let dias: Date[] = [];
@@ -295,28 +358,28 @@ export function useAgenda() {
     }
 
     dias.forEach(dia => {
-      const eventosDoDia = eventos.filter(evento => isSameDay(parseISO(evento.data), dia));
-      organizados[dia.toISOString()] = eventosDoDia;
+      const reservasDoDia = reservasAgenda.filter(reserva => isSameDay(parseISO(reserva.data), dia));
+      organizados[dia.toISOString()] = reservasDoDia;
     });
     
     return organizados;
-  }, [eventos, tipoVisualizacao, dataAtual]);
+  }, [reservasAgenda, tipoVisualizacao, dataAtual]);
 
   // Handlers de eventos
-  const handleEventClick = useCallback((evento: Evento) => {
-    console.log('Evento clicado:', evento);
-    // Implementar navegação para edição do evento
-    navigate(`/eventos/evento/${evento.id}/editar`);
+  const handleEventClick = useCallback((reserva: Reserva) => {
+    console.log('Reserva clicada:', reserva);
+    // Implementar navegação para edição da reserva
+    navigate(`/eventos/reserva/${reserva.id}/editar`);
   }, [navigate]);
 
   const handleDataClick = useCallback((data: Date) => {
     console.log('Data clicada:', data);
-    // Implementar navegação para criação de evento
+    // Implementar navegação para criação de reserva
     const ano = data.getFullYear();
     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
     const dia = data.getDate().toString().padStart(2, '0');
     const dataStr = `${ano}-${mes}-${dia}`;
-    navigate(`/eventos/evento?date=${dataStr}`);
+    navigate(`/eventos/reserva?date=${dataStr}`);
   }, [navigate]);
 
   const handleNovoEvento = useCallback(() => {
@@ -324,12 +387,39 @@ export function useAgenda() {
     const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
     const dia = dataAtual.getDate().toString().padStart(2, '0');
     const dataStr = `${ano}-${mes}-${dia}`;
-    navigate(`/eventos/evento?date=${dataStr}`);
+    navigate(`/eventos/reserva?date=${dataStr}`);
   }, [dataAtual, navigate]);
 
   const handleToggleSidebar = useCallback(() => {
     setSidebarExpanded(exp => !exp);
   }, []);
+
+  // No final do hook, só retorna o estado se não estiver restaurando
+  if (restaurando) {
+    return {
+      tipoVisualizacao,
+      setTipoVisualizacao: () => {},
+      dataAtual,
+      setDataAtual: () => {},
+      locaisSelecionados,
+      setLocaisSelecionados: () => {},
+      sidebarExpanded,
+      locais,
+      eventos: [],
+      eventosPorDiaELocal: {},
+      loading: true,
+      navegarData: () => {},
+      irParaHoje: () => {},
+      alternarLocal: () => {},
+      setarLocaisSelecionados: () => {},
+      isLocalSelecionado: () => false,
+      handleEventClick: () => {},
+      handleDataClick: () => {},
+      handleNovoEvento: () => {},
+      handleToggleSidebar: () => {},
+      sincronizar: () => {},
+    };
+  }
 
   return {
     // Estado
@@ -341,8 +431,8 @@ export function useAgenda() {
     setLocaisSelecionados,
     sidebarExpanded,
     locais,
-    eventos,
-    eventosPorDiaELocal,
+    eventos: reservasAgenda, // Mantém compatibilidade com componentes existentes
+    eventosPorDiaELocal: reservasPorDiaELocal, // Mantém compatibilidade
     loading,
     
     // Métodos de navegação

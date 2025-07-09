@@ -6,27 +6,56 @@ import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useLocais } from '@/hooks/useLocais';
 import { Activity, Building, Clock, DollarSign, MapPin, Plus } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Locais = () => {
   const navigate = useNavigate();
-  const { locais, loading } = useLocais();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+
+  // Filtros para o hook
+  const filtros = useMemo(() => {
+    const params: any = {
+      pageNumber: currentPage,
+      pageSize: pageSize
+    };
+
+    if (searchTerm) {
+      params.nome = searchTerm;
+    }
+
+    if (statusFilter) {
+      params.situacao = statusFilter;
+    }
+
+    return params;
+  }, [currentPage, pageSize, searchTerm, statusFilter]);
+
+  const { locais, loading, pagination, fetchLocais } = useLocais(filtros);
+
+  useEffect(() => {
+    fetchLocais(filtros);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filtros)]);
 
   // Debug: verificar se os dados estão chegando
   console.log('Locais - dados recebidos:', locais);
   console.log('Locais - quantidade:', locais.length);
   console.log('Locais - loading:', loading);
+  console.log('Locais - pagination:', pagination);
 
   // Calculate summary metrics
   const summaryData = useMemo(() => {
     if (!locais.length) return [];
 
-    const totalLocals = locais.length;
-    const activeLocals = locais.filter(local => local.status === 'ativo').length;
+    const totalLocals = pagination.totalCount;
+    const activeLocals = locais.filter(local => local.situacao === 'ativo').length;
     const averageHourlyRate = locais.reduce((sum, local) => sum + local.valorHora, 0) / locais.length;
-    const maintenanceLocals = locais.filter(local => local.status === 'manutencao').length;
-    const inactiveLocals = locais.filter(local => local.status === 'inativo').length;
+    const maintenanceLocals = locais.filter(local => local.situacao === 'manutencao').length;
+    const inactiveLocals = locais.filter(local => local.situacao === 'inativo').length;
 
     return [
       {
@@ -78,7 +107,7 @@ const Locais = () => {
         color: 'bg-orange-500'
       }
     ];
-  }, [locais]);
+  }, [locais, pagination.totalCount]);
 
   const columns = [
     {
@@ -110,7 +139,7 @@ const Locais = () => {
       render: (item: any) => item.capacidade ? `${item.capacidade} pessoas` : 'N/A'
     },
     {
-      key: 'status',
+      key: 'situacao',
       label: 'Situação',
       filterable: true,
       filterType: 'select' as const,
@@ -120,7 +149,7 @@ const Locais = () => {
           inativo: { variant: 'destructive' as const, label: 'Inativo' },
           manutencao: { variant: 'secondary' as const, label: 'Manutenção' }
         };
-        const config = statusConfig[item.status] || statusConfig.inativo;
+        const config = statusConfig[item.situacao] || statusConfig.inativo;
         return <Badge variant={config.variant}>{config.label}</Badge>;
       }
     }
@@ -149,8 +178,6 @@ const Locais = () => {
         title="Locais"
         icon={<MapPin className="h-6 w-6" />}
         moduleColor={MODULE_COLORS.events}
-
-        
       />
 
       <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 xl:px-12 py-6 overflow-hidden">
@@ -170,10 +197,11 @@ const Locais = () => {
               searchPlaceholder="Buscar locais..."
               searchFields={['nome', 'tipo']}
               getItemId={(item) => item.id}
-              pageSize={10}
+              pageSize={pageSize}
               entityName="locais"
               loading={loading}
               className="h-full"
+              showDebugInfo={true}
             />
           </div>
         </div>
