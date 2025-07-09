@@ -198,17 +198,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ];
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    let loadingToast: string | number | undefined;
-    
     try {
-      loadingToast = toast.loading('Fazendo login...');
-      
       const response = await api.post<ApiResponse<LoginResponse>>('/autenticacao/entrar', { 
         email, 
         senha: password 
       });
-
-      toast.dismiss(loadingToast);
 
       if (response.success && response.data) {
         const { accessToken, refreshToken, user } = response.data;
@@ -275,13 +269,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
     } catch (error) {
-      // Sempre interromper o loading em caso de erro
-      if (loadingToast) {
-        toast.dismiss(loadingToast);
-      }
-      
       console.error('Erro no login:', error);
-      // Removido toast.error duplicado aqui
       return false;
     }
   };
