@@ -24,6 +24,13 @@ const School = () => {
       action: () => navigate('/escolinha/alunos')
     },
     {
+      title: 'Clientes',
+      description: 'Gerenciar clientes da escola',
+      icon: Users2,
+      color: 'bg-module-school',
+      action: () => navigate('/escolinha/clientes')
+    },
+    {
       title: 'Professores',
       description: 'Gerenciar professores',
       icon: GraduationCap,

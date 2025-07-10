@@ -39,6 +39,7 @@ import UnifiedSale from './pages/bar/UnifiedSale';
 import AttendanceCall from './pages/escolinha/AttendanceCall';
 import ClassStudents from './pages/escolinha/ClassStudents';
 import Classes from './pages/escolinha/Classes';
+import ClientesEscolinha from './pages/escolinha/ClientesEscolinha';
 import EditClass from './pages/escolinha/EditClass';
 import EditStudent from './pages/escolinha/EditStudent';
 import EditTeacher from './pages/escolinha/EditTeacher';
@@ -139,6 +140,7 @@ function App() {
 
           {/* Escolinha */}
           <Route path="/escolinha" element={<School />} />
+          <Route path="/escolinha/clientes" element={<ClientesEscolinha />} />
           <Route path="/escolinha/alunos" element={<Students />} />
           <Route path="/escolinha/alunos/novo" element={<NewStudent />} />
           <Route path="/escolinha/alunos/:id/editar" element={<EditStudent />} />

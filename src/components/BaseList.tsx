@@ -4,7 +4,7 @@ import BaseListGrid from '@/components/BaseListGrid';
 import BaseListHeader from '@/components/BaseListHeader';
 import BaseListSearchControls, { AdvancedFilter } from '@/components/BaseListSearchControls';
 import PaginationControls from '@/components/PaginationControls';
-import TabelaAvancada from '@/core/componentes/tabela/TabelaAvancada';
+import TabelaAvancada from '@/components/tabela/TabelaAvancada';
 import { useCacheTabela } from '@/core/hooks/useCacheTabela';
 import { usePagination } from '@/hooks/usePagination';
 import { cn } from '@/lib/utils';
