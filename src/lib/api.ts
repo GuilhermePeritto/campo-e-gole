@@ -9,7 +9,8 @@ import { toast } from 'sonner';
 // ============================================================================
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const API_TIMEOUT = 10000; // 10 segundos
+/* const API_TIMEOUT = 10000; // 10 segundos */
+const API_TIMEOUT = 60000; // 1 minuto
 
 // ============================================================================
 // TIPOS DE RESPOSTA DA API
@@ -62,7 +63,7 @@ class Api {
     this.showNotifications = enabled;
   }
 
-  private showErrorNotification(error: ApiError) {
+  private showErrorNotification(error: ApiError, retryAction?: () => void) {
     if (!this.showNotifications) return;
 
     let message = error.message;
@@ -80,6 +81,9 @@ class Api {
         break;
       case 404:
         message = 'Recurso não encontrado';
+        break;
+      case 408:
+        message = 'Tempo limite excedido. A requisição demorou muito para responder.';
         break;
       case 409:
         message = 'Conflito. O recurso já existe ou está em uso.';
@@ -99,13 +103,23 @@ class Api {
 
     const fullMessage = details ? `${message}\n${details}` : message;
     
-    toast.error(fullMessage, {
+    const toastOptions: any = {
       duration: 8000,
       action: {
         label: 'Fechar',
         onClick: () => toast.dismiss(),
       },
-    });
+    };
+
+    // Adicionar botão de retry para timeouts e erros de conexão
+    if ((error.status === 408 || error.status === 0) && retryAction) {
+      toastOptions.action = {
+        label: 'Tentar Novamente',
+        onClick: retryAction,
+      };
+    }
+    
+    toast.error(fullMessage, toastOptions);
   }
 
   private showSuccessNotification(message: string) {
@@ -285,14 +299,49 @@ class Api {
       return (await response.text()) as T;
     } catch (error) {
       clearTimeout(timeoutId);
-      // Só lançar exceção para erros de rede ou abort
-      if (error && (error.name === 'AbortError' || error.name === 'TypeError')) {
+      
+      // Detectar tipo de erro e mostrar notificação apropriada
+      if (error && error.name === 'AbortError') {
+        // Timeout da requisição
+        const timeoutError: ApiError = {
+          message: 'Tempo limite excedido. A requisição demorou muito para responder.',
+          status: 408
+        };
+        
+        // Mostrar notificação com botão de retry
+        this.showErrorNotification(timeoutError, () => {
+          // Retry da requisição
+          return this.request(url, options);
+        });
+        
         throw {
           success: false,
-          message: 'Erro de conexão. Verifique sua internet.',
+          message: timeoutError.message,
           data: null
         };
       }
+      
+      if (error && error.name === 'TypeError') {
+        // Erro de rede/conexão
+        const networkError: ApiError = {
+          message: 'Erro de conexão. Verifique sua internet.',
+          status: 0
+        };
+        
+        // Mostrar notificação com botão de retry
+        this.showErrorNotification(networkError, () => {
+          // Retry da requisição
+          return this.request(url, options);
+        });
+        
+        throw {
+          success: false,
+          message: networkError.message,
+          data: null
+        };
+      }
+      
+      // Outros erros
       throw error;
     }
   }

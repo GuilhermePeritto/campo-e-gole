@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import CampoTelefone from '@/core/componentes/CampoTelefone';
-import CampoHorario from '@/core/componentes/CampoHorario';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import CampoHorario from '@/core/components/CampoHorario';
+import CampoTelefone from '@/core/components/CampoTelefone';
 import { MapPin } from 'lucide-react';
 import { useState } from 'react';
 

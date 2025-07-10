@@ -7,14 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import CampoEmail from '@/core/componentes/CampoEmail';
-import CampoTelefone from '@/core/componentes/CampoTelefone';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import CampoEmail from '@/core/components/CampoEmail';
+import CampoTelefone from '@/core/components/CampoTelefone';
 import { toast } from '@/hooks/use-toast';
 import { useFiliais } from '@/hooks/useFiliais';
 import { useGrupos } from '@/hooks/useGrupos';
 import { useUsuarios } from '@/hooks/useUsuarios';
-import { Camera, Upload, User, UserPlus, Edit } from 'lucide-react';
+import { Camera, Edit, Upload, User, UserPlus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 

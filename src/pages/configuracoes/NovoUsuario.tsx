@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import CampoEmail from '@/core/componentes/CampoEmail';
-import CampoTelefone from '@/core/componentes/CampoTelefone';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import CampoEmail from '@/core/components/CampoEmail';
+import CampoTelefone from '@/core/components/CampoTelefone';
 import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 

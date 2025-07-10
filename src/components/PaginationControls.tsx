@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink
 } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
@@ -82,14 +82,14 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   if (totalPages <= 1 && !showInfo) return null;
 
   return (
-    <div className="flex items-center justify-between py-1 px-2">
+    <div className="flex items-center justify-between py-0 px-2">
       {/* Left: Info */}
       <div className="flex-shrink-0 min-w-0">
         {showInfo && (
           <div className="text-xs text-muted-foreground">
             {startIndex}-{endIndex} de {totalItems}
             {showDebugInfo && (
-              <div className="text-[10px] text-muted-foreground/70 mt-1">
+              <div className="text-[10px] text-muted-foreground/70 mt-0.5">
                 page: {currentPage} | limit: {pageSize} | start: {startIndex - 1}
               </div>
             )}
@@ -101,7 +101,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       <div className="flex-1 flex justify-center">
         {totalPages > 1 && (
           <Pagination>
-            <PaginationContent className="gap-1">
+            <PaginationContent className="gap-0.5">
               {/* First page button - only show if more than 5 pages and not on first page */}
               {totalPages > 5 && currentPage > 1 && (
                 <PaginationItem>
@@ -109,10 +109,10 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onPageChange(1)}
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-5 p-0 text-xs"
                     title="Primeira página"
                   >
-                    <ChevronsLeft className="h-4 w-4" />
+                    <ChevronsLeft className="h-3 w-3" />
                   </Button>
                 </PaginationItem>
               )}
@@ -122,9 +122,9 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => hasPreviousPage && onPageChange(currentPage - 1)}
-                  disabled={!hasPreviousPage}
-                  className="h-8 px-3 text-xs gap-1"
+                  onClick={() => onPageChange(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                  className="h-8 px-1 text-xs gap-1"
                   title="Página anterior"
                 >
                   <span>Anterior</span>
@@ -135,12 +135,12 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               {getVisiblePages().map((page, index) => (
                 <PaginationItem key={index}>
                   {page === '...' ? (
-                    <PaginationEllipsis className="h-8 w-8" />
+                    <PaginationEllipsis className="h-8 w-5" />
                   ) : (
                     <PaginationLink
                       onClick={() => onPageChange(page as number)}
                       isActive={currentPage === page}
-                      className="cursor-pointer h-8 w-8 text-xs"
+                      className="cursor-pointer h-8 w-5 text-xs"
                     >
                       {page}
                     </PaginationLink>
@@ -153,9 +153,9 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => hasNextPage && onPageChange(currentPage + 1)}
-                  disabled={!hasNextPage}
-                  className="h-8 px-3 text-xs gap-1"
+                  onClick={() => onPageChange(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                  className="h-8 px-1 text-xs gap-1"
                   title="Próxima página"
                 >
                   <span>Próximo</span>
@@ -169,10 +169,10 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onPageChange(totalPages)}
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-5 p-0 text-xs"
                     title="Última página"
                   >
-                    <ChevronsRight className="h-4 w-4" />
+                    <ChevronsRight className="h-3 w-3" />
                   </Button>
                 </PaginationItem>
               )}
@@ -184,18 +184,18 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       {/* Right: Page Size Selector */}
       <div className="flex-shrink-0 min-w-0">
         {showPageSizeSelector && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0.5">
             <span className="text-xs text-muted-foreground whitespace-nowrap">Por página:</span>
             <Select
               value={pageSize.toString()}
               onValueChange={(value) => onPageSizeChange(Number(value))}
             >
-              <SelectTrigger className="w-20 h-8 text-xs">
-                <SelectValue />
+              <SelectTrigger className="w-15 h-8 text-xs">
+                <SelectValue/>
               </SelectTrigger>
               <SelectContent>
                 {pageSizeOptions.map((size) => (
-                  <SelectItem key={size} value={size.toString()}>
+                  <SelectItem key={size} value={size.toString()} className="text-xs h-8 min-h-0 py-0">
                     {size}
                   </SelectItem>
                 ))}

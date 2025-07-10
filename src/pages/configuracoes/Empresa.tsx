@@ -3,10 +3,10 @@ import BaseFormPage from '@/components/BaseFormPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import CampoDocumento from '@/core/componentes/CampoDocumento';
-import CampoEmail from '@/core/componentes/CampoEmail';
-import CampoTelefone from '@/core/componentes/CampoTelefone';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import CampoDocumento from '@/core/components/CampoDocumento';
+import CampoEmail from '@/core/components/CampoEmail';
+import CampoTelefone from '@/core/components/CampoTelefone';
 import { Building } from 'lucide-react';
 import { useState } from 'react';
 

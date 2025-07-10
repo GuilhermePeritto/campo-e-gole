@@ -1,4 +1,4 @@
-import { useBaseCrud } from '@/pages/base/hooks/useBaseCrud';
+import { useBaseCrud } from '@/hooks/useBaseCrud';
 
 // Interface para o cliente
 interface Cliente {

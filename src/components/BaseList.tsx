@@ -4,7 +4,6 @@ import BaseListGrid from '@/components/BaseListGrid';
 import BaseListHeader from '@/components/BaseListHeader';
 import BaseListSearchControls, { AdvancedFilter } from '@/components/BaseListSearchControls';
 import PaginationControls from '@/components/PaginationControls';
-import TabelaAvancada from '@/components/tabela/TabelaAvancada';
 import { useCacheTabela } from '@/core/hooks/useCacheTabela';
 import { usePagination } from '@/hooks/usePagination';
 import { cn } from '@/lib/utils';
@@ -268,34 +267,14 @@ const BaseList = <T extends Record<string, any>>({
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex-1 overflow-hidden min-h-0">
           {loading ? (
-            <TabelaAvancada
-              dados={[]}
-              colunas={columns}
-              acoes={actions}
-              obterIdItem={getItemId}
-              visibilidadeColunas={columnVisibility}
-              nomeEntidade={entityName}
-              carregando={true}
-              termosBusca={searchTerm}
-              filtrosAvancados={advancedFilters}
-            />
+            <></>
           ) : paginatedData.length === 0 ? (
             <BaseListEmptyState
               searchTerm={searchTerm}
               createButton={createButton}
             />
           ) : viewMode === 'table' ? (
-            <TabelaAvancada
-              dados={paginatedData}
-              colunas={columns}
-              acoes={actions}
-              obterIdItem={getItemId}
-              visibilidadeColunas={columnVisibility}
-              nomeEntidade={entityName}
-              carregando={false}
-              termosBusca={searchTerm}
-              filtrosAvancados={advancedFilters}
-            />
+            <></>
           ) : (
             <BaseListGrid
               data={paginatedData}

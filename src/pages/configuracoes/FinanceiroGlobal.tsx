@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import CampoValor from '@/core/componentes/CampoValor';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { DollarSign, Save, Plus, Trash2 } from 'lucide-react';
+import CampoValor from '@/core/components/CampoValor';
+import { DollarSign, Plus, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 const FinanceiroGlobal = () => {

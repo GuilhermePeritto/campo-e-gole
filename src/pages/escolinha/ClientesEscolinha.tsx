@@ -1,6 +1,6 @@
+import type { AcaoListagem, ColunaListagem } from '@/core/components/listagem';
+import { Listagem } from '@/core/components/listagem';
 import { useClientesEscolinhaBase } from '@/hooks/useClientesEscolinhaBase';
-import { BaseCrudPage } from '@/pages/base/BaseCrudPage';
-import { BaseCrudAction, BaseCrudColumn } from '@/pages/base/types/BaseCrudTypes';
 import { Calendar, CheckCircle, Mail, Phone, Plus, Users, XCircle } from 'lucide-react';
 
 // Interface para o cliente
@@ -17,22 +17,22 @@ export default function ClientesEscolinha() {
   const hook = useClientesEscolinhaBase();
 
   // Configuração das colunas
-  const columns: BaseCrudColumn<Cliente>[] = [
+  const colunas: ColunaListagem<Cliente>[] = [
     {
-      key: 'nome',
-      label: 'Nome',
-      sortable: true,
-      filterable: true,
-      filterType: 'select',
-      canHide: false
+      chave: 'nome',
+      titulo: 'Nome',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select',
+      podeOcultar: false
     },
     {
-      key: 'email',
-      label: 'E-mail',
-      sortable: true,
-      filterable: true,
-      filterType: 'select',
-      render: (item) => (
+      chave: 'email',
+      titulo: 'E-mail',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select',
+      renderizar: (item) => (
         <div className="flex items-center gap-2">
           <Mail className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm">{item.email}</span>
@@ -40,12 +40,12 @@ export default function ClientesEscolinha() {
       )
     },
     {
-      key: 'telefone',
-      label: 'Telefone',
-      sortable: true,
-      filterable: true,
-      filterType: 'select',
-      render: (item) => (
+      chave: 'telefone',
+      titulo: 'Telefone',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select',
+      renderizar: (item) => (
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm">{item.telefone}</span>
@@ -53,12 +53,12 @@ export default function ClientesEscolinha() {
       )
     },
     {
-      key: 'status',
-      label: 'Status',
-      sortable: true,
-      filterable: true,
-      filterType: 'select',
-      render: (item) => (
+      chave: 'status',
+      titulo: 'Status',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select',
+      renderizar: (item) => (
         <div className="flex items-center gap-2">
           {item.status === 'ativo' ? (
             <CheckCircle className="h-4 w-4 text-green-600" />
@@ -74,12 +74,12 @@ export default function ClientesEscolinha() {
       )
     },
     {
-      key: 'dataCadastro',
-      label: 'Data de Cadastro',
-      sortable: true,
-      filterable: true,
-      filterType: 'select',
-      render: (item) => (
+      chave: 'dataCadastro',
+      titulo: 'Data de Cadastro',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select',
+      renderizar: (item) => (
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm">
@@ -91,50 +91,50 @@ export default function ClientesEscolinha() {
   ];
 
   // Configuração das ações
-  const actions: BaseCrudAction<Cliente>[] = [
+  const acoes: AcaoListagem<Cliente>[] = [
     {
-      label: 'Excluir',
+      titulo: 'Excluir',
       onClick: (item) => {
         if (confirm(`Tem certeza que deseja excluir o cliente ${item.nome}?`)) {
           hook.deleteItem(item.id);
         }
       },
-      variant: 'destructive',
-      show: () => true // Sempre mostrar para teste
+      variante: 'destructive',
+      mostrar: () => true // Sempre mostrar para teste
     }
   ];
 
   // Configuração dos cards de resumo
-  const summaryCards = [
+  const cardsResumo = [
     {
-      title: 'Total de Clientes',
-      value: (data: Cliente[]) => data.length,
-      description: 'Clientes cadastrados',
-      icon: Users,
-      color: 'bg-blue-500',
-      trend: {
-        value: 12,
+      titulo: 'Total de Clientes',
+      valor: (data: Cliente[]) => data.length,
+      descricao: 'Clientes cadastrados',
+      icone: Users,
+      cor: 'bg-blue-500',
+      tendencia: {
+        valor: 12,
         label: 'este mês',
-        type: 'positive' as const
+        tipo: 'positivo' as const
       }
     },
     {
-      title: 'Clientes Ativos',
-      value: (data: Cliente[]) => data.filter(c => c.status === 'ativo').length,
-      description: 'Clientes ativos',
-      icon: CheckCircle,
-      color: 'bg-green-500'
+      titulo: 'Clientes Ativos',
+      valor: (data: Cliente[]) => data.filter(c => c.status === 'ativo').length,
+      descricao: 'Clientes ativos',
+      icone: CheckCircle,
+      cor: 'bg-green-500'
     },
     {
-      title: 'Clientes Inativos',
-      value: (data: Cliente[]) => data.filter(c => c.status === 'inativo').length,
-      description: 'Clientes inativos',
-      icon: XCircle,
-      color: 'bg-red-500'
+      titulo: 'Clientes Inativos',
+      valor: (data: Cliente[]) => data.filter(c => c.status === 'inativo').length,
+      descricao: 'Clientes inativos',
+      icone: XCircle,
+      cor: 'bg-red-500'
     },
     {
-      title: 'Novos este Mês',
-      value: (data: Cliente[]) => {
+      titulo: 'Novos este Mês',
+      valor: (data: Cliente[]) => {
         const thisMonth = new Date().getMonth();
         const thisYear = new Date().getFullYear();
         return data.filter(c => {
@@ -142,36 +142,36 @@ export default function ClientesEscolinha() {
           return cadastro.getMonth() === thisMonth && cadastro.getFullYear() === thisYear;
         }).length;
       },
-      description: 'Novos cadastros',
-      icon: Calendar,
-      color: 'bg-purple-500'
+      descricao: 'Novos cadastros',
+      icone: Calendar,
+      cor: 'bg-purple-500'
     }
   ];
 
   return (
-    <BaseCrudPage<Cliente>
-      title="Clientes"
-      description="Gerencie os clientes da escolinha"
-      icon={<Users className="h-6 w-6" />}
-      moduleColor="bg-blue-500"
-      entityName="Cliente"
-      entityNamePlural="Clientes"
-      entityRoute="/escolinha/clientes"
+    <Listagem<Cliente>
+      titulo="Clientes"
+      descricao="Gerencie os clientes da escolinha"
+      icone={<Users className="h-6 w-6" />}
+      corModulo="rgb(var(--module-school))"
+      nomeEntidade="Cliente"
+      nomeEntidadePlural="Clientes"
+      rotaEntidade="/escolinha/clientes"
       hook={hook}
-      columns={columns}
-      actions={actions}
-      createButton={{
-        label: "Novo Cliente",
-        icon: <Plus className="h-4 w-4" />,
-        route: "/escolinha/clientes/novo"
+      colunas={colunas}
+      acoes={acoes}
+      botaoCriar={{
+        titulo: "Novo Cliente",
+        icone: <Plus className="h-4 w-4" />,
+        rota: "/escolinha/clientes/novo"
       }}
-      summaryCards={summaryCards}
-      searchFields={['nome', 'email', 'telefone']}
-      searchPlaceholder="Buscar clientes por nome, email ou telefone..."
-      showExport={true}
-      exportFilename="clientes-escolinha"
-      defaultSort="nome"
-      defaultPageSize={10}
+      cardsResumo={cardsResumo}
+      camposBusca={['nome', 'email', 'telefone']}
+      placeholderBusca="Buscar clientes por nome, email ou telefone..."
+      mostrarExportar={true}
+      nomeArquivoExportar="clientes-escolinha"
+      ordenacaoPadrao="nome"
+      tamanhoPaginaPadrao={10}
     />
   );
 } 

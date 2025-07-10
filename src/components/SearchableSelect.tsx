@@ -1,5 +1,5 @@
 
-import CampoBusca from '@/core/componentes/CampoBusca';
+import CampoBusca from '@/core/components/CampoBusca';
 import React from 'react';
 
 interface SearchableSelectProps {

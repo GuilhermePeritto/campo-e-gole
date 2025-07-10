@@ -1,44 +1,30 @@
 import React from 'react';
 
-// Tipos para colunas da tabela
-export interface BaseCrudColumn<T> {
+// Renomear tipos para português
+export interface ColunaListagem<T> {
   key: keyof T | string;
   label: string;
   sortable?: boolean;
   filterable?: boolean;
-  filterType?: 'text' | 'select' | 'multiselect';
-  render?: (item: T) => React.ReactNode;
+  filterType?: 'select' | 'text';
   canHide?: boolean;
+  render?: (item: T) => React.ReactNode;
 }
 
-// Tipos para ações
-export interface BaseCrudAction<T> {
+export interface AcaoListagem<T> {
   label: string;
-  icon?: React.ReactNode;
   onClick: (item: T) => void;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: 'default' | 'outline' | 'destructive';
+  icon?: React.ReactNode;
   show?: (item: T) => boolean;
 }
 
-// Tipo para o hook base
-export interface BaseCrudHook<T> {
+export interface HookListagem<T> {
   data: T[];
   loading: boolean;
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    pageSize: number;
-    startIndex: number;
-    endIndex: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-  fetchData: (params: any) => Promise<void>;
+  pagination: any;
+  fetchData: (params: any) => void;
   deleteItem: (id: string | number) => Promise<void>;
-  createItem?: (data: Partial<T>) => Promise<T>;
-  updateItem?: (id: string | number, data: Partial<T>) => Promise<T>;
-  getItem?: (id: string | number) => Promise<T>;
 }
 
 // Tipos para parâmetros da API
@@ -78,8 +64,8 @@ export interface BaseCrudSummaryCard {
 
 export interface BaseCrudTableProps<T> {
   data: T[];
-  columns: BaseCrudColumn<T>[];
-  actions: BaseCrudAction<T>[];
+  columns: ColunaListagem<T>[];
+  actions: AcaoListagem<T>[];
   loading: boolean;
   pagination: BasePagination;
   searchTerm: string;

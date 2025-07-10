@@ -100,6 +100,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentBranch, setCurrentBranch] = useState<Branch | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Função utilitária para parse seguro de JSON
+  const safeJsonParse = <T,>(value: string | null, defaultValue: T): T => {
+    if (!value) return defaultValue;
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      console.warn('Erro ao fazer parse de JSON:', error);
+      return defaultValue;
+    }
+  };
+
   useEffect(() => {
     // Verificar se há tokens salvos
     const accessToken = localStorage.getItem('accessToken');
@@ -111,17 +122,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedCurrentBranch = localStorage.getItem('currentBranch');
 
     if (accessToken && refreshToken && savedUser) {
-      // Configurar tokens na API
-      api.setTokens(accessToken, refreshToken);
-      
-      // Restaurar dados do usuário
-      setUser(JSON.parse(savedUser));
-      setCompany(savedCompany ? JSON.parse(savedCompany) : null);
-      setUserGroups(savedUserGroups ? JSON.parse(savedUserGroups) : getDefaultUserGroups());
-      const branchesData = savedBranches ? JSON.parse(savedBranches) : getDefaultBranches();
-      setBranches(branchesData);
-      setCurrentBranch(savedCurrentBranch ? JSON.parse(savedCurrentBranch) : branchesData[0]);
-      setIsAuthenticated(true);
+      try {
+        // Configurar tokens na API
+        api.setTokens(accessToken, refreshToken);
+        
+        // Restaurar dados do usuário com validação segura
+        const userData = safeJsonParse(savedUser, null);
+        const companyData = safeJsonParse(savedCompany, null);
+        const userGroupsData = safeJsonParse(savedUserGroups, getDefaultUserGroups());
+        const branchesData = safeJsonParse(savedBranches, getDefaultBranches());
+        const currentBranchData = safeJsonParse(savedCurrentBranch, branchesData[0]);
+        
+        // Verificar se os dados do usuário são válidos
+        if (!userData || typeof userData !== 'object') {
+          throw new Error('Dados do usuário inválidos');
+        }
+        
+        setUser(userData);
+        setCompany(companyData);
+        setUserGroups(userGroupsData);
+        setBranches(branchesData);
+        setCurrentBranch(currentBranchData);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Erro ao restaurar dados do localStorage:', error);
+        // Em caso de erro, limpar dados corrompidos e inicializar padrão
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        localStorage.removeItem('company');
+        localStorage.removeItem('userGroups');
+        localStorage.removeItem('branches');
+        localStorage.removeItem('currentBranch');
+        
+        // Inicializar grupos e filiais padrão
+        setUserGroups(getDefaultUserGroups());
+        const defaultBranches = getDefaultBranches();
+        setBranches(defaultBranches);
+        setCurrentBranch(defaultBranches[0]);
+        setIsAuthenticated(false);
+      }
     } else {
       // Inicializar grupos e filiais padrão
       setUserGroups(getDefaultUserGroups());

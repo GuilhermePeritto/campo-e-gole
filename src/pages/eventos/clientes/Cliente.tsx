@@ -7,9 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import CampoDocumento from '@/core/componentes/CampoDocumento';
-import CampoEmail from '@/core/componentes/CampoEmail';
-import CampoTelefone from '@/core/componentes/CampoTelefone';
+import CampoDocumento from '@/core/components/CampoDocumento';
+import CampoEmail from '@/core/components/CampoEmail';
+import CampoTelefone from '@/core/components/CampoTelefone';
 import { useClientes } from '@/hooks/useClientes';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { User } from 'lucide-react';
