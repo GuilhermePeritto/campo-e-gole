@@ -112,18 +112,16 @@ export function useBaseCrud<T>(
         : (responseData.data || responseData);
       
       // Transformar paginação do backend
-      const transformedPagination = options?.transformPagination
-        ? options.transformPagination(responseData.pagination || responseData)
-        : (responseData.pagination || {
-            currentPage: params.page || 1,
-            totalPages: 1,
-            totalItems: transformedData.length,
-            pageSize: params.limit || 10,
-            startIndex: 1,
-            endIndex: transformedData.length,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          });
+      const transformedPagination = {
+        currentPage: responseData.pageNumber || 1,
+        totalPages: responseData.totalPages || 1,
+        totalItems: responseData.totalCount || 0,
+        pageSize: responseData.pageSize || 10,
+        startIndex: ((responseData.pageNumber || 1) - 1) * (responseData.pageSize || 10) + 1,
+        endIndex: Math.min((responseData.pageNumber || 1) * (responseData.pageSize || 10), responseData.totalCount || 0),
+        hasNextPage: (responseData.pageNumber || 1) < (responseData.totalPages || 1),
+        hasPreviousPage: (responseData.pageNumber || 1) > 1,
+      };
       
       setData(transformedData);
       setPagination(transformedPagination);
