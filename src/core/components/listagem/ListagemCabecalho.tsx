@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { TableHead } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -30,17 +29,20 @@ export function ListagemCabecalho<T>({ coluna, ordenacao, onSort }: PropsListage
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    // Garantir que o texto não mude durante o drag
+    userSelect: 'none' as const,
+    pointerEvents: isDragging ? 'none' as const : 'auto' as const,
   };
   
   const isOrdenado = ordenacao.campo === chaveColuna;
   const direcao = ordenacao.direcao;
   
   return (
-    <TableHead
+    <th
       ref={setNodeRef}
       style={style}
       className={cn(
-        "select-none relative group",
+        "h-10 px-3 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 select-none relative group bg-background",
         coluna.ordenavel !== false && "cursor-pointer hover:bg-muted/50"
       )}
     >
@@ -77,6 +79,6 @@ export function ListagemCabecalho<T>({ coluna, ordenacao, onSort }: PropsListage
           <span className="font-medium">{coluna.titulo}</span>
         )}
       </div>
-    </TableHead>
+    </th>
   );
 } 

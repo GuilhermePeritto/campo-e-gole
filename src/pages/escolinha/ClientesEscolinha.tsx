@@ -157,6 +157,7 @@ export default function ClientesEscolinha() {
       nomeEntidade="Cliente"
       nomeEntidadePlural="Clientes"
       rotaEntidade="/escolinha/clientes"
+      rotaResumo="/escolinha/clientes"
       hook={hook}
       colunas={colunas}
       acoes={acoes}

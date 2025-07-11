@@ -16,6 +16,7 @@ export interface BaseCrudHook<T> {
     hasPreviousPage: boolean;
   };
   fetchData: (params: any) => Promise<void>;
+  fetchSummaryData: (params: any) => Promise<void>;
   deleteItem: (id: string | number) => Promise<void>;
   createItem?: (data: Partial<T>) => Promise<T>;
   updateItem?: (id: string | number, data: Partial<T>) => Promise<T>;
@@ -287,11 +288,24 @@ export function useBaseCrud<T>(
     }
   }, [endpoint]);
 
+  const fetchSummaryData = useCallback(async (params: any) => {
+    try {
+      const response = await api.get(`${endpoint}/resumo`, params);
+      return ((response as any).data);
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao buscar dados do resumo', {
+        duration: 5000,
+      });
+      throw error;
+    }
+  }, [endpoint]);
+
   return {
     data,
     loading,
     pagination,
     fetchData,
+    fetchSummaryData,
     deleteItem,
     createItem,
     updateItem,

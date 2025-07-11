@@ -1,13 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
   closestCenter,
@@ -25,7 +23,7 @@ import {
   horizontalListSortingStrategy,
   SortableContext,
 } from '@dnd-kit/sortable';
-import { FileX } from 'lucide-react';
+import { FileX, MoreHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ListagemCabecalho } from './ListagemCabecalho';
@@ -186,17 +184,17 @@ export function ListagemTabela() {
   // Renderizar tabela
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-1 min-h-0 border border-border rounded-md bg-background overflow-hidden">
+      <div className="flex-1 min-h-0 border border-border rounded-md bg-background">
         <DndContext
           collisionDetection={closestCenter}
           modifiers={[restrictToHorizontalAxis]}
           onDragEnd={handleDragEnd}
           sensors={sensores}
         >
-          <div className="overflow-auto h-full">
-            <Table>
-              <TableHeader className="sticky top-0 z-10 bg-background border-b">
-                <TableRow>
+          <div className="relative h-full overflow-auto">
+            <table className="w-full caption-bottom text-sm">
+              <thead className="sticky top-0 z-20 bg-background border-b shadow-sm [&_tr]:border-b">
+                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                   <SortableContext
                     items={ordemColunas}
                     strategy={horizontalListSortingStrategy}
@@ -214,58 +212,69 @@ export function ListagemTabela() {
                     ))}
                   </SortableContext>
                   {acoesComPadrao.length > 0 && (
-                    <TableHead className="text-right">Ações</TableHead>
+                    <th className="h-10 px-3 text-center align-middle font-medium text-muted-foreground w-16 bg-background">
+                      Ações
+                    </th>
                   )}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+                </tr>
+              </thead>
+              <tbody className="[&_tr:last-child]:border-0">
                 {dados.map((item: any) => (
-                  <TableRow
+                  <tr
                     key={item.id || JSON.stringify(item)}
-                    className="hover:bg-muted/50"
+                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                   >
                     {colunasVisiveis.map((coluna) => (
-                      <TableCell key={String(coluna.chave)}>
+                      <td key={String(coluna.chave)} className="h-10 px-3 align-middle [&:has([role=checkbox])]:pr-0">
                         <ListagemCelula
                           item={item}
                           coluna={coluna}
                         />
-                      </TableCell>
+                      </td>
                     ))}
                     {acoesComPadrao.length > 0 && (
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {acoesComPadrao.map((acao, index) => {
-                            if (acao.mostrar && !acao.mostrar(item)) {
-                              return null;
-                            }
-                            
-                            return (
-                              <Button
-                                key={index}
-                                variant={acao.variante || 'outline'}
-                                size="sm"
-                                onClick={() => {
-                                  if (acao.titulo === 'Excluir') {
-                                    handleDelete(item);
-                                  } else {
-                                    acao.onClick(item);
-                                  }
-                                }}
-                                className={cn("gap-1", acao.className)}
-                              >
-                                {acao.icone}
-                                {acao.titulo}
-                              </Button>
-                            );
-                          })}
-                        </div>
-                      </TableCell>
+                      <td className="h-10 px-3 text-center align-middle [&:has([role=checkbox])]:pr-0 w-16">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {acoesComPadrao.map((acao, index) => {
+                              if (acao.mostrar && !acao.mostrar(item)) {
+                                return null;
+                              }
+                              
+                              return (
+                                <DropdownMenuItem
+                                  key={index}
+                                  onClick={() => {
+                                    if (acao.titulo === 'Excluir') {
+                                      handleDelete(item);
+                                    } else {
+                                      acao.onClick(item);
+                                    }
+                                  }}
+                                  className={cn("gap-2", acao.className)}
+                                >
+                                  {acao.icone}
+                                  {acao.titulo}
+                                </DropdownMenuItem>
+                              );
+                            })}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
                     )}
-                  </TableRow>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           </div>
         </DndContext>
       </div>

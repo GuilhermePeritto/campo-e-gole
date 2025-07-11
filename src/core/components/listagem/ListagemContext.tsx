@@ -47,6 +47,7 @@ export interface ConfiguracaoListagem<T> {
   nomeEntidade: string;
   nomeEntidadePlural: string;
   rotaEntidade: string;
+  rotaResumo: string;
   
   // Hook com métodos CRUD
   hook: {
@@ -55,7 +56,6 @@ export interface ConfiguracaoListagem<T> {
     pagination: any;
     fetchData: (params: any) => Promise<void>;
     deleteItem: (id: string | number) => Promise<void>;
-    // Novo método opcional para buscar dados do resumo
     fetchSummaryData?: (params?: any) => Promise<any>;
   };
   
@@ -190,7 +190,6 @@ export function ListagemProvider<T extends Record<string, any>>({
   
   // Refs para evitar chamadas desnecessárias
   const parametrosAnterioresRef = useRef<string>('');
-  const parametrosResumoAnterioresRef = useRef<string>('');
   
   // Dados do hook
   const { data, loading, pagination, fetchData, deleteItem, fetchSummaryData } = configuracao.hook;
@@ -263,27 +262,14 @@ export function ListagemProvider<T extends Record<string, any>>({
     }
   }, [parametrosApi, fetchData]);
   
-  // Carregar dados do resumo separadamente
+  // Carregar dados do resumo apenas na inicialização
   useEffect(() => {
-    if (fetchSummaryData) {
-      const parametrosResumo = {
-        // Pode enviar parâmetros simplificados para o resumo
-        filter: parametrosApi.filter
-      };
-      
-      const parametrosResumoString = JSON.stringify(parametrosResumo);
-      
-      if (parametrosResumoString !== parametrosResumoAnterioresRef.current) {
-        parametrosResumoAnterioresRef.current = parametrosResumoString;
-        
-        setCarregandoResumo(true);
-        fetchSummaryData(parametrosResumo)
-          .then(dados => setDadosResumo(dados))
-          .catch(error => console.error('Erro ao carregar resumo:', error))
-          .finally(() => setCarregandoResumo(false));
-      }
-    }
-  }, [parametrosApi.filter, fetchSummaryData]);
+      setCarregandoResumo(true);
+      fetchSummaryData({})
+        .then(dados => setDadosResumo(dados))
+        .catch(error => console.error('Erro ao carregar resumo:', error))
+        .finally(() => setCarregandoResumo(false));  
+  }, []);
   
   // Dados filtrados localmente (para visualização imediata)
   const dadosFiltrados = useMemo(() => {
@@ -322,7 +308,7 @@ export function ListagemProvider<T extends Record<string, any>>({
       cor: card.cor,
       tendencia: card.tendencia
     }));
-  }, [configuracao.cardsResumo, dadosFiltrados, pagination, dadosResumo]);
+  }, [dadosResumo]);
   
   // Dados de paginação
   const totalPaginas = pagination?.totalPages || Math.ceil((pagination?.totalItems || 0) / tamanhoPagina) || 1;

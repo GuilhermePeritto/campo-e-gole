@@ -46,7 +46,7 @@ export interface Cliente {
   endereco: string;
   observacoes: string;
   situacao: string; // Padronizado com backend
-  dataCadastro: string; // Padronizado com backend
+  dataCriacao: string; // Padronizado com backend
 }
 
 // ============================================================================

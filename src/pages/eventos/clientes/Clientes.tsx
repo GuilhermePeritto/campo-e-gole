@@ -1,213 +1,151 @@
 
-import BaseList, { BaseListAction, BaseListColumn } from '@/components/BaseList';
-import ModuleHeader from '@/components/ModuleHeader';
-import SummaryCards from '@/components/table/SummaryCards';
-import { Badge } from '@/components/ui/badge';
-import { MODULE_COLORS } from '@/constants/moduleColors';
+import { Listagem } from '@/core/components/listagem';
 import { useClientes } from '@/hooks/useClientes';
-import { Calendar, Edit, Plus, UserCheck, UserPlus, Users } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import type { Cliente } from '@/types/reservas';
+import { Calendar, IdCard, Mail, Phone, UserCheck, UserPlus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Clientes = () => {
+export default function Clientes() {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
-
-  // Filtros para o hook
-  const filtros = useMemo(() => {
-    const params: any = {
-      pageNumber: currentPage,
-      pageSize: pageSize
-    };
-
-    if (searchTerm) {
-      params.nome = searchTerm;
-    }
-
-    if (statusFilter) {
-      params.situacao = statusFilter;
-    }
-
-    return params;
-  }, [currentPage, pageSize, searchTerm, statusFilter]);
-
-  const { clientes, loading, pagination } = useClientes(filtros);
-
-  // Debug: verificar se os dados estão chegando
-  console.log('Clientes - dados recebidos:', clientes);
-  console.log('Clientes - quantidade:', clientes.length);
-  console.log('Clientes - loading:', loading);
-  console.log('Clientes - pagination:', pagination);
-
-  // Calculate summary metrics
-  const summaryData = useMemo(() => {
-    if (!clientes.length) return [];
-
-    const totalClients = pagination.totalCount;
-    const activeClients = clientes.filter(c => c.situacao === 'ativo').length;
-    const thisMonth = new Date().getMonth();
-    const newThisMonth = clientes.filter(c => 
-      new Date(c.dataCadastro).getMonth() === thisMonth
-    ).length;
-    const corporateClients = clientes.filter(c => c.documento.includes('/')).length;
-
-    return [
-      {
-        title: 'Total de Clientes',
-        value: totalClients,
-        description: 'Clientes cadastrados',
-        icon: Users,
-        trend: {
-          value: 15,
-          label: 'vs mês anterior',
-          type: 'positive' as const
-        },
-        color: 'bg-blue-500'
-      },
-      {
-        title: 'Clientes Ativos',
-        value: activeClients,
-        description: `${Math.round((activeClients / totalClients) * 100)}% do total`,
-        icon: UserCheck,
-        trend: {
-          value: 8,
-          label: 'este mês',
-          type: 'positive' as const
-        },
-        color: 'bg-green-500'
-      },
-      {
-        title: 'Novos Este Mês',
-        value: newThisMonth,
-        description: 'Cadastros recentes',
-        icon: UserPlus,
-        trend: {
-          value: 25,
-          label: 'vs mês anterior',
-          type: 'positive' as const
-        },
-        color: 'bg-emerald-500'
-      },
-      {
-        title: 'Pessoa Jurídica',
-        value: corporateClients,
-        description: `${Math.round((corporateClients / totalClients) * 100)}% do total`,
-        icon: Calendar,
-        trend: {
-          value: 0,
-          label: 'sem alteração',
-          type: 'neutral' as const
-        },
-        color: 'bg-purple-500'
-      }
-    ];
-  }, [clientes, pagination.totalCount]);
-
-  const columns: BaseListColumn<any>[] = [
-    {
-      key: 'nome',
-      label: 'Nome',
-      sortable: true
-    },
-    {
-      key: 'email',
-      label: 'E-mail',
-      sortable: true
-    },
-    {
-      key: 'telefone',
-      label: 'Telefone'
-    },
-    {
-      key: 'documento',
-      label: 'Documento',
-      render: (cliente) => {
-        const isCNPJ = cliente.documento.includes('/');
-        return (
-          <div>
-            <div className="font-medium">{cliente.documento}</div>
-            <div className="text-sm text-muted-foreground">
-              {isCNPJ ? 'CNPJ' : 'CPF'}
-            </div>
-          </div>
-        );
-      }
-    },
-    {
-      key: 'situacao',
-      label: 'Situação',
-      sortable: true,
-      render: (cliente) => (
-        <Badge variant={cliente.situacao === 'ativo' ? 'default' : 'destructive'}>
-          {cliente.situacao === 'ativo' ? 'Ativo' : 'Inativo'}
-        </Badge>
-      )
-    },
-    {
-      key: 'dataCadastro',
-      label: 'Data Cadastro',
-      sortable: true,
-      render: (cliente) => new Date(cliente.dataCadastro).toLocaleDateString('pt-BR')
-    }
-  ];
-
-  const actions: BaseListAction<any>[] = [
-    {
-      label: 'Editar',
-      icon: <Edit className="h-4 w-4" />,
-      onClick: (cliente) => navigate(`/eventos/clientes/${cliente.id}`),
-      variant: 'outline'
-    }
-  ];
+  const hook = useClientes();
 
   return (
-    <div className="h-screen bg-background flex flex-col">
-      <ModuleHeader
-        title="Clientes"
-        icon={<Users className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.events}
-      />
-
-      <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 py-6 overflow-hidden">
-        <div className="flex flex-col h-full space-y-6">
-          <div className="flex-shrink-0">
-            <SummaryCards cards={summaryData} loading={loading} />
-          </div>
-          
-          <div className="flex-1 min-h-0">
-            <BaseList
-              data={clientes}
-              columns={columns}
-              actions={actions}
-              title="Gerenciar Clientes"
-              description="Visualize e gerencie todos os clientes do módulo de eventos"
-              searchPlaceholder="Buscar clientes..."
-              searchFields={['nome', 'email', 'documento']}
-              getItemId={(cliente) => cliente.id}
-              createButton={{
-                label: 'Novo Cliente',
-                icon: <Plus className="h-4 w-4" />,
-                onClick: () => {
-                  sessionStorage.setItem('returnUrl', window.location.pathname);
-                  navigate('/eventos/clientes/novo');
-                }
-              }}
-              showExport={true}
-              exportFilename="clientes-eventos"
-              loading={loading}
-              entityName="clientes"
-              showDebugInfo={true}
-              className="h-full"
-              pageSize={pageSize}
-            />
-          </div>
-        </div>
-      </main>
-    </div>
+    <Listagem<Cliente>
+      titulo="Clientes"
+      descricao="Visualize e gerencie todos os clientes do módulo de eventos"
+      icone={<Users className="h-6 w-6" />}
+      corModulo="bg-green-600"
+      nomeEntidade="Cliente"
+      nomeEntidadePlural="Clientes"
+      rotaEntidade="/clientes"
+      rotaResumo="/clientes/resumo"
+      hook={hook}
+      colunas={[
+        {
+          chave: 'nome',
+          titulo: 'Nome',
+          ordenavel: true,
+          renderizar: (cliente) => (
+            <div className="flex items-center gap-2">
+              <span>{cliente.nome}</span>
+            </div>
+          ),
+        },
+        {
+          chave: 'email',
+          titulo: 'E-mail',
+          ordenavel: true,
+          renderizar: (cliente) => (
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-muted-foreground" />
+              <span>{cliente.email}</span>
+            </div>
+          ),
+        },
+        {
+          chave: 'telefone',
+          titulo: 'Telefone',
+          renderizar: (cliente) => (
+            <div className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              <span>{cliente.telefone}</span>
+            </div>
+          ),
+        },
+        {
+          chave: 'documento',
+          titulo: 'Documento',
+          renderizar: (cliente) => (
+            <div className="flex items-center gap-2">
+              <IdCard className="h-4 w-4 text-muted-foreground" />
+              <span>{cliente.documento}</span>
+            </div>
+          ),
+        },
+        {
+          chave: 'situacao',
+          titulo: 'Situação',
+          ordenavel: true,
+          renderizar: (cliente) => (
+            <span className={
+              cliente.situacao === 'ativo'
+                ? 'text-green-600 font-medium flex items-center gap-1'
+                : 'text-red-600 font-medium flex items-center gap-1'
+            }>
+              <UserCheck className="h-4 w-4" />
+              {cliente.situacao === 'ativo' ? 'Ativo' : 'Inativo'}
+            </span>
+          ),
+        },
+        {
+          chave: 'dataCriacao',
+          titulo: 'Data Cadastro',
+          ordenavel: true,
+          renderizar: (cliente) => {
+            let data = '';
+            try {
+              const d = new Date(cliente.dataCriacao);
+              data = isNaN(d.getTime()) ? '-' : d.toLocaleDateString('pt-BR');
+            } catch {
+              data = '-';
+            }
+            return (
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span>{data}</span>
+              </div>
+            );
+          },
+        },
+      ]}
+      acoes={[
+        {
+          titulo: 'Editar',
+          onClick: (cliente) => navigate(`/eventos/clientes/${cliente.id}`),
+          variante: 'outline',
+        },
+      ]}
+      botaoCriar={{
+        titulo: 'Novo Cliente',
+        icone: <UserPlus className="h-4 w-4" />,
+        rota: '/eventos/clientes/novo',
+      }}
+      cardsResumo={[
+        {
+          titulo: 'Total de Clientes',
+          valor: (_data, _pagination, summaryData) => summaryData?.totalClientes ?? 0,
+          descricao: 'Clientes cadastrados',
+          icone: Users,
+          cor: 'bg-blue-500',
+        },
+        {
+          titulo: 'Clientes Ativos',
+          valor: (_data, _pagination, summaryData) => summaryData?.ativos ?? 0,
+          descricao: 'Clientes ativos',
+          icone: UserCheck,
+          cor: 'bg-green-500',
+        },
+        {
+          titulo: 'Novos Este Mês',
+          valor: (_data, _pagination, summaryData) => summaryData?.novosMes ?? 0,
+          descricao: 'Cadastros recentes',
+          icone: UserPlus,
+          cor: 'bg-emerald-500',
+        },
+        {
+          titulo: 'Pessoa Jurídica',
+          valor: (_data, _pagination, summaryData) => summaryData?.pessoaJuridica ?? 0,
+          descricao: 'Clientes PJ',
+          icone: Calendar,
+          cor: 'bg-purple-500',
+        },
+      ]}
+      camposBusca={['nome', 'email', 'documento']}
+      placeholderBusca="Buscar clientes..."
+      mostrarExportar={true}
+      nomeArquivoExportar="clientes-eventos"
+      ordenacaoPadrao="nome"
+      tamanhoPaginaPadrao={10}
+    />
   );
-};
-
-export default Clientes;
+}

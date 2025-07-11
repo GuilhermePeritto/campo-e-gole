@@ -5,7 +5,7 @@ import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 import { useListagem } from './ListagemContext';
 
 export function ListagemResumo() {
-  const { carregando, resumoDados } = useListagem();
+  const { carregandoResumo, resumoDados } = useListagem();
   
   if (!resumoDados || resumoDados.length === 0) {
     return null;
@@ -27,7 +27,7 @@ export function ListagemResumo() {
               </div>
             </CardHeader>
             <CardContent>
-              {carregando ? (
+              {carregandoResumo ? (
                 <div className="space-y-2">
                   <Skeleton className="h-7 w-20" />
                   <Skeleton className="h-4 w-24" />
