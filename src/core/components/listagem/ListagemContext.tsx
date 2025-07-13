@@ -314,15 +314,18 @@ export function ListagemProvider<T extends Record<string, any>>({
   const resumoDados = useMemo(() => {
     if (!configuracao.cardsResumo) return [];
     
+    // Garantir que dadosFiltrados seja sempre um array
+    const dadosSeguros = Array.isArray(dadosFiltrados) ? dadosFiltrados : [];
+    
     return configuracao.cardsResumo.map(card => ({
       titulo: card.titulo,
-      valor: card.valor(dadosFiltrados, pagination, dadosResumo),
+      valor: card.valor(dadosSeguros, pagination, dadosResumo),
       descricao: card.descricao,
       icone: card.icone,
       cor: card.cor,
       tendencia: card.tendencia
     }));
-  }, [dadosResumo]);
+  }, [configuracao.cardsResumo, dadosFiltrados, pagination, dadosResumo]);
   
   // Dados de paginação
   const totalPaginas = pagination?.totalPages || Math.ceil((pagination?.totalItems || 0) / tamanhoPagina) || 1;

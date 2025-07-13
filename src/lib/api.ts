@@ -32,6 +32,16 @@ export interface ApiPagedResponse<T> {
   totalPages: number;
 }
 
+export interface ApiPagedResponseV2<T> {
+  success: boolean;
+  message?: string;
+  items: T[];
+  totalItems: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface ApiError {
   message: string;
   status: number;

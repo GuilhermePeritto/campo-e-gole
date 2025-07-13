@@ -1,45 +1,25 @@
 
-import ModuleHeader from '@/components/ModuleHeader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Mail, Phone, Settings, Shield, User, Users } from 'lucide-react';
+import { Listagem } from '@/core/components/listagem';
+import { useUsuarios } from '@/hooks/useUsuarios';
+import { Usuario } from '@/types/usuario';
+import { Building, Mail, Phone, Plus, Settings, Shield, User, UserCheck, Users, UserX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-// import { useUsuarios } from '@/hooks/useUsuarios';
-// import { useFiliais } from '@/hooks/useFiliais';
-// import { useGrupos } from '@/hooks/useGrupos';
 
 const Usuarios = () => {
   const navigate = useNavigate();
-  // const { usuarios, buscarUsuarios } = useUsuarios();
-  // const { filiais, buscarFiliais } = useFiliais();
-  // const { grupos, buscarGrupos } = useGrupos();
+  const usuariosHook = useUsuarios();
 
-  // useEffect(() => {
-  //   buscarUsuarios();
-  //   buscarFiliais();
-  //   buscarGrupos();
-  // }, [buscarUsuarios, buscarFiliais, buscarGrupos]);
-
-  // const getFilialNome = (filialId: number) => {
-  //   const filial = filiais.find(f => f.id === filialId);
-  //   return filial?.nome || 'N/A';
-  // };
-
-  // const getGrupoInfo = (grupoId: number) => {
-  //   const grupo = grupos.find(g => g.id === grupoId);
-  //   return {
-  //     nome: grupo?.nome || 'N/A',
-  //     cor: grupo?.cor || 'bg-gray-500'
-  //   };
-  // };
-
-  const columns = [
+  const colunas = [
     {
-      key: 'nome',
-      label: 'Usuário',
-      sortable: true,
-      render: (usuario: any) => (
+      chave: 'nome',
+      titulo: 'Usuário',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (usuario: Usuario) => (
         <div className="flex items-center gap-3">
           <Avatar className="w-10 h-10">
             <AvatarImage src={usuario.foto} />
@@ -55,9 +35,9 @@ const Usuarios = () => {
       ),
     },
     {
-      key: 'email',
-      label: 'Contato',
-      render: (usuario: any) => (
+      chave: 'email',
+      titulo: 'Contato',
+      renderizar: (usuario: Usuario) => (
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-sm">
             <Mail className="h-3 w-3 text-muted-foreground" />
@@ -71,39 +51,57 @@ const Usuarios = () => {
       ),
     },
     {
-      key: 'filial',
-      label: 'Filial',
-      sortable: true,
-      render: (usuario: any) => {/* getFilialNome(usuario.filialId) */},
+      chave: 'filial',
+      titulo: 'Filial',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (usuario: Usuario) => (
+        <div className="flex items-center gap-2">
+          <Building className="h-4 w-4 text-muted-foreground" />
+          <span>{usuario.filial?.nome || 'N/A'}</span>
+        </div>
+      ),
     },
     {
-      key: 'grupo',
-      label: 'Grupo',
-      sortable: true,
-      render: (usuario: any) => {
-        // const grupoInfo = getGrupoInfo(usuario.grupoId);
+      chave: 'grupo',
+      titulo: 'Grupo',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (usuario: Usuario) => {
         return (
           <div className="flex items-center gap-2">
-            {/* <div className={`w-3 h-3 rounded-full ${grupoInfo.cor}`} />
-            <span>{grupoInfo.nome}</span> */}
+            {usuario.grupo && (
+              <>
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: usuario.grupo?.cor || '#888' }}
+                />
+                <span>{usuario.grupo?.nome || 'N/A'}</span>
+              </>
+            )}
           </div>
         );
       },
     },
     {
-      key: 'status',
-      label: 'Status',
-      render: (usuario: any) => (
+      chave: 'ativo',
+      titulo: 'Status',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (usuario: Usuario) => (
         <Badge variant={usuario.ativo ? 'default' : 'secondary'}>
           {usuario.ativo ? 'Ativo' : 'Inativo'}
         </Badge>
       ),
     },
     {
-      key: 'ultimoAcesso',
-      label: 'Último Acesso',
-      sortable: true,
-      render: (usuario: any) => (
+      chave: 'ultimoAcesso',
+      titulo: 'Último Acesso',
+      ordenavel: true,
+      renderizar: (usuario: Usuario) => (
         <span className="text-sm text-muted-foreground">
           {usuario.ultimoAcesso || 'Nunca'}
         </span>
@@ -111,52 +109,74 @@ const Usuarios = () => {
     },
   ];
 
-  const actions = [
+  const acoes = [
     {
-      label: 'Editar',
-      icon: <Settings className="h-4 w-4" />,
-      onClick: (usuario: any) => navigate(`/configuracoes/usuarios/${usuario.id}/editar`),
-      variant: 'outline' as const,
+      titulo: 'Editar',
+      icone: <Settings className="h-4 w-4" />,
+      onClick: (usuario: Usuario) => navigate(`/configuracoes/usuarios/${usuario.id}/editar`),
+      variante: 'outline' as const,
     },
     {
-      label: 'Permissões',
-      icon: <Shield className="h-4 w-4" />,
-      onClick: (usuario: any) => navigate(`/configuracoes/usuarios/${usuario.id}/permissoes`),
-      variant: 'outline' as const,
+      titulo: 'Permissões',
+      icone: <Shield className="h-4 w-4" />,
+      onClick: (usuario: Usuario) => navigate(`/configuracoes/usuarios/${usuario.id}/permissoes`),
+      variante: 'outline' as const,
+    },
+  ];
+
+  const cardsResumo = [
+    {
+      titulo: 'Total de Usuários',
+      valor: (data: Usuario[] = []) => Array.isArray(data) ? data.length : 0,
+      icone: Users,
+      cor: 'bg-blue-500',
+    },
+    {
+      titulo: 'Usuários Ativos',
+      valor: (data: Usuario[] = []) => Array.isArray(data) ? data.filter(u => u.ativo).length : 0,
+      icone: UserCheck,
+      cor: 'bg-green-500',
+    },
+    {
+      titulo: 'Usuários Inativos',
+      valor: (data: Usuario[] = []) => Array.isArray(data) ? data.filter(u => !u.ativo).length : 0,
+      icone: UserX,
+      cor: 'bg-red-500',
+    },
+    {
+      titulo: 'Com Último Acesso',
+      valor: (data: Usuario[] = []) => Array.isArray(data) ? data.filter(u => u.ultimoAcesso).length : 0,
+      icone: User,
+      cor: 'bg-purple-500',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <ModuleHeader
-        title="Usuários e Permissões"
-        icon={<Users className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.inicio}
-        mustReturn={true}
-        backTo="/configuracoes"
-        backLabel="Configurações"
-      />
-
-      <main className="container mx-auto p-6">
-        {/* <BaseList
-          data={usuarios}
-          columns={columns}
-          actions={actions}
-          title="Usuários do Sistema"
-          description="Gerencie usuários e suas permissões"
-          searchPlaceholder="Buscar usuário..."
-          searchFields={['nome', 'email', 'cargo']}
-          getItemId={(usuario) => usuario.id}
-          createButton={{
-            label: 'Novo Usuário',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/configuracoes/usuarios/novo'),
-          }}
-          showExport={true}
-          exportFilename="usuarios"
-        /> */}
-      </main>
-    </div>
+    <Listagem<Usuario>
+      titulo="Usuários"
+      descricao="Gerencie usuários do sistema e suas permissões"
+      icone={<Users className="h-6 w-6" />}
+      corModulo={MODULE_COLORS.inicio}
+      nomeEntidade="Usuário"
+      nomeEntidadePlural="Usuários"
+      rotaEntidade="/configuracoes/usuarios"
+      rotaResumo="/configuracoes"
+      hook={usuariosHook}
+      colunas={colunas}
+      acoes={acoes}
+      botaoCriar={{
+        titulo: "Novo Usuário",
+        icone: <Plus className="h-4 w-4" />,
+        rota: "/configuracoes/usuarios/novo"
+      }}
+      cardsResumo={cardsResumo}
+      mostrarExportar={true}
+      nomeArquivoExportar="usuarios"
+      ordenacaoPadrao="nome"
+      tamanhoPaginaPadrao={20}
+      camposBusca={['nome', 'email', 'cargo']}
+      placeholderBusca="Buscar usuário..."
+    />
   );
 };
 

@@ -1,82 +1,24 @@
 
-import ModuleHeader from '@/components/ModuleHeader';
-import BaseList from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { MapPin, Plus, Settings, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { Listagem } from '@/core/components/listagem';
+import { useFiliais } from '@/hooks/useFiliais';
+import { Filial } from '@/types/filial';
+import { Building, Calendar, DollarSign, MapPin, Phone, Plus, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface Filial {
-  id: number;
-  nome: string;
-  endereco: string;
-  cidade: string;
-  telefone: string;
-  ativo: boolean;
-  modulos: {
-    eventos: boolean;
-    bar: boolean;
-    escolinha: boolean;
-    financeiro: boolean;
-  };
-}
 
 const Filiais = () => {
   const navigate = useNavigate();
-  
-  const [filiais] = useState<Filial[]>([
-    {
-      id: 1,
-      nome: 'Filial Centro',
-      endereco: 'Av. Paulista, 1000',
-      cidade: 'São Paulo',
-      telefone: '11987654321',
-      ativo: true,
-      modulos: {
-        eventos: true,
-        bar: true,
-        escolinha: false,
-        financeiro: true
-      }
-    },
-    {
-      id: 2,
-      nome: 'Filial Zona Norte',
-      endereco: 'Rua do Limão, 500',
-      cidade: 'São Paulo',
-      telefone: '11987654322',
-      ativo: true,
-      modulos: {
-        eventos: true,
-        bar: false,
-        escolinha: true,
-        financeiro: true
-      }
-    },
-    {
-      id: 3,
-      nome: 'Filial Zona Sul',
-      endereco: 'Av. Ibirapuera, 200',
-      cidade: 'São Paulo',
-      telefone: '11987654323',
-      ativo: false,
-      modulos: {
-        eventos: true,
-        bar: true,
-        escolinha: true,
-        financeiro: true
-      }
-    }
-  ]);
+  const filiaisHook = useFiliais();
 
-  const columns = [
+  const colunas = [
     {
-      key: 'nome',
-      label: 'Nome',
-      sortable: true,
-      render: (filial: Filial) => (
+      chave: 'nome',
+      titulo: 'Nome',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (filial: Filial) => (
         <div>
           <div className="font-medium">{filial.nome}</div>
           <div className="text-sm text-muted-foreground">{filial.endereco}, {filial.cidade}</div>
@@ -84,9 +26,9 @@ const Filiais = () => {
       ),
     },
     {
-      key: 'telefone',
-      label: 'Telefone',
-      render: (filial: Filial) => (
+      chave: 'telefone',
+      titulo: 'Telefone',
+      renderizar: (filial: Filial) => (
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4 text-muted-foreground" />
           <span>{filial.telefone}</span>
@@ -94,68 +36,93 @@ const Filiais = () => {
       ),
     },
     {
-      key: 'status',
-      label: 'Status',
-      render: (filial: Filial) => (
+      chave: 'ativo',
+      titulo: 'Status',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (filial: Filial) => (
         <Badge variant={filial.ativo ? 'default' : 'secondary'}>
           {filial.ativo ? 'Ativa' : 'Inativa'}
         </Badge>
       ),
     },
     {
-      key: 'modulos',
-      label: 'Módulos Ativos',
-      render: (filial: Filial) => (
+      chave: 'modulos',
+      titulo: 'Módulos Ativos',
+      renderizar: (filial: Filial) => (
         <div className="flex gap-1 flex-wrap">
-          {filial.modulos.eventos && <Badge variant="outline" className="text-xs">Eventos</Badge>}
-          {filial.modulos.bar && <Badge variant="outline" className="text-xs">Bar</Badge>}
-          {filial.modulos.escolinha && <Badge variant="outline" className="text-xs">Escolinha</Badge>}
-          {filial.modulos.financeiro && <Badge variant="outline" className="text-xs">Financeiro</Badge>}
+          {filial.modulos?.eventos && <Badge variant="outline" className="text-xs">Eventos</Badge>}
+          {filial.modulos?.bar && <Badge variant="outline" className="text-xs">Bar</Badge>}
+          {filial.modulos?.escolinha && <Badge variant="outline" className="text-xs">Escolinha</Badge>}
+          {filial.modulos?.financeiro && <Badge variant="outline" className="text-xs">Financeiro</Badge>}
         </div>
       ),
     },
   ];
 
-  const actions = [
+  const acoes = [
     {
-      label: 'Editar',
-      icon: <Settings className="h-4 w-4" />,
+      titulo: 'Editar',
+      icone: <Settings className="h-4 w-4" />,
       onClick: (filial: Filial) => navigate(`/configuracoes/filiais/${filial.id}/editar`),
-      variant: 'outline' as const,
+      variante: 'outline' as const,
+    },
+  ];
+
+  const cardsResumo = [
+    {
+      titulo: 'Total de Filiais',
+      valor: (data: Filial[] = []) => Array.isArray(data) ? data.length : 0,
+      icone: Building,
+      cor: 'bg-blue-500',
+    },
+    {
+      titulo: 'Filiais Ativas',
+      valor: (data: Filial[] = []) => Array.isArray(data) ? data.filter(f => f.ativo).length : 0,
+      icone: MapPin,
+      cor: 'bg-green-500',
+    },
+    {
+      titulo: 'Com Módulo Eventos',
+      valor: (data: Filial[] = []) => Array.isArray(data) ? data.filter(f => f.modulos?.eventos).length : 0,
+      icone: Calendar,
+      cor: 'bg-purple-500',
+    },
+    {
+      titulo: 'Com Módulo Financeiro',
+      valor: (data: Filial[] = []) => Array.isArray(data) ? data.filter(f => f.modulos?.financeiro).length : 0,
+      icone: DollarSign,
+      cor: 'bg-orange-500',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <ModuleHeader
-        title="Filiais"
-        icon={<MapPin className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.inicio}
-        mustReturn={true}
-        backTo="/configuracoes"
-        backLabel="Configurações"
-      />
-
-      <main className="container mx-auto p-6">
-        <BaseList
-          data={filiais}
-          columns={columns}
-          actions={actions}
-          title="Filiais Cadastradas"
-          description="Gerencie as filiais da sua empresa"
-          searchPlaceholder="Buscar filial..."
-          searchFields={['nome', 'endereco', 'cidade']}
-          getItemId={(filial) => filial.id}
-          createButton={{
-            label: 'Nova Filial',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/configuracoes/filiais/nova'),
-          }}
-          showExport={true}
-          exportFilename="filiais"
-        />
-      </main>
-    </div>
+    <Listagem<Filial>
+      titulo="Filiais"
+      descricao="Gerencie as filiais da sua empresa"
+      icone={<MapPin className="h-6 w-6" />}
+      corModulo={MODULE_COLORS.inicio}
+      nomeEntidade="Filial"
+      nomeEntidadePlural="Filiais"
+      rotaEntidade="/configuracoes/filiais"
+      rotaResumo="/configuracoes"
+      hook={filiaisHook}
+      colunas={colunas}
+      acoes={acoes}
+      botaoCriar={{
+        titulo: "Nova Filial",
+        icone: <Plus className="h-4 w-4" />,
+        rota: "/configuracoes/filiais/nova"
+      }}
+      cardsResumo={cardsResumo}
+      mostrarExportar={true}
+      nomeArquivoExportar="filiais"
+      ordenacaoPadrao="nome"
+      tamanhoPaginaPadrao={20}
+      camposBusca={['nome', 'endereco', 'cidade']}
+      placeholderBusca="Buscar filial..."
+    />
   );
 };
 

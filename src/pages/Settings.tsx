@@ -2,19 +2,28 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Building, Users, Shield, MapPin, Settings as SettingsIcon, DollarSign, FileText, Globe } from 'lucide-react';
+import { Building, DollarSign, FileText, Globe, MapPin, Settings as SettingsIcon, Shield, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
   const navigate = useNavigate();
 
   const configSections = [
+    // MÓDULO SISTEMA - Configurações Gerais
+    {
+      id: 'empresas',
+      title: 'Empresas',
+      description: 'Gerenciar empresas do sistema',
+      icon: <Building className="h-6 w-6" />,
+      color: 'bg-blue-500',
+      path: '/configuracoes/empresas'
+    },
     {
       id: 'empresa',
       title: 'Dados da Empresa',
-      description: 'Gerenciar informações básicas da empresa',
+      description: 'Informações básicas da empresa atual',
       icon: <Building className="h-6 w-6" />,
-      color: 'bg-blue-500',
+      color: 'bg-blue-600',
       path: '/configuracoes/empresa'
     },
     {
@@ -25,38 +34,52 @@ const Settings = () => {
       color: 'bg-indigo-500',
       path: '/configuracoes/filiais'
     },
+    
+    // MÓDULO USUÁRIOS - Gestão de Usuários e Permissões
     {
       id: 'usuarios',
-      title: 'Usuários e Permissões',
-      description: 'Controlar usuários e níveis de acesso',
+      title: 'Usuários',
+      description: 'Controlar usuários do sistema',
       icon: <Users className="h-6 w-6" />,
       color: 'bg-green-500',
       path: '/configuracoes/usuarios'
     },
     {
       id: 'grupos',
-      title: 'Grupos e Perfis',
+      title: 'Grupos de Permissão',
       description: 'Definir perfis de acesso reutilizáveis',
       icon: <Shield className="h-6 w-6" />,
       color: 'bg-purple-500',
       path: '/configuracoes/grupos'
     },
     {
+      id: 'permissoes',
+      title: 'Permissões',
+      description: 'Visualizar permissões do sistema',
+      icon: <Shield className="h-6 w-6" />,
+      color: 'bg-purple-600',
+      path: '/configuracoes/permissoes'
+    },
+    
+    // MÓDULO PARÂMETROS - Configurações Específicas
+    {
       id: 'parametros',
-      title: 'Parâmetros por Filial',
-      description: 'Configurações específicas por filial',
+      title: 'Parâmetros Globais',
+      description: 'Configurações gerais do sistema',
       icon: <SettingsIcon className="h-6 w-6" />,
       color: 'bg-orange-500',
       path: '/configuracoes/parametros'
     },
     {
-      id: 'integracoes',
-      title: 'Integrações',
-      description: 'Conectar com serviços externos',
-      icon: <Globe className="h-6 w-6" />,
-      color: 'bg-cyan-500',
-      path: '/configuracoes/integracoes'
+      id: 'parametros-filial',
+      title: 'Parâmetros por Filial',
+      description: 'Configurações específicas por filial',
+      icon: <SettingsIcon className="h-6 w-6" />,
+      color: 'bg-orange-600',
+      path: '/configuracoes/parametros-por-filial'
     },
+    
+    // MÓDULO FINANCEIRO - Configurações Financeiras
     {
       id: 'financeiro-global',
       title: 'Financeiro Global',
@@ -65,6 +88,18 @@ const Settings = () => {
       color: 'bg-emerald-500',
       path: '/configuracoes/financeiro-global'
     },
+    
+    // MÓDULO INTEGRAÇÕES - Serviços Externos
+    {
+      id: 'integracoes',
+      title: 'Integrações',
+      description: 'Conectar com serviços externos',
+      icon: <Globe className="h-6 w-6" />,
+      color: 'bg-cyan-500',
+      path: '/configuracoes/integracoes'
+    },
+    
+    // MÓDULO AUDITORIA - Monitoramento
     {
       id: 'auditoria',
       title: 'Auditoria e Logs',

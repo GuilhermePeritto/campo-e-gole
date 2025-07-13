@@ -107,25 +107,46 @@ export function useBaseCrud<T>(
       
       console.log('📦 API Response:', responseData);
       
-      // Transformar dados do backend
-      const transformedData = options?.transformData 
-        ? options.transformData(responseData.data || responseData)
-        : (responseData.data || responseData);
-      
-      // Transformar paginação do backend
-      const transformedPagination = {
-        currentPage: responseData.pageNumber || 1,
-        totalPages: responseData.totalPages || 1,
-        totalItems: responseData.totalCount || 0,
-        pageSize: responseData.pageSize || 10,
-        startIndex: ((responseData.pageNumber || 1) - 1) * (responseData.pageSize || 10) + 1,
-        endIndex: Math.min((responseData.pageNumber || 1) * (responseData.pageSize || 10), responseData.totalCount || 0),
-        hasNextPage: (responseData.pageNumber || 1) < (responseData.totalPages || 1),
-        hasPreviousPage: (responseData.pageNumber || 1) > 1,
-      };
-      
-      setData(transformedData);
-      setPagination(transformedPagination);
+      // Verificar se a resposta tem o novo formato
+      if (responseData.success !== undefined && responseData.items !== undefined) {
+        // Novo formato: { success, message, items, totalItems, currentPage, pageSize, totalPages }
+        const transformedData = options?.transformData 
+          ? options.transformData(responseData.items)
+          : responseData.items;
+        
+        const transformedPagination = {
+          currentPage: responseData.currentPage || 1,
+          totalPages: responseData.totalPages || 1,
+          totalItems: responseData.totalItems || 0,
+          pageSize: responseData.pageSize || 10,
+          startIndex: ((responseData.currentPage || 1) - 1) * (responseData.pageSize || 10) + 1,
+          endIndex: Math.min((responseData.currentPage || 1) * (responseData.pageSize || 10), responseData.totalItems || 0),
+          hasNextPage: (responseData.currentPage || 1) < (responseData.totalPages || 1),
+          hasPreviousPage: (responseData.currentPage || 1) > 1,
+        };
+        
+        setData(transformedData);
+        setPagination(transformedPagination);
+      } else {
+        // Formato antigo (fallback)
+        const transformedData = options?.transformData 
+          ? options.transformData(responseData.data || responseData)
+          : (responseData.data || responseData);
+        
+        const transformedPagination = {
+          currentPage: responseData.pageNumber || 1,
+          totalPages: responseData.totalPages || 1,
+          totalItems: responseData.totalCount || 0,
+          pageSize: responseData.pageSize || 10,
+          startIndex: ((responseData.pageNumber || 1) - 1) * (responseData.pageSize || 10) + 1,
+          endIndex: Math.min((responseData.pageNumber || 1) * (responseData.pageSize || 10), responseData.totalCount || 0),
+          hasNextPage: (responseData.pageNumber || 1) < (responseData.totalPages || 1),
+          hasPreviousPage: (responseData.pageNumber || 1) > 1,
+        };
+        
+        setData(transformedData);
+        setPagination(transformedPagination);
+      }
     } catch (error: any) {
       console.error('❌ Erro ao buscar dados do backend:', error);
       
@@ -299,7 +320,8 @@ export function useBaseCrud<T>(
       toast.error(error.message || 'Erro ao buscar dados do resumo', {
         duration: 5000,
       });
-      throw error;
+      // Retornar array vazio em caso de erro para evitar crashes nos cards de resumo
+      return [];
     }
   }, [endpoint]);
 

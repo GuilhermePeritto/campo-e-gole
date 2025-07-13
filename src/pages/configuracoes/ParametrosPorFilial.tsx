@@ -1,10 +1,9 @@
 
-import ModuleHeader from '@/components/ModuleHeader';
 import BaseList from '@/components/BaseList';
+import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Settings, MapPin, Phone } from 'lucide-react';
+import { Phone, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

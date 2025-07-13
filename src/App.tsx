@@ -91,6 +91,7 @@ import NovaFilial from './pages/configuracoes/NovaFilial';
 import NovoGrupo from './pages/configuracoes/NovoGrupo';
 import Parametros from './pages/configuracoes/Parametros';
 import ParametrosPorFilial from './pages/configuracoes/ParametrosPorFilial';
+import Permissoes from './pages/configuracoes/Permissoes';
 import PermissoesUsuario from './pages/configuracoes/PermissoesUsuario';
 import Usuarios from './pages/configuracoes/Usuarios';
 
@@ -201,6 +202,7 @@ function App() {
           <Route path="/configuracoes/integracoes" element={<Integracoes />} />
           <Route path="/configuracoes/financeiro-global" element={<FinanceiroGlobal />} />
           <Route path="/configuracoes/auditoria" element={<Auditoria />} />
+          <Route path="/configuracoes/permissoes" element={<Permissoes />} />
 
           {/* Pagamento Universal */}
           <Route path="/receber-pagamento" element={<UniversalReceivePayment />} />

@@ -1,74 +1,24 @@
 
-import ModuleHeader from '@/components/ModuleHeader';
-import BaseList from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Shield, Plus, Settings } from 'lucide-react';
-import { useState } from 'react';
+import { Listagem } from '@/core/components/listagem';
+import { useGruposPermissoes } from '@/hooks/useGruposPermissoes';
+import { GrupoPermissao } from '@/types/grupo-permissao';
+import { Plus, Settings, Shield, ShieldCheck, Trash2, UserCheck, Users, UserX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface Grupo {
-  id: number;
-  nome: string;
-  descricao: string;
-  usuarios: number;
-  ativo: boolean;
-  permissoes: string[];
-}
 
 const Grupos = () => {
   const navigate = useNavigate();
-  
-  const [grupos] = useState<Grupo[]>([
-    {
-      id: 1,
-      nome: 'Administrador',
-      descricao: 'Acesso total ao sistema',
-      usuarios: 2,
-      ativo: true,
-      permissoes: ['Eventos', 'Bar', 'Escolinha', 'Financeiro', 'Configurações']
-    },
-    {
-      id: 2,
-      nome: 'Gerente',
-      descricao: 'Acesso a módulos operacionais',
-      usuarios: 3,
-      ativo: true,
-      permissoes: ['Eventos', 'Bar', 'Escolinha', 'Financeiro']
-    },
-    {
-      id: 3,
-      nome: 'Atendente',
-      descricao: 'Acesso limitado para atendimento',
-      usuarios: 5,
-      ativo: true,
-      permissoes: ['Eventos', 'Bar']
-    },
-    {
-      id: 4,
-      nome: 'Professor',
-      descricao: 'Acesso ao módulo da escolinha',
-      usuarios: 8,
-      ativo: true,
-      permissoes: ['Escolinha']
-    },
-    {
-      id: 5,
-      nome: 'Financeiro',
-      descricao: 'Acesso apenas ao módulo financeiro',
-      usuarios: 1,
-      ativo: false,
-      permissoes: ['Financeiro']
-    }
-  ]);
+  const gruposHook = useGruposPermissoes();
 
-  const columns = [
+  const colunas = [
     {
-      key: 'nome',
-      label: 'Grupo',
-      sortable: true,
-      render: (grupo: Grupo) => (
+      chave: 'nome',
+      titulo: 'Grupo',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (grupo: GrupoPermissao) => (
         <div>
           <div className="font-medium">{grupo.nome}</div>
           <div className="text-sm text-muted-foreground">{grupo.descricao}</div>
@@ -76,30 +26,41 @@ const Grupos = () => {
       ),
     },
     {
-      key: 'usuarios',
-      label: 'Usuários',
-      sortable: true,
-      render: (grupo: Grupo) => (
-        <span className="font-medium">{grupo.usuarios}</span>
-      ),
-    },
-    {
-      key: 'permissoes',
-      label: 'Módulos com Acesso',
-      render: (grupo: Grupo) => (
-        <div className="flex gap-1 flex-wrap">
-          {grupo.permissoes.map((permissao) => (
-            <Badge key={permissao} variant="outline" className="text-xs">
-              {permissao}
-            </Badge>
-          ))}
+      chave: 'usuarios',
+      titulo: 'Usuários',
+      ordenavel: true,
+      renderizar: (grupo: GrupoPermissao) => (
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          <span className="font-medium">{grupo.usuarios?.length || 0}</span>
         </div>
       ),
     },
     {
-      key: 'status',
-      label: 'Status',
-      render: (grupo: Grupo) => (
+      chave: 'permissoes',
+      titulo: 'Permissões',
+      renderizar: (grupo: GrupoPermissao) => (
+        <div className="flex gap-1 flex-wrap">
+          {grupo.permissoes?.slice(0, 3).map((permissao) => (
+            <Badge key={permissao.id} variant="outline" className="text-xs">
+              {permissao.moduloPai}
+            </Badge>
+          ))}
+          {grupo.permissoes && grupo.permissoes.length > 3 && (
+            <Badge variant="outline" className="text-xs">
+              +{grupo.permissoes.length - 3}
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+    {
+      chave: 'ativo',
+      titulo: 'Status',
+      ordenavel: true,
+      filtravel: true,
+      tipoFiltro: 'select' as const,
+      renderizar: (grupo: GrupoPermissao) => (
         <Badge variant={grupo.ativo ? 'default' : 'secondary'}>
           {grupo.ativo ? 'Ativo' : 'Inativo'}
         </Badge>
@@ -107,46 +68,79 @@ const Grupos = () => {
     },
   ];
 
-  const actions = [
+  const acoes = [
     {
-      label: 'Editar',
-      icon: <Settings className="h-4 w-4" />,
-      onClick: (grupo: Grupo) => navigate(`/configuracoes/grupos/${grupo.id}/editar`),
-      variant: 'outline' as const,
+      titulo: 'Editar',
+      icone: <Settings className="h-4 w-4" />,
+      onClick: (grupo: GrupoPermissao) => navigate(`/configuracoes/grupos/${grupo.id}/editar`),
+      variante: 'outline' as const,
+    },
+    {
+      titulo: 'Excluir',
+      icone: <Trash2 className="h-4 w-4" />,
+      onClick: (grupo: GrupoPermissao) => {
+        if (confirm(`Tem certeza que deseja excluir o grupo "${grupo.nome}"?`)) {
+          gruposHook.deleteItem(grupo.id);
+        }
+      },
+      variante: 'destructive' as const,
+      mostrar: (grupo: GrupoPermissao) => !grupo.usuarios || grupo.usuarios.length === 0,
+    },
+  ];
+
+  const cardsResumo = [
+    {
+      titulo: 'Total de Grupos',
+      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.length : 0,
+      icone: Shield,
+      cor: 'bg-blue-500',
+    },
+    {
+      titulo: 'Grupos Ativos',
+      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => g.ativo).length : 0,
+      icone: ShieldCheck,
+      cor: 'bg-green-500',
+    },
+    {
+      titulo: 'Grupos Inativos',
+      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => !g.ativo).length : 0,
+      icone: UserX,
+      cor: 'bg-red-500',
+    },
+    {
+      titulo: 'Com Usuários',
+      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => g.usuarios && g.usuarios.length > 0).length : 0,
+      icone: UserCheck,
+      cor: 'bg-purple-500',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <ModuleHeader
-        title="Grupos e Perfis"
-        icon={<Shield className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.inicio}
-        mustReturn={true}
-        backTo="/configuracoes"
-        backLabel="Configurações"
-      />
-
-      <main className="container mx-auto p-6">
-        <BaseList
-          data={grupos}
-          columns={columns}
-          actions={actions}
-          title="Grupos de Permissões"
-          description="Gerencie grupos e perfis de acesso"
-          searchPlaceholder="Buscar grupo..."
-          searchFields={['nome', 'descricao']}
-          getItemId={(grupo) => grupo.id}
-          createButton={{
-            label: 'Novo Grupo',
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate('/configuracoes/grupos/novo'),
-          }}
-          showExport={true}
-          exportFilename="grupos"
-        />
-      </main>
-    </div>
+    <Listagem<GrupoPermissao>
+      titulo="Grupos de Permissão"
+      descricao="Gerencie grupos e perfis de acesso reutilizáveis"
+      icone={<Shield className="h-6 w-6" />}
+      corModulo={MODULE_COLORS.inicio}
+      nomeEntidade="Grupo"
+      nomeEntidadePlural="Grupos"
+      rotaEntidade="/configuracoes/grupos"
+      rotaResumo="/configuracoes"
+      hook={gruposHook}
+      colunas={colunas}
+      acoes={acoes}
+      botaoCriar={{
+        titulo: "Novo Grupo",
+        icone: <Plus className="h-4 w-4" />,
+        rota: "/configuracoes/grupos/novo"
+      }}
+      cardsResumo={cardsResumo}
+      mostrarExportar={true}
+      nomeArquivoExportar="grupos"
+      ordenacaoPadrao="nome"
+      tamanhoPaginaPadrao={20}
+      camposBusca={['nome', 'descricao']}
+      placeholderBusca="Buscar grupo..."
+    />
   );
 };
 
