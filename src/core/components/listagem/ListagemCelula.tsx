@@ -1,130 +1,228 @@
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { CheckCircle, XCircle } from 'lucide-react';
-import { useMemo } from 'react';
-import { ColunaListagem } from './ListagemContext';
+import { getSituacaoConfig } from '@/utils/enumUtils';
+import { Calendar, Clock, DollarSign, Hash, IdCard, Mail, Percent, Phone } from 'lucide-react';
+import { TipoColuna } from './ListagemContext';
 
-interface PropsListagemCelula<T> {
+interface PropsCelula<T> {
   item: T;
-  coluna: ColunaListagem<T>;
+  chave: string;
+  tipo?: TipoColuna;
+  opcoesSituacao?: Record<string | number, { label: string; variant: 'default' | 'destructive' | 'secondary' | 'outline' }>;
+  mapeamentoValores?: Record<string | number, string | number>;
+  tipoEntidade?: 'recebivel' | 'cliente' | 'local' | 'reserva';
 }
 
-export function ListagemCelula<T>({ item, coluna }: PropsListagemCelula<T>) {
-  const valor = item[coluna.chave as keyof T];
+export function ListagemCelula<T>({ item, chave, tipo, opcoesSituacao, mapeamentoValores, tipoEntidade }: PropsCelula<T>) {
+  let valor = (item as any)[chave];
   
-  // Se tem função de renderização customizada, usar ela
-  if (coluna.renderizar) {
-    return <>{coluna.renderizar(item)}</>;
+  // Aplicar mapeamento de valores se existir
+  if (mapeamentoValores && valor !== undefined && valor !== null) {
+    valor = mapeamentoValores[valor] ?? valor;
   }
   
-  // Detectar tipo do valor e renderizar apropriadamente
-  const tipoValor = useMemo(() => {
-    if (valor === null || valor === undefined) return 'vazio';
-    if (typeof valor === 'boolean') return 'booleano';
-    if (typeof valor === 'number') return 'numero';
-    if (valor instanceof Date) return 'data';
+  if (!tipo) {
+    return <span>{valor || '-'}</span>;
+  }
+
+  const formatarData = (data: any): string => {
+    if (!data) return '-';
+    try {
+      const d = new Date(data);
+      if (isNaN(d.getTime())) return '-';
+      return d.toLocaleDateString('pt-BR');
+    } catch {
+      return '-';
+    }
+  };
+
+  const formatarHora = (hora: any): string => {
+    if (!hora) return '-';
+    try {
+      const d = new Date(`2000-01-01T${hora}`);
+      if (isNaN(d.getTime())) return hora;
+      return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return hora;
+    }
+  };
+
+  const formatarDataHora = (dataHora: any): string => {
+    if (!dataHora) return '-';
+    try {
+      const d = new Date(dataHora);
+      if (isNaN(d.getTime())) return '-';
+      return d.toLocaleString('pt-BR');
+    } catch {
+      return '-';
+    }
+  };
+
+  const formatarValor = (valor: any): string => {
+    if (valor === null || valor === undefined) return '-';
+    const num = parseFloat(valor);
+    if (isNaN(num)) return valor;
+    return `R$ ${num.toFixed(2)}`;
+  };
+
+  const formatarNumero = (numero: any): string => {
+    if (numero === null || numero === undefined) return '-';
+    const num = parseFloat(numero);
+    if (isNaN(num)) return numero;
+    return num.toLocaleString('pt-BR');
+  };
+
+  const formatarPercentual = (percentual: any): string => {
+    if (percentual === null || percentual === undefined) return '-';
+    const num = parseFloat(percentual);
+    if (isNaN(num)) return percentual;
+    return `${num.toFixed(1)}%`;
+  };
+
+  const formatarTelefone = (telefone: any): string => {
+    if (!telefone) return '-';
+    // Remove tudo que não é número
+    const numeros = telefone.replace(/\D/g, '');
+    if (numeros.length === 11) {
+      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
+    } else if (numeros.length === 10) {
+      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
+    }
+    return telefone;
+  };
+
+  const formatarDocumento = (documento: any): string => {
+    if (!documento) return '-';
+    // Remove tudo que não é número
+    const numeros = documento.replace(/\D/g, '');
+    if (numeros.length === 11) {
+      // CPF
+      return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`;
+    } else if (numeros.length === 14) {
+      // CNPJ
+      return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8, 12)}-${numeros.slice(12)}`;
+    }
+    return documento;
+  };
+
+  const renderizarSituacao = (situacao: any) => {
+    if (!situacao) return '-';
     
-    const valorString = String(valor).toLowerCase();
+    let config;
     
-    // Detectar padrões comuns
-    if (/^\d{4}-\d{2}-\d{2}/.test(String(valor))) return 'data';
-    if (/^\d+(\.\d{2})?$/.test(String(valor)) && coluna.chave.toString().includes('valor')) return 'moeda';
-    if (/^[\w.-]+@[\w.-]+\.\w+$/.test(valorString)) return 'email';
-    if (/^\+?\d[\d\s()-]+$/.test(valorString) && valorString.length >= 10) return 'telefone';
-    if (['ativo', 'inativo', 'pendente', 'concluido', 'cancelado'].includes(valorString)) return 'status';
-    if (/^#[0-9A-F]{6}$/i.test(valorString)) return 'cor';
+    // Se tem tipoEntidade, usar configuração automática
+    if (tipoEntidade) {
+      const situacaoConfig = getSituacaoConfig(tipoEntidade);
+      config = situacaoConfig[situacao];
+    }
     
-    return 'texto';
-  }, [valor, coluna.chave]);
-  
-  // Renderizar baseado no tipo
-  switch (tipoValor) {
-    case 'vazio':
-      return <span className="text-muted-foreground">-</span>;
-      
-    case 'booleano':
-      return (
-        <div className="flex items-center">
-          {valor ? (
-            <CheckCircle className="h-4 w-4 text-green-600" />
-          ) : (
-            <XCircle className="h-4 w-4 text-red-600" />
-          )}
-        </div>
-      );
-      
-    case 'data':
-      return (
-        <span className="text-sm">
-          {new Date(String(valor)).toLocaleDateString('pt-BR')}
-        </span>
-      );
-      
-    case 'moeda':
-      return (
-        <span className="font-mono text-sm">
-          {new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-          }).format(Number(valor))}
-        </span>
-      );
-      
+    // Se não encontrou configuração automática, usar opcoesSituacao manual
+    if (!config) {
+      config = opcoesSituacao?.[situacao] || { label: situacao, variant: 'default' as const };
+    }
+    
+    const variantClasses = {
+      default: 'bg-green-100 text-green-800',
+      destructive: 'bg-red-100 text-red-800',
+      secondary: 'bg-gray-100 text-gray-800',
+      outline: 'bg-blue-100 text-blue-800'
+    };
+
+    return (
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses[config.variant]}`}>
+        {config.label}
+      </span>
+    );
+  };
+
+  const renderizarBadge = (valor: any) => {
+    if (!valor) return '-';
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        {valor}
+      </span>
+    );
+  };
+
+  switch (tipo) {
     case 'email':
       return (
-        <a
-          href={`mailto:${valor}`}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          {String(valor)}
-        </a>
-      );
-      
-    case 'telefone':
-      return (
-        <a
-          href={`tel:${String(valor).replace(/\D/g, '')}`}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          {String(valor)}
-        </a>
-      );
-      
-    case 'status':
-      const status = String(valor).toLowerCase();
-      const statusConfig = {
-        ativo: { cor: 'bg-green-100 text-green-800', icone: CheckCircle },
-        inativo: { cor: 'bg-red-100 text-red-800', icone: XCircle },
-        pendente: { cor: 'bg-yellow-100 text-yellow-800', icone: undefined },
-        concluido: { cor: 'bg-blue-100 text-blue-800', icone: undefined },
-        cancelado: { cor: 'bg-gray-100 text-gray-800', icone: undefined },
-      };
-      
-      const config = statusConfig[status as keyof typeof statusConfig] || { cor: 'bg-gray-100 text-gray-800', icone: undefined };
-      const Icon = config.icone;
-      
-      return (
-        <Badge
-          variant="secondary"
-          className={cn("gap-1", config.cor)}
-        >
-          {Icon && <Icon className="h-3 w-3" />}
-          {String(valor)}
-        </Badge>
-      );
-      
-    case 'cor':
-      return (
         <div className="flex items-center gap-2">
-          <div
-            className="h-6 w-6 rounded border"
-            style={{ backgroundColor: String(valor) }}
-          />
-          <span className="text-sm font-mono">{String(valor)}</span>
+          <Mail className="h-4 w-4 text-muted-foreground" />
+          <span>{valor || '-'}</span>
         </div>
       );
-      
+
+    case 'telefone':
+      return (
+        <div className="flex items-center gap-2">
+          <Phone className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarTelefone(valor)}</span>
+        </div>
+      );
+
+    case 'documento':
+      return (
+        <div className="flex items-center gap-2">
+          <IdCard className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarDocumento(valor)}</span>
+        </div>
+      );
+
+    case 'data':
+      return (
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarData(valor)}</span>
+        </div>
+      );
+
+    case 'hora':
+      return (
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarHora(valor)}</span>
+        </div>
+      );
+
+    case 'datahora':
+      return (
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarDataHora(valor)}</span>
+        </div>
+      );
+
+    case 'valor':
+      return (
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarValor(valor)}</span>
+        </div>
+      );
+
+    case 'numero':
+      return (
+        <div className="flex items-center gap-2">
+          <Hash className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarNumero(valor)}</span>
+        </div>
+      );
+
+    case 'percentual':
+      return (
+        <div className="flex items-center gap-2">
+          <Percent className="h-4 w-4 text-muted-foreground" />
+          <span>{formatarPercentual(valor)}</span>
+        </div>
+      );
+
+    case 'situacao':
+      return renderizarSituacao(valor);
+
+    case 'badge':
+      return renderizarBadge(valor);
+
+    case 'texto':
     default:
-      return <span className="text-sm">{String(valor)}</span>;
+      return <span>{valor || '-'}</span>;
   }
 } 

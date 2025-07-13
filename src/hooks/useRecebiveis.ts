@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { api, ApiResponse } from '../lib/api';
 import { Recebivel } from '../types/reservas';
@@ -20,6 +20,13 @@ export const useRecebiveis = (filtros?: {
     transformPagination: (pagination) => pagination
   });
 
+  // Usar o fetchSummaryData do baseHook diretamente (sem transformação)
+  const fetchSummaryData = useCallback(async (params?: any) => {
+    console.log('📊 Buscando resumo de recebíveis...');
+    const resumo = await baseHook.fetchSummaryData(params);
+    console.log('📊 Resumo recebido:', resumo);
+    return resumo;
+  }, [baseHook.fetchSummaryData]);
 
 
   // Método específico para buscar recebíveis com filtros customizados
@@ -189,7 +196,7 @@ export const useRecebiveis = (filtros?: {
     
     // Métodos do hook base
     fetchData: fetchRecebiveis,
-    fetchSummaryData: baseHook.fetchSummaryData,
+    fetchSummaryData, // <-- usa o adaptador
     
     // Métodos específicos
     createRecebivel,

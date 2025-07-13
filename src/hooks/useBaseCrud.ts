@@ -290,9 +290,12 @@ export function useBaseCrud<T>(
 
   const fetchSummaryData = useCallback(async (params: any) => {
     try {
+      console.log('🔍 API Request (Resumo):', { endpoint: `${endpoint}/resumo`, params });
       const response = await api.get(`${endpoint}/resumo`, params);
+      console.log('✅ API Response (Resumo):', response);
       return ((response as any).data);
     } catch (error: any) {
+      console.error('❌ API Error (Resumo):', error);
       toast.error(error.message || 'Erro ao buscar dados do resumo', {
         duration: 5000,
       });

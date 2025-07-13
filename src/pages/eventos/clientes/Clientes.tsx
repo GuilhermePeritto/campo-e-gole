@@ -2,7 +2,7 @@
 import { Listagem } from '@/core/components/listagem';
 import { useClientes } from '@/hooks/useClientes';
 import type { Cliente } from '@/types/reservas';
-import { Calendar, IdCard, Mail, Phone, UserCheck, UserPlus, Users } from 'lucide-react';
+import { Calendar, UserCheck, UserPlus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Clientes() {
@@ -25,77 +25,43 @@ export default function Clientes() {
           chave: 'nome',
           titulo: 'Nome',
           ordenavel: true,
-          renderizar: (cliente) => (
-            <div className="flex items-center gap-2">
-              <span>{cliente.nome}</span>
-            </div>
-          ),
+          tipo: 'texto'
         },
         {
           chave: 'email',
           titulo: 'E-mail',
           ordenavel: true,
-          renderizar: (cliente) => (
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <span>{cliente.email}</span>
-            </div>
-          ),
+          tipo: 'email'
         },
         {
           chave: 'telefone',
           titulo: 'Telefone',
-          renderizar: (cliente) => (
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <span>{cliente.telefone}</span>
-            </div>
-          ),
+          tipo: 'telefone'
         },
         {
           chave: 'documento',
           titulo: 'Documento',
-          renderizar: (cliente) => (
-            <div className="flex items-center gap-2">
-              <IdCard className="h-4 w-4 text-muted-foreground" />
-              <span>{cliente.documento}</span>
-            </div>
-          ),
+          tipo: 'documento'
         },
         {
           chave: 'situacao',
           titulo: 'Situação',
           ordenavel: true,
-          renderizar: (cliente) => (
-            <span className={
-              cliente.situacao === 'ativo'
-                ? 'text-green-600 font-medium flex items-center gap-1'
-                : 'text-red-600 font-medium flex items-center gap-1'
-            }>
-              <UserCheck className="h-4 w-4" />
-              {cliente.situacao === 'ativo' ? 'Ativo' : 'Inativo'}
-            </span>
-          ),
+          tipo: 'situacao',
+          mapeamentoValores: {
+            1: 'ativo',
+            0: 'inativo'
+          },
+          opcoesSituacao: {
+            ativo: { label: 'Ativo', variant: 'default' },
+            inativo: { label: 'Inativo', variant: 'destructive' }
+          }
         },
         {
           chave: 'dataCriacao',
           titulo: 'Data Cadastro',
           ordenavel: true,
-          renderizar: (cliente) => {
-            let data = '';
-            try {
-              const d = new Date(cliente.dataCriacao);
-              data = isNaN(d.getTime()) ? '-' : d.toLocaleDateString('pt-BR');
-            } catch {
-              data = '-';
-            }
-            return (
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span>{data}</span>
-              </div>
-            );
-          },
+          tipo: 'data'
         },
       ]}
       acoes={[

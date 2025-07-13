@@ -75,22 +75,16 @@ const Locais = () => {
           ordenavel: true,
           filtravel: true,
           tipoFiltro: 'select',
-          renderizar: (local) => {
-            const statusConfig = {
-              ativo: { variant: 'default' as const, label: 'Ativo' },
-              inativo: { variant: 'destructive' as const, label: 'Inativo' },
-              manutencao: { variant: 'secondary' as const, label: 'Manutenção' }
-            };
-            const config = statusConfig[local.situacao] || statusConfig.inativo;
-            return (
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                config.variant === 'default' ? 'bg-green-100 text-green-800' :
-                config.variant === 'destructive' ? 'bg-red-100 text-red-800' :
-                'bg-gray-100 text-gray-800'
-              }`}>
-                {config.label}
-              </span>
-            );
+          tipo: 'situacao',
+          mapeamentoValores: {
+            1: 'ativo',
+            0: 'inativo',
+            2: 'manutencao'
+          },
+          opcoesSituacao: {
+            ativo: { label: 'Ativo', variant: 'default' },
+            inativo: { label: 'Inativo', variant: 'destructive' },
+            manutencao: { label: 'Manutenção', variant: 'secondary' }
           }
         }
       ]}

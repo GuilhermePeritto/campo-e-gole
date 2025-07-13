@@ -112,6 +112,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    console.log('🔄 Inicializando AuthContext...');
+    
     // Verificar se há tokens salvos
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
@@ -121,8 +123,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedBranches = localStorage.getItem('branches');
     const savedCurrentBranch = localStorage.getItem('currentBranch');
 
+    console.log('📦 Dados do localStorage:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      hasUser: !!savedUser,
+      hasCompany: !!savedCompany,
+      hasUserGroups: !!savedUserGroups,
+      hasBranches: !!savedBranches,
+      hasCurrentBranch: !!savedCurrentBranch
+    });
+
     if (accessToken && refreshToken && savedUser) {
       try {
+        console.log('✅ Tokens encontrados, restaurando sessão...');
+        
         // Configurar tokens na API
         api.setTokens(accessToken, refreshToken);
         
@@ -131,7 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const companyData = safeJsonParse(savedCompany, null);
         const userGroupsData = safeJsonParse(savedUserGroups, getDefaultUserGroups());
         const branchesData = safeJsonParse(savedBranches, getDefaultBranches());
-        const currentBranchData = safeJsonParse(savedCurrentBranch, branchesData[0]);
+        const currentBranchData = safeJsonParse(savedCurrentBranch, branchesData?.[0] || null);
         
         // Verificar se os dados do usuário são válidos
         if (!userData || typeof userData !== 'object') {
@@ -144,8 +158,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setBranches(branchesData);
         setCurrentBranch(currentBranchData);
         setIsAuthenticated(true);
+        
+        console.log('✅ Sessão restaurada com sucesso');
       } catch (error) {
-        console.error('Erro ao restaurar dados do localStorage:', error);
+        console.error('❌ Erro ao restaurar dados do localStorage:', error);
         // Em caso de erro, limpar dados corrompidos e inicializar padrão
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -161,13 +177,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setBranches(defaultBranches);
         setCurrentBranch(defaultBranches[0]);
         setIsAuthenticated(false);
+        
+        console.log('🔄 Dados corrompidos removidos, inicializando padrão');
       }
     } else {
+      console.log('ℹ️ Nenhuma sessão encontrada, inicializando padrão');
       // Inicializar grupos e filiais padrão
       setUserGroups(getDefaultUserGroups());
       const defaultBranches = getDefaultBranches();
       setBranches(defaultBranches);
       setCurrentBranch(defaultBranches[0]);
+      setIsAuthenticated(false);
     }
   }, []);
 
@@ -245,7 +265,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (response.success && response.data) {
-        const { accessToken, refreshToken, user } = response.data;
+        const { accessToken, refreshToken, usuario } = response.data;
+        
+        console.log('✅ Login bem-sucedido, salvando dados...');
         
         // Configurar tokens na API
         api.setTokens(accessToken, refreshToken);
@@ -253,10 +275,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Salvar dados no localStorage
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(usuario));
+        
+        console.log('💾 Dados salvos no localStorage:', {
+          accessToken: accessToken ? '✅' : '❌',
+          refreshToken: refreshToken ? '✅' : '❌',
+          user: usuario ? '✅' : '❌'
+        });
         
         // Atualizar estado
-        setUser(user);
+        setUser(usuario);
         setIsAuthenticated(true);
         
         // Carregar dados da empresa se necessário
@@ -315,12 +343,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    console.log('🚪 Fazendo logout...');
+    
     // Limpar tokens da API
     api.clearTokens();
     
     // Limpar estado
     setUser(null);
     setCompany(null);
+    setUserGroups(getDefaultUserGroups());
+    const defaultBranches = getDefaultBranches();
+    setBranches(defaultBranches);
+    setCurrentBranch(defaultBranches[0]);
     setIsAuthenticated(false);
     
     // Limpar localStorage
@@ -332,6 +366,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('branches');
     localStorage.removeItem('currentBranch');
     
+    console.log('✅ Logout realizado com sucesso');
     toast.success('Logout realizado com sucesso!');
   };
 

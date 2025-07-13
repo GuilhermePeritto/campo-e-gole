@@ -3,6 +3,8 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { toast } from 'sonner';
 
 // Tipos
+export type TipoColuna = 'texto' | 'email' | 'documento' | 'telefone' | 'data' | 'hora' | 'datahora' | 'situacao' | 'valor' | 'numero' | 'percentual' | 'badge';
+
 export interface ColunaListagem<T> {
   chave: keyof T | string;
   titulo: string;
@@ -12,6 +14,10 @@ export interface ColunaListagem<T> {
   podeOcultar?: boolean;
   renderizar?: (item: T) => React.ReactNode;
   largura?: number;
+  tipo?: TipoColuna;
+  opcoesSituacao?: Record<string | number, { label: string; variant: 'default' | 'destructive' | 'secondary' | 'outline' }>;
+  mapeamentoValores?: Record<string | number, string | number>;
+  tipoEntidade?: 'recebivel' | 'cliente' | 'local' | 'reserva';
 }
 
 export interface AcaoListagem<T> {
@@ -142,6 +148,7 @@ interface ContextoListagem<T> extends EstadoListagem<T> {
   // Ações CRUD
   excluirItem: (item: T) => Promise<void>;
   recarregarDados: () => Promise<void>;
+  recarregarResumo: () => Promise<void>;
   
   // Dados computados
   dadosFiltrados: T[];
@@ -266,13 +273,17 @@ export function ListagemProvider<T extends Record<string, any>>({
   useEffect(() => {
     // Verificar se o hook tem o método fetchSummaryData
     if (configuracao.hook.fetchSummaryData) {
+      console.log('📊 Carregando resumo inicial...');
       setCarregandoResumo(true);
       configuracao.hook.fetchSummaryData({})
-        .then(dados => setDadosResumo(dados))
+        .then(dados => {
+          console.log('📊 Resumo carregado:', dados);
+          setDadosResumo(dados);
+        })
         .catch(error => console.error('Erro ao carregar resumo:', error))
         .finally(() => setCarregandoResumo(false));
     }
-  }, [configuracao.hook]);
+  }, []); // Remover dependência do hook para evitar múltiplas chamadas
   
   // Dados filtrados localmente (para visualização imediata)
   const dadosFiltrados = useMemo(() => {
@@ -414,6 +425,22 @@ export function ListagemProvider<T extends Record<string, any>>({
   const recarregarDados = useCallback(async () => {
     await fetchData(parametrosApi);
   }, [fetchData, parametrosApi]);
+
+  const recarregarResumo = useCallback(async () => {
+    if (configuracao.hook.fetchSummaryData) {
+      console.log('📊 Recarregando resumo...');
+      setCarregandoResumo(true);
+      try {
+        const dados = await configuracao.hook.fetchSummaryData({});
+        console.log('📊 Resumo recarregado:', dados);
+        setDadosResumo(dados);
+      } catch (error) {
+        console.error('Erro ao recarregar resumo:', error);
+      } finally {
+        setCarregandoResumo(false);
+      }
+    }
+  }, [configuracao.hook.fetchSummaryData]);
   
   const valor: ContextoListagem<T> = {
     // Estados
@@ -450,6 +477,7 @@ export function ListagemProvider<T extends Record<string, any>>({
     definirFixacaoColuna,
     excluirItem,
     recarregarDados,
+    recarregarResumo,
     
     // Dados computados
     dadosFiltrados,

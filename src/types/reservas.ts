@@ -3,12 +3,45 @@
 // ============================================================================
 
 // ============================================================================
+// ENUMS BASEADOS NO BACKEND
+// ============================================================================
+
+export enum SituacaoBase {
+  Ativo = 1,
+  Inativo = 2
+}
+
+export enum SituacaoRecebivel {
+  Aberto = 1,        // Título ainda não pago
+  Vencido = 2,       // Passou da data de vencimento
+  Pago = 3,          // Pago
+  Cancelado = 4,     // Cancelou evento ou cancelado manualmente
+  Estornado = 5      // Somente manualmente
+}
+
+export enum SituacaoCliente {
+  Ativo = SituacaoBase.Ativo,
+  Inativo = SituacaoBase.Inativo,
+  Bloqueado = 3      // Cliente velhaco com títulos vencidos
+}
+
+export enum SituacaoLocal {
+  Ativo = SituacaoBase.Ativo,
+  Inativo = SituacaoBase.Inativo,
+  Manutencao = 3     // Em manutenção
+}
+
+export enum SituacaoReserva {
+  Confirmado = 1,    // Cliente pagou
+  Concluido = 2,     // Pós término do evento
+  Pendente = 3,      // Confirmação pendente (ainda não pagou)
+  Cancelado = 4      // Cancelado
+}
+
+// ============================================================================
 // TIPOS BASE
 // ============================================================================
 
-export type StatusReserva = 'confirmado' | 'pendente' | 'cancelado';
-export type StatusLocal = 'ativo' | 'inativo' | 'manutencao';
-export type StatusCliente = 'ativo' | 'inativo';
 export type TipoVisualizacao = 'mes' | 'semana' | 'dia' | 'lista';
 
 // ============================================================================
@@ -25,7 +58,7 @@ export interface Local {
   capacidade: number | null;
   descricao: string;
   comodidades: string[];
-  situacao: string; // Padronizado com backend
+  situacao: SituacaoLocal; // Enum do backend
   cor: string;
   horaAbertura: string; // Padronizado com backend
   horaFechamento: string; // Padronizado com backend
@@ -45,7 +78,7 @@ export interface Cliente {
   telefone: string;
   endereco: string;
   observacoes: string;
-  situacao: string; // Padronizado com backend
+  situacao: SituacaoCliente; // Enum do backend
   dataCriacao: string; // Padronizado com backend
 }
 
@@ -62,9 +95,9 @@ export interface Recebivel {
   descricao: string;
   valor: number;
   dataVencimento: string;
-  situacao: string; // Padronizado com backend
+  situacao: SituacaoRecebivel; // Enum do backend
   reservaId: string | null; // Padronizado com backend
-  dataCadastro: string; // Padronizado com backend
+  dataCriacao: string; // Padronizado com backend
 }
 
 // ============================================================================
@@ -78,7 +111,7 @@ export interface Reserva {
   data: string;
   horaInicio: string;
   horaFim: string;
-  situacao: string; // Padronizado com backend
+  situacao: SituacaoReserva; // Enum do backend
   cor: string;
   esporte: string; // Padronizado com backend
   observacoes: string;
@@ -96,7 +129,7 @@ export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   expiraEm: string;
-  user: User;
+  usuario: User;
 }
 
 export interface User {

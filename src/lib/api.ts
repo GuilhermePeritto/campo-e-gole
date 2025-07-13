@@ -258,22 +258,24 @@ class Api {
       clearTimeout(timeoutId);
 
       if (response.status === 401) {
-        // Tentar refresh do token
+        console.log('🔒 401 detectado, tentando refresh token...');
+        
+        // Sempre tentar refresh do token quando receber 401
         const refreshed = await this.refreshAccessToken();
+        
         if (refreshed) {
-          // Reexecutar a requisição original
+          console.log('✅ Token renovado, reexecutando requisição...');
+          // Reexecutar a requisição original com o novo token
           return this.request(url, options);
         } else {
-          // Só retorna erro de sessão expirada se houver refreshToken
-          if (this.refreshToken) {
-            this.handleUnauthorized();
-            return {
-              success: false,
-              message: 'Sessão expirada. Faça login novamente.',
-              data: null
-            } as any;
-          }
-          // Se não houver token, deixa seguir o fluxo (não retorna nada aqui)
+          console.log('❌ Falha no refresh token, fazendo logout...');
+          // Qualquer erro no refresh = logout automático
+          this.handleUnauthorized();
+          return {
+            success: false,
+            message: 'Sessão expirada. Faça login novamente.',
+            data: null
+          } as any;
         }
       }
 
@@ -347,35 +349,60 @@ class Api {
   }
 
   private async refreshAccessToken(): Promise<boolean> {
-    if (!this.refreshToken) return false;
+    if (!this.refreshToken) {
+      console.log('❌ Nenhum refresh token disponível');
+      return false;
+    }
 
     try {
+      console.log('🔄 Tentando renovar token...');
       const url = this.buildUrl('autenticacao/refresh');
+      
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({ refreshToken: this.refreshToken })
       });
 
+      console.log('📡 Status da resposta do refresh:', response.status);
+
       if (response.ok) {
         const data = await response.json();
-        if (data.success && data.data) {
+        console.log('📦 Resposta do refresh:', data);
+        
+        if (data.success && data.data && data.data.accessToken && data.data.refreshToken) {
           this.setTokens(data.data.accessToken, data.data.refreshToken);
+          console.log('✅ Token renovado com sucesso');
           return true;
+        } else {
+          console.error('❌ Resposta de refresh inválida:', data);
+          return false;
         }
+      } else {
+        console.error('❌ Erro HTTP no refresh:', response.status, response.statusText);
+        return false;
       }
     } catch (error) {
-      console.error('Erro ao renovar token:', error);
+      console.error('❌ Erro ao renovar token:', error);
+      return false;
     }
-
-    return false;
   }
 
   private handleUnauthorized() {
+    console.log('🚪 Fazendo logout automático por sessão expirada...');
+    
+    // Limpar tokens
     this.clearTokens();
+    
+    // Mostrar notificação
     this.showWarningNotification('Sessão expirada. Faça login novamente.');
+    
     // Redirecionar para login apenas se não estiver já na página de login
     if (window.location.pathname !== '/login') {
+      console.log('🔄 Redirecionando para login...');
       window.location.href = '/login';
     }
   }

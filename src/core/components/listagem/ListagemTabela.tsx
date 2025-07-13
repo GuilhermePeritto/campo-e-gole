@@ -1,27 +1,27 @@
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
+    closestCenter,
+    DndContext,
+    KeyboardSensor,
+    MouseSensor,
+    TouchSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
 } from '@dnd-kit/core';
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
+    arrayMove,
+    horizontalListSortingStrategy,
+    SortableContext,
 } from '@dnd-kit/sortable';
 import { FileX, MoreHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
@@ -226,10 +226,18 @@ export function ListagemTabela() {
                   >
                     {colunasVisiveis.map((coluna) => (
                       <td key={String(coluna.chave)} className="h-10 px-3 align-middle [&:has([role=checkbox])]:pr-0">
-                        <ListagemCelula
-                          item={item}
-                          coluna={coluna}
-                        />
+                        {coluna.renderizar ? (
+                          coluna.renderizar(item)
+                        ) : (
+                          <ListagemCelula
+                            item={item}
+                            chave={String(coluna.chave)}
+                            tipo={coluna.tipo}
+                            opcoesSituacao={coluna.opcoesSituacao}
+                            mapeamentoValores={coluna.mapeamentoValores}
+                            tipoEntidade={coluna.tipoEntidade}
+                          />
+                        )}
                       </td>
                     ))}
                     {acoesComPadrao.length > 0 && (

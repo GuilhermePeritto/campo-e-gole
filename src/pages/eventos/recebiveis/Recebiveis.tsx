@@ -45,26 +45,28 @@ const Recebiveis = () => {
           titulo: 'Cliente',
           ordenavel: true,
           filtravel: true,
-          tipoFiltro: 'select'
+          tipoFiltro: 'select',
+          tipo: 'texto'
         },
         {
           chave: 'descricao',
           titulo: 'Descrição',
           ordenavel: true,
           filtravel: true,
-          tipoFiltro: 'text'
+          tipoFiltro: 'text',
+          tipo: 'texto'
         },
         {
           chave: 'valor',
           titulo: 'Valor',
           ordenavel: true,
-          renderizar: (recebivel) => `R$ ${recebivel.valor.toFixed(2)}`
+          tipo: 'valor'
         },
         {
           chave: 'dataVencimento',
           titulo: 'Vencimento',
           ordenavel: true,
-          renderizar: (recebivel) => new Date(recebivel.dataVencimento).toLocaleDateString('pt-BR')
+          tipo: 'data'
         },
         {
           chave: 'situacao',
@@ -72,25 +74,14 @@ const Recebiveis = () => {
           ordenavel: true,
           filtravel: true,
           tipoFiltro: 'select',
-          renderizar: (recebivel) => {
-            const statusConfig = {
-              pendente: { label: 'Pendente', className: 'bg-yellow-100 text-yellow-800' },
-              pago: { label: 'Pago', className: 'bg-green-100 text-green-800' },
-              vencido: { label: 'Vencido', className: 'bg-red-100 text-red-800' }
-            };
-            const config = statusConfig[recebivel.situacao] || statusConfig.pendente;
-            return (
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.className}`}>
-                {config.label}
-              </span>
-            );
-          }
+          tipo: 'situacao',
+          tipoEntidade: 'recebivel'
         },
         {
-          chave: 'dataCadastro',
+          chave: 'dataCriacao',
           titulo: 'Data Criação',
           ordenavel: true,
-          renderizar: (recebivel) => new Date(recebivel.dataCadastro).toLocaleDateString('pt-BR')
+          tipo: 'data'
         }
       ]}
       acoes={[
@@ -105,7 +96,7 @@ const Recebiveis = () => {
           onClick: (recebivel) => navigate(`/eventos/recebiveis/${recebivel.id}/receber`),
           variante: 'default',
           icone: <CreditCard className="h-4 w-4" />,
-          mostrar: (recebivel) => recebivel.situacao === 'pendente' || recebivel.situacao === 'vencido'
+          mostrar: (recebivel) => recebivel.situacao === 1 || recebivel.situacao === 2 // Aberto ou Vencido
         }
       ]}
       botaoCriar={{
@@ -117,7 +108,7 @@ const Recebiveis = () => {
         {
           titulo: 'Total a Receber',
           valor: (_data, _pagination, summaryData) => {
-            const valor = summaryData?.totalAmount ?? 0;
+            const valor = summaryData?.valorTotal ?? 0;
             return `R$ ${valor.toFixed(2)}`;
           },
           descricao: 'Valor total',
@@ -132,7 +123,7 @@ const Recebiveis = () => {
         {
           titulo: 'Pendentes',
           valor: (_data, _pagination, summaryData) => {
-            const valor = summaryData?.pendingAmount ?? 0;
+            const valor = summaryData?.valorPendente ?? 0;
             return `R$ ${valor.toFixed(2)}`;
           },
           descricao: 'Aguardando pagamento',
@@ -147,7 +138,7 @@ const Recebiveis = () => {
         {
           titulo: 'Pagos',
           valor: (_data, _pagination, summaryData) => {
-            const valor = summaryData?.paidAmount ?? 0;
+            const valor = summaryData?.valorPago ?? 0;
             return `R$ ${valor.toFixed(2)}`;
           },
           descricao: 'Recebimentos confirmados',
@@ -162,7 +153,7 @@ const Recebiveis = () => {
         {
           titulo: 'Vencidos',
           valor: (_data, _pagination, summaryData) => {
-            const valor = summaryData?.overdueAmount ?? 0;
+            const valor = summaryData?.valorVencido ?? 0;
             return `R$ ${valor.toFixed(2)}`;
           },
           descricao: 'Contas em atraso',
