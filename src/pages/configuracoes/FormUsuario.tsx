@@ -5,17 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import CampoEmail from '@/core/components/CampoEmail';
 import CampoTelefone from '@/core/components/CampoTelefone';
-import { toast } from '@/hooks/use-toast';
-import { useFiliais } from '@/hooks/useFiliais';
-import { useGrupos } from '@/hooks/useGrupos';
-import { useUsuarios } from '@/hooks/useUsuarios';
+// import { useFiliais } from '@/hooks/useFiliais';
+// import { useGrupos } from '@/hooks/useGrupos';
+// import { useUsuarios } from '@/hooks/useUsuarios';
 import { Camera, Edit, Upload, User, UserPlus } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const FormUsuario = () => {
@@ -23,9 +22,9 @@ const FormUsuario = () => {
   const { id } = useParams();
   const isEditing = !!id;
   
-  const { filiais, buscarFiliais } = useFiliais();
-  const { grupos, buscarGrupos } = useGrupos();
-  const { buscarUsuarioPorId, criarUsuario, atualizarUsuario } = useUsuarios();
+  // const { filiais, buscarFiliais } = useFiliais();
+  // const { grupos, buscarGrupos } = useGrupos();
+  // const { buscarUsuarioPorId, criarUsuario, atualizarUsuario } = useUsuarios();
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -43,38 +42,38 @@ const FormUsuario = () => {
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    buscarFiliais();
-    buscarGrupos();
-  }, [buscarFiliais, buscarGrupos]);
+  // useEffect(() => {
+  //   buscarFiliais();
+  //   buscarGrupos();
+  // }, [buscarFiliais, buscarGrupos]);
 
-  useEffect(() => {
-    if (isEditing && id) {
-      carregarUsuario(parseInt(id));
-    }
-  }, [id, isEditing]);
+  // useEffect(() => {
+  //   if (isEditing && id) {
+  //     carregarUsuario(parseInt(id));
+  //   }
+  // }, [id, isEditing]);
 
-  const carregarUsuario = async (usuarioId: number) => {
-    setLoading(true);
-    const usuario = await buscarUsuarioPorId(usuarioId);
+  // const carregarUsuario = async (usuarioId: number) => {
+  //   setLoading(true);
+  //   const usuario = await buscarUsuarioPorId(usuarioId);
     
-    if (usuario) {
-      setFormData({
-        nome: usuario.nome,
-        email: usuario.email,
-        telefone: usuario.telefone,
-        cargo: usuario.cargo,
-        filialId: usuario.filialId,
-        grupoId: usuario.grupoId,
-        senha: '',
-        confirmarSenha: '',
-        ativo: usuario.ativo,
-        foto: usuario.foto || ''
-      });
-      setAvatarPreview(usuario.foto || '');
-    }
-    setLoading(false);
-  };
+  //   if (usuario) {
+  //     setFormData({
+  //       nome: usuario.nome,
+  //       email: usuario.email,
+  //       telefone: usuario.telefone,
+  //       cargo: usuario.cargo,
+  //       filialId: usuario.filialId,
+  //       grupoId: usuario.grupoId,
+  //       senha: '',
+  //       confirmarSenha: '',
+  //       ativo: usuario.ativo,
+  //       foto: usuario.foto || ''
+  //     });
+  //     setAvatarPreview(usuario.foto || '');
+  //   }
+  //   setLoading(false);
+  // };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -93,86 +92,86 @@ const FormUsuario = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isEditing && formData.senha !== formData.confirmarSenha) {
-      toast({
-        title: "Erro",
-        description: "As senhas não coincidem.",
-        variant: "destructive"
-      });
-      return;
-    }
+    // if (!isEditing && formData.senha !== formData.confirmarSenha) {
+    //   toast({
+    //     title: "Erro",
+    //     description: "As senhas não coincidem.",
+    //     variant: "destructive"
+    //   });
+    //   return;
+    // }
 
-    if (!formData.grupoId) {
-      toast({
-        title: "Erro",
-        description: "Selecione um grupo para o usuário.",
-        variant: "destructive"
-      });
-      return;
-    }
+    // if (!formData.grupoId) {
+    //   toast({
+    //     title: "Erro",
+    //     description: "Selecione um grupo para o usuário.",
+    //     variant: "destructive"
+    //   });
+    //   return;
+    // }
 
-    if (!formData.filialId) {
-      toast({
-        title: "Erro",
-        description: "Selecione uma filial para o usuário.",
-        variant: "destructive"
-      });
-      return;
-    }
+    // if (!formData.filialId) {
+    //   toast({
+    //     title: "Erro",
+    //     description: "Selecione uma filial para o usuário.",
+    //     variant: "destructive"
+    //   });
+    //   return;
+    // }
 
-    setLoading(true);
+    // setLoading(true);
 
-    try {
-      if (isEditing) {
-        await atualizarUsuario(parseInt(id!), {
-          nome: formData.nome,
-          email: formData.email,
-          telefone: formData.telefone,
-          cargo: formData.cargo,
-          filialId: formData.filialId,
-          grupoId: formData.grupoId,
-          ativo: formData.ativo,
-          foto: formData.foto
-        });
+    // try {
+    //   if (isEditing) {
+    //     await atualizarUsuario(parseInt(id!), {
+    //       nome: formData.nome,
+    //       email: formData.email,
+    //       telefone: formData.telefone,
+    //       cargo: formData.cargo,
+    //       filialId: formData.filialId,
+    //       grupoId: formData.grupoId,
+    //       ativo: formData.ativo,
+    //       foto: formData.foto
+    //     });
         
-        toast({
-          title: "Usuário atualizado",
-          description: "O usuário foi atualizado com sucesso.",
-        });
-      } else {
-        await criarUsuario({
-          nome: formData.nome,
-          email: formData.email,
-          telefone: formData.telefone,
-          cargo: formData.cargo,
-          filialId: formData.filialId,
-          grupoId: formData.grupoId,
-          ativo: formData.ativo,
-          foto: formData.foto,
-          ultimoAcesso: '',
-          senha: formData.senha
-        });
+    //     toast({
+    //       title: "Usuário atualizado",
+    //       description: "O usuário foi atualizado com sucesso.",
+    //     });
+    //   } else {
+    //     await criarUsuario({
+    //       nome: formData.nome,
+    //       email: formData.email,
+    //       telefone: formData.telefone,
+    //       cargo: formData.cargo,
+    //       filialId: formData.filialId,
+    //       grupoId: formData.grupoId,
+    //       ativo: formData.ativo,
+    //       foto: formData.foto,
+    //       ultimoAcesso: '',
+    //       senha: formData.senha
+    //     });
         
-        toast({
-          title: "Usuário criado",
-          description: "O usuário foi criado com sucesso.",
-        });
-      }
+    //     toast({
+    //       title: "Usuário criado",
+    //       description: "O usuário foi criado com sucesso.",
+    //     });
+    //   }
       
-      navigate('/configuracoes/usuarios');
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao salvar o usuário.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+    //   navigate('/configuracoes/usuarios');
+    // } catch (error) {
+    //   toast({
+    //     title: "Erro",
+    //     description: "Ocorreu um erro ao salvar o usuário.",
+    //     variant: "destructive"
+    //   });
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
-  const selectedGrupo = grupos.find(g => g.id === formData.grupoId);
-  const selectedFilial = filiais.find(f => f.id === formData.filialId);
+  // const selectedGrupo = grupos.find(g => g.id === formData.grupoId);
+  // const selectedFilial = filiais.find(f => f.id === formData.filialId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -287,9 +286,9 @@ const FormUsuario = () => {
                       <SelectValue placeholder="Selecione a filial" />
                     </SelectTrigger>
                     <SelectContent>
-                      {filiais.map((filial) => (
+                      {/* {filiais.map((filial) => (
                         <SelectItem key={filial.id} value={filial.id.toString()}>{filial.nome}</SelectItem>
-                      ))}
+                      ))} */}
                     </SelectContent>
                   </Select>
                 </div>
@@ -301,15 +300,15 @@ const FormUsuario = () => {
                       <SelectValue placeholder="Selecione o grupo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {grupos.filter(g => g.ativo).map((grupo) => (
+                      {/* {grupos.filter(g => g.ativo).map((grupo) => (
                         <SelectItem key={grupo.id} value={grupo.id.toString()}>{grupo.nome}</SelectItem>
-                      ))}
+                      ))} */}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              {selectedGrupo && (
+              {/* {selectedGrupo && (
                 <div className="p-4 bg-muted rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <div className={`w-3 h-3 rounded-full ${selectedGrupo.cor}`} />
@@ -317,7 +316,7 @@ const FormUsuario = () => {
                   </div>
                   <p className="text-sm text-muted-foreground">{selectedGrupo.descricao}</p>
                 </div>
-              )}
+              )} */}
 
               {!isEditing && (
                 <div className="grid gap-4 md:grid-cols-2">

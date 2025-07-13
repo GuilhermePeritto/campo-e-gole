@@ -1,7 +1,7 @@
 
 import { Listagem } from '@/core/components/listagem';
 import { useClientes } from '@/hooks/useClientes';
-import type { Cliente } from '@/types/reservas';
+import type { Cliente } from '@/types';
 import { Calendar, UserCheck, UserPlus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

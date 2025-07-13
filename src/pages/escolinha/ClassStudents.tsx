@@ -1,9 +1,8 @@
 
-import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
+// import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Plus, Users2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -77,10 +76,10 @@ const ClassStudents = () => {
     }
   ];
 
-  const pagination = usePagination(students, {
-    pageSize: 5,
-    totalItems: students.length
-  });
+  // const pagination = usePagination(students, {
+  //   pageSize: 5,
+  //   totalItems: students.length
+  // });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -159,7 +158,8 @@ const ClassStudents = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pagination.paginatedData.map((student) => (
+                {/* {pagination.paginatedData.map((student) => ( */}
+                {students.map((student) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-gray-600 dark:text-gray-300">{student.name}</TableCell>
                     <TableCell className="text-gray-600">{student.age} anos</TableCell>
@@ -195,7 +195,7 @@ const ClassStudents = () => {
             </Table>
 
             {/* Paginação */}
-            <PaginationControls
+            {/* <PaginationControls
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
               totalItems={pagination.totalItems}
@@ -207,7 +207,7 @@ const ClassStudents = () => {
               onPageChange={pagination.goToPage}
               onPageSizeChange={pagination.setPageSize}
               pageSizeOptions={[5, 10, 15]}
-            />
+            /> */}
           </CardContent>
         </Card>
       </main>

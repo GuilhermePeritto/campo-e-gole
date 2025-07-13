@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useClientes } from '@/hooks/useClientes';
 import { useLocais } from '@/hooks/useLocais';
 import { useReservas } from '@/hooks/useReservas';
-import type { Reserva } from '@/types/reservas';
+import type { Reserva } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';

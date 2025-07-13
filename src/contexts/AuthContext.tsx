@@ -1,5 +1,5 @@
 import { api, ApiResponse } from '@/lib/api';
-import type { LoginResponse, User } from '@/types/reservas';
+import type { LoginResponse, User } from '@/types';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 

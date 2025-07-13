@@ -1,10 +1,9 @@
 
-import PaginationControls from '@/components/PaginationControls';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
+// import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Calendar, DollarSign, GraduationCap, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -75,10 +74,10 @@ const TeacherReport = () => {
     }
   ];
 
-  const pagination = usePagination(classes, {
-    pageSize: 10,
-    totalItems: classes.length
-  });
+  // const pagination = usePagination(classes, {
+  //   pageSize: 10,
+  //   totalItems: classes.length
+  // });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -238,7 +237,7 @@ const TeacherReport = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pagination.paginatedData.map((classItem) => (
+                {classes.map((classItem) => (
                   <TableRow key={classItem.id} className="hover:bg-muted/50">
                     <TableCell className="font-medium">
                       {new Date(classItem.date).toLocaleDateString('pt-BR')}
@@ -261,7 +260,7 @@ const TeacherReport = () => {
             </Table>
 
             {/* Paginação */}
-            <PaginationControls
+            {/* <PaginationControls
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
               totalItems={pagination.totalItems}
@@ -273,7 +272,7 @@ const TeacherReport = () => {
               onPageChange={pagination.goToPage}
               onPageSizeChange={pagination.setPageSize}
               pageSizeOptions={[10, 20, 30]}
-            />
+            /> */}
           </CardContent>
         </Card>
       </main>

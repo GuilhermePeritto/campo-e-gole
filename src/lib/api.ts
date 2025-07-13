@@ -94,9 +94,6 @@ class Api {
       case 500:
         message = 'Erro interno do servidor. Tente novamente mais tarde.';
         break;
-      case 0:
-        message = 'Erro de conexão. Verifique sua internet.';
-        break;
       default:
         details = `Erro ${error.status}`;
     }

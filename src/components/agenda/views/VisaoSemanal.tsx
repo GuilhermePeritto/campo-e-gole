@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useContextoAgenda } from '@/contexts/AgendaContext';
 import { useLocais } from '@/hooks/useLocais';
-import type { Reserva } from '@/types/reservas';
+import type { Reserva } from '@/types';
 import { eachDayOfInterval, endOfWeek, format, startOfWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { memo, useMemo } from 'react';

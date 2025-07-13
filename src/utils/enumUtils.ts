@@ -3,7 +3,7 @@ import {
     SituacaoLocal,
     SituacaoRecebivel,
     SituacaoReserva
-} from '../types/reservas';
+} from '../types';
 
 // ============================================================================
 // UTILITÁRIOS PARA CONVERSÃO DE ENUMS

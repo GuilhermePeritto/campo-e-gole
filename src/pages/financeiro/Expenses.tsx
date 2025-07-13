@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+// import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Filter, Plus, Search, TrendingDown } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -64,10 +64,10 @@ const Despesas = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const pagination = usePagination(filteredDespesas, {
-    pageSize: 10,
-    totalItems: filteredDespesas.length
-  });
+  // const pagination = usePagination(filteredDespesas, {
+  //   pageSize: 10,
+  //   totalItems: filteredDespesas.length
+  // });
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -214,44 +214,44 @@ const Despesas = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pagination.paginatedData.map((expense) => (
-                  <TableRow key={expense.id}>
-                    <TableCell className="font-medium">{expense.description}</TableCell>
-                    <TableCell className="font-bold text-red-600">
-                      R$ {expense.amount.toFixed(2).replace('.', ',')}
-                    </TableCell>
-                    <TableCell>{new Date(expense.date).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(expense.category)}`}>
-                        {expense.category}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(expense.status)}`}>
-                        {expense.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm">
-                        Detalhes
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {/* {pagination.paginatedData.map((expense) => ( */}
+                {/*   <TableRow key={expense.id}> */}
+                {/*     <TableCell className="font-medium">{expense.description}</TableCell> */}
+                {/*     <TableCell className="font-bold text-red-600"> */}
+                {/*       R$ {expense.amount.toFixed(2).replace('.', ',')} */}
+                {/*     </TableCell> */}
+                {/*     <TableCell>{new Date(expense.date).toLocaleDateString('pt-BR')}</TableCell> */}
+                {/*     <TableCell> */}
+                {/*       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(expense.category)}`}> */}
+                {/*         {expense.category} */}
+                {/*       </span> */}
+                {/*     </TableCell> */}
+                {/*     <TableCell> */}
+                {/*       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(expense.status)}`}> */}
+                {/*         {expense.status} */}
+                {/*       </span> */}
+                {/*     </TableCell> */}
+                {/*     <TableCell> */}
+                {/*       <Button variant="outline" size="sm"> */}
+                {/*         Detalhes */}
+                {/*       </Button> */}
+                {/*     </TableCell> */}
+                {/*   </TableRow> */}
+                {/* ))} */}
               </TableBody>
             </Table>
 
             <PaginationControls
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              pageSize={pagination.pageSize}
-              startIndex={pagination.startIndex}
-              endIndex={pagination.endIndex}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              onPageChange={pagination.goToPage}
-              onPageSizeChange={pagination.setPageSize}
+              currentPage={1}
+              totalPages={1}
+              totalItems={filteredDespesas.length}
+              pageSize={10}
+              startIndex={0}
+              endIndex={filteredDespesas.length}
+              hasNextPage={false}
+              hasPreviousPage={false}
+              onPageChange={() => {}}
+              onPageSizeChange={() => {}}
               pageSizeOptions={[10, 20, 50]}
             />
           </CardContent>

@@ -1,5 +1,4 @@
 import ModuleHeader from '@/components/ModuleHeader';
-import BaseList from '@/components/BaseList';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,12 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { FileText, Download, Calendar, User, Activity, Filter, Search } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useAuditoria } from '@/hooks/useAuditoria';
+import { Activity, Calendar, FileText, Filter, Search, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+// import { useAuditoria } from '@/hooks/useAuditoria';
 
 const Auditoria = () => {
-  const { logs, loading, buscarLogs, buscarEstatisticas, exportarLogs } = useAuditoria();
+  // const { logs, loading, buscarLogs, buscarEstatisticas, exportarLogs } = useAuditoria();
   const [estatisticas, setEstatisticas] = useState({
     acoesHoje: 0,
     usuariosAtivos: 0,
@@ -34,16 +33,16 @@ const Auditoria = () => {
   }, []);
 
   const carregarDados = async () => {
-    await buscarLogs();
-    const stats = await buscarEstatisticas();
-    setEstatisticas(stats);
+    // await buscarLogs();
+    // const stats = await buscarEstatisticas();
+    // setEstatisticas(stats);
   };
 
   const aplicarFiltros = async () => {
     const filtrosLimpos = Object.fromEntries(
       Object.entries(filtros).filter(([_, value]) => value !== '')
     );
-    await buscarLogs(filtrosLimpos);
+    // await buscarLogs(filtrosLimpos);
   };
 
   const limparFiltros = async () => {
@@ -55,7 +54,7 @@ const Auditoria = () => {
       dataFim: '',
       status: ''
     });
-    await buscarLogs();
+    // await buscarLogs();
   };
 
   const columns = [
@@ -298,7 +297,7 @@ const Auditoria = () => {
         </Card>
 
         {/* Lista de Logs */}
-        <BaseList
+        {/* <BaseList
           data={logs}
           columns={columns}
           title="Logs de Auditoria"
@@ -313,7 +312,7 @@ const Auditoria = () => {
           }}
           showExport={true}
           exportFilename="logs-auditoria"
-        />
+        /> */}
       </main>
     </div>
   );

@@ -3,7 +3,7 @@ import ListaLocaisAgenda from '@/components/agenda/locais/ListaLocaisAgenda';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import type { Local } from '@/types/reservas';
+import type { Local } from '@/types';
 import { ChevronLeft, FilterIcon } from 'lucide-react';
 import { memo } from 'react';
 import type { DateValue } from "react-aria-components";

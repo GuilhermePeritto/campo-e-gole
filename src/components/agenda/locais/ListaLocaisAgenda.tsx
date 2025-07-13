@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLocais } from '@/hooks/useLocais';
 import { cn } from '@/lib/utils';
-import type { Local } from '@/types/reservas';
+import type { Local } from '@/types';
 import { Search } from 'lucide-react';
 import { memo, useEffect, useRef, useState } from 'react';
 

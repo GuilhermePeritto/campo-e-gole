@@ -1,4 +1,3 @@
-import PaginationControls from '@/components/PaginationControls';
 import SummaryCardSkeleton from '@/components/SummaryCardSkeleton';
 import ValueSkeleton from '@/components/ValueSkeleton';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePagination } from '@/hooks/usePagination';
+// import { usePagination } from '@/hooks/usePagination';
 import { ArrowLeft, Filter, Plus, Search, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -77,10 +76,10 @@ const Receitas = () => {
     return matchesSearch && matchesModule;
   });
 
-  const pagination = usePagination(filteredReceitas, {
-    pageSize: 10,
-    totalItems: filteredReceitas.length
-  });
+  // const pagination = usePagination(filteredReceitas, {
+  //   pageSize: 10,
+  //   totalItems: filteredReceitas.length
+  // });
 
   const getModuleColor = (module: string) => {
     switch (module) {
@@ -239,7 +238,8 @@ const Receitas = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pagination.paginatedData.map((revenue) => (
+                {/* {pagination.paginatedData.map((revenue) => ( */}
+                {filteredReceitas.map((revenue) => (
                   <TableRow key={revenue.id}>
                     <TableCell className="font-medium">{revenue.description}</TableCell>
                     <TableCell className="font-bold text-green-600">
@@ -267,7 +267,7 @@ const Receitas = () => {
               </TableBody>
             </Table>
 
-            <PaginationControls
+            {/* <PaginationControls
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
               totalItems={pagination.totalItems}
@@ -279,7 +279,7 @@ const Receitas = () => {
               onPageChange={pagination.goToPage}
               onPageSizeChange={pagination.setPageSize}
               pageSizeOptions={[10, 20, 50]}
-            />
+            /> */}
           </CardContent>
         </Card>
       </main>

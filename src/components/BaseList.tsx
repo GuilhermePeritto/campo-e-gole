@@ -5,7 +5,7 @@ import BaseListHeader from '@/components/BaseListHeader';
 import BaseListSearchControls, { AdvancedFilter } from '@/components/BaseListSearchControls';
 import PaginationControls from '@/components/PaginationControls';
 import { useCacheTabela } from '@/core/hooks/useCacheTabela';
-import { usePagination } from '@/hooks/usePagination';
+// import { usePagination } from '@/hooks/usePagination';
 import { cn } from '@/lib/utils';
 import { VisibilityState } from '@tanstack/react-table';
 import React, { useMemo, useState } from 'react';
@@ -157,36 +157,36 @@ const BaseList = <T extends Record<string, any>>({
     return filtered;
   }, [data, searchTerm, searchFields, advancedFilters]);
 
-  const {
-    currentPage,
-    totalPages,
-    startIndex,
-    endIndex,
-    paginatedData,
-    hasNextPage,
-    hasPreviousPage,
-    goToPage,
-    setPageSize,
-    pageSize: currentPageSize,
-    getPageInfo,
-    isLoading: paginationLoading
-  } = usePagination(filteredData, {
-    pageSize,
-    totalItems: filteredData.length,
-    simulateApiDelay: true
-  });
+  // const {
+  //   currentPage,
+  //   totalPages,
+  //   startIndex,
+  //   endIndex,
+  //   paginatedData,
+  //   hasNextPage,
+  //   hasPreviousPage,
+  //   goToPage,
+  //   setPageSize,
+  //   pageSize: currentPageSize,
+  //   getPageInfo,
+  //   isLoading: paginationLoading
+  // } = usePagination(filteredData, {
+  //   pageSize,
+  //   totalItems: filteredData.length,
+  //   simulateApiDelay: true
+  // });
 
   // Informações de paginação para debug/logs
   React.useEffect(() => {
-    const pageInfo = getPageInfo();
-    console.log(`📊 BaseList - ${title}:`, {
-      ...pageInfo,
-      totalItems: filteredData.length,
-      totalPages,
-      currentPage,
-      itemsInPage: paginatedData.length
-    });
-  }, [currentPage, pageSize, filteredData.length, getPageInfo, title, totalPages, paginatedData.length]);
+    // const pageInfo = getPageInfo();
+    // console.log(`📊 BaseList - ${title}:`, {
+    //   ...pageInfo,
+    //   totalItems: filteredData.length,
+    //   totalPages,
+    //   currentPage,
+    //   itemsInPage: paginatedData.length
+    // });
+  }, [/* currentPage, pageSize, filteredData.length, getPageInfo, title, totalPages, paginatedData.length */]);
 
   // Prepare columns for visibility control
   const columnsForVisibility = useMemo(() => {
@@ -268,7 +268,7 @@ const BaseList = <T extends Record<string, any>>({
         <div className="flex-1 overflow-hidden min-h-0">
           {loading ? (
             <></>
-          ) : paginatedData.length === 0 ? (
+          ) : filteredData.length === 0 ? (
             <BaseListEmptyState
               searchTerm={searchTerm}
               createButton={createButton}
@@ -277,7 +277,7 @@ const BaseList = <T extends Record<string, any>>({
             <></>
           ) : (
             <BaseListGrid
-              data={paginatedData}
+              data={filteredData}
               columns={columns}
               actions={actions}
               getItemId={getItemId}
@@ -290,16 +290,16 @@ const BaseList = <T extends Record<string, any>>({
         {filteredData.length > 0 && (
           <div className="flex-shrink-0 mt-4 pt-3 border-t bg-background">
             <PaginationControls
-              currentPage={currentPage}
-              totalPages={totalPages}
+              currentPage={0}
+              totalPages={1}
               totalItems={filteredData.length}
-              pageSize={currentPageSize}
-              startIndex={startIndex}
-              endIndex={endIndex}
-              hasNextPage={hasNextPage}
-              hasPreviousPage={hasPreviousPage}
-              onPageChange={goToPage}
-              onPageSizeChange={setPageSize}
+              pageSize={pageSize}
+              startIndex={0}
+              endIndex={filteredData.length - 1}
+              hasNextPage={false}
+              hasPreviousPage={false}
+              onPageChange={() => {}}
+              onPageSizeChange={() => {}}
               showDebugInfo={showDebugInfo}
             />
           </div>

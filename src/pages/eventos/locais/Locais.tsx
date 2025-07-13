@@ -1,32 +1,13 @@
 
 import { Listagem } from '@/core/components/listagem';
 import { useLocais } from '@/hooks/useLocais';
-import type { Local } from '@/types/reservas';
+import type { Local } from '@/types';
 import { Activity, Building, Clock, DollarSign, MapPin, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Locais = () => {
   const navigate = useNavigate();
-  const baseHook = useLocais();
-  
-  // Adaptador para converter a interface do hook para a interface da listagem
-  const hook = {
-    data: baseHook.locais,
-    loading: baseHook.loading,
-    pagination: {
-      currentPage: baseHook.pagination.pageNumber,
-      totalPages: baseHook.pagination.totalPages,
-      totalItems: baseHook.pagination.totalCount,
-      pageSize: baseHook.pagination.pageSize,
-      startIndex: ((baseHook.pagination.pageNumber - 1) * baseHook.pagination.pageSize) + 1,
-      endIndex: Math.min(baseHook.pagination.pageNumber * baseHook.pagination.pageSize, baseHook.pagination.totalCount),
-      hasNextPage: baseHook.pagination.pageNumber < baseHook.pagination.totalPages,
-      hasPreviousPage: baseHook.pagination.pageNumber > 1,
-    },
-    fetchData: baseHook.fetchLocais,
-    deleteItem: baseHook.deleteLocal,
-    fetchSummaryData: baseHook.fetchSummaryData
-  };
+  const hook = useLocais();
 
   return (
     <Listagem<Local>

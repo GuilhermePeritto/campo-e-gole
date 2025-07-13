@@ -1,40 +1,38 @@
 
 import ModuleHeader from '@/components/ModuleHeader';
-import BaseList from '@/components/BaseList';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Users, Plus, Settings, Mail, Phone, Shield, User } from 'lucide-react';
-import { useEffect } from 'react';
+import { Mail, Phone, Settings, Shield, User, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useUsuarios } from '@/hooks/useUsuarios';
-import { useFiliais } from '@/hooks/useFiliais';
-import { useGrupos } from '@/hooks/useGrupos';
+// import { useUsuarios } from '@/hooks/useUsuarios';
+// import { useFiliais } from '@/hooks/useFiliais';
+// import { useGrupos } from '@/hooks/useGrupos';
 
 const Usuarios = () => {
   const navigate = useNavigate();
-  const { usuarios, buscarUsuarios } = useUsuarios();
-  const { filiais, buscarFiliais } = useFiliais();
-  const { grupos, buscarGrupos } = useGrupos();
+  // const { usuarios, buscarUsuarios } = useUsuarios();
+  // const { filiais, buscarFiliais } = useFiliais();
+  // const { grupos, buscarGrupos } = useGrupos();
 
-  useEffect(() => {
-    buscarUsuarios();
-    buscarFiliais();
-    buscarGrupos();
-  }, [buscarUsuarios, buscarFiliais, buscarGrupos]);
+  // useEffect(() => {
+  //   buscarUsuarios();
+  //   buscarFiliais();
+  //   buscarGrupos();
+  // }, [buscarUsuarios, buscarFiliais, buscarGrupos]);
 
-  const getFilialNome = (filialId: number) => {
-    const filial = filiais.find(f => f.id === filialId);
-    return filial?.nome || 'N/A';
-  };
+  // const getFilialNome = (filialId: number) => {
+  //   const filial = filiais.find(f => f.id === filialId);
+  //   return filial?.nome || 'N/A';
+  // };
 
-  const getGrupoInfo = (grupoId: number) => {
-    const grupo = grupos.find(g => g.id === grupoId);
-    return {
-      nome: grupo?.nome || 'N/A',
-      cor: grupo?.cor || 'bg-gray-500'
-    };
-  };
+  // const getGrupoInfo = (grupoId: number) => {
+  //   const grupo = grupos.find(g => g.id === grupoId);
+  //   return {
+  //     nome: grupo?.nome || 'N/A',
+  //     cor: grupo?.cor || 'bg-gray-500'
+  //   };
+  // };
 
   const columns = [
     {
@@ -76,18 +74,18 @@ const Usuarios = () => {
       key: 'filial',
       label: 'Filial',
       sortable: true,
-      render: (usuario: any) => getFilialNome(usuario.filialId),
+      render: (usuario: any) => {/* getFilialNome(usuario.filialId) */},
     },
     {
       key: 'grupo',
       label: 'Grupo',
       sortable: true,
       render: (usuario: any) => {
-        const grupoInfo = getGrupoInfo(usuario.grupoId);
+        // const grupoInfo = getGrupoInfo(usuario.grupoId);
         return (
           <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${grupoInfo.cor}`} />
-            <span>{grupoInfo.nome}</span>
+            {/* <div className={`w-3 h-3 rounded-full ${grupoInfo.cor}`} />
+            <span>{grupoInfo.nome}</span> */}
           </div>
         );
       },
@@ -140,7 +138,7 @@ const Usuarios = () => {
       />
 
       <main className="container mx-auto p-6">
-        <BaseList
+        {/* <BaseList
           data={usuarios}
           columns={columns}
           actions={actions}
@@ -156,7 +154,7 @@ const Usuarios = () => {
           }}
           showExport={true}
           exportFilename="usuarios"
-        />
+        /> */}
       </main>
     </div>
   );

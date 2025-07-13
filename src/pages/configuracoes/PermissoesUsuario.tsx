@@ -4,20 +4,18 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { toast } from '@/hooks/use-toast';
-import { useGrupos } from '@/hooks/useGrupos';
-import { useUsuarios } from '@/hooks/useUsuarios';
-import { Shield, User, Save } from 'lucide-react';
-import { useEffect, useState } from 'react';
+// import { useGrupos } from '@/hooks/useGrupos';
+// import { useUsuarios } from '@/hooks/useUsuarios';
+import { Save, Shield, User } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const PermissoesUsuario = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { buscarUsuarioPorId, atualizarUsuario } = useUsuarios();
-  const { grupos, permissoes, buscarGrupos, buscarPermissoesPorModulo } = useGrupos();
+  // const { buscarUsuarioPorId, atualizarUsuario } = useUsuarios();
+  // const { grupos, permissoes, buscarGrupos, buscarPermissoesPorModulo } = useGrupos();
   
   const [usuario, setUsuario] = useState<any>(null);
   const [grupoSelecionado, setGrupoSelecionado] = useState<number>(0);
@@ -25,98 +23,98 @@ const PermissoesUsuario = () => {
   const [usarGrupo, setUsarGrupo] = useState(true);
   const [loading, setLoading] = useState(false);
   
-  const permissoesPorModulo = buscarPermissoesPorModulo();
+  // const permissoesPorModulo = buscarPermissoesPorModulo();
 
-  useEffect(() => {
-    if (id) {
-      carregarUsuario(parseInt(id));
-    }
-    buscarGrupos();
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     carregarUsuario(parseInt(id));
+  //   }
+  //   buscarGrupos();
+  // }, [id]);
 
-  const carregarUsuario = async (usuarioId: number) => {
-    setLoading(true);
-    const usuarioEncontrado = await buscarUsuarioPorId(usuarioId);
+  // const carregarUsuario = async (usuarioId: number) => {
+  //   setLoading(true);
+  //   const usuarioEncontrado = await buscarUsuarioPorId(usuarioId);
     
-    if (usuarioEncontrado) {
-      setUsuario(usuarioEncontrado);
-      setGrupoSelecionado(usuarioEncontrado.grupoId);
+  //   if (usuarioEncontrado) {
+  //     setUsuario(usuarioEncontrado);
+  //     setGrupoSelecionado(usuarioEncontrado.grupoId);
       
-      if (usuarioEncontrado.permissoesCustomizadas) {
-        setPermissoesSelecionadas(usuarioEncontrado.permissoesCustomizadas);
-        setUsarGrupo(false);
-      } else {
-        const grupo = grupos.find(g => g.id === usuarioEncontrado.grupoId);
-        setPermissoesSelecionadas(grupo?.permissoes || []);
-        setUsarGrupo(true);
-      }
-    }
-    setLoading(false);
-  };
+  //     if (usuarioEncontrado.permissoesCustomizadas) {
+  //       setPermissoesSelecionadas(usuarioEncontrado.permissoesCustomizadas);
+  //       setUsarGrupo(false);
+  //     } else {
+  //       const grupo = grupos.find(g => g.id === usuarioEncontrado.grupoId);
+  //       setPermissoesSelecionadas(grupo?.permissoes || []);
+  //       setUsarGrupo(true);
+  //     }
+  //   }
+  //   setLoading(false);
+  // };
 
-  const handleGrupoChange = (grupoId: string) => {
-    const id = parseInt(grupoId);
-    setGrupoSelecionado(id);
+  // const handleGrupoChange = (grupoId: string) => {
+  //   const id = parseInt(grupoId);
+  //   setGrupoSelecionado(id);
     
-    if (usarGrupo) {
-      const grupo = grupos.find(g => g.id === id);
-      setPermissoesSelecionadas(grupo?.permissoes || []);
-    }
-  };
+  //   if (usarGrupo) {
+  //     const grupo = grupos.find(g => g.id === id);
+  //     setPermissoesSelecionadas(grupo?.permissoes || []);
+  //   }
+  // };
 
-  const handlePermissaoToggle = (permissaoId: number) => {
-    if (usarGrupo) return; // Não permite edição quando usando grupo
+  // const handlePermissaoToggle = (permissaoId: number) => {
+  //   if (usarGrupo) return; // Não permite edição quando usando grupo
     
-    setPermissoesSelecionadas(prev => 
-      prev.includes(permissaoId) 
-        ? prev.filter(id => id !== permissaoId)
-        : [...prev, permissaoId]
-    );
-  };
+  //   setPermissoesSelecionadas(prev => 
+  //     prev.includes(permissaoId) 
+  //       ? prev.filter(id => id !== permissaoId)
+  //       : [...prev, permissaoId]
+  //   );
+  // };
 
-  const handleModoPermissaoChange = (usarGrupoPermissoes: boolean) => {
-    setUsarGrupo(usarGrupoPermissoes);
+  // const handleModoPermissaoChange = (usarGrupoPermissoes: boolean) => {
+  //   setUsarGrupo(usarGrupoPermissoes);
     
-    if (usarGrupoPermissoes) {
-      const grupo = grupos.find(g => g.id === grupoSelecionado);
-      setPermissoesSelecionadas(grupo?.permissoes || []);
-    }
-  };
+  //   if (usarGrupoPermissoes) {
+  //     const grupo = grupos.find(g => g.id === grupoSelecionado);
+  //     setPermissoesSelecionadas(grupo?.permissoes || []);
+  //   }
+  // };
 
-  const handleSalvar = async () => {
-    if (!usuario) return;
+  // const handleSalvar = async () => {
+  //   if (!usuario) return;
     
-    setLoading(true);
+  //   setLoading(true);
     
-    try {
-      const dadosAtualizacao: any = {
-        grupoId: grupoSelecionado
-      };
+  //   try {
+  //     const dadosAtualizacao: any = {
+  //       grupoId: grupoSelecionado
+  //     };
       
-      if (!usarGrupo) {
-        dadosAtualizacao.permissoesCustomizadas = permissoesSelecionadas;
-      } else {
-        dadosAtualizacao.permissoesCustomizadas = undefined;
-      }
+  //     if (!usarGrupo) {
+  //       dadosAtualizacao.permissoesCustomizadas = permissoesSelecionadas;
+  //     } else {
+  //       dadosAtualizacao.permissoesCustomizadas = undefined;
+  //     }
       
-      await atualizarUsuario(usuario.id, dadosAtualizacao);
+  //     await atualizarUsuario(usuario.id, dadosAtualizacao);
       
-      toast({
-        title: "Permissões atualizadas",
-        description: "As permissões do usuário foram atualizadas com sucesso.",
-      });
+  //     toast({
+  //       title: "Permissões atualizadas",
+  //       description: "As permissões do usuário foram atualizadas com sucesso.",
+  //     });
       
-      navigate('/configuracoes/usuarios');
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao atualizar as permissões.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     navigate('/configuracoes/usuarios');
+  //   } catch (error) {
+  //     toast({
+  //       title: "Erro",
+  //       description: "Ocorreu um erro ao atualizar as permissões.",
+  //       variant: "destructive"
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (!usuario) {
     return (
@@ -136,7 +134,7 @@ const PermissoesUsuario = () => {
     );
   }
 
-  const grupoAtual = grupos.find(g => g.id === grupoSelecionado);
+  // const grupoAtual = grupos.find(g => g.id === grupoSelecionado);
 
   return (
     <div className="min-h-screen bg-background">
@@ -175,7 +173,7 @@ const PermissoesUsuario = () => {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Grupo de Permissões</label>
-                <Select value={grupoSelecionado.toString()} onValueChange={handleGrupoChange}>
+                {/* <Select value={grupoSelecionado.toString()} onValueChange={handleGrupoChange}>
                   <SelectTrigger className="h-11">
                     <SelectValue placeholder="Selecione o grupo" />
                   </SelectTrigger>
@@ -189,7 +187,7 @@ const PermissoesUsuario = () => {
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select> */}
               </div>
               
               <div className="space-y-2">

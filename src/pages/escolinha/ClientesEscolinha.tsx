@@ -1,7 +1,6 @@
 import type { AcaoListagem, ColunaListagem } from '@/core/components/listagem';
-import { Listagem } from '@/core/components/listagem';
-import { useClientesEscolinhaBase } from '@/hooks/useClientesEscolinhaBase';
-import { Calendar, CheckCircle, Mail, Phone, Plus, Users, XCircle } from 'lucide-react';
+// import { useClientesEscolinhaBase } from '@/hooks/useClientesEscolinhaBase';
+import { Calendar, CheckCircle, Mail, Phone, Users, XCircle } from 'lucide-react';
 
 // Interface para o cliente
 interface Cliente {
@@ -14,7 +13,7 @@ interface Cliente {
 }
 
 export default function ClientesEscolinha() {
-  const hook = useClientesEscolinhaBase();
+  // const hook = useClientesEscolinhaBase();
 
   // Configuração das colunas
   const colunas: ColunaListagem<Cliente>[] = [
@@ -96,7 +95,7 @@ export default function ClientesEscolinha() {
       titulo: 'Excluir',
       onClick: (item) => {
         if (confirm(`Tem certeza que deseja excluir o cliente ${item.nome}?`)) {
-          hook.deleteItem(item.id);
+          // hook.deleteItem(item.id);
         }
       },
       variante: 'destructive',
@@ -148,31 +147,32 @@ export default function ClientesEscolinha() {
     }
   ];
 
-  return (
-    <Listagem<Cliente>
-      titulo="Clientes"
-      descricao="Gerencie os clientes da escolinha"
-      icone={<Users className="h-6 w-6" />}
-      corModulo="rgb(var(--module-school))"
-      nomeEntidade="Cliente"
-      nomeEntidadePlural="Clientes"
-      rotaEntidade="/escolinha/clientes"
-      rotaResumo="/escolinha/clientes"
-      hook={hook}
-      colunas={colunas}
-      acoes={acoes}
-      botaoCriar={{
-        titulo: "Novo Cliente",
-        icone: <Plus className="h-4 w-4" />,
-        rota: "/escolinha/clientes/novo"
-      }}
-      cardsResumo={cardsResumo}
-      camposBusca={['nome', 'email', 'telefone']}
-      placeholderBusca="Buscar clientes por nome, email ou telefone..."
-      mostrarExportar={true}
-      nomeArquivoExportar="clientes-escolinha"
-      ordenacaoPadrao="nome"
-      tamanhoPaginaPadrao={10}
-    />
-  );
+  // return (
+  //   <Listagem<Cliente>
+  //     titulo="Clientes"
+  //     descricao="Gerencie os clientes da escolinha"
+  //     icone={<Users className="h-6 w-6" />}
+  //     corModulo="rgb(var(--module-school))"
+  //     nomeEntidade="Cliente"
+  //     nomeEntidadePlural="Clientes"
+  //     rotaEntidade="/escolinha/clientes"
+  //     rotaResumo="/escolinha/clientes"
+  //     // hook={hook}
+  //     colunas={colunas}
+  //     acoes={acoes}
+  //     botaoCriar={{
+  //       titulo: "Novo Cliente",
+  //       icone: <Plus className="h-4 w-4" />,
+  //       rota: "/escolinha/clientes/novo"
+  //     }}
+  //     cardsResumo={cardsResumo}
+  //     camposBusca={['nome', 'email', 'telefone']}
+  //     placeholderBusca="Buscar clientes por nome, email ou telefone..."
+  //     mostrarExportar={true}
+  //     nomeArquivoExportar="clientes-escolinha"
+  //     ordenacaoPadrao="nome"
+  //     tamanhoPaginaPadrao={10}
+  //   />
+  // );
+  return null;
 } 

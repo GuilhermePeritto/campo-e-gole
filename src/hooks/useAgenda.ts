@@ -1,4 +1,4 @@
-import type { Reserva } from '@/types/reservas';
+import type { Reserva } from '@/types';
 import { eachDayOfInterval, endOfMonth, endOfWeek, isSameDay, isSameMonth, isSameWeek, parseISO, startOfMonth, startOfWeek } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -1,32 +1,13 @@
 
 import { Listagem } from '@/core/components/listagem';
 import { useRecebiveis } from '@/hooks/useRecebiveis';
-import type { Recebivel } from '@/types/reservas';
+import type { Recebivel } from '@/types';
 import { AlertTriangle, CheckCircle, CreditCard, DollarSign, Edit, Plus, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Recebiveis = () => {
   const navigate = useNavigate();
-  const baseHook = useRecebiveis();
-  
-  // Adaptador para converter a interface do hook para a interface da listagem
-  const hook = {
-    data: baseHook.recebiveis,
-    loading: baseHook.loading,
-    pagination: {
-      currentPage: baseHook.pagination.pageNumber,
-      totalPages: baseHook.pagination.totalPages,
-      totalItems: baseHook.pagination.totalCount,
-      pageSize: baseHook.pagination.pageSize,
-      startIndex: ((baseHook.pagination.pageNumber - 1) * baseHook.pagination.pageSize) + 1,
-      endIndex: Math.min(baseHook.pagination.pageNumber * baseHook.pagination.pageSize, baseHook.pagination.totalCount),
-      hasNextPage: baseHook.pagination.pageNumber < baseHook.pagination.totalPages,
-      hasPreviousPage: baseHook.pagination.pageNumber > 1,
-    },
-    fetchData: baseHook.fetchRecebiveis,
-    deleteItem: baseHook.deleteRecebivel,
-    fetchSummaryData: baseHook.fetchSummaryData
-  };
+  const hook = useRecebiveis();
 
   return (
     <Listagem<Recebivel>
