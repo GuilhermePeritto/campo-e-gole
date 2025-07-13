@@ -1,8 +1,9 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
+import { api, ApiResponse } from '../lib/api';
 import { Recebivel } from '../types/reservas';
+import { useBaseCrud } from './useBaseCrud';
 
 export const useRecebiveis = (filtros?: {
   pageNumber?: number;
@@ -14,58 +15,63 @@ export const useRecebiveis = (filtros?: {
   ordenarPor?: string;
   direcao?: 'asc' | 'desc';
 }) => {
-  const [recebiveis, setRecebiveis] = useState<Recebivel[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    pageNumber: 1,
-    pageSize: 10,
-    totalCount: 0,
-    totalPages: 0
+  const baseHook = useBaseCrud<Recebivel>('/recebiveis', {
+    transformData: (data) => data,
+    transformPagination: (pagination) => pagination
   });
 
-  const fetchRecebiveis = async (params = filtros) => {
-    setLoading(true);
-    setError(null);
 
-    try {
-      const response = await api.get<ApiPagedResponse<Recebivel>>('/recebiveis', {
-        pageNumber: params?.pageNumber || 1,
-        pageSize: params?.pageSize || 10,
-        search: params?.search || '',
-        situacao: params?.situacao || '',
-        dataInicio: params?.dataInicio || '',
-        dataFim: params?.dataFim || '',
-        ordenarPor: params?.ordenarPor || 'dataVencimento',
-        direcao: params?.direcao || 'asc'
-      });
 
-      if (response.success) {
-        setRecebiveis(response.data);
-        setPagination({
-          pageNumber: response.pageNumber,
-          pageSize: response.pageSize,
-          totalCount: response.totalCount,
-          totalPages: response.totalPages
+  // Método específico para buscar recebíveis com filtros customizados
+  const fetchRecebiveis = async (params: any = filtros) => {
+    const apiParams: any = {
+      page: params?.pageNumber || params?.page || 1,
+      limit: params?.pageSize || params?.limit || 10,
+      sort: params?.ordenarPor || params?.sort || 'dataVencimento'
+    };
+    
+    // Tratar filtros
+    const filtrosAvancados: any = {};
+    
+    if (params?.search) {
+      apiParams.filter = params.search;
+    }
+    
+    if (params?.situacao) {
+      filtrosAvancados.situacao = params.situacao;
+    }
+    
+    if (params?.dataInicio) {
+      filtrosAvancados.dataInicio = params.dataInicio;
+    }
+    
+    if (params?.dataFim) {
+      filtrosAvancados.dataFim = params.dataFim;
+    }
+    
+    // Se tem filtros avançados, combinar com filtro de busca
+    if (Object.keys(filtrosAvancados).length > 0) {
+      if (apiParams.filter) {
+        apiParams.filter = JSON.stringify({
+          search: apiParams.filter,
+          ...filtrosAvancados
         });
       } else {
-        setError(response.message || 'Erro ao carregar recebíveis');
-        toast.error(response.message || 'Erro ao carregar recebíveis');
+        apiParams.filter = JSON.stringify(filtrosAvancados);
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar recebíveis';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
     }
+    
+    await baseHook.fetchData(apiParams);
   };
 
+  // Carregar dados quando filtros mudarem
   useEffect(() => {
-    fetchRecebiveis(filtros);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filtros)]);
+    if (filtros) {
+      fetchRecebiveis(filtros);
+    }
+  }, [filtros]);
 
+  // Métodos específicos que não existem no useBaseCrud
   const createRecebivel = async (recebivelData: Omit<Recebivel, 'id' | 'dataCadastro'>) => {
     try {
       const loadingToast = toast.loading('Criando recebível...');
@@ -77,7 +83,10 @@ export const useRecebiveis = (filtros?: {
       if (response.success && response.data) {
         toast.success('Recebível criado com sucesso!');
         // Recarregar a lista
-        await fetchRecebiveis();
+        await baseHook.fetchData({ 
+          page: baseHook.pagination.currentPage, 
+          limit: baseHook.pagination.pageSize 
+        });
         return response.data;
       } else {
         toast.error(response.message || 'Erro ao criar recebível');
@@ -101,7 +110,10 @@ export const useRecebiveis = (filtros?: {
       if (response.success && response.data) {
         toast.success('Recebível atualizado com sucesso!');
         // Recarregar a lista
-        await fetchRecebiveis();
+        await baseHook.fetchData({ 
+          page: baseHook.pagination.currentPage, 
+          limit: baseHook.pagination.pageSize 
+        });
         return response.data;
       } else {
         toast.error(response.message || 'Erro ao atualizar recebível');
@@ -109,29 +121,6 @@ export const useRecebiveis = (filtros?: {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar recebível';
-      toast.error(errorMessage);
-      throw error;
-    }
-  };
-
-  const deleteRecebivel = async (id: string) => {
-    try {
-      const loadingToast = toast.loading('Excluindo recebível...');
-      
-      const response = await api.delete<ApiResponse<void>>(`/recebiveis/${id}`);
-      
-      toast.dismiss(loadingToast);
-
-      if (response.success) {
-        toast.success('Recebível excluído com sucesso!');
-        // Recarregar a lista
-        await fetchRecebiveis();
-      } else {
-        toast.error(response.message || 'Erro ao excluir recebível');
-        throw new Error(response.message || 'Erro ao excluir recebível');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir recebível';
       toast.error(errorMessage);
       throw error;
     }
@@ -170,7 +159,10 @@ export const useRecebiveis = (filtros?: {
       if (response.success && response.data) {
         toast.success('Pagamento registrado com sucesso!');
         // Recarregar a lista
-        await fetchRecebiveis();
+        await baseHook.fetchData({ 
+          page: baseHook.pagination.currentPage, 
+          limit: baseHook.pagination.pageSize 
+        });
         return response.data;
       } else {
         toast.error(response.message || 'Erro ao registrar pagamento');
@@ -184,15 +176,31 @@ export const useRecebiveis = (filtros?: {
   };
 
   return {
-    recebiveis,
-    loading,
-    error,
-    pagination,
-    fetchRecebiveis,
+    // Dados do hook base
+    data: baseHook.data,
+    loading: baseHook.loading,
+    error: null, // useBaseCrud já trata erros
+    pagination: {
+      pageNumber: baseHook.pagination.currentPage,
+      pageSize: baseHook.pagination.pageSize,
+      totalCount: baseHook.pagination.totalItems,
+      totalPages: baseHook.pagination.totalPages
+    },
+    
+    // Métodos do hook base
+    fetchData: fetchRecebiveis,
+    fetchSummaryData: baseHook.fetchSummaryData,
+    
+    // Métodos específicos
     createRecebivel,
     updateRecebivel,
-    deleteRecebivel,
+    deleteItem: baseHook.deleteItem,
     getRecebivel,
-    receberPagamento
+    receberPagamento,
+    
+    // Aliases para compatibilidade
+    recebiveis: baseHook.data,
+    fetchRecebiveis,
+    deleteRecebivel: baseHook.deleteItem,
   };
 };

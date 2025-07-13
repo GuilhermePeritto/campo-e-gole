@@ -3,19 +3,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from '@/components/ui/popover';
 import { Columns, Filter, Grid, List, Plus, Search, X } from 'lucide-react';
 import React from 'react';
@@ -49,7 +49,7 @@ export function ListagemFiltros() {
         
         // Gerar opções baseadas nos dados
         const valoresUnicos = Array.from(new Set(
-          dados.map(item => {
+          (Array.isArray(dados) ? dados : []).map(item => {
             const valor = item[chaveColuna as keyof typeof item];
             return valor !== undefined && valor !== null ? String(valor) : '';
           }).filter(Boolean)
@@ -58,7 +58,7 @@ export function ListagemFiltros() {
         const opcoes = valoresUnicos.map(valor => ({
           valor,
           titulo: valor,
-          quantidade: dados.filter(item => String(item[chaveColuna as keyof typeof item]) === valor).length
+          quantidade: (Array.isArray(dados) ? dados : []).filter(item => String(item[chaveColuna as keyof typeof item]) === valor).length
         }));
         
         return {

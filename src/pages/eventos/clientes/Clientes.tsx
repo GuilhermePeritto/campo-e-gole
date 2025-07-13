@@ -14,11 +14,11 @@ export default function Clientes() {
       titulo="Clientes"
       descricao="Visualize e gerencie todos os clientes do módulo de eventos"
       icone={<Users className="h-6 w-6" />}
-      corModulo="bg-green-600"
+      corModulo="rgb(var(--module-events))"
       nomeEntidade="Cliente"
       nomeEntidadePlural="Clientes"
-      rotaEntidade="/clientes"
-      rotaResumo="/clientes/resumo"
+      rotaEntidade="/eventos/clientes"
+      rotaResumo="/eventos/clientes/resumo"
       hook={hook}
       colunas={[
         {
@@ -114,30 +114,58 @@ export default function Clientes() {
         {
           titulo: 'Total de Clientes',
           valor: (_data, _pagination, summaryData) => summaryData?.totalClientes ?? 0,
-          descricao: 'Clientes cadastrados',
+          descricao: 'Base total de clientes',
           icone: Users,
           cor: 'bg-blue-500',
+          tendencia: {
+            valor: 8,
+            label: 'vs mês anterior',
+            tipo: 'positivo'
+          }
         },
         {
-          titulo: 'Clientes Ativos',
-          valor: (_data, _pagination, summaryData) => summaryData?.ativos ?? 0,
-          descricao: 'Clientes ativos',
+          titulo: 'Taxa de Ativação',
+          valor: (_data, _pagination, summaryData) => {
+            const ativos = summaryData?.ativos ?? 0;
+            const total = summaryData?.totalClientes ?? 1;
+            return `${Math.round((ativos / total) * 100)}%`;
+          },
+          descricao: 'Clientes ativos do total',
           icone: UserCheck,
           cor: 'bg-green-500',
+          tendencia: {
+            valor: 5,
+            label: 'vs mês anterior',
+            tipo: 'positivo'
+          }
         },
         {
-          titulo: 'Novos Este Mês',
+          titulo: 'Crescimento Mensal',
           valor: (_data, _pagination, summaryData) => summaryData?.novosMes ?? 0,
-          descricao: 'Cadastros recentes',
+          descricao: 'Novos clientes este mês',
           icone: UserPlus,
           cor: 'bg-emerald-500',
+          tendencia: {
+            valor: 12,
+            label: 'vs mês anterior',
+            tipo: 'positivo'
+          }
         },
         {
-          titulo: 'Pessoa Jurídica',
-          valor: (_data, _pagination, summaryData) => summaryData?.pessoaJuridica ?? 0,
-          descricao: 'Clientes PJ',
+          titulo: 'Mix de Clientes',
+          valor: (_data, _pagination, summaryData) => {
+            const pj = summaryData?.pessoaJuridica ?? 0;
+            const pf = (summaryData?.totalClientes ?? 0) - pj;
+            return `${pf} PF / ${pj} PJ`;
+          },
+          descricao: 'Pessoa Física vs Jurídica',
           icone: Calendar,
           cor: 'bg-purple-500',
+          tendencia: {
+            valor: -2,
+            label: 'PJ vs mês anterior',
+            tipo: 'negativo'
+          }
         },
       ]}
       camposBusca={['nome', 'email', 'documento']}

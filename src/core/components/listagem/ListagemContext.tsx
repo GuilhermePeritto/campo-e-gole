@@ -192,7 +192,7 @@ export function ListagemProvider<T extends Record<string, any>>({
   const parametrosAnterioresRef = useRef<string>('');
   
   // Dados do hook
-  const { data, loading, pagination, fetchData, deleteItem, fetchSummaryData } = configuracao.hook;
+  const { data, loading, pagination, fetchData, deleteItem } = configuracao.hook;
   
   // Parâmetros para API compatíveis com o backend
   const parametrosApi = useMemo(() => {
@@ -264,12 +264,15 @@ export function ListagemProvider<T extends Record<string, any>>({
   
   // Carregar dados do resumo apenas na inicialização
   useEffect(() => {
+    // Verificar se o hook tem o método fetchSummaryData
+    if (configuracao.hook.fetchSummaryData) {
       setCarregandoResumo(true);
-      fetchSummaryData({})
+      configuracao.hook.fetchSummaryData({})
         .then(dados => setDadosResumo(dados))
         .catch(error => console.error('Erro ao carregar resumo:', error))
-        .finally(() => setCarregandoResumo(false));  
-  }, []);
+        .finally(() => setCarregandoResumo(false));
+    }
+  }, [configuracao.hook]);
   
   // Dados filtrados localmente (para visualização imediata)
   const dadosFiltrados = useMemo(() => {

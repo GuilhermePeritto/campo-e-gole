@@ -1,72 +1,18 @@
 
-import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { api, ApiPagedResponse, ApiResponse } from '../lib/api';
+import { api, ApiResponse } from '../lib/api';
 import { Local } from '../types/reservas';
+import { useBaseCrud } from './useBaseCrud';
 
-export const useLocais = (filtros?: {
-  Fields?: string;
-  Page?: number;
-  Start?: number;
-  Limit?: number;
-  Sort?: string;
-  Filter?: string;
-}) => {
-  const [locais, setLocais] = useState<Local[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    pageNumber: 1,
-    pageSize: 10,
-    totalCount: 0,
-    totalPages: 0
+export const useLocais = () => {
+  const baseHook = useBaseCrud<Local>('/locais', {
+    transformData: (data) => data,
+    transformPagination: (pagination) => pagination
   });
 
-  const fetchLocais = useCallback(async (params?: {
-    Fields?: string;
-    Page?: number;
-    Start?: number;
-    Limit?: number;
-    Sort?: string;
-    Filter?: string;
-  }) => {
-    setLoading(true);
-    setError(null);
 
-    try {
-      const finalParams = params || filtros;
-      const response = await api.get<ApiPagedResponse<Local>>('/locais', {
-        Fields: finalParams?.Fields || '',
-        Page: finalParams?.Page || 1,
-        Start: finalParams?.Start || 0,
-        Limit: finalParams?.Limit || 10,
-        Sort: finalParams?.Sort || 'nome',
-        Filter: finalParams?.Filter || ''
-      });
 
-      if (response.success) {
-        setLocais(response.data);
-        setPagination({
-          pageNumber: response.pageNumber,
-          pageSize: response.pageSize,
-          totalCount: response.totalCount,
-          totalPages: response.totalPages
-        });
-      } else {
-        setError(response.message || 'Erro ao carregar locais');
-        toast.error(response.message || 'Erro ao carregar locais');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar locais';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Remover o useEffect automático de busca
-
+  // Métodos específicos que não existem no useBaseCrud
   const createLocal = async (localData: Omit<Local, 'id' | 'dataCadastro'>) => {
     try {
       const loadingToast = toast.loading('Criando local...');
@@ -78,7 +24,10 @@ export const useLocais = (filtros?: {
       if (response.success && response.data) {
         toast.success('Local criado com sucesso!');
         // Recarregar a lista
-        await fetchLocais();
+        await baseHook.fetchData({ 
+          page: baseHook.pagination.currentPage, 
+          limit: baseHook.pagination.pageSize 
+        });
         return response.data;
       } else {
         toast.error(response.message || 'Erro ao criar local');
@@ -102,7 +51,10 @@ export const useLocais = (filtros?: {
       if (response.success && response.data) {
         toast.success('Local atualizado com sucesso!');
         // Recarregar a lista
-        await fetchLocais();
+        await baseHook.fetchData({ 
+          page: baseHook.pagination.currentPage, 
+          limit: baseHook.pagination.pageSize 
+        });
         return response.data;
       } else {
         toast.error(response.message || 'Erro ao atualizar local');
@@ -110,29 +62,6 @@ export const useLocais = (filtros?: {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar local';
-      toast.error(errorMessage);
-      throw error;
-    }
-  };
-
-  const deleteLocal = async (id: string) => {
-    try {
-      const loadingToast = toast.loading('Excluindo local...');
-      
-      const response = await api.delete<ApiResponse<void>>(`/locais/${id}`);
-      
-      toast.dismiss(loadingToast);
-
-      if (response.success) {
-        toast.success('Local excluído com sucesso!');
-        // Recarregar a lista
-        await fetchLocais();
-      } else {
-        toast.error(response.message || 'Erro ao excluir local');
-        throw new Error(response.message || 'Erro ao excluir local');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir local';
       toast.error(errorMessage);
       throw error;
     }
@@ -155,25 +84,40 @@ export const useLocais = (filtros?: {
     }
   };
 
-  const buscarPorId = (id: string) => locais.find(l => l.id === id);
+  const buscarPorId = (id: string) => baseHook.data.find(l => l.id === id);
 
-  // Método para listar todos os locais (compatibilidade)
   const listar = async () => {
-    await fetchLocais({ Limit: 1000 }); // Buscar todos os locais
-    return locais;
+    await baseHook.fetchData({ limit: 1000 });
+    return baseHook.data;
   };
 
   return {
-    locais,
-    loading,
-    error,
-    pagination,
-    fetchLocais,
+    // Dados do hook base
+    data: baseHook.data,
+    loading: baseHook.loading,
+    error: null, // useBaseCrud já trata erros
+    pagination: {
+      pageNumber: baseHook.pagination.currentPage,
+      pageSize: baseHook.pagination.pageSize,
+      totalCount: baseHook.pagination.totalItems,
+      totalPages: baseHook.pagination.totalPages
+    },
+    
+    // Métodos do hook base
+    fetchData: baseHook.fetchData,
+    fetchSummaryData: baseHook.fetchSummaryData,
+    
+    // Métodos específicos
     createLocal,
     updateLocal,
-    deleteLocal,
+    deleteItem: baseHook.deleteItem,
     getLocal,
     buscarPorId,
-    listar
+    listar,
+    
+    // Aliases para compatibilidade
+    locais: baseHook.data,
+    fetchLocais: baseHook.fetchData,
+    deleteLocal: baseHook.deleteItem,
   };
 };

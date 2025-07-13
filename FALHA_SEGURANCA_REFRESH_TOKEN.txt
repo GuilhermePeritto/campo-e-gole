@@ -1,0 +1,233 @@
+============================================================================
+FALHA DE SEGURANÇA CRÍTICA - REFRESH TOKEN
+============================================================================
+
+DESCRIÇÃO DA VULNERABILIDADE:
+O sistema está aceitando o mesmo refresh token múltiplas vezes, permitindo
+que um token inválido ou já usado seja reutilizado para gerar novos access tokens.
+
+============================================================================
+EVIDÊNCIAS DA FALHA:
+============================================================================
+
+1. TOKEN ORIGINAL RECEBIDO NO LOGIN:
+{
+  "success": true,
+  "message": "Login realizado com sucesso",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiraEm": "2025-07-13T01:26:06.9246988Z"
+  }
+}
+
+2. REFRESH TOKEN MODIFICADO (INVÁLIDO) ENVIADO:
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+
+3. RESPOSTA DO BACKEND (ACEITOU O TOKEN INVÁLIDO):
+{
+  "success": true,
+  "message": "Token renovado com sucesso",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiraEm": "2025-07-13T01:26:40.5116078Z"
+  }
+}
+
+============================================================================
+PROBLEMAS IDENTIFICADOS:
+============================================================================
+
+1. REUTILIZAÇÃO DE REFRESH TOKENS:
+   - O backend não está invalidando refresh tokens após uso
+   - O mesmo token pode ser usado múltiplas vezes
+   - Tokens modificados/inválidos são aceitos
+
+2. FALTA DE VALIDAÇÃO:
+   - Não há verificação se o refresh token já foi usado
+   - Não há verificação de integridade do token
+   - Não há blacklist de tokens inválidos
+
+3. FALTA DE ROTAÇÃO:
+   - O refresh token não é rotacionado após uso
+   - O mesmo token continua válido após renovação
+
+============================================================================
+IMPACTOS DE SEGURANÇA:
+============================================================================
+
+1. ATAQUE DE REPLAY:
+   - Um atacante pode interceptar um refresh token
+   - Pode reutilizar o token para gerar novos access tokens
+   - Mantém acesso à conta mesmo após logout
+
+2. ELEVAÇÃO DE PRIVILÉGIOS:
+   - Tokens inválidos podem ser aceitos
+   - Possível acesso não autorizado
+
+3. PERSISTÊNCIA DE SESSÃO:
+   - Sessões não são adequadamente encerradas
+   - Usuários podem permanecer logados após logout
+
+============================================================================
+RECOMENDAÇÕES PARA CORREÇÃO:
+============================================================================
+
+1. IMPLEMENTAR ROTAÇÃO DE REFRESH TOKENS:
+```javascript
+// Após renovar o token, invalidar o anterior
+async function refreshToken(refreshToken) {
+  // Validar o refresh token
+  const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+  
+  // Verificar se já foi usado
+  if (await isTokenUsed(refreshToken)) {
+    throw new Error('Token já foi usado');
+  }
+  
+  // Gerar novos tokens
+  const newAccessToken = generateAccessToken(decoded.userId);
+  const newRefreshToken = generateRefreshToken(decoded.userId);
+  
+  // Invalidar o token anterior
+  await invalidateToken(refreshToken);
+  
+  // Salvar o novo refresh token como válido
+  await saveValidToken(newRefreshToken, decoded.userId);
+  
+  return { newAccessToken, newRefreshToken };
+}
+```
+
+2. IMPLEMENTAR BLACKLIST DE TOKENS:
+```sql
+CREATE TABLE token_blacklist (
+  id UUID PRIMARY KEY,
+  token_hash VARCHAR(255) NOT NULL,
+  user_id UUID NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+3. VALIDAÇÃO RIGOROSA:
+```javascript
+async function validateRefreshToken(token) {
+  try {
+    // Verificar assinatura
+    const decoded = jwt.verify(token, REFRESH_SECRET);
+    
+    // Verificar se não está na blacklist
+    if (await isTokenBlacklisted(token)) {
+      throw new Error('Token inválido');
+    }
+    
+    // Verificar se não foi usado
+    if (await isTokenUsed(token)) {
+      throw new Error('Token já foi usado');
+    }
+    
+    // Verificar se o usuário ainda existe e está ativo
+    const user = await getUserById(decoded.userId);
+    if (!user || !user.active) {
+      throw new Error('Usuário inválido');
+    }
+    
+    return decoded;
+  } catch (error) {
+    throw new Error('Token inválido');
+  }
+}
+```
+
+4. IMPLEMENTAR LOGOUT SEGURO:
+```javascript
+async function logout(refreshToken) {
+  // Adicionar à blacklist
+  await addToBlacklist(refreshToken);
+  
+  // Invalidar todas as sessões do usuário (opcional)
+  await invalidateAllUserSessions(userId);
+}
+```
+
+5. CONFIGURAÇÕES DE SEGURANÇA:
+```javascript
+// Configurações recomendadas
+const JWT_CONFIG = {
+  accessToken: {
+    expiresIn: '15m',  // Tempo curto
+    algorithm: 'HS256'
+  },
+  refreshToken: {
+    expiresIn: '7d',   // Tempo mais longo
+    algorithm: 'HS256',
+    rotateOnUse: true, // Sempre rotacionar
+    maxUses: 1         // Usar apenas uma vez
+  }
+};
+```
+
+============================================================================
+IMPLEMENTAÇÃO NO FRONTEND:
+============================================================================
+
+1. ATUALIZAR API CLIENT:
+```typescript
+private async refreshAccessToken(): Promise<boolean> {
+  if (!this.refreshToken) return false;
+
+  try {
+    const response = await fetch(`${this.baseURL}/autenticacao/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken: this.refreshToken })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Sempre atualizar ambos os tokens
+        this.setTokens(data.data.accessToken, data.data.refreshToken);
+        return true;
+      }
+    }
+    
+    // Se falhou, limpar tokens
+    this.clearTokens();
+    return false;
+  } catch (error) {
+    console.error('Erro ao renovar token:', error);
+    this.clearTokens();
+    return false;
+  }
+}
+```
+
+2. TRATAMENTO DE ERRO MELHORADO:
+```typescript
+private handleUnauthorized() {
+  this.clearTokens();
+  this.showWarningNotification('Sessão expirada. Faça login novamente.');
+  
+  // Redirecionar para login
+  if (window.location.pathname !== '/login') {
+    window.location.href = '/login';
+  }
+}
+```
+
+============================================================================
+PRIORIDADE: CRÍTICA
+============================================================================
+
+Esta vulnerabilidade deve ser corrigida IMEDIATAMENTE, pois:
+- Permite acesso não autorizado
+- Compromete a segurança de todas as contas
+- Pode ser explorada facilmente
+- Afeta a integridade do sistema
+
+============================================================================ 
