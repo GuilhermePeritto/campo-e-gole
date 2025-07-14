@@ -1,4 +1,5 @@
 import { Permissao } from '@/types/permissao';
+import { useCallback, useMemo } from 'react';
 import { useBaseCrud } from '../core/hooks/useBaseCrud';
 
 export const usePermissoes = () => {
@@ -7,22 +8,22 @@ export const usePermissoes = () => {
     transformPagination: (pagination) => pagination
   });
 
-  const getPermissaoById = (id: string) => baseHook.data.find(p => p.id === id);
+  const getPermissaoById = useCallback((id: string) => 
+    baseHook.data.find(p => p.id === id), [baseHook.data]);
 
-  const getPermissoesByModulo = (modulo: string) => {
-    return baseHook.data.filter(p => p.moduloPai === modulo);
-  };
+  const getPermissoesByModulo = useCallback((modulo: string) => 
+    baseHook.data.filter(p => p.moduloPai === modulo), [baseHook.data]);
 
-  const getPermissoesForSearch = async () => {
+  const getPermissoesForSearch = useCallback(async () => {
     await baseHook.fetchData({ limit: 1000 });
     return baseHook.data.map(permissao => ({
       id: permissao.id,
       label: permissao.nome,
       subtitle: permissao.descricao
     }));
-  };
+  }, [baseHook.fetchData, baseHook.data]);
 
-  const getPermissoesAgrupadas = () => {
+  const getPermissoesAgrupadas = useCallback(() => {
     const agrupadas: Record<string, Permissao[]> = {};
     
     baseHook.data.forEach(permissao => {
@@ -33,9 +34,10 @@ export const usePermissoes = () => {
     });
 
     return agrupadas;
-  };
+  }, [baseHook.data]);
 
-  return {
+  // Memoizar o objeto retornado para evitar re-renderizações
+  const hookValue = useMemo(() => ({
     ...baseHook,
     getPermissaoById,
     getPermissoesByModulo,
@@ -44,5 +46,13 @@ export const usePermissoes = () => {
     // Aliases para compatibilidade
     permissoes: baseHook.data,
     fetchPermissoes: baseHook.fetchData,
-  };
+  }), [
+    baseHook,
+    getPermissaoById,
+    getPermissoesByModulo,
+    getPermissoesForSearch,
+    getPermissoesAgrupadas
+  ]);
+
+  return hookValue;
 }; 

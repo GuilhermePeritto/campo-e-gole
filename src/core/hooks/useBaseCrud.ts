@@ -187,7 +187,7 @@ export function useBaseCrud<T>(
     } finally {
       setLoading(false);
     }
-  }, [endpoint, options?.transformData, options?.transformPagination]);
+  }, [endpoint]); // Remover dependências que mudam a cada renderização
 
   const deleteItem = useCallback(async (id: string | number) => {
     try {

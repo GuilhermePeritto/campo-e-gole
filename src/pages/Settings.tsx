@@ -11,14 +11,6 @@ const Settings = () => {
   const configSections = [
     // MÓDULO SISTEMA - Configurações Gerais
     {
-      id: 'empresas',
-      title: 'Empresas',
-      description: 'Gerenciar empresas do sistema',
-      icon: <Building className="h-6 w-6" />,
-      color: 'bg-blue-500',
-      path: '/configuracoes/empresas'
-    },
-    {
       id: 'empresa',
       title: 'Dados da Empresa',
       description: 'Informações básicas da empresa atual',

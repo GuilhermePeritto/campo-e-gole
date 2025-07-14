@@ -5,21 +5,21 @@ import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePermissoes } from '@/hooks/usePermissoes';
 import { Permissao } from '@/types/permissao';
 import {
-    AlertCircle,
-    BarChart3,
-    Building,
-    Calendar,
-    Coffee,
-    CreditCard,
-    DollarSign,
-    FileText,
-    Lock,
-    MapPin,
-    Plus,
-    School,
-    Settings,
-    Shield,
-    Users
+  AlertCircle,
+  BarChart3,
+  Building,
+  Calendar,
+  Coffee,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Lock,
+  MapPin,
+  Plus,
+  School,
+  Settings,
+  Shield,
+  Users
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -58,10 +58,10 @@ const Permissoes = () => {
     };
 
     carregarPermissoes();
-  }, [permissoesHook]);
+  }, []); // Remover dependência do hook para evitar loop infinito
 
   useEffect(() => {
-    if (permissoesHook.data.length > 0) {
+    if (permissoesHook.data && permissoesHook.data.length > 0) {
       const agrupadas = permissoesHook.data.reduce((acc, permissao) => {
         const modulo = permissao.moduloPai || 'Outros';
         if (!acc[modulo]) {
@@ -72,6 +72,8 @@ const Permissoes = () => {
       }, {} as Record<string, Permissao[]>);
 
       setPermissoesAgrupadas(agrupadas);
+    } else {
+      setPermissoesAgrupadas({});
     }
   }, [permissoesHook.data]);
 
