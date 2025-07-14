@@ -120,7 +120,7 @@ const Grupos = () => {
       titulo="Grupos de Permissão"
       descricao="Gerencie grupos e perfis de acesso reutilizáveis"
       icone={<Shield className="h-6 w-6" />}
-      corModulo={MODULE_COLORS.inicio}
+      corModulo={MODULE_COLORS.settings}
       nomeEntidade="Grupo"
       nomeEntidadePlural="Grupos"
       rotaEntidade="/configuracoes/grupos"

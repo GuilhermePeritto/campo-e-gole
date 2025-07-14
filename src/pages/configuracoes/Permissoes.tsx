@@ -1,3 +1,4 @@
+import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -111,183 +112,190 @@ const Permissoes = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Shield className="h-8 w-8 text-muted-foreground" />
-          <div>
-            <h1 className="text-2xl font-bold">Permissões</h1>
-            <p className="text-muted-foreground">Gerencie as permissões do sistema</p>
+      <div className="min-h-screen bg-background">
+        <ModuleHeader
+          title="Permissões"
+          icon={<Shield className="h-6 w-6" />}
+          moduleColor={MODULE_COLORS.settings}
+          mustReturn={true}
+        />
+        <main className="container mx-auto p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {[...Array(3)].map((_, j) => (
+                      <div key={j} className="h-3 bg-gray-200 rounded"></div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {[...Array(3)].map((_, j) => (
-                    <div key={j} className="h-3 bg-gray-200 rounded"></div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Shield className="h-8 w-8" style={{ color: MODULE_COLORS.inicio }} />
+    <div className="min-h-screen bg-background">
+      <ModuleHeader
+        title="Permissões"
+        icon={<Shield className="h-6 w-6" />}
+        moduleColor={MODULE_COLORS.settings}
+        mustReturn={true}
+      />
+      
+      <main className="container mx-auto p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold">Permissões</h1>
+            <h2 className="text-2xl font-bold">Gerenciar Permissões</h2>
             <p className="text-muted-foreground">
               Gerencie as permissões e controles de acesso do sistema
             </p>
           </div>
+          <Button onClick={() => navigate('/configuracoes/permissoes/nova')}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Permissão
+          </Button>
         </div>
-        <Button onClick={() => navigate('/configuracoes/permissoes/nova')}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Permissão
-        </Button>
-      </div>
 
-      {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Shield className="h-5 w-5 text-blue-600" />
+        {/* Estatísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Shield className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="text-2xl font-bold">{permissoesHook.data.length}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total</p>
-                <p className="text-2xl font-bold">{permissoesHook.data.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Shield className="h-5 w-5 text-green-600" />
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Shield className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Ativas</p>
+                  <p className="text-2xl font-bold">
+                    {permissoesHook.data.filter(p => p.ativo).length}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Ativas</p>
-                <p className="text-2xl font-bold">
-                  {permissoesHook.data.filter(p => p.ativo).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Settings className="h-5 w-5 text-orange-600" />
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Settings className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Módulos</p>
+                  <p className="text-2xl font-bold">{Object.keys(permissoesAgrupadas).length}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Módulos</p>
-                <p className="text-2xl font-bold">{Object.keys(permissoesAgrupadas).length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Lock className="h-5 w-5 text-purple-600" />
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Lock className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Administrativas</p>
+                  <p className="text-2xl font-bold">
+                    {permissoesHook.data.filter(p => p.acao === 'administracao').length}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Administrativas</p>
-                                 <p className="text-2xl font-bold">
-                   {permissoesHook.data.filter(p => p.acao === 'administracao').length}
-                 </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Permissões por Módulo */}
-      {Object.keys(permissoesAgrupadas).length === 0 ? (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhuma permissão encontrada</h3>
-            <p className="text-muted-foreground mb-4">
-              Não há permissões cadastradas no sistema.
-            </p>
-            <Button onClick={() => navigate('/configuracoes/permissoes/nova')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Criar Primeira Permissão
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {Object.entries(permissoesAgrupadas).map(([modulo, permissoes]) => {
-            const config = getModuloConfig(modulo);
-            const IconComponent = config.icon;
+        {/* Permissões por Módulo */}
+        {Object.keys(permissoesAgrupadas).length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Nenhuma permissão encontrada</h3>
+              <p className="text-muted-foreground mb-4">
+                Não há permissões cadastradas no sistema.
+              </p>
+              <Button onClick={() => navigate('/configuracoes/permissoes/nova')}>
+                <Plus className="h-4 w-4 mr-2" />
+                Criar Primeira Permissão
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {Object.entries(permissoesAgrupadas).map(([modulo, permissoes]) => {
+              const config = getModuloConfig(modulo);
+              const IconComponent = config.icon;
 
-            return (
-              <Card key={modulo} className={`${config.bgColor} border-l-4`} style={{ borderLeftColor: config.color }}>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: config.color + '20' }}>
-                      <IconComponent className="h-5 w-5" style={{ color: config.color }} />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{modulo}</CardTitle>
-                      <CardDescription>
-                        {permissoes.length} permissão{permissoes.length !== 1 ? 'ões' : ''}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {permissoes.map((permissao) => (
-                      <div
-                        key={permissao.id}
-                        className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-sm transition-shadow cursor-pointer"
-                        onClick={() => navigate(`/configuracoes/permissoes/${permissao.id}/editar`)}
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium text-sm">{permissao.nome}</h4>
-                            {getStatusBadge(permissao)}
-                            {getTipoPermissaoBadge(permissao)}
-                          </div>
-                          {permissao.descricao && (
-                            <p className="text-xs text-muted-foreground">{permissao.descricao}</p>
-                          )}
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          <Settings className="h-4 w-4" />
-                        </Button>
+              return (
+                <Card key={modulo} className={`${config.bgColor} border-l-4`} style={{ borderLeftColor: config.color }}>
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: config.color + '20' }}>
+                        <IconComponent className="h-5 w-5" style={{ color: config.color }} />
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                      <div>
+                        <CardTitle className="text-lg">{modulo}</CardTitle>
+                        <CardDescription>
+                          {permissoes.length} permissão{permissoes.length !== 1 ? 'ões' : ''}
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {permissoes.map((permissao) => (
+                        <div
+                          key={permissao.id}
+                          className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-sm transition-shadow cursor-pointer"
+                          onClick={() => navigate(`/configuracoes/permissoes/${permissao.id}/editar`)}
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-sm">{permissao.nome}</h4>
+                              {getStatusBadge(permissao)}
+                              {getTipoPermissaoBadge(permissao)}
+                            </div>
+                            {permissao.descricao && (
+                              <p className="text-xs text-muted-foreground">{permissao.descricao}</p>
+                            )}
+                          </div>
+                          <Button variant="ghost" size="sm">
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </main>
     </div>
   );
 };

@@ -102,7 +102,7 @@ const Filiais = () => {
       titulo="Filiais"
       descricao="Gerencie as filiais da sua empresa"
       icone={<MapPin className="h-6 w-6" />}
-      corModulo={MODULE_COLORS.inicio}
+      corModulo={MODULE_COLORS.settings}
       nomeEntidade="Filial"
       nomeEntidadePlural="Filiais"
       rotaEntidade="/configuracoes/filiais"

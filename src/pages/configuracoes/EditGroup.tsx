@@ -146,7 +146,7 @@ const EditGroup = () => {
       <ModuleHeader
         title="Editar Grupo"
         icon={<Edit className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.inicio}
+        moduleColor={MODULE_COLORS.settings}
         mustReturn={true}
         backTo="/configuracoes"
         backLabel="Configurações"

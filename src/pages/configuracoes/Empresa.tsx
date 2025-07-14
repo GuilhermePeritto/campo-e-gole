@@ -1,6 +1,5 @@
 
 import BaseFormPage from '@/components/BaseFormPage';
-import CompanyFormModal from '@/components/CompanyFormModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -76,7 +75,7 @@ const Empresa = () => {
       title="Dados da Empresa"
       description="Gerencie as informações básicas da sua empresa"
       icon={<Building className="h-6 w-6" />}
-      moduleColor={MODULE_COLORS.inicio}
+      moduleColor={MODULE_COLORS.settings}
       backTo="/configuracoes"
       backLabel="Configurações"
       onSubmit={handleSubmit}
@@ -202,12 +201,6 @@ const Empresa = () => {
         </Card>
       </div>
 
-      <CompanyFormModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        empresa={editingEmpresa}
-        onSuccess={handleModalSuccess}
-      />
     </BaseFormPage>
   );
 };

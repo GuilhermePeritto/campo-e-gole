@@ -15,7 +15,7 @@ const Events = () => {
       description: 'Criar uma nova reserva',
       icon: Plus,
       color: 'bg-module-events',
-      action: () => navigate('/eventos/evento')
+      action: () => navigate('/eventos/reserva/novo')
     },
     {
       title: 'Locais',

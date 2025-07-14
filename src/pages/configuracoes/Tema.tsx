@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MODULE_COLORS } from '@/constants/moduleColors';
-import { Palette, Save, Upload, Eye } from 'lucide-react';
+import { Eye, Palette, Save, Upload } from 'lucide-react';
 import { useState } from 'react';
 
 const Tema = () => {
@@ -48,7 +48,7 @@ const Tema = () => {
       <ModuleHeader
         title="Personalização Visual"
         icon={<Palette className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.inicio}
+        moduleColor={MODULE_COLORS.settings}
         mustReturn={true}
         backTo="/configuracoes"
         backLabel="Configurações"

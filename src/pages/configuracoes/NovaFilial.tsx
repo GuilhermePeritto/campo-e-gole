@@ -57,7 +57,7 @@ const NovaFilial = () => {
       title="Nova Filial"
       description="Cadastre uma nova filial da empresa"
       icon={<MapPin className="h-6 w-6" />}
-      moduleColor={MODULE_COLORS.inicio}
+      moduleColor={MODULE_COLORS.settings}
       backTo="/configuracoes/empresa"
       backLabel="Empresa"
       onSubmit={handleSubmit}

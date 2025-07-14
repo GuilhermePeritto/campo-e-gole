@@ -2,33 +2,33 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
 } from '@/components/ui/sheet';
 import {
-    BarChart3,
-    Calendar,
-    ClipboardList,
-    Clock,
-    CreditCard,
-    DollarSign,
-    FileText,
-    GraduationCap,
-    MapPin,
-    Package,
-    PieChart,
-    Receipt,
-    Search,
-    Settings,
-    Shield,
-    ShoppingCart,
-    TrendingUp,
-    User,
-    UserCheck,
-    UserPlus,
-    Users2
+  BarChart3,
+  Calendar,
+  ClipboardList,
+  Clock,
+  CreditCard,
+  DollarSign,
+  FileText,
+  GraduationCap,
+  MapPin,
+  Package,
+  PieChart,
+  Receipt,
+  Search,
+  Settings,
+  Shield,
+  ShoppingCart,
+  TrendingUp,
+  User,
+  UserCheck,
+  UserPlus,
+  Users2
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ const QuickSearch: React.FC<QuickSearchProps> = ({ isOpen, onClose }) => {
     { id: 'venues', title: 'Locais', path: '/eventos/locais', icon: <MapPin className="h-4 w-4" />, module: 'Eventos', keywords: ['locais', 'quadras', 'espacos'] },
     { id: 'clients', title: 'Clientes', path: '/eventos/clientes', icon: <Users2 className="h-4 w-4" />, module: 'Eventos', keywords: ['clientes', 'usuarios'] },
     { id: 'new-client', title: 'Novo Cliente', path: '/eventos/clientes/novo', icon: <UserPlus className="h-4 w-4" />, module: 'Eventos', keywords: ['cliente', 'novo', 'adicionar'] },
-    { id: 'reservations', title: 'Novo Evento', path: '/eventos/evento/novo', icon: <Calendar className="h-4 w-4" />, module: 'Eventos', keywords: ['evento', 'novo', 'agendar'] },
+    { id: 'reservations', title: 'Novo Evento', path: '/eventos/reserva/novo', icon: <Calendar className="h-4 w-4" />, module: 'Eventos', keywords: ['evento', 'novo', 'agendar'] },
     { id: 'receivables', title: 'Contas a Receber', path: '/eventos/recebiveis', icon: <CreditCard className="h-4 w-4" />, module: 'Eventos', keywords: ['recebiveis', 'contas', 'receber'] },
     { id: 'events-reports', title: 'Relatórios Eventos', path: '/eventos/relatorios', icon: <FileText className="h-4 w-4" />, module: 'Eventos', keywords: ['relatorios', 'eventos'] },
 

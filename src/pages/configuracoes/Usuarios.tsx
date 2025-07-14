@@ -156,7 +156,7 @@ const Usuarios = () => {
       titulo="Usuários"
       descricao="Gerencie usuários do sistema e suas permissões"
       icone={<Users className="h-6 w-6" />}
-      corModulo={MODULE_COLORS.inicio}
+      corModulo={MODULE_COLORS.settings}
       nomeEntidade="Usuário"
       nomeEntidadePlural="Usuários"
       rotaEntidade="/configuracoes/usuarios"

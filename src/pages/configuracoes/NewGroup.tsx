@@ -128,7 +128,7 @@ const NewGroup = () => {
       <ModuleHeader
         title="Novo Grupo"
         icon={<Shield className="h-6 w-6" />}
-        moduleColor={MODULE_COLORS.inicio}
+        moduleColor={MODULE_COLORS.settings}
         mustReturn={true}
         backTo="/configuracoes"
         backLabel="Configurações"

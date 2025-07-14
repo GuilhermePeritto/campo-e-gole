@@ -1,17 +1,15 @@
 
-import BaseFormPage from '@/components/BaseFormPage';
-import { TourStep } from '@/components/PageTour';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { FormField, FormSection, FormularioBase } from '@/core/components/formularioBase';
 import { useLocais } from '@/hooks/useLocais';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory';
-import { MapPin } from 'lucide-react';
+import { SituacaoLocal } from '@/types/enums/situacao-local';
+import { Info, MapPin, Settings, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface LocalFormData {
   nome: string;
@@ -21,15 +19,13 @@ interface LocalFormData {
   capacidade: string;
   descricao: string;
   comodidades: string[];
-  situacao: string;
+  situacao: SituacaoLocal;
   intervalo: string;
   horaAbertura: string;
   horaFechamento: string;
 }
 
 const Local = () => {
-  const navigate = useNavigate();
-  const { goBack } = useNavigationHistory();
   const { id } = useParams();
   const isEdit = !!id;
 
@@ -43,11 +39,13 @@ const Local = () => {
     capacidade: '',
     descricao: '',
     comodidades: [],
-    situacao: 'ativo',
+    situacao: SituacaoLocal.Ativo,
     intervalo: '60',
     horaAbertura: '08:00',
     horaFechamento: '22:00'
   });
+
+  const [loading, setLoading] = useState(false);
 
   // Carregar dados do local se for edição
   useEffect(() => {
@@ -62,7 +60,7 @@ const Local = () => {
           capacidade: local.capacidade?.toString() || '',
           descricao: local.descricao || '',
           comodidades: local.comodidades || [],
-          situacao: local.situacao || 'ativo',
+          situacao: local.situacao || SituacaoLocal.Ativo,
           intervalo: local.intervalo?.toString() || '60',
           horaAbertura: local.horaAbertura || '08:00',
           horaFechamento: local.horaFechamento || '22:00'
@@ -106,28 +104,7 @@ const Local = () => {
     { value: '120', label: '2 horas' }
   ];
 
-  const tourSteps: TourStep[] = [
-    {
-      target: '[data-card="info-basicas"]',
-      title: 'Informações Básicas',
-      content: 'Este card contém os dados principais do local como nome, tipo e capacidade.',
-      placement: 'bottom'
-    },
-    {
-      target: '#nome',
-      title: 'Nome do Local',
-      content: 'Digite o nome do local que será exibido nas reservas.',
-      placement: 'bottom'
-    },
-    {
-      target: '[data-card="comodidades"]',
-      title: 'Comodidades',
-      content: 'Selecione as comodidades disponíveis no local.',
-      placement: 'top'
-    }
-  ];
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.nome || !formData.tipo || !formData.valorHora) {
@@ -135,33 +112,39 @@ const Local = () => {
       return;
     }
 
-    const localData = {
-      nome: formData.nome,
-      rotulo: formData.nome,
-      subtitulo: formData.tipo,
-      tipo: formData.tipo,
-      valorHora: parseFloat(formData.valorHora),
-      capacidade: formData.capacidade ? parseInt(formData.capacidade) : undefined,
-      descricao: formData.descricao,
-      comodidades: formData.comodidades,
-      situacao: formData.situacao,
-      cor: formData.cor,
-      intervalo: parseInt(formData.intervalo),
-      horaAbertura: formData.horaAbertura,
-      horaFechamento: formData.horaFechamento,
-      filialId: '1' // TODO: Pegar da sessão do usuário
-    };
+    setLoading(true);
 
-    if (isEdit && id) {
-      updateLocal(id, localData);
-    } else {
-      createLocal(localData);
+    try {
+      const localData = {
+        nome: formData.nome,
+        rotulo: formData.nome,
+        subtitulo: formData.tipo,
+        tipo: formData.tipo,
+        valorHora: parseFloat(formData.valorHora),
+        capacidade: formData.capacidade ? parseInt(formData.capacidade) : undefined,
+        descricao: formData.descricao,
+        comodidades: formData.comodidades,
+        situacao: formData.situacao,
+        cor: formData.cor,
+        intervalo: parseInt(formData.intervalo),
+        horaAbertura: formData.horaAbertura,
+        horaFechamento: formData.horaFechamento,
+        filialId: '1' // TODO: Pegar da sessão do usuário
+      };
+
+      if (isEdit && id) {
+        await updateLocal(id, localData);
+      } else {
+        await createLocal(localData);
+      }
+    } catch (error) {
+      console.error('Erro ao salvar local:', error);
+    } finally {
+      setLoading(false);
     }
-
-    goBack();
   };
 
-  const handleChange = (field: keyof LocalFormData, value: string | string[]) => {
+  const handleChange = (field: keyof LocalFormData, value: string | string[] | SituacaoLocal) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -174,203 +157,190 @@ const Local = () => {
     }));
   };
 
-  const formSections = [
-    {
-      id: 'info-basicas',
-      title: 'Informações Básicas',
-      alwaysOpen: true,
-      content: (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="nome">Nome do Local *</Label>
-              <Input
-                id="nome"
-                value={formData.nome}
-                onChange={(e) => handleChange('nome', e.target.value)}
-                placeholder="Ex: Quadra Principal"
-                required
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="tipo">Tipo *</Label>
-              <Select value={formData.tipo} onValueChange={(value) => handleChange('tipo', value)}>
-                <SelectTrigger id="tipo" className="h-11">
-                  <SelectValue placeholder="Selecione o tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {opcoesTipo.map(tipo => (
-                    <SelectItem key={tipo} value={tipo}>
-                      {tipo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="descricao">Descrição</Label>
-            <Textarea
-              id="descricao"
-              value={formData.descricao}
-              onChange={(e) => handleChange('descricao', e.target.value)}
-              placeholder="Descrição detalhada do local..."
-              rows={3}
+  return (
+    <FormularioBase
+      title={isEdit ? "Editar Local" : "Novo Local"}
+      icon={<MapPin className="h-6 w-6" />}
+      moduleColor={MODULE_COLORS.events}
+      onSubmit={handleSubmit}
+      submitLabel={isEdit ? "Atualizar Local" : "Criar Local"}
+      description={isEdit ? "Edite as informações do local existente." : "Preencha os campos para criar um novo local."}
+      loading={loading}
+      layout="two-column"
+    >
+      {/* Informações Básicas */}
+      <FormSection
+        title="Informações Básicas"
+        icon={<Info className="h-5 w-5" />}
+        description="Dados principais do local"
+        variant="accent"
+        colSpan="full"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <FormField label="Nome do Local" required>
+            <Input
+              value={formData.nome}
+              onChange={(e) => handleChange('nome', e.target.value)}
+              placeholder="Ex: Quadra Principal"
+              className="h-12 text-base"
             />
-          </div>
+          </FormField>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="valorHora">Valor por Hora (R$) *</Label>
-              <Input
-                id="valorHora"
-                type="number"
-                step="0.01"
-                value={formData.valorHora}
-                onChange={(e) => handleChange('valorHora', e.target.value)}
-                placeholder="Ex: 80.00"
-                required
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="capacidade">Capacidade</Label>
-              <Input
-                id="capacidade"
-                type="number"
-                value={formData.capacidade}
-                onChange={(e) => handleChange('capacidade', e.target.value)}
-                placeholder="Ex: 22"
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select value={formData.situacao} onValueChange={(value) => handleChange('situacao', value as 'ativo' | 'inativo' | 'manutencao')}>
-                <SelectTrigger id="status" className="h-11">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ativo">Ativo</SelectItem>
-                  <SelectItem value="inativo">Inativo</SelectItem>
-                  <SelectItem value="manutencao">Em Manutenção</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <FormField label="Tipo" required>
+            <Select value={formData.tipo} onValueChange={(value) => handleChange('tipo', value)}>
+              <SelectTrigger className="h-12 text-base">
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                {opcoesTipo.map(tipo => (
+                  <SelectItem key={tipo} value={tipo}>
+                    {tipo}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
         </div>
-      )
-    },
-    {
-      id: 'configuracoes',
-      title: 'Configurações',
-      defaultOpen: false,
-      content: (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="intervalo">Intervalo de Reserva</Label>
-              <Select value={formData.intervalo} onValueChange={(value) => handleChange('intervalo', value)}>
-                <SelectTrigger id="intervalo" className="h-11">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {opcoesIntervalo.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="horarioAbertura">Horário de Abertura</Label>
+        <FormField label="Descrição" colSpan="full">
+          <Textarea
+            value={formData.descricao}
+            onChange={(e) => handleChange('descricao', e.target.value)}
+            placeholder="Descrição detalhada do local..."
+            rows={4}
+            className="text-base resize-none"
+          />
+        </FormField>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <FormField label="Valor por Hora (R$)" required>
+            <Input
+              type="number"
+              step="0.01"
+              value={formData.valorHora}
+              onChange={(e) => handleChange('valorHora', e.target.value)}
+              placeholder="Ex: 80.00"
+              className="h-12 text-base"
+            />
+          </FormField>
+
+          <FormField label="Capacidade">
+            <Input
+              type="number"
+              value={formData.capacidade}
+              onChange={(e) => handleChange('capacidade', e.target.value)}
+              placeholder="Ex: 22"
+              className="h-12 text-base"
+            />
+          </FormField>
+
+          <FormField label="Status">
+            <Select value={formData.situacao.toString()} onValueChange={(value) => handleChange('situacao', parseInt(value) as SituacaoLocal)}>
+              <SelectTrigger className="h-12 text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={SituacaoLocal.Ativo.toString()}>Ativo</SelectItem>
+                <SelectItem value={SituacaoLocal.Inativo.toString()}>Inativo</SelectItem>
+                <SelectItem value={SituacaoLocal.Manutencao.toString()}>Em Manutenção</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+        </div>
+      </FormSection>
+
+      {/* Configurações */}
+      <FormSection
+        title="Configurações"
+        icon={<Settings className="h-5 w-5" />}
+        description="Configurações de horário e intervalo"
+        variant="default"
+      >
+        <div className="space-y-6">
+          <FormField label="Intervalo de Reserva">
+            <Select value={formData.intervalo} onValueChange={(value) => handleChange('intervalo', value)}>
+              <SelectTrigger className="h-12 text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {opcoesIntervalo.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <FormField label="Horário de Abertura">
               <Input
-                id="horarioAbertura"
                 type="time"
                 value={formData.horaAbertura}
                 onChange={(e) => handleChange('horaAbertura', e.target.value)}
-                className="h-11"
+                className="h-12 text-base"
               />
-            </div>
+            </FormField>
 
-            <div className="space-y-2">
-              <Label htmlFor="horarioFechamento">Horário de Fechamento</Label>
+            <FormField label="Horário de Fechamento">
               <Input
-                id="horarioFechamento"
                 type="time"
                 value={formData.horaFechamento}
                 onChange={(e) => handleChange('horaFechamento', e.target.value)}
-                className="h-11"
+                className="h-12 text-base"
               />
-            </div>
+            </FormField>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="cor">Cor do Local</Label>
-            <div className="flex items-center space-x-3">
+          <FormField label="Cor do Local" description="Cor para identificação visual">
+            <div className="flex items-center space-x-4">
               <Input
-                id="cor"
                 type="color"
                 value={formData.cor}
                 onChange={(e) => handleChange('cor', e.target.value)}
-                className="w-16 h-11 p-1"
+                className="w-20 h-12 p-1 rounded-lg border-2 border-border"
               />
-              <span className="text-sm text-muted-foreground">
-                Cor para identificação visual do local
-              </span>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-foreground">{formData.cor}</div>
+                <div className="text-xs text-muted-foreground">Clique para alterar a cor</div>
+              </div>
             </div>
-          </div>
+          </FormField>
         </div>
-      )
-    },
-    {
-      id: 'comodidades',
-      title: 'Comodidades',
-      defaultOpen: false,
-      content: (
+      </FormSection>
+
+      {/* Comodidades */}
+      <FormSection
+        title="Comodidades"
+        icon={<Star className="h-5 w-5" />}
+        description="Selecione as comodidades disponíveis"
+        variant="subtle"
+      >
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Selecione as comodidades disponíveis neste local:
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-3">
             {opcoesComodidades.map(comodidade => (
-              <div key={comodidade} className="flex items-center space-x-2">
+              <div key={comodidade} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id={comodidade}
                   checked={formData.comodidades.includes(comodidade)}
                   onCheckedChange={() => handleComodidadeToggle(comodidade)}
+                  className="h-5 w-5"
                 />
-                <Label htmlFor={comodidade} className="text-sm">
+                <label 
+                  htmlFor={comodidade} 
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                >
                   {comodidade}
-                </Label>
+                </label>
               </div>
             ))}
           </div>
         </div>
-      )
-    }
-  ];
-
-  return (
-    <BaseFormPage
-      title={isEdit ? "Editar Local" : "Novo Local"}
-      icon={<MapPin className="h-6 w-6" />}
-      moduleColor={MODULE_COLORS.events}
-      
-      
-      formSections={formSections}
-      onSubmit={handleSubmit}
-      tourSteps={tourSteps}
-      submitLabel={isEdit ? "Atualizar Local" : "Criar Local"}
-      description={isEdit ? "Edite as informações do local existente." : "Preencha os campos para criar um novo local."}
-    />
+      </FormSection>
+    </FormularioBase>
   );
 };
 
