@@ -4,7 +4,7 @@ import { useBaseCrud } from '../core/hooks/useBaseCrud';
 import { api, ApiResponse } from '../lib/api';
 
 export const useUsuarios = () => {
-  const baseHook = useBaseCrud<Usuario>('/usuarios', {
+  const baseHook = useBaseCrud<Usuario>('/api/usuarios', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
@@ -20,11 +20,11 @@ export const useUsuarios = () => {
     }));
   };
 
-  const createUsuario = async (usuarioData: Omit<Usuario, 'id' | 'dataCriacao' | 'dataAtualizacao'>) => {
+  const createUsuario = async (usuarioData: Omit<Usuario, 'id' | 'dataCriacao'>) => {
     try {
       const loadingToast = toast.loading('Criando usuário...');
       
-      const response = await api.post<ApiResponse<Usuario>>('/usuarios', usuarioData);
+      const response = await api.post<ApiResponse<Usuario>>('/api/usuarios', usuarioData);
       
       toast.dismiss(loadingToast);
 
@@ -46,11 +46,11 @@ export const useUsuarios = () => {
     }
   };
 
-  const updateUsuario = async (id: string, usuarioData: Partial<Usuario>) => {
+  const updateUsuario = async (id: string, usuarioData: Partial<Omit<Usuario, 'id' | 'dataCriacao'>>) => {
     try {
       const loadingToast = toast.loading('Atualizando usuário...');
       
-      const response = await api.put<ApiResponse<Usuario>>(`/usuarios/${id}`, usuarioData);
+      const response = await api.put<ApiResponse<Usuario>>(`/api/usuarios/${id}`, usuarioData);
       
       toast.dismiss(loadingToast);
 

@@ -7,13 +7,14 @@ import { Switch } from '@/components/ui/switch';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory';
-import { BarChart3, Calendar, HomeIcon, Moon, Settings, Sun, Users2 } from 'lucide-react';
+import { BarChart3, Calendar, HomeIcon, Moon, Settings, Sun, Users2, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import FilialSelector from '@/components/FilialSelector';
 
 const Inicio = () => {
   const navigate = useNavigate();
-  const { user, company, logout, hasModuleAccess } = useAuth();
+  const { user, empresa, filialAtual, logout, hasModuleAccess } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { goBack } = useNavigationHistory();
 
@@ -103,15 +104,37 @@ const Inicio = () => {
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold mb-2 text-foreground">
-              Bem-vindo, {user?.name}!
+              Bem-vindo, {user?.nome}!
             </h1>
             <p className="text-muted-foreground">
               Escolha um módulo para começar a trabalhar
             </p>
+            
+            {/* Informações da empresa e filial */}
+            <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+              {empresa && (
+                <div className="flex items-center gap-1">
+                  <Building2 className="h-4 w-4" />
+                  <span>{empresa.nome}</span>
+                </div>
+              )}
+              {filialAtual && (
+                <div className="flex items-center gap-1">
+                  <span>•</span>
+                  <span>{filialAtual.nome}</span>
+                  {filialAtual.cidade && filialAtual.estado && (
+                    <span className="text-xs">({filialAtual.cidade} - {filialAtual.estado})</span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           
           {/* Controles superiores */}
           <div className="flex items-center gap-4">
+            {/* Seletor de filial */}
+            <FilialSelector showLabel={false} />
+            
             {/* Switch de tema */}
             <div className="flex items-center gap-3">
               <Sun className="h-4 w-4 text-muted-foreground" />
@@ -137,7 +160,7 @@ const Inicio = () => {
 
         <div className="grid md:grid-cols-4 gap-8">
           {modules.map((module) => {
-            const hasAccess = hasModuleAccess(module.id as 'events' | 'bar');
+            const hasAccess = hasModuleAccess(module.id as 'events' | 'bar' | 'school' | 'financial');
             const IconComponent = module.icon;
 
             return (

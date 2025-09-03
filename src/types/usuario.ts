@@ -1,15 +1,14 @@
 export interface Usuario {
   id: string;
   dataCriacao: string;
-  dataAtualizacao: string | null;
   nome: string;
   email: string;
-  telefone: string;
-  cargo: string;
+  telefone?: string;
+  cargo?: string;
   foto?: string;
-  ativo: boolean;
+  situacao: 'Ativo' | 'Inativo';
   ultimoAcesso?: string;
-  empresaId: string;
+  empresaId?: string;
   grupoPermissaoId?: string;
   filialId?: string;
   filial?: {
@@ -21,5 +20,5 @@ export interface Usuario {
     nome: string;
     cor: string;
   };
-  tenantId: number;
+  tenantId?: number;
 } 

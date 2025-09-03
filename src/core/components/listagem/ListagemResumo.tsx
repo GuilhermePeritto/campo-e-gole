@@ -7,13 +7,16 @@ import { useListagem } from './ListagemContext';
 export function ListagemResumo() {
   const { carregandoResumo, resumoDados } = useListagem();
   
-  if (!resumoDados || resumoDados.length === 0) {
+  // Garantir que resumoDados seja um array
+  const resumoDadosSeguros = Array.isArray(resumoDados) ? resumoDados : [];
+  
+  if (resumoDadosSeguros.length === 0) {
     return null;
   }
   
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {resumoDados.map((card, index) => {
+      {resumoDadosSeguros.map((card, index) => {
         const Icon = card.icone;
         
         return (

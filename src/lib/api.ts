@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 // CONFIGURAÇÕES DA API
 // ============================================================================
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 /* const API_TIMEOUT = 10000; // 10 segundos */
 const API_TIMEOUT = 60000; // 1 minuto
 
@@ -363,7 +363,7 @@ class Api {
 
     try {
       console.log('🔄 Tentando renovar token...');
-      const url = this.buildUrl('autenticacao/refresh');
+      const url = this.buildUrl('api/autenticacao/refresh');
       
       const response = await fetch(url, {
         method: 'POST',

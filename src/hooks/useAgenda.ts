@@ -272,9 +272,9 @@ export function useAgenda() {
     }
 
     const filtros = {
-      Page: 1,
-      Limit: 1000,
-      Filter: JSON.stringify(filters)
+      page: 1,
+      limit: 1000,
+      search: filters.length > 0 ? JSON.stringify(filters) : undefined
     };
     
     console.log('🔄 Filtros para busca de reservas:', filtros);

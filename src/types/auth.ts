@@ -13,13 +13,13 @@ export interface User {
   id: string;
   nome: string;
   email: string;
-  telefone: string;
-  cargo: string;
-  filialId: string;
-  grupoId: string;
-  ativo: boolean;
-  ultimoAcesso: string;
-  foto: string;
-  permissoesCustomizadas: number[];
-  dataCadastro: string;
+  telefone?: string;
+  cargo?: string;
+  empresaId: string;
+  grupoPermissaoId: string;
+  situacao: 'Ativo' | 'Inativo';
+  ultimoAcesso?: string;
+  foto?: string;
+  permissoesCustomizadas?: string[];
+  dataCriacao: string;
 } 

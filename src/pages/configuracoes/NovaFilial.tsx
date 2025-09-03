@@ -18,7 +18,7 @@ const NovaFilial = () => {
     estado: '',
     cep: '',
     telefone: '',
-    ativo: true,
+    situacao: 'Ativo' as const,
     horarioFuncionamento: {
       segunda: { inicio: '08:00', fim: '22:00', ativo: true },
       terca: { inicio: '08:00', fim: '22:00', ativo: true },
@@ -138,8 +138,8 @@ const NovaFilial = () => {
             <div className="flex items-center space-x-2">
               <Switch
                 id="ativo"
-                checked={filialData.ativo}
-                onCheckedChange={(checked) => setFilialData({...filialData, ativo: checked})}
+                              checked={filialData.situacao === 'Ativo'}
+              onCheckedChange={(checked) => setFilialData({...filialData, situacao: checked ? 'Ativo' : 'Inativo'})}
               />
               <Label htmlFor="ativo">Filial ativa</Label>
             </div>

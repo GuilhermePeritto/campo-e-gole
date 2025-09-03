@@ -17,6 +17,9 @@ export function ListagemGrade() {
     excluirItem,
   } = useListagem();
   
+  // Garantir que dados seja um array
+  const dadosSeguros = Array.isArray(dados) ? dados : [];
+  
   // Colunas visíveis
   const colunasVisiveis = useMemo(() => {
     return config.colunas.filter(col => visibilidadeColunas[String(col.chave)] !== false);
@@ -52,7 +55,7 @@ export function ListagemGrade() {
     <div className="h-full flex flex-col">
       <div className="flex-1 min-h-0 overflow-auto">
         <div className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {dados.map((item: any) => (
+          {dadosSeguros.map((item: any) => (
             <Card
               key={item.id || JSON.stringify(item)}
               className="hover:shadow-lg transition-shadow"

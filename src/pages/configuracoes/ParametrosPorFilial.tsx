@@ -3,72 +3,33 @@ import BaseList from '@/components/BaseList';
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { useFiliais } from '@/hooks/useFiliais';
 import { Phone, Settings } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Filial {
-  id: number;
+  id: string;
   nome: string;
-  endereco: string;
-  cidade: string;
-  telefone: string;
-  ativo: boolean;
-  modulos: {
-    eventos: boolean;
-    bar: boolean;
-    escolinha: boolean;
-    financeiro: boolean;
+  endereco?: string;
+  cidade?: string;
+  telefone?: string;
+  situacao: 'Ativo' | 'Inativo';
+  modulos?: {
+    eventos?: boolean;
+    bar?: boolean;
+    escolinha?: boolean;
+    financeiro?: boolean;
   };
 }
 
 const ParametrosPorFilial = () => {
   const navigate = useNavigate();
+  const { filiais, loading, fetchFiliais } = useFiliais();
   
-  const [filiais] = useState<Filial[]>([
-    {
-      id: 1,
-      nome: 'Filial Centro',
-      endereco: 'Av. Paulista, 1000',
-      cidade: 'São Paulo',
-      telefone: '11987654321',
-      ativo: true,
-      modulos: {
-        eventos: true,
-        bar: true,
-        escolinha: false,
-        financeiro: true
-      }
-    },
-    {
-      id: 2,
-      nome: 'Filial Zona Norte',
-      endereco: 'Rua do Limão, 500',
-      cidade: 'São Paulo',
-      telefone: '11987654322',
-      ativo: true,
-      modulos: {
-        eventos: true,
-        bar: false,
-        escolinha: true,
-        financeiro: true
-      }
-    },
-    {
-      id: 3,
-      nome: 'Filial Zona Sul',
-      endereco: 'Av. Ibirapuera, 200',
-      cidade: 'São Paulo',
-      telefone: '11987654323',
-      ativo: false,
-      modulos: {
-        eventos: true,
-        bar: true,
-        escolinha: true,
-        financeiro: true
-      }
-    }
-  ]);
+  useEffect(() => {
+    fetchFiliais({ limit: 100 });
+  }, [fetchFiliais]);
 
   const columns = [
     {
@@ -78,7 +39,9 @@ const ParametrosPorFilial = () => {
       render: (filial: Filial) => (
         <div>
           <div className="font-medium">{filial.nome}</div>
-          <div className="text-sm text-muted-foreground">{filial.endereco}, {filial.cidade}</div>
+          <div className="text-sm text-muted-foreground">
+            {filial.endereco && filial.cidade ? `${filial.endereco}, ${filial.cidade}` : 'Endereço não informado'}
+          </div>
         </div>
       ),
     },
@@ -88,7 +51,7 @@ const ParametrosPorFilial = () => {
       render: (filial: Filial) => (
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4 text-muted-foreground" />
-          <span>{filial.telefone}</span>
+          <span>{filial.telefone || 'Não informado'}</span>
         </div>
       ),
     },
@@ -96,8 +59,8 @@ const ParametrosPorFilial = () => {
       key: 'status',
       label: 'Status',
       render: (filial: Filial) => (
-        <Badge variant={filial.ativo ? 'default' : 'secondary'}>
-          {filial.ativo ? 'Ativa' : 'Inativa'}
+        <Badge variant={filial.situacao === 'Ativo' ? 'default' : 'secondary'}>
+          {filial.situacao === 'Ativo' ? 'Ativa' : 'Inativa'}
         </Badge>
       ),
     },
@@ -106,10 +69,13 @@ const ParametrosPorFilial = () => {
       label: 'Módulos Ativos',
       render: (filial: Filial) => (
         <div className="flex gap-1 flex-wrap">
-          {filial.modulos.eventos && <Badge variant="outline" className="text-xs">Eventos</Badge>}
-          {filial.modulos.bar && <Badge variant="outline" className="text-xs">Bar</Badge>}
-          {filial.modulos.escolinha && <Badge variant="outline" className="text-xs">Escolinha</Badge>}
-          {filial.modulos.financeiro && <Badge variant="outline" className="text-xs">Financeiro</Badge>}
+          {filial.modulos?.eventos && <Badge variant="outline" className="text-xs">Eventos</Badge>}
+          {filial.modulos?.bar && <Badge variant="outline" className="text-xs">Bar</Badge>}
+          {filial.modulos?.escolinha && <Badge variant="outline" className="text-xs">Escolinha</Badge>}
+          {filial.modulos?.financeiro && <Badge variant="outline" className="text-xs">Financeiro</Badge>}
+          {!filial.modulos?.eventos && !filial.modulos?.bar && !filial.modulos?.escolinha && !filial.modulos?.financeiro && (
+            <span className="text-sm text-muted-foreground">Nenhum módulo configurado</span>
+          )}
         </div>
       ),
     },
@@ -146,6 +112,7 @@ const ParametrosPorFilial = () => {
           searchFields={['nome', 'endereco', 'cidade']}
           getItemId={(filial) => filial.id}
           showExport={false}
+          loading={loading}
         />
       </main>
     </div>

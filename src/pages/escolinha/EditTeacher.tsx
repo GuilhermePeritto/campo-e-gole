@@ -30,21 +30,42 @@ const EditTeacher = () => {
   });
 
   useEffect(() => {
-    // Simular carregamento dos dados do professor
-    const mockData = {
-      name: 'Carlos Silva',
-      email: 'carlos.silva@email.com',
-      phone: '(11) 99999-1111',
-      cpf: '123.456.789-00',
-      address: 'Rua das Flores, 123, Centro, São Paulo - SP',
-      specialization: 'futebol',
-      chargeType: 'por-aula',
-      valuePerClass: '80.00',
-      commissionPercentage: '15',
-      status: true,
-      notes: 'Professor experiente em futebol infantil'
+    // Carregar dados do professor
+    const loadTeacher = async () => {
+      if (!id) return;
+      
+      setIsLoading(true);
+      try {
+        // Aqui você faria uma chamada para buscar dados do professor
+        // Por exemplo: const response = await api.get<ApiResponse<Teacher>>(`/api/professores/${id}`);
+        // Por enquanto, vamos deixar como dados vazios até implementar a API
+        
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          cpf: '',
+          address: '',
+          specialization: '',
+          chargeType: 'por-aula',
+          valuePerClass: '',
+          commissionPercentage: '',
+          status: true,
+          notes: ''
+        });
+      } catch (error) {
+        console.error('Erro ao carregar professor:', error);
+        toast({
+          title: "Erro",
+          description: "Erro ao carregar dados do professor.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
-    setFormData(mockData);
+
+    loadTeacher();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,8 +73,8 @@ const EditTeacher = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Aqui você faria uma chamada para atualizar o professor
+      // Por exemplo: await api.put<ApiResponse<Teacher>>(`/api/professores/${id}`, formData);
       
       toast({
         title: "Professor atualizado com sucesso!",
@@ -62,6 +83,7 @@ const EditTeacher = () => {
       
       navigate('/escolinha/professores');
     } catch (error) {
+      console.error('Erro ao atualizar professor:', error);
       toast({
         title: "Erro ao atualizar professor",
         description: "Tente novamente em alguns minutos.",

@@ -232,27 +232,27 @@ export function ListagemProvider<T extends Record<string, any>>({
     // Combinar busca e filtros
     if (filterValue && Object.keys(filtrosAvancados).length > 0) {
       // Se tem busca e filtros, usar formato JSON
-      params.filter = JSON.stringify({
+      params.search = JSON.stringify({
         search: filterValue,
         ...filtrosAvancados
       });
     } else if (filterValue) {
       // Apenas busca por texto
-      params.filter = filterValue;
+      params.search = filterValue;
     } else if (Object.keys(filtrosAvancados).length > 0) {
       // Apenas filtros avançados
       if (Object.keys(filtrosAvancados).length === 1) {
         const [chave, valores] = Object.entries(filtrosAvancados)[0];
         if (valores.length === 1) {
           // Filtro simples: campo:valor
-          params.filter = `${chave}:${valores[0]}`;
+          params.search = `${chave}:${valores[0]}`;
         } else {
           // Múltiplos valores - usar JSON
-          params.filter = JSON.stringify({ [chave]: valores });
+          params.search = JSON.stringify({ [chave]: valores });
         }
       } else {
         // Múltiplos campos - usar JSON
-        params.filter = JSON.stringify(filtrosAvancados);
+        params.search = JSON.stringify(filtrosAvancados);
       }
     }
     

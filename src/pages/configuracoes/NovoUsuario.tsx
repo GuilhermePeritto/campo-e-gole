@@ -21,7 +21,7 @@ const NovoUsuario = () => {
     grupo: '',
     senha: '',
     confirmarSenha: '',
-    ativo: true,
+    situacao: 'Ativo' as const,
     forcarTrocaSenha: true
   });
 
@@ -160,8 +160,8 @@ const NovoUsuario = () => {
               <div className="flex items-center space-x-2">
                 <Switch
                   id="ativo"
-                  checked={userData.ativo}
-                  onCheckedChange={(checked) => setUserData({...userData, ativo: checked})}
+                                checked={userData.situacao === 'Ativo'}
+              onCheckedChange={(checked) => setUserData({...userData, situacao: checked ? 'Ativo' : 'Inativo'})}
                 />
                 <Label htmlFor="ativo">Usuário ativo</Label>
               </div>

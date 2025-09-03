@@ -47,8 +47,8 @@ const ListaLocaisAgenda = memo(({
       }
       
       fetchLocais({ 
-        Filter: filters.length > 0 ? JSON.stringify(filters) : '',
-        Limit: 50
+        search: filters.length > 0 ? JSON.stringify(filters) : undefined,
+        limit: 50
       });
     }, 400);
     return () => {
@@ -58,7 +58,7 @@ const ListaLocaisAgenda = memo(({
 
   // Buscar todos os locais na primeira renderização
   useEffect(() => {
-    fetchLocais({ Limit: 50 });
+    fetchLocais({ limit: 50 });
   }, [fetchLocais]);
 
   const todosSelecionados = locaisFiltrados.length > 0 && locaisFiltrados.every(local => estaLocalSelecionado(local.id));

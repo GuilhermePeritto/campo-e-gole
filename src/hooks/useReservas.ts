@@ -4,33 +4,27 @@ import { api, ApiResponse } from '../lib/api';
 import { Reserva } from '../types';
 
 export const useReservas = () => {
-  const baseHook = useBaseCrud<Reserva>('/reservas', {
+  const baseHook = useBaseCrud<Reserva>('/api/reservas', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
 
-  const getReserva = async (id: string) => {
-    try {
-      const response = await api.get<ApiResponse<Reserva>>(`/reservas/${id}`);
-      
-      if (response.success && response.data) {
-        return response.data;
-      } else {
-        toast.error(response.message || 'Erro ao carregar reserva');
-        throw new Error(response.message || 'Erro ao carregar reserva');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar reserva';
-      toast.error(errorMessage);
-      throw error;
-    }
+  const getReservaById = (id: string) => baseHook.data.find(r => r.id === id);
+
+  const getReservasForSearch = async () => {
+    await baseHook.fetchData({ limit: 1000 });
+    return baseHook.data.map(reserva => ({
+      id: reserva.id,
+      label: reserva.titulo,
+      subtitle: reserva.cliente?.nome || 'Cliente não informado'
+    }));
   };
 
-  const createReserva = async (reservaData: Omit<Reserva, 'id' | 'dataCadastro'>) => {
+  const createReserva = async (reservaData: Omit<Reserva, 'id' | 'dataCriacao'>) => {
     try {
       const loadingToast = toast.loading('Criando reserva...');
       
-      const response = await api.post<ApiResponse<Reserva>>('/reservas', reservaData);
+      const response = await api.post<ApiResponse<Reserva>>('/api/reservas', reservaData);
       
       toast.dismiss(loadingToast);
 
@@ -56,7 +50,7 @@ export const useReservas = () => {
     try {
       const loadingToast = toast.loading('Atualizando reserva...');
       
-      const response = await api.put<ApiResponse<Reserva>>(`/reservas/${id}`, reservaData);
+      const response = await api.put<ApiResponse<Reserva>>(`/api/reservas/${id}`, reservaData);
       
       toast.dismiss(loadingToast);
 
@@ -82,7 +76,7 @@ export const useReservas = () => {
     try {
       const loadingToast = toast.loading('Confirmando reserva...');
       
-      const response = await api.patch<ApiResponse<Reserva>>(`/reservas/${id}/confirmar`);
+      const response = await api.put<ApiResponse<Reserva>>(`/api/reservas/${id}/confirmar`);
       
       toast.dismiss(loadingToast);
 
@@ -104,13 +98,11 @@ export const useReservas = () => {
     }
   };
 
-  const cancelarReserva = async (id: string, motivo?: string) => {
+  const cancelarReserva = async (id: string) => {
     try {
       const loadingToast = toast.loading('Cancelando reserva...');
       
-      const response = await api.patch<ApiResponse<Reserva>>(`/reservas/${id}/cancelar`, {
-        motivo: motivo || 'Cancelado pelo usuário'
-      });
+      const response = await api.put<ApiResponse<Reserva>>(`/api/reservas/${id}/cancelar`);
       
       toast.dismiss(loadingToast);
 
@@ -132,16 +124,45 @@ export const useReservas = () => {
     }
   };
 
+  const finalizarReserva = async (id: string) => {
+    try {
+      const loadingToast = toast.loading('Finalizando reserva...');
+      
+      const response = await api.put<ApiResponse<Reserva>>(`/api/reservas/${id}/finalizar`);
+      
+      toast.dismiss(loadingToast);
+
+      if (response.success && response.data) {
+        toast.success('Reserva finalizada com sucesso!');
+        await baseHook.fetchData({ 
+          page: baseHook.pagination.currentPage, 
+          limit: baseHook.pagination.pageSize 
+        });
+        return response.data;
+      } else {
+        toast.error(response.message || 'Erro ao finalizar reserva');
+        throw new Error(response.message || 'Erro ao finalizar reserva');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao finalizar reserva';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
   return {
     ...baseHook,
-    getReserva,
+    getReservaById,
+    getReservasForSearch,
     createReserva,
     updateReserva,
     confirmarReserva,
     cancelarReserva,
+    finalizarReserva,
     // Aliases para compatibilidade
     reservas: baseHook.data,
     fetchReservas: baseHook.fetchData,
     deleteReserva: baseHook.deleteItem,
+    getReserva: baseHook.getItem,
   };
 }; 

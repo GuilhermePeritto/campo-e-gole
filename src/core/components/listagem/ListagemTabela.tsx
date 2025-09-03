@@ -1,27 +1,27 @@
 import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
-    closestCenter,
-    DndContext,
-    KeyboardSensor,
-    MouseSensor,
-    TouchSensor,
-    useSensor,
-    useSensors,
-    type DragEndEvent,
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import {
-    arrayMove,
-    horizontalListSortingStrategy,
-    SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+  SortableContext,
 } from '@dnd-kit/sortable';
 import { FileX, MoreHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
@@ -95,6 +95,9 @@ export function ListagemTabela() {
     excluirItem,
   } = useListagem();
   
+  // Garantir que dados seja um array
+  const dadosSeguros = Array.isArray(dados) ? dados : [];
+  
   // Sensores para drag and drop
   const sensores = useSensors(
     useSensor(MouseSensor, {}),
@@ -166,7 +169,7 @@ export function ListagemTabela() {
     );
   }
   
-  if (dados.length === 0) {
+  if (dadosSeguros.length === 0) {
     return (
       <div className="h-full flex flex-col">
         <div className="flex-1 min-h-0 border border-border rounded-md bg-background">
@@ -219,7 +222,7 @@ export function ListagemTabela() {
                 </tr>
               </thead>
               <tbody className="[&_tr:last-child]:border-0">
-                {dados.map((item: any) => (
+                {dadosSeguros.map((item: any) => (
                   <tr
                     key={item.id || JSON.stringify(item)}
                     className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"

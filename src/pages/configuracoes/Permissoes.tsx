@@ -1,6 +1,5 @@
 import ModuleHeader from '@/components/ModuleHeader';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MODULE_COLORS } from '@/constants/moduleColors';
 import { usePermissoes } from '@/hooks/usePermissoes';
@@ -16,7 +15,6 @@ import {
   FileText,
   Lock,
   MapPin,
-  Plus,
   School,
   Settings,
   Shield,
@@ -28,7 +26,7 @@ import { useNavigate } from 'react-router-dom';
 // Mapeamento de módulos para ícones e cores
 const MODULE_CONFIG = {
   'Sistema': { icon: Settings, color: 'bg-gray-500', bgColor: 'bg-gray-50' },
-  'Usuários': { icon: Users, color: 'bg-blue-500', bgColor: 'bg-blue-50' },
+  'Usuarios': { icon: Users, color: 'bg-blue-500', bgColor: 'bg-blue-50' },
   'Filiais': { icon: Building, color: 'bg-green-500', bgColor: 'bg-green-50' },
   'Eventos': { icon: Calendar, color: 'bg-purple-500', bgColor: 'bg-purple-50' },
   'Financeiro': { icon: DollarSign, color: 'bg-orange-500', bgColor: 'bg-orange-50' },
@@ -59,11 +57,12 @@ const Permissoes = () => {
     };
 
     carregarPermissoes();
-  }, []); // Remover dependência do hook para evitar loop infinito
+  }, []);
 
   useEffect(() => {
-    if (permissoesHook.data && permissoesHook.data.length > 0) {
-      const agrupadas = permissoesHook.data.reduce((acc, permissao) => {
+    const permissoesData = getPermissoesData();
+    if (permissoesData.length > 0) {
+      const agrupadas = permissoesData.reduce((acc, permissao) => {
         const modulo = permissao.moduloPai || 'Outros';
         if (!acc[modulo]) {
           acc[modulo] = [];
@@ -86,22 +85,21 @@ const Permissoes = () => {
     };
   };
 
-  const getStatusBadge = (permissao: Permissao) => {
-    if (permissao.ativo) {
-      return <Badge variant="default" className="text-xs">Ativa</Badge>;
-    }
-    return <Badge variant="secondary" className="text-xs">Inativa</Badge>;
-  };
-
-  const getTipoPermissaoBadge = (permissao: Permissao) => {
+  const getSubmoduloBadge = (permissao: Permissao) => {
+    if (!permissao.submodulo) return null;
+    
     const tipos = {
-      'leitura': { label: 'Leitura', variant: 'outline' as const, color: 'text-blue-600' },
-      'escrita': { label: 'Escrita', variant: 'outline' as const, color: 'text-green-600' },
-      'exclusao': { label: 'Exclusão', variant: 'outline' as const, color: 'text-red-600' },
-      'administracao': { label: 'Admin', variant: 'default' as const, color: 'text-white' },
+      'Criar': { label: 'Criar', variant: 'outline' as const, color: 'text-green-600' },
+      'Editar': { label: 'Editar', variant: 'outline' as const, color: 'text-blue-600' },
+      'Excluir': { label: 'Excluir', variant: 'outline' as const, color: 'text-red-600' },
+      'Visualizar': { label: 'Visualizar', variant: 'outline' as const, color: 'text-purple-600' },
     };
 
-    const tipo = tipos[permissao.acao as keyof typeof tipos] || tipos.leitura;
+    const tipo = tipos[permissao.submodulo as keyof typeof tipos] || { 
+      label: permissao.submodulo, 
+      variant: 'outline' as const, 
+      color: 'text-gray-600' 
+    };
     
     return (
       <Badge variant={tipo.variant} className={`text-xs ${tipo.color}`}>
@@ -109,6 +107,13 @@ const Permissoes = () => {
       </Badge>
     );
   };
+
+  // Função para obter dados seguros
+  const getPermissoesData = () => {
+    return Array.isArray(permissoesHook.data) ? permissoesHook.data : [];
+  };
+
+  const permissoesData = getPermissoesData();
 
   if (loading) {
     return (
@@ -157,17 +162,13 @@ const Permissoes = () => {
           <div>
             <h2 className="text-2xl font-bold">Gerenciar Permissões</h2>
             <p className="text-muted-foreground">
-              Gerencie as permissões e controles de acesso do sistema
+              Visualize as permissões disponíveis no sistema
             </p>
           </div>
-          <Button onClick={() => navigate('/configuracoes/permissoes/nova')}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Permissão
-          </Button>
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -175,24 +176,8 @@ const Permissoes = () => {
                   <Shield className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total</p>
-                  <p className="text-2xl font-bold">{permissoesHook.data.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Shield className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Ativas</p>
-                  <p className="text-2xl font-bold">
-                    {permissoesHook.data.filter(p => p.ativo).length}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Total de Permissões</p>
+                  <p className="text-2xl font-bold">{permissoesData.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -219,9 +204,9 @@ const Permissoes = () => {
                   <Lock className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Administrativas</p>
+                  <p className="text-sm text-muted-foreground">Submódulos</p>
                   <p className="text-2xl font-bold">
-                    {permissoesHook.data.filter(p => p.acao === 'administracao').length}
+                    {new Set(permissoesData.map(p => p.submodulo).filter(Boolean)).size}
                   </p>
                 </div>
               </div>
@@ -238,10 +223,6 @@ const Permissoes = () => {
               <p className="text-muted-foreground mb-4">
                 Não há permissões cadastradas no sistema.
               </p>
-              <Button onClick={() => navigate('/configuracoes/permissoes/nova')}>
-                <Plus className="h-4 w-4 mr-2" />
-                Criar Primeira Permissão
-              </Button>
             </CardContent>
           </Card>
         ) : (
@@ -270,22 +251,17 @@ const Permissoes = () => {
                       {permissoes.map((permissao) => (
                         <div
                           key={permissao.id}
-                          className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-sm transition-shadow cursor-pointer"
-                          onClick={() => navigate(`/configuracoes/permissoes/${permissao.id}/editar`)}
+                          className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-sm transition-shadow"
                         >
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-medium text-sm">{permissao.nome}</h4>
-                              {getStatusBadge(permissao)}
-                              {getTipoPermissaoBadge(permissao)}
+                              {getSubmoduloBadge(permissao)}
                             </div>
                             {permissao.descricao && (
                               <p className="text-xs text-muted-foreground">{permissao.descricao}</p>
                             )}
                           </div>
-                          <Button variant="ghost" size="sm">
-                            <Settings className="h-4 w-4" />
-                          </Button>
                         </div>
                       ))}
                     </div>

@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronRight, Search, Database, Lightbulb } from 'lucide-react';
-import { ReportField, EntityFieldGroup } from '@/types/reports';
-import { getSmartRelatedFields, detectReportType } from '@/utils/entityRelationships';
+import { Input } from '@/components/ui/input';
+import { EntityFieldGroup, ReportField } from '@/types/reports';
+import { detectReportType, getSmartRelatedFields } from '@/utils/entityRelationships';
+import { ChevronDown, ChevronRight, Database, Lightbulb, Search } from 'lucide-react';
+import { useState } from 'react';
 import DraggableField from './DraggableField';
 
 interface FieldSelectorProps {
@@ -43,7 +43,7 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
     { id: 'escolinha_turma', name: 'turma', label: 'Turma', type: 'string', entity: 'escolinha' },
     { id: 'escolinha_mensalidade', name: 'mensalidade', label: 'Mensalidade', type: 'number', entity: 'escolinha' },
     { id: 'escolinha_data_matricula', name: 'data_matricula', label: 'Data Matrícula', type: 'date', entity: 'escolinha' },
-    { id: 'escolinha_ativo', name: 'ativo', label: 'Ativo', type: 'boolean', entity: 'escolinha' },
+    { id: 'escolinha_situacao', name: 'situacao', label: 'Situação', type: 'string', entity: 'escolinha' },
     { id: 'escolinha_idade', name: 'idade', label: 'Idade', type: 'number', entity: 'escolinha' },
 
     // Bar
@@ -59,7 +59,7 @@ const FieldSelector = ({ onFieldSelect, selectedFields }: FieldSelectorProps) =>
     { id: 'usuarios_nome', name: 'nome', label: 'Nome', type: 'string', entity: 'usuarios' },
     { id: 'usuarios_email', name: 'email', label: 'Email', type: 'string', entity: 'usuarios' },
     { id: 'usuarios_grupo', name: 'grupo', label: 'Grupo', type: 'string', entity: 'usuarios' },
-    { id: 'usuarios_ativo', name: 'ativo', label: 'Ativo', type: 'boolean', entity: 'usuarios' },
+    { id: 'usuarios_situacao', name: 'situacao', label: 'Situação', type: 'string', entity: 'usuarios' },
     { id: 'usuarios_data_criacao', name: 'data_criacao', label: 'Data Criação', type: 'date', entity: 'usuarios' },
     { id: 'usuarios_ultimo_acesso', name: 'ultimo_acesso', label: 'Último Acesso', type: 'date', entity: 'usuarios' },
   ];

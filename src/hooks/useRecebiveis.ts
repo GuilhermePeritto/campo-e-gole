@@ -5,18 +5,27 @@ import { api, ApiResponse } from '../lib/api';
 import { Recebivel } from '../types';
 
 export const useRecebiveis = () => {
-  const baseHook = useBaseCrud<Recebivel>('/recebiveis', {
+  const baseHook = useBaseCrud<Recebivel>('/api/recebiveis', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
 
-  const buscarPorId = (id: string) => baseHook.data.find(r => r.id === id);
+  const getRecebivelById = (id: string) => baseHook.data.find(r => r.id === id);
 
-  const createRecebivel = async (recebivelData: Omit<Recebivel, 'id' | 'dataCadastro'>) => {
+  const getRecebiveisForSearch = async () => {
+    await baseHook.fetchData({ limit: 1000 });
+    return baseHook.data.map(recebivel => ({
+      id: recebivel.id,
+      label: recebivel.descricao,
+      subtitle: `R$ ${recebivel.valor.toFixed(2)}`
+    }));
+  };
+
+  const createRecebivel = async (recebivelData: Omit<Recebivel, 'id' | 'dataCriacao'>) => {
     try {
       const loadingToast = toast.loading('Criando recebível...');
       
-      const response = await api.post<ApiResponse<Recebivel>>('/recebiveis', recebivelData);
+      const response = await api.post<ApiResponse<Recebivel>>('/api/recebiveis', recebivelData);
       
       toast.dismiss(loadingToast);
 
@@ -42,7 +51,7 @@ export const useRecebiveis = () => {
     try {
       const loadingToast = toast.loading('Atualizando recebível...');
       
-      const response = await api.put<ApiResponse<Recebivel>>(`/recebiveis/${id}`, recebivelData);
+      const response = await api.put<ApiResponse<Recebivel>>(`/api/recebiveis/${id}`, recebivelData);
       
       toast.dismiss(loadingToast);
 
@@ -66,7 +75,8 @@ export const useRecebiveis = () => {
 
   return {
     ...baseHook,
-    buscarPorId,
+    getRecebivelById,
+    getRecebiveisForSearch,
     createRecebivel,
     updateRecebivel,
     // Aliases para compatibilidade

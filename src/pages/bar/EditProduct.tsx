@@ -31,22 +31,33 @@ const EditProduct = () => {
   // Simular carregamento dos dados do produto
   useEffect(() => {
     const loadProduct = async () => {
-      setLoading(true);
-      // Simular delay da API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (!id) return;
       
-      // Dados mockados para demonstração
-      const mockProduct = {
-        name: 'Cerveja Skol 350ml',
-        category: 'Bebidas',
-        price: '4.50',
-        supplier: 'Distribuidora ABC',
-        barcode: '7891234567890',
-        minStock: '20',
-        active: true
-      };
-      setFormData(mockProduct);
-      setLoading(false);
+      setLoading(true);
+      try {
+        // Aqui você faria uma chamada para buscar dados do produto
+        // Por exemplo: const response = await api.get<ApiResponse<Product>>(`/api/produtos/${id}`);
+        // Por enquanto, vamos deixar como dados vazios até implementar a API
+        
+        setFormData({
+          name: '',
+          category: '',
+          price: '',
+          supplier: '',
+          barcode: '',
+          minStock: '',
+          active: true
+        });
+      } catch (error) {
+        console.error('Erro ao carregar produto:', error);
+        toast({
+          title: "Erro",
+          description: "Erro ao carregar dados do produto.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadProduct();

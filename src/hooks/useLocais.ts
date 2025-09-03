@@ -5,25 +5,27 @@ import { api, ApiResponse } from '../lib/api';
 import { Local } from '../types';
 
 export const useLocais = () => {
-  const baseHook = useBaseCrud<Local>('/locais', {
+  const baseHook = useBaseCrud<Local>('/api/locais', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
 
-  const buscarPorId = (id: string) => baseHook.data.find(l => l.id === id);
   const getLocalById = (id: string) => baseHook.data.find(l => l.id === id);
-  const getLocalByName = (name: string) => baseHook.data.find(l => l.nome === name);
 
-  const listar = async () => {
+  const getLocaisForSearch = async () => {
     await baseHook.fetchData({ limit: 1000 });
-    return baseHook.data;
+    return baseHook.data.map(local => ({
+      id: local.id,
+      label: local.nome,
+      subtitle: local.endereco
+    }));
   };
 
-  const createLocal = async (localData: Omit<Local, 'id' | 'dataCadastro'>) => {
+  const createLocal = async (localData: Omit<Local, 'id' | 'dataCriacao'>) => {
     try {
       const loadingToast = toast.loading('Criando local...');
       
-      const response = await api.post<ApiResponse<Local>>('/locais', localData);
+      const response = await api.post<ApiResponse<Local>>('/api/locais', localData);
       
       toast.dismiss(loadingToast);
 
@@ -49,7 +51,7 @@ export const useLocais = () => {
     try {
       const loadingToast = toast.loading('Atualizando local...');
       
-      const response = await api.put<ApiResponse<Local>>(`/locais/${id}`, localData);
+      const response = await api.put<ApiResponse<Local>>(`/api/locais/${id}`, localData);
       
       toast.dismiss(loadingToast);
 
@@ -73,10 +75,8 @@ export const useLocais = () => {
 
   return {
     ...baseHook,
-    buscarPorId,
     getLocalById,
-    getLocalByName,
-    listar,
+    getLocaisForSearch,
     createLocal,
     updateLocal,
     // Aliases para compatibilidade

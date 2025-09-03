@@ -4,7 +4,7 @@ import { useBaseCrud } from '../core/hooks/useBaseCrud';
 import { api, ApiResponse } from '../lib/api';
 
 export const useFiliais = () => {
-  const baseHook = useBaseCrud<Filial>('/filiais', {
+  const baseHook = useBaseCrud<Filial>('/api/filiais', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
@@ -16,15 +16,15 @@ export const useFiliais = () => {
     return baseHook.data.map(filial => ({
       id: filial.id,
       label: filial.nome,
-      subtitle: `${filial.cidade} - ${filial.estado}`
+      subtitle: filial.codigo || `${filial.cidade} - ${filial.estado}` || ''
     }));
   };
 
-  const createFilial = async (filialData: Omit<Filial, 'id' | 'dataCriacao' | 'dataAtualizacao'>) => {
+  const createFilial = async (filialData: Omit<Filial, 'id' | 'dataCriacao'>) => {
     try {
       const loadingToast = toast.loading('Criando filial...');
       
-      const response = await api.post<ApiResponse<Filial>>('/filiais', filialData);
+      const response = await api.post<ApiResponse<Filial>>('/api/filiais', filialData);
       
       toast.dismiss(loadingToast);
 
@@ -46,11 +46,11 @@ export const useFiliais = () => {
     }
   };
 
-  const updateFilial = async (id: string, filialData: Partial<Filial>) => {
+  const updateFilial = async (id: string, filialData: Partial<Omit<Filial, 'id' | 'dataCriacao'>>) => {
     try {
       const loadingToast = toast.loading('Atualizando filial...');
       
-      const response = await api.put<ApiResponse<Filial>>(`/filiais/${id}`, filialData);
+      const response = await api.put<ApiResponse<Filial>>(`/api/filiais/${id}`, filialData);
       
       toast.dismiss(loadingToast);
 

@@ -1,11 +1,9 @@
 export interface GrupoPermissao {
   id: string;
-  dataCriacao: string;
-  dataAtualizacao: string | null;
   nome: string;
   descricao: string;
-  ativo: boolean;
-  tenantId: number;
+  situacao: 'Ativo' | 'Inativo';
+  dataCriacao: string;
   usuarios?: {
     id: string;
     nome: string;
@@ -16,6 +14,6 @@ export interface GrupoPermissao {
     nome: string;
     descricao: string;
     moduloPai: string;
-    acao: string;
+    submodulo?: string;
   }[];
 } 

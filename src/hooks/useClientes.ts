@@ -1,11 +1,11 @@
 
+import { Cliente } from '@/types/cliente';
 import { toast } from 'sonner';
 import { useBaseCrud } from '../core/hooks/useBaseCrud';
 import { api, ApiResponse } from '../lib/api';
-import { Cliente } from '../types';
 
 export const useClientes = () => {
-  const baseHook = useBaseCrud<Cliente>('/clientes', {
+  const baseHook = useBaseCrud<Cliente>('/api/clientes', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
@@ -17,7 +17,7 @@ export const useClientes = () => {
     return baseHook.data.map(cliente => ({
       id: cliente.id,
       label: cliente.nome,
-      subtitle: cliente.email
+      subtitle: cliente.documento || cliente.email || ''
     }));
   };
 
@@ -25,7 +25,7 @@ export const useClientes = () => {
     try {
       const loadingToast = toast.loading('Criando cliente...');
       
-      const response = await api.post<ApiResponse<Cliente>>('/clientes', clienteData);
+      const response = await api.post<ApiResponse<Cliente>>('/api/clientes', clienteData);
       
       toast.dismiss(loadingToast);
 
@@ -47,11 +47,11 @@ export const useClientes = () => {
     }
   };
 
-  const updateCliente = async (id: string, clienteData: Partial<Cliente>) => {
+  const updateCliente = async (id: string, clienteData: Partial<Omit<Cliente, 'id' | 'dataCriacao'>>) => {
     try {
       const loadingToast = toast.loading('Atualizando cliente...');
       
-      const response = await api.put<ApiResponse<Cliente>>(`/clientes/${id}`, clienteData);
+      const response = await api.put<ApiResponse<Cliente>>(`/api/clientes/${id}`, clienteData);
       
       toast.dismiss(loadingToast);
 

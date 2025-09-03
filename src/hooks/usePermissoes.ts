@@ -1,58 +1,79 @@
-import { Permissao } from '@/types/permissao';
-import { useCallback, useMemo } from 'react';
 import { useBaseCrud } from '../core/hooks/useBaseCrud';
+import { api, ApiResponse } from '../lib/api';
+import { Permissao } from '../types/permissao';
 
 export const usePermissoes = () => {
-  const baseHook = useBaseCrud<Permissao>('/permissoes', {
-    transformData: (data) => data,
-    transformPagination: (pagination) => pagination
-  });
+  const baseHook = useBaseCrud<Permissao>('/api/permissoes');
 
-  const getPermissaoById = useCallback((id: string) => 
-    baseHook.data.find(p => p.id === id), [baseHook.data]);
+  const getPermissaoById = (id: string) => {
+    if (!Array.isArray(baseHook.data)) return undefined;
+    return baseHook.data.find(p => p.id === id);
+  };
 
-  const getPermissoesByModulo = useCallback((modulo: string) => 
-    baseHook.data.filter(p => p.moduloPai === modulo), [baseHook.data]);
+  const getPermissoesForSearch = async () => {
+    try {
+      const response = await api.get<ApiResponse<Permissao[]>>('/api/permissoes', { limit: 100 });
+      return (response.data || []).map(permissao => ({
+        id: permissao.id,
+        nome: permissao.nome,
+        subtitle: permissao.descricao
+      }));
+    } catch (error) {
+      console.error('Erro ao buscar permissões:', error);
+      return [];
+    }
+  };
 
-  const getPermissoesForSearch = useCallback(async () => {
-    await baseHook.fetchData({ limit: 1000 });
-    return baseHook.data.map(permissao => ({
-      id: permissao.id,
-      label: permissao.nome,
-      subtitle: permissao.descricao
-    }));
-  }, [baseHook.fetchData, baseHook.data]);
+  const getModulosPai = async () => {
+    try {
+      const response = await api.get<ApiResponse<string[]>>('/api/permissoes/modulos-pai');
+      return response.data || [];
+    } catch (error) {
+      console.error('Erro ao buscar módulos pai:', error);
+      return [];
+    }
+  };
 
-  const getPermissoesAgrupadas = useCallback(() => {
-    const agrupadas: Record<string, Permissao[]> = {};
-    
-    baseHook.data.forEach(permissao => {
-      if (!agrupadas[permissao.moduloPai]) {
-        agrupadas[permissao.moduloPai] = [];
-      }
-      agrupadas[permissao.moduloPai].push(permissao);
-    });
+  const getSubmodulos = async () => {
+    try {
+      const response = await api.get<ApiResponse<string[]>>('/api/permissoes/submodulos');
+      return response.data || [];
+    } catch (error) {
+      console.error('Erro ao buscar submódulos:', error);
+      return [];
+    }
+  };
 
-    return agrupadas;
-  }, [baseHook.data]);
+  const getPermissoesPorModuloPai = async (moduloPai: string) => {
+    try {
+      const response = await api.get<ApiResponse<Permissao[]>>(`/api/permissoes/modulo-pai/${moduloPai}`);
+      return response.data || [];
+    } catch (error) {
+      console.error('Erro ao buscar permissões por módulo pai:', error);
+      return [];
+    }
+  };
 
-  // Memoizar o objeto retornado para evitar re-renderizações
-  const hookValue = useMemo(() => ({
+  const getPermissoesPorSubmodulo = async (submodulo: string) => {
+    try {
+      const response = await api.get<ApiResponse<Permissao[]>>(`/api/permissoes/submodulo/${submodulo}`);
+      return response.data || [];
+    } catch (error) {
+      console.error('Erro ao buscar permissões por submódulo:', error);
+      return [];
+    }
+  };
+
+  return {
     ...baseHook,
     getPermissaoById,
-    getPermissoesByModulo,
     getPermissoesForSearch,
-    getPermissoesAgrupadas,
+    getModulosPai,
+    getSubmodulos,
+    getPermissoesPorModuloPai,
+    getPermissoesPorSubmodulo,
     // Aliases para compatibilidade
     permissoes: baseHook.data,
     fetchPermissoes: baseHook.fetchData,
-  }), [
-    baseHook,
-    getPermissaoById,
-    getPermissoesByModulo,
-    getPermissoesForSearch,
-    getPermissoesAgrupadas
-  ]);
-
-  return hookValue;
+  };
 }; 

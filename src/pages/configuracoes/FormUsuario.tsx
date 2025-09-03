@@ -35,7 +35,7 @@ const FormUsuario = () => {
     grupoId: 0,
     senha: '',
     confirmarSenha: '',
-    ativo: true,
+    situacao: 'Ativo' as const,
     foto: ''
   });
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -67,7 +67,7 @@ const FormUsuario = () => {
   //       grupoId: usuario.grupoId,
   //       senha: '',
   //       confirmarSenha: '',
-  //       ativo: usuario.ativo,
+  //       situacao: usuario.situacao,
   //       foto: usuario.foto || ''
   //     });
   //     setAvatarPreview(usuario.foto || '');
@@ -350,8 +350,8 @@ const FormUsuario = () => {
               <div className="flex items-center space-x-2">
                 <Switch
                   id="ativo"
-                  checked={formData.ativo}
-                  onCheckedChange={(checked) => setFormData({...formData, ativo: checked})}
+                                checked={formData.situacao === 'Ativo'}
+              onCheckedChange={(checked) => setFormData({...formData, situacao: checked ? 'Ativo' : 'Inativo'})}
                 />
                 <Label htmlFor="ativo">Usuário ativo</Label>
               </div>

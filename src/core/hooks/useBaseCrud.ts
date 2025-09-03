@@ -47,16 +47,16 @@ export function useBaseCrud<T>(
     try {
       setLoading(true);
       
-      // Preparar parâmetros para o backend conforme especificação
+      // Preparar parâmetros para o backend conforme especificação da nova API
       const apiParams: Record<string, any> = {};
       
       // Parâmetros básicos de paginação (sempre enviar)
       apiParams.page = params.page || 1;
       apiParams.limit = params.limit || 10;
       
-      // Parâmetro de ordenação
-      if (params.sort && params.sort !== 'id') {
-        apiParams.sort = params.sort;
+      // Parâmetro de busca (search)
+      if (params.search && params.search.trim()) {
+        apiParams.search = params.search.trim();
       }
       
       // Parâmetro de campos específicos
@@ -70,7 +70,7 @@ export function useBaseCrud<T>(
         if (typeof params.filter === 'object' && params.filter !== null) {
           // Se tem search, usar como filtro principal
           if (params.filter.search && params.filter.search.trim()) {
-            apiParams.filter = params.filter.search.trim();
+            apiParams.search = params.filter.search.trim();
           }
           // Para outros filtros, adicionar como parâmetros separados
           Object.entries(params.filter).forEach(([key, value]) => {
@@ -83,8 +83,8 @@ export function useBaseCrud<T>(
             }
           });
         } else if (typeof params.filter === 'string' && params.filter.trim()) {
-          // Se for string, usar diretamente
-          apiParams.filter = params.filter.trim();
+          // Se for string, usar diretamente como search
+          apiParams.search = params.filter.trim();
         }
       }
       
@@ -107,22 +107,41 @@ export function useBaseCrud<T>(
       
       console.log('📦 API Response:', responseData);
       
-      // Verificar se a resposta tem o novo formato
-      if (responseData.success !== undefined && responseData.items !== undefined) {
-        // Novo formato: { success, message, items, totalItems, currentPage, pageSize, totalPages }
+      // Verificar se a resposta tem o novo formato da API
+      if (responseData.success !== undefined && responseData.data && responseData.data.items !== undefined) {
+        // Novo formato: { success, message, data: { items, totalItems, page, limit, totalPages } }
+        const transformedData = options?.transformData 
+          ? options.transformData(responseData.data.items)
+          : responseData.data.items;
+        
+        const transformedPagination = {
+          currentPage: responseData.data.page || 1,
+          totalPages: responseData.data.totalPages || 1,
+          totalItems: responseData.data.totalItems || 0,
+          pageSize: responseData.data.limit || 10,
+          startIndex: ((responseData.data.page || 1) - 1) * (responseData.data.limit || 10) + 1,
+          endIndex: Math.min((responseData.data.page || 1) * (responseData.data.limit || 10), responseData.data.totalItems || 0),
+          hasNextPage: (responseData.data.page || 1) < (responseData.data.totalPages || 1),
+          hasPreviousPage: (responseData.data.page || 1) > 1,
+        };
+        
+        setData(transformedData);
+        setPagination(transformedPagination);
+      } else if (responseData.success !== undefined && responseData.items !== undefined) {
+        // Formato alternativo: { success, message, items, totalItems, page, limit, totalPages }
         const transformedData = options?.transformData 
           ? options.transformData(responseData.items)
           : responseData.items;
         
         const transformedPagination = {
-          currentPage: responseData.currentPage || 1,
+          currentPage: responseData.page || 1,
           totalPages: responseData.totalPages || 1,
           totalItems: responseData.totalItems || 0,
-          pageSize: responseData.pageSize || 10,
-          startIndex: ((responseData.currentPage || 1) - 1) * (responseData.pageSize || 10) + 1,
-          endIndex: Math.min((responseData.currentPage || 1) * (responseData.pageSize || 10), responseData.totalItems || 0),
-          hasNextPage: (responseData.currentPage || 1) < (responseData.totalPages || 1),
-          hasPreviousPage: (responseData.currentPage || 1) > 1,
+          pageSize: responseData.limit || 10,
+          startIndex: ((responseData.page || 1) - 1) * (responseData.limit || 10) + 1,
+          endIndex: Math.min((responseData.page || 1) * (responseData.limit || 10), responseData.totalItems || 0),
+          hasNextPage: (responseData.page || 1) < (responseData.totalPages || 1),
+          hasPreviousPage: (responseData.page || 1) > 1,
         };
         
         setData(transformedData);

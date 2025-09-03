@@ -4,7 +4,7 @@ import { useBaseCrud } from '../core/hooks/useBaseCrud';
 import { api, ApiResponse } from '../lib/api';
 
 export const useEmpresas = () => {
-  const baseHook = useBaseCrud<Empresa>('/empresas', {
+  const baseHook = useBaseCrud<Empresa>('/api/empresas', {
     transformData: (data) => data,
     transformPagination: (pagination) => pagination
   });
@@ -16,15 +16,15 @@ export const useEmpresas = () => {
     return baseHook.data.map(empresa => ({
       id: empresa.id,
       label: empresa.nome,
-      subtitle: empresa.cnpj
+      subtitle: empresa.cnpj || empresa.email || ''
     }));
   };
 
-  const createEmpresa = async (empresaData: Omit<Empresa, 'id' | 'dataCriacao' | 'dataAtualizacao'>) => {
+  const createEmpresa = async (empresaData: Omit<Empresa, 'id' | 'dataCriacao'>) => {
     try {
       const loadingToast = toast.loading('Criando empresa...');
       
-      const response = await api.post<ApiResponse<Empresa>>('/empresas', empresaData);
+      const response = await api.post<ApiResponse<Empresa>>('/api/empresas', empresaData);
       
       toast.dismiss(loadingToast);
 
@@ -46,11 +46,11 @@ export const useEmpresas = () => {
     }
   };
 
-  const updateEmpresa = async (id: string, empresaData: Partial<Empresa>) => {
+  const updateEmpresa = async (id: string, empresaData: Partial<Omit<Empresa, 'id' | 'dataCriacao'>>) => {
     try {
       const loadingToast = toast.loading('Atualizando empresa...');
       
-      const response = await api.put<ApiResponse<Empresa>>(`/empresas/${id}`, empresaData);
+      const response = await api.put<ApiResponse<Empresa>>(`/api/empresas/${id}`, empresaData);
       
       toast.dismiss(loadingToast);
 

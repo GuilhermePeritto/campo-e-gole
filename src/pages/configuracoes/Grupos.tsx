@@ -55,14 +55,14 @@ const Grupos = () => {
       ),
     },
     {
-      chave: 'ativo',
+      chave: 'situacao',
       titulo: 'Status',
       ordenavel: true,
       filtravel: true,
       tipoFiltro: 'select' as const,
       renderizar: (grupo: GrupoPermissao) => (
-        <Badge variant={grupo.ativo ? 'default' : 'secondary'}>
-          {grupo.ativo ? 'Ativo' : 'Inativo'}
+        <Badge variant={grupo.situacao === 'Ativo' ? 'default' : 'secondary'}>
+          {grupo.situacao}
         </Badge>
       ),
     },
@@ -97,13 +97,13 @@ const Grupos = () => {
     },
     {
       titulo: 'Grupos Ativos',
-      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => g.ativo).length : 0,
+      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => g.situacao === 'Ativo').length : 0,
       icone: ShieldCheck,
       cor: 'bg-green-500',
     },
     {
       titulo: 'Grupos Inativos',
-      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => !g.ativo).length : 0,
+      valor: (data: GrupoPermissao[] = []) => Array.isArray(data) ? data.filter(g => g.situacao === 'Inativo').length : 0,
       icone: UserX,
       cor: 'bg-red-500',
     },

@@ -1,109 +1,123 @@
 
 import BaseFormPage from '@/components/BaseFormPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { MODULE_COLORS } from '@/constants/moduleColors';
+import { useGruposPermissoes } from '@/hooks/useGruposPermissoes';
+import { usePermissoes } from '@/hooks/usePermissoes';
+import { Permissao } from '@/types/permissao';
 import { Shield } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const NovoGrupo = () => {
+  const navigate = useNavigate();
+  const gruposHook = useGruposPermissoes();
+  const permissoesHook = usePermissoes();
+  
   const [grupoData, setGrupoData] = useState({
     nome: '',
     descricao: '',
-    ativo: true,
-    permissoes: {
-      eventos: {
-        visualizar: false,
-        criar: false,
-        editar: false,
-        excluir: false
-      },
-      bar: {
-        visualizar: false,
-        criar: false,
-        editar: false,
-        excluir: false
-      },
-      escolinha: {
-        visualizar: false,
-        criar: false,
-        editar: false,
-        excluir: false
-      },
-      financeiro: {
-        visualizar: false,
-        criar: false,
-        editar: false,
-        excluir: false
-      },
-      configuracoes: {
-        visualizar: false,
-        criar: false,
-        editar: false,
-        excluir: false
-      }
-    }
+    situacao: 'Ativo' as const,
   });
+
+  const [permissoesDisponiveis, setPermissoesDisponiveis] = useState<Permissao[]>([]);
+  const [permissoesSelecionadas, setPermissoesSelecionadas] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const checkboxRefs = useRef<{ [key: string]: HTMLElement | null }>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Carregar permissões disponíveis
+  useEffect(() => {
+    const carregarPermissoes = async () => {
+      try {
+        const permissoes = await permissoesHook.getPermissoesForSearch();
+        // Buscar permissões completas
+        await permissoesHook.fetchData({ limit: 1000 });
+        // Garantir que é um array antes de usar
+        const permissoesData = Array.isArray(permissoesHook.data) ? permissoesHook.data : [];
+        setPermissoesDisponiveis(permissoesData);
+      } catch (error) {
+        console.error('Erro ao carregar permissões:', error);
+        toast.error('Erro ao carregar permissões disponíveis');
+      }
+    };
+
+    carregarPermissoes();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Salvando grupo:', grupoData);
-    // Aqui faria a chamada para a API
+    
+    if (!grupoData.nome.trim()) {
+      toast.error('Nome do grupo é obrigatório');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const dadosGrupo = {
+        nome: grupoData.nome,
+        descricao: grupoData.descricao,
+        situacao: grupoData.situacao,
+        // Aqui você pode adicionar as permissões selecionadas se a API suportar
+        // permissoesIds: permissoesSelecionadas
+      };
+
+      await gruposHook.createGrupo(dadosGrupo);
+      toast.success('Grupo criado com sucesso!');
+      navigate('/configuracoes/grupos');
+    } catch (error) {
+      console.error('Erro ao criar grupo:', error);
+      toast.error('Erro ao criar grupo');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const modulos = [
-    { key: 'eventos', label: 'Eventos', description: 'Reservas e agenda' },
-    { key: 'bar', label: 'Bar', description: 'Comandas e vendas' },
-    { key: 'escolinha', label: 'Escolinha', description: 'Alunos e turmas' },
-    { key: 'financeiro', label: 'Financeiro', description: 'Contas e relatórios' },
-    { key: 'configuracoes', label: 'Configurações', description: 'Administração do sistema' }
-  ];
+  // Agrupar permissões por módulo
+  const permissoesPorModulo = permissoesDisponiveis.reduce((acc, permissao) => {
+    const modulo = permissao.moduloPai;
+    if (!acc[modulo]) {
+      acc[modulo] = [];
+    }
+    acc[modulo].push(permissao);
+    return acc;
+  }, {} as Record<string, Permissao[]>);
 
-  const acoes = [
-    { key: 'visualizar', label: 'Visualizar' },
-    { key: 'criar', label: 'Criar' },
-    { key: 'editar', label: 'Editar' },
-    { key: 'excluir', label: 'Excluir' }
-  ];
-
-  const handlePermissaoChange = (modulo: string, acao: string, checked: boolean) => {
-    setGrupoData({
-      ...grupoData,
-      permissoes: {
-        ...grupoData.permissoes,
-        [modulo]: {
-          ...grupoData.permissoes[modulo],
-          [acao]: checked
-        }
-      }
-    });
+  const handlePermissaoChange = (permissaoId: string, checked: boolean) => {
+    if (checked) {
+      setPermissoesSelecionadas(prev => [...prev, permissaoId]);
+    } else {
+      setPermissoesSelecionadas(prev => prev.filter(id => id !== permissaoId));
+    }
   };
 
   const toggleModulo = (modulo: string, allChecked: boolean) => {
-    const newPermissoes = { ...grupoData.permissoes };
-    acoes.forEach(acao => {
-      newPermissoes[modulo][acao.key] = allChecked;
-    });
-    setGrupoData({
-      ...grupoData,
-      permissoes: newPermissoes
-    });
+    const permissoesModulo = permissoesPorModulo[modulo] || [];
+    const idsModulo = permissoesModulo.map(p => p.id);
+    
+    if (allChecked) {
+      setPermissoesSelecionadas(prev => [...new Set([...prev, ...idsModulo])]);
+    } else {
+      setPermissoesSelecionadas(prev => prev.filter(id => !idsModulo.includes(id)));
+    }
   };
 
   // Effect to update indeterminate state
   useEffect(() => {
-    modulos.forEach((modulo) => {
-      const moduloPermissoes = grupoData.permissoes[modulo.key];
-      const allChecked = acoes.every(acao => moduloPermissoes[acao.key]);
-      const someChecked = acoes.some(acao => moduloPermissoes[acao.key]);
+    Object.keys(permissoesPorModulo).forEach((modulo) => {
+      const permissoesModulo = permissoesPorModulo[modulo] || [];
+      const idsModulo = permissoesModulo.map(p => p.id);
+      const allChecked = idsModulo.every(id => permissoesSelecionadas.includes(id));
+      const someChecked = idsModulo.some(id => permissoesSelecionadas.includes(id));
       
-      const checkboxElement = checkboxRefs.current[`${modulo.key}-all`];
+      const checkboxElement = checkboxRefs.current[`${modulo}-all`];
       if (checkboxElement) {
         const buttonElement = checkboxElement.querySelector('button');
         if (buttonElement) {
@@ -111,18 +125,19 @@ const NovoGrupo = () => {
         }
       }
     });
-  }, [grupoData.permissoes]);
+  }, [permissoesSelecionadas, permissoesPorModulo]);
 
   return (
     <BaseFormPage
       title="Novo Grupo"
       description="Crie um novo grupo de permissões"
       icon={<Shield className="h-6 w-6" />}
-      moduleColor={MODULE_COLORS.inicio}
+      moduleColor={MODULE_COLORS.settings}
       backTo="/configuracoes/grupos"
       backLabel="Grupos"
       onSubmit={handleSubmit}
       submitLabel="Salvar Grupo"
+      loading={loading}
     >
       <div className="space-y-6">
         <Card>
@@ -147,8 +162,8 @@ const NovoGrupo = () => {
               <div className="flex items-center space-x-2 mt-8">
                 <Switch
                   id="ativo"
-                  checked={grupoData.ativo}
-                  onCheckedChange={(checked) => setGrupoData({...grupoData, ativo: checked})}
+                  checked={grupoData.situacao === 'Ativo'}
+                  onCheckedChange={(checked) => setGrupoData({...grupoData, situacao: checked ? 'Ativo' : 'Inativo'})}
                 />
                 <Label htmlFor="ativo">Grupo ativo</Label>
               </div>
@@ -175,44 +190,53 @@ const NovoGrupo = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {modulos.map((modulo) => {
-              const moduloPermissoes = grupoData.permissoes[modulo.key];
-              const allChecked = acoes.every(acao => moduloPermissoes[acao.key]);
-              const someChecked = acoes.some(acao => moduloPermissoes[acao.key]);
+            {Object.entries(permissoesPorModulo).map(([modulo, permissoes]) => {
+              const idsModulo = permissoes.map(p => p.id);
+              const allChecked = idsModulo.every(id => permissoesSelecionadas.includes(id));
+              const someChecked = idsModulo.some(id => permissoesSelecionadas.includes(id));
 
               return (
-                <div key={modulo.key} className="border rounded-lg p-4 space-y-4">
+                <div key={modulo} className="border rounded-lg p-4 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium">{modulo.label}</h4>
-                      <p className="text-sm text-muted-foreground">{modulo.description}</p>
+                      <h4 className="font-medium">{modulo}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {permissoes.length} permissão{permissoes.length !== 1 ? 'ões' : ''} disponível{permissoes.length !== 1 ? 'eis' : ''}
+                      </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div ref={(el) => { checkboxRefs.current[`${modulo.key}-all`] = el; }}>
+                      <div ref={(el) => { checkboxRefs.current[`${modulo}-all`] = el; }}>
                         <Checkbox
-                          id={`${modulo.key}-all`}
+                          id={`${modulo}-all`}
                           checked={allChecked}
-                          onCheckedChange={(checked) => toggleModulo(modulo.key, checked as boolean)}
+                          onCheckedChange={(checked) => toggleModulo(modulo, checked as boolean)}
                         />
                       </div>
-                      <Label htmlFor={`${modulo.key}-all`} className="text-sm font-medium">
+                      <Label htmlFor={`${modulo}-all`} className="text-sm font-medium">
                         Todas as permissões
                       </Label>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pl-4">
-                    {acoes.map((acao) => (
-                      <div key={acao.key} className="flex items-center space-x-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4">
+                    {permissoes.map((permissao) => (
+                      <div key={permissao.id} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`${modulo.key}-${acao.key}`}
-                          checked={moduloPermissoes[acao.key]}
+                          id={`permissao-${permissao.id}`}
+                          checked={permissoesSelecionadas.includes(permissao.id)}
                           onCheckedChange={(checked) => 
-                            handlePermissaoChange(modulo.key, acao.key, checked as boolean)
+                            handlePermissaoChange(permissao.id, checked as boolean)
                           }
                         />
-                        <Label htmlFor={`${modulo.key}-${acao.key}`} className="text-sm">
-                          {acao.label}
+                        <Label htmlFor={`permissao-${permissao.id}`} className="text-sm">
+                          <div>
+                            <div className="font-medium">{permissao.nome}</div>
+                            {permissao.submodulo && (
+                              <div className="text-xs text-muted-foreground">
+                                {permissao.submodulo}
+                              </div>
+                            )}
+                          </div>
                         </Label>
                       </div>
                     ))}
